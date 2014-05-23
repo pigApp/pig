@@ -18,30 +18,22 @@ Item {
         onActiveChanged: { if(!loaderUpdate.active) input.focus = true; loaderUpdate.destroy() }
     }
 
-    Column {
-        id: formFindColumn
-        spacing: 30
-        opacity: 0
-        visible: showFinder && !showDbError
-        enabled: showFinder && !showDbError
-        anchors.left: parent.left
-        anchors.verticalCenter: parent.verticalCenter
-        anchors.verticalCenterOffset: -20
-        z: 2
+    Row {
+        id: inputFindRow
+        spacing: 8
+        visible: buttonsFindColumn.visible && buttonsFindColumn.opacity == 1
+        anchors.centerIn: parent
+        anchors.verticalCenterOffset: 23.5
         TextInput {
             id: input
-            x: 147 
-            width: screen.width/5.5
             color: Qt.rgba(0.2, 0.2, 0.2, 0.4)
             font.family: pigFont.name
-            font.weight: Font.Light
             font.capitalization: Font.AllUppercase
-            font.pixelSize: 15
+            font.pixelSize: 25
             focus: true
-            visible: showFinder && !showDbError
             enabled: showFinder && !showDbError
-            maximumLength: 25
-            onAccepted: { 
+            maximumLength: 29
+            onAccepted: {
                 if (!waitForResultTimer.running) {
                     if (!showFilters && !loaderSetPassword.active) {
                         if (noResultLabel.visible) { noResultLabel.visible = false }
@@ -55,20 +47,21 @@ Item {
                 running: false
                 repeat: false
                 interval: 1000// ver el tiempo
-                onTriggered: { 
+                onTriggered: {
                     if (!noResult) {
-                        finder.state = "hideFinder" 
+                        finder.state = "hideFinder"
                     }else {
                         root.noResult = false
                         noResultLabel.visible = true
                     }
-                } 
+                }
             }
             onCursorPositionChanged: { if (noResultLabel.visible) noResultLabel.visible = false }
             Keys.onPressed: {
                 if (event.key === Qt.Key_P && (event.modifiers & Qt.ControlModifier) && (event.modifiers & Qt.ShiftModifier) && showFinder && !root.requirePass) {
                     if (finder.state == 'showFinder' || finder.state == 'hideFilter') {
-                        formFindColumn.visible = false
+                        buttonsFindColumn.visible = false
+                        inputFindRow.visible = false
                         input.focus = false
                         loaderSetPassword.active = true
                     }
@@ -76,9 +69,29 @@ Item {
                 }
             }
         }
+        Text {
+            id: noResultLabel
+            text: ">> NO RESULT"
+            color: Qt.rgba(0.2, 0.2, 0.2, 0.2)
+            font.family: pigFont.name
+            font.pixelSize: 24/strap
+            visible: false
+        }
+    }
+
+    Column {
+        id: buttonsFindColumn
+        spacing: 30
+        opacity: 0
+        visible: showFinder && !showDbError
+        enabled: showFinder && !showDbError
+        anchors.left: parent.left
+        anchors.leftMargin: 140
+        anchors.verticalCenter: parent.verticalCenter
+        anchors.verticalCenterOffset: 20
+        z: 2
         Button {
             id: categoryFind
-            x: 140
             width: 360
             height: 40
             label: "CATEGORY"
@@ -86,52 +99,12 @@ Item {
         }
         Button {
             id: pornstarFind
-            x: 140
             width: 373
             height: 40
             label: "PORNSTAR"
             onClicked: { finder.state = "showFilter"; filtersManager(pornstarFind,null) }
         }
     }
-
-    Text {
-        id: noResultLabel
-        text: "NO RESULT"
-        color: Qt.rgba(0.5, 0.5, 0.5, 0.7)
-        font.family: pigFont.name
-        font.weight: Font.Light
-        font.pixelSize: 15/strap
-        visible: false
-        anchors.horizontalCenter: parent.horizontalCenter
-        anchors.verticalCenter: parent.verticalCenter
-    }
-
-    Row {
-        id: waitRow
-        spacing: 15
-        anchors.horizontalCenter: parent.horizontalCenter
-        anchors.horizontalCenterOffset: -27
-        anchors.verticalCenter: parent.verticalCenter
-        Text {
-            id: waitMsg
-            text: "PLEASE WAIT..."
-            color: Qt.rgba(0.5, 0.5, 0.5, 0.7)
-            font.family: pigFont.name
-            font.weight: Font.Light
-            font.pixelSize: 15
-            opacity: { if(root.showWaitSpinner) 1; else 0 }
-        }
-        Image {
-            id: waitSpinner
-            width: 15
-            height: 15
-            source: "qrc:/images/busy.png";
-            visible: root.showWaitSpinner
-            property bool on: root.showWaitSpinner
-            NumberAnimation on rotation { running: waitSpinner.on; from: 0; to: 360; loops: Animation.Infinite; duration: 1200 }
-        }
-    }
-
     Rectangle {
         id: filtersLayer
         color: Qt.rgba(0, 0, 0, 0.5)
@@ -169,8 +142,33 @@ Item {
         running: false
         repeat: false
         interval: 1150
-        onTriggered: { showFilters = true }
+        onTriggered: showFilters = true
     } 
+
+    Row {
+        id: waitRow
+        spacing: 15
+        anchors.horizontalCenter: parent.horizontalCenter
+        anchors.horizontalCenterOffset: -27
+        anchors.verticalCenter: parent.verticalCenter
+        Text {
+            id: waitMsg
+            text: "PLEASE WAIT..."
+            color: Qt.rgba(0.2, 0.2, 0.2, 0.4)
+            font.family: pigFont.name
+            font.pixelSize: 25
+            opacity: { if(root.showWaitSpinner) 1; else 0 }
+        }
+        Image {
+            id: waitSpinner
+            width: 15
+            height: 15
+            source: "qrc:/images/busy.png";
+            visible: root.showWaitSpinner
+            property bool on: root.showWaitSpinner
+            NumberAnimation on rotation { running: waitSpinner.on; from: 0; to: 360; loops: Animation.Infinite; duration: 1200 }
+        }
+    }
 
     Loader {
         id: loaderSetPassword
@@ -186,7 +184,8 @@ Item {
             input.focus = true
         } else {
             loaderSetPassword.active = false
-            formFindColumn.visible = true
+            buttonsFindColumn.visible = true
+            inputFindRow.visible = true
             input.focus = true
         }
     }
@@ -244,7 +243,7 @@ Item {
                     NumberAnimation { target: root; properties: "blurOpacity"; to: 1; duration: 1700; easing.type: Easing.InOutQuart }
                     NumberAnimation { target: root; properties: "blurRadius"; to: 40; duration: 1700; easing.type: Easing.InOutQuart }
                 }
-                NumberAnimation { target: formFindColumn; properties: "opacity"; to: 1.0; duration: 400; easing.type: Easing.InOutQuart }
+                NumberAnimation { target: buttonsFindColumn; properties: "opacity"; to: 1.0; duration: 400; easing.type: Easing.InOutQuart }
             }
         },
         Transition {
@@ -256,7 +255,7 @@ Item {
                     NumberAnimation { target: root; properties: "blurOpacity"; to: 1; duration: 700; easing.type: Easing.InOutQuart }
                     NumberAnimation { target: root; properties: "blurRadius"; to: 40; duration: 700; easing.type: Easing.InOutQuart }
                 }
-                NumberAnimation { target: formFindColumn; properties: "opacity"; to: 1.0; duration: 200; easing.type: Easing.InOutQuart }
+                NumberAnimation { target: buttonsFindColumn; properties: "opacity"; to: 1.0; duration: 200; easing.type: Easing.InOutQuart }
                 PropertyAction { target: input; property: "focus"; value: false }
                 PropertyAction { target: input; property: "focus"; value: true }
                 PropertyAction { target: root; property: "showFinderFast"; value: false }
@@ -265,7 +264,7 @@ Item {
         Transition {
             to: "hideFinder"
             SequentialAnimation {
-                NumberAnimation { target: formFindColumn; properties: "opacity"; to: 0; duration: 300; easing.type: Easing.InOutQuart }
+                NumberAnimation { target: buttonsFindColumn; properties: "opacity"; to: 0; duration: 300; easing.type: Easing.InOutQuart }
                 ParallelAnimation {
                     NumberAnimation { target: root; easing.amplitude: 1.65; properties: "blurOpacity"; to: 0; duration: 800; easing.type: Easing.OutInElastic }
                     NumberAnimation { target: root; easing.amplitude: 1.65; properties: "girlOpacity"; to: 0; duration: 800; easing.type: Easing.OutInElastic }
@@ -277,7 +276,7 @@ Item {
         Transition {
             to: "showFilter"
             SequentialAnimation {
-                NumberAnimation { target: formFindColumn; properties: "opacity"; to: 0; duration: 50; easing.type: Easing.InOutQuart }
+                NumberAnimation { target: buttonsFindColumn; properties: "opacity"; to: 0; duration: 50; easing.type: Easing.InOutQuart }
                 NumberAnimation { target: filtersLayer; easing.amplitude: 1.7; properties: "anchors.leftMargin"; to: -screen.width; duration: 1100; easing.type: Easing.OutQuart }
             }
         },
@@ -285,7 +284,7 @@ Item {
             to: "hideFilter"
             SequentialAnimation {
                 NumberAnimation { target: filtersLayer; easing.amplitude: 1.7; properties: "anchors.leftMargin"; to: 0; duration: 700; easing.type: Easing.OutQuart }
-                NumberAnimation { target: formFindColumn; properties: "opacity"; to: 1; duration: 50; easing.type: Easing.InOutQuart }
+                NumberAnimation { target: buttonsFindColumn; properties: "opacity"; to: 1; duration: 50; easing.type: Easing.InOutQuart }
             }
         },
         Transition {

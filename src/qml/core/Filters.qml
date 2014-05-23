@@ -6,7 +6,6 @@ Rectangle {
     visible: showFilters
     z: 1
     anchors.fill: parent
-    anchors.margins: 5
     Flickable {
         id: flickAreaFilters
         contentWidth: filtersGrid.width
@@ -46,5 +45,3 @@ Rectangle {
     }
 }
 // Espacios hechos.
-    
-

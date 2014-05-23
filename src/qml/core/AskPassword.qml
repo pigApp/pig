@@ -9,26 +9,27 @@ Item {
         anchors.centerIn: parent
         Text {
             id: label
-            text: { if (root.failPass) "BAD PASSWORD"; else "PASSWORD" }
-            color: Qt.rgba(0.5, 0.5, 0.5, 0.7)
+            text: { if (root.failPass) "WRONG PASSWORD"; else "YOUR PASSWORD" }
+            color: Qt.rgba(0.2, 0.2, 0.2, 0.4)
             font.family: pigFont.name
-            font.pixelSize: 40
+            font.pixelSize: 25
+            anchors.horizontalCenter: parent.horizontalCenter
         }
         Rectangle {
             id: inputLayer
-            width: screen.width/3.4
-            height: 54
+            width: screen.width/5.48
+            height: 35
             color: "black"
             TextInput {
                 id: input
-                width: screen.width/3.4
+                width: screen.width/4.5
                 color: "white"
                 font.family: pigFont.name
-                font.pixelSize: 40
+                font.pixelSize: 25
                 focus: true
                 maximumLength: 16
                 echoMode: TextInput.Password
-                onCursorPositionChanged: { if(label.text == "BAD PASSWORD") root.failPass = false }
+                onCursorPositionChanged: { if(label.text == "WRONG PASSWORD") root.failPass = false }
                 onAccepted: {
                     if (input.text !== '')
                         root.passManager(input.text, false, false)
@@ -38,4 +39,3 @@ Item {
     }
 }
 // Espacios hechos.
-

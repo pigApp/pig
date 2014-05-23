@@ -16,18 +16,16 @@ Item {
         Text {
             id: statusLabel
             text: root.status
-            color: Qt.rgba(0.5, 0.5, 0.5, 0.7)
+            color: Qt.rgba(0.2, 0.2, 0.2, 0.4)
             font.family: pigFont.name
-            font.weight: Font.Light
             font.capitalization: Font.AllUppercase
-            font.pixelSize: 15
+            font.pixelSize: 25
         }
         Text {
             id: statusInformationLabel
             text: root.statusInformation
             color: Qt.rgba(0.5, 0.5, 0.5, 0.15)
             font.family: pigFont.name
-            font.weight: Font.Light
             font.capitalization: Font.AllUppercase
             font.italic: true
             font.pixelSize: 13

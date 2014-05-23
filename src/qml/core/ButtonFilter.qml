@@ -25,18 +25,13 @@ Rectangle {
     Image {
         id: starPic
         visible: false
-        fillMode: Image.PreserveAspectCrop
-        anchors.horizontalCenter: parent.horizontalCenter
-        anchors.horizontalCenterOffset: 1
-        anchors.verticalCenter: parent.verticalCenter
+        anchors.centerIn: parent
     }
     Text {
         id: label
         color: "white"
         font.family: pigFont.name
         font.pixelSize: 40
-        horizontalAlignment: Text.AlignHLeft
-        verticalAlignment: Text.AlignVCenter
         anchors.centerIn: parent
     }
 
@@ -57,6 +52,7 @@ Rectangle {
             if (pornStarsVisible) {
                 starPic.visible = true
                 label.visible = false
+                buttonFilter.color = "white"
             } else {
                 label.color = Qt.rgba(0, 0, 0, 1)
                 buttonFilter.color = "white"
@@ -73,6 +69,7 @@ Rectangle {
             if (pornStarsVisible) {
                 starPic.visible = false
                 label.visible = true
+                buttonFilter.color = Qt.rgba(0 ,0 ,0 , 0.03)
             } else {
                 label.color = "white"
                 buttonFilter.color = Qt.rgba(0 ,0 ,0 , 0.03)
@@ -81,7 +78,7 @@ Rectangle {
         }
     }
     states: State {
-        when: mousearea.pressed
+        when: mousearea.pressed && !pornStarsVisible
         PropertyChanges { target: buttonFilter; color: Qt.rgba(1, 1, 1, 0.8) }
     }
 }

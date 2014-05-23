@@ -470,6 +470,7 @@ Item {
         color: Qt.rgba(1, 1, 1, 0.05)
         font.family: "Verdana"
         font.pixelSize: 30
+        visible: { if (playerLayer.height < screen.height -50) true; else false }
         anchors.right: parent.right
         anchors.rightMargin: 3
         anchors.bottom: parent.bottom
@@ -559,5 +560,3 @@ Item {
         root.findDb(inputText, category, pornstar, offset, false)
     }
 }
-
-
