@@ -11,11 +11,13 @@ QML_IMPORT_PATH = $$(HOME)/$$(USER)/Qt5.3.0/5.3/gcc_64/qml/QtAV
 SOURCES += src/main.cpp\
 	   src/pig.cpp\
 	   src/password/pass.cpp\
+	   src/update/update.cpp\
 	   src/video/videoplayer.cpp
 
 
 HEADERS += src/pig.h\
 	   src/password/pass.h\
+	   src/update/update.h\
 	   src/video/videoplayer.h
 
 OTHER_FILES += src/qml/main.qml\

@@ -10,9 +10,7 @@ Item {
     Row {
         id: statusRow
         spacing: 15
-        anchors.horizontalCenter: parent.horizontalCenter
-        anchors.horizontalCenterOffset: -27
-        anchors.verticalCenter: parent.verticalCenter
+        anchors.centerIn: parent
         Text {
             id: statusLabel
             text: root.status
@@ -34,9 +32,9 @@ Item {
         }
         Image {
             id: spinner
-            width: 15
-            height: 15
-            source: "qrc:/images/busy.png" 
+            width: 29.3
+            height: 29.3
+            source: "qrc:/images/spinner.png" 
             visible: showSpinner
             property bool on: showSpinner
             NumberAnimation on rotation { running: spinner.on; from: 0; to: 360; loops: Animation.Infinite; duration: 1200 }

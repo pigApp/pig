@@ -87,7 +87,7 @@ Item {
                     }
                 }
             }
-           GaussianBlur {
+            GaussianBlur {
                 id: posterEffect
                 source: posters
                 radius: 20
@@ -115,8 +115,7 @@ Item {
                 sourceSize.width: 677
                 sourceSize.height: 435
                 source: urlCover
-                anchors.horizontalCenter: parent.horizontalCenter
-                anchors.verticalCenter: parent.verticalCenter
+                anchors.centerIn: parent
                 anchors.verticalCenterOffset: 1
                 onStatusChanged: {
                     if (cover.source == list[5] && cover.progress == 1.0) {
@@ -132,14 +131,13 @@ Item {
                 }
             }
             Image {
-                id: frameCover
+                id: frameCentral
                 width: 683
                 height: 500
                 sourceSize.width: 683
                 sourceSize.height: 500
-                source: "qrc:/images/frameCover.png"
-                anchors.horizontalCenter: parent.horizontalCenter
-                anchors.verticalCenter: parent.verticalCenter
+                source: "qrc:/images/frameCentral.png"
+                anchors.centerIn: parent
             }
             Timer {
                 id: imagesStatus
@@ -156,72 +154,116 @@ Item {
                     }
                 }
             }
+            Column {
+                id: datesColumn
+                spacing: 5
+                anchors.centerIn: parent
+                anchors.verticalCenterOffset: 325
+                Text {
+                    id: atressesLabel
+                    text: actresses
+                    color: Qt.rgba(1, 1, 1, 0.2)
+                    font.family: pigFont.name
+                    font.pixelSize: 25
+                }
+                Text {
+                    id: qualityLabel
+                    text: quality
+                    color: Qt.rgba(1, 1, 1, 0.2)
+                    font.family: pigFont.name
+                    font.pixelSize: 25
+                }
+                Text {
+                    id: collaboratorLabel
+                    text: collaborator
+                    color: Qt.rgba(1, 1, 1, 0.2)
+                    font.family: pigFont.name
+                    font.pixelSize: 25
+                }
+                /*
+                Text {
+                    id: counterLabel
+                    text: "FILM "+currentFilm+" FROM A TOTAL "+totalFilms+" FOUND"
+                    color: Qt.rgba(1, 1, 1, 0.1)
+                    font.family: "Verdana"
+                    font.italic: true
+                    font.pixelSize: 15
+                }*/
+            }
 
             Image {
-                id: frameA
+                id: frameLeft
                 width: 713
                 height: 500
                 sourceSize.width: 713
                 sourceSize.height: 500
-                source: "qrc:/images/frameA.png"
-                anchors.horizontalCenter: parent.horizontalCenter
+                source: "qrc:/images/frameLeft.png"
+                anchors.centerIn: parent
                 anchors.horizontalCenterOffset: -695
-                anchors.verticalCenter: parent.verticalCenter
-                PreviewPlayer {
-                  id: previewPlayer
-                  url: urlPreview
-                  anchors.centerIn: parent
-                }
+            }
+            PreviewPlayer {
+                id: previewPlayer
+                previewWidth: 620  // Pasarle este parametro como screen.width/?
+                previewHeight: 432.4 // Pasarle este parametro como screen.height/?
+                url: urlPreview
+            }
+
+            Image {
+                id: frameRight
+                width: 713
+                height: 500
+                sourceSize.width: 700
+                sourceSize.height: 500
+                source: "qrc:/images/frameRight.png"
+                anchors.centerIn: parent
+                anchors.horizontalCenterOffset: 695
                 Row {
-                    id: openFilmRow
+                    id: openScenneRow
                     spacing: 40
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    anchors.horizontalCenterOffset: 42.6
-                    anchors.bottom: parent.bottom
-                    anchors.bottomMargin: 50
+                    anchors.centerIn: parent
                     ButtonScenne {
-                        id: openFilm1
-                        sceneLabel: { if (urlVideo1 != '') "SCENE 1"; else 'SCENE' }
+                        id: openScenne1
+                        sceneLabel: { if (urlScenne1 != '') "SCENE 1"; else 'SCENE' }
                         onClicked: {
-                            if (urlVideo1 != '') {
+                            if (urlScenne1 != '') {
                                 previewPlayer.kill()
-                                videoID = urlVideo1
+                                videoID = urlScenne1
                                 recipe.state = "showPlayerLayer"
                                 delayPlayerLayer.start()
                             }
                         }
                     }
                     ButtonScenne {
-                        id: openFilm2
-                        sceneLabel: { if (urlVideo2 != '') "SCENE 2"; else 'SCENE' }
+                        id: openScenne2
+                        sceneLabel: { if (urlScenne2 != '') "SCENE 2"; else 'SCENE' }
                         onClicked: {
-                            if (urlVideo2 != '') {
+                            if (urlScenne2 != '') {
                                 previewPlayer.kill()
-                                videoID = urlVideo2
+                                videoID = urlScenne2
                                 recipe.state = "showPlayerLayer"
                                 delayPlayerLayer.start()
                             }
                         }
                     }
                     ButtonScenne {
-                        id: openFilm3
-                        sceneLabel: { if (urlVideo3 != '') "SCENE 3"; else 'SCENE' }
+                        id: openScenne3
+                        sceneLabel: { if (urlScenne3 != '') "SCENE 3"; else 'SCENE' }
                         onClicked: {
-                            if (urlVideo3 != '') {
+                            if (urlScenne3 != '') {
                                 previewPlayer.kill()
-                                videoID = urlVideo3
+                                videoID = urlScenne3
                                 recipe.state = "showPlayerLayer"
                                 delayPlayerLayer.start()
                             }
                         }
                     }
                     ButtonScenne {
-                        id: openFilm4
-                        sceneLabel: { if (urlVideo4 != '') "SCENE 4"; else 'SCENE' }
+                        id: openScenne4
+                        sceneLabel: { if (urlScenne4 != '') "SCENE 4"; else 'SCENE' }
                         onClicked: {
-                            if (urlVideo4 != '') {
+                            if (urlScenne4 != '') {
                                 previewPlayer.kill()
-                                videoID = urlVideo4
+                                videoID = urlScenne4
                                 recipe.state = "showPlayerLayer"
                                 delayPlayerLayer.start()
                             }
@@ -237,81 +279,25 @@ Item {
                 }
             }
 
-            Image {
-                id: frameB
-                width: 713
-                height: 500
-                sourceSize.width: 700
-                sourceSize.height: 500
-                source: "qrc:/images/frameB.png"
-                anchors.horizontalCenter: parent.horizontalCenter
-                anchors.horizontalCenterOffset: 695
-                anchors.verticalCenter: parent.verticalCenter
-            }
-            Text {
-                id: counterLabel
-                text: currentFilm+"·"+totalFilms
-                color: Qt.rgba(1, 1, 1, 0)//0.8)
-                font.family: pigFont.name
-                font.pixelSize: 30/strap
-                textFormat: Text.RichText
-                anchors.right: parent.right
-                anchors.rightMargin: 8
-                anchors.verticalCenter: parent.verticalCenter
-            }
-            Text {
-                id: categoryLabel
-                text: categories
-                color: Qt.rgba(1, 1, 1, 0.03)
-                font.family: pigFont.name
-                font.pixelSize: 70/strap
-                anchors.centerIn: frameB
-                anchors.horizontalCenterOffset: -45
-                anchors.verticalCenterOffset: -36
-            }
-            Column {
-                id: datesColumn
-                spacing: 5
-                anchors.centerIn: frameB
-                anchors.horizontalCenterOffset: -40
-                anchors.verticalCenterOffset: 45 
-                Text {
-                    id: atressesLabel
-                    text: "Actresses: "+actresses
-                    color: Qt.rgba(1, 1, 1, 0.15)
-                    font.family: pigFont.name
-                    font.weight: Font.Light
-                    font.pixelSize: 15
-                }
-                Text {
-                    id: qualityLabel
-                    text: "Quality: "+quality
-                    color: Qt.rgba(1, 1, 1, 0.15)
-                    font.family: pigFont.name
-                    font.weight: Font.Light
-                    font.pixelSize: 15
-                }
-                Text {
-                    id: collaboratorLabel
-                    text: "Collaborator: "+collaborator
-                    color: Qt.rgba(1, 1, 1, 0.15)
-                    font.family: pigFont.name
-                    font.weight: Font.Light
-                    font.pixelSize: 15
-                }
-            }
-
             Text {
                 id: titleLabel
+                y:127
                 text: title
                 color: "white"
                 font.family: pigFont.name
                 font.letterSpacing: -10
                 font.pixelSize: 185/strap
-                anchors.top: parent.top
-                anchors.topMargin: 172
                 anchors.left: parent.left
-                anchors.leftMargin: 20
+            }
+            Text {
+                id: categoryLabel
+                y: 211
+                text: categories
+                color: Qt.rgba(1, 1, 1, 0.04)
+                font.family: pigFont.name
+                font.pixelSize: 81/strap
+                anchors.left: titleLabel.right
+                anchors.leftMargin: 5
             }
 
             NumberAnimation { running: recipe.PathView.isCurrentItem; target: posters; property: "opacity"; to: 1; duration: 4000; easing.type: Easing.InOutQuad }
@@ -535,12 +521,12 @@ Item {
         inputText = list[9]
         category = list[10]
         pornstar = list[11]
-        var video
+        var scenne
         var row = 0
         for(var i=0; i<n; i++) {
-           video = list[row+8].split(",")
+           scenne = list[row+8].split(",")
            model.append({ "title": list[row], "actresses": list[row+1], "quality": list[row+2], "collaborator": list[row+3], "categories": list[row+4], "urlCover": list[row+5],
-                          "urlPoster": list[row+6], "urlPreview": list[row+7], "urlVideo1": video[0], "urlVideo2": video[1], "urlVideo3": video[2], "urlVideo4": video[3] })
+                          "urlPoster": list[row+6], "urlPreview": list[row+7], "urlScenne1": scenne[0], "urlScenne2": scenne[1], "urlScenne3": scenne[2], "urlScenne4": scenne[3] })
            row +=12
         }
         location = 0

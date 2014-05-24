@@ -20,10 +20,11 @@ Item {
 
     Row {
         id: inputFindRow
-        spacing: 8
+        height: 10
+        spacing: 7
         visible: buttonsFindColumn.visible && buttonsFindColumn.opacity == 1
         anchors.centerIn: parent
-        anchors.verticalCenterOffset: 23.5
+        anchors.verticalCenterOffset: 14
         TextInput {
             id: input
             color: Qt.rgba(0.2, 0.2, 0.2, 0.4)
@@ -71,7 +72,7 @@ Item {
         }
         Text {
             id: noResultLabel
-            text: ">> NO RESULT"
+            text: "\\ NO RESULT \\"
             color: Qt.rgba(0.2, 0.2, 0.2, 0.2)
             font.family: pigFont.name
             font.pixelSize: 24/strap
@@ -153,7 +154,7 @@ Item {
         anchors.verticalCenter: parent.verticalCenter
         Text {
             id: waitMsg
-            text: "PLEASE WAIT..."
+            text: "PLEASE WAIT"
             color: Qt.rgba(0.2, 0.2, 0.2, 0.4)
             font.family: pigFont.name
             font.pixelSize: 25
@@ -161,9 +162,9 @@ Item {
         }
         Image {
             id: waitSpinner
-            width: 15
-            height: 15
-            source: "qrc:/images/busy.png";
+            width: 29.3
+            height: 29.3
+            source: "qrc:/images/spinner.png";
             visible: root.showWaitSpinner
             property bool on: root.showWaitSpinner
             NumberAnimation on rotation { running: waitSpinner.on; from: 0; to: 360; loops: Animation.Infinite; duration: 1200 }
