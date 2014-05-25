@@ -2,8 +2,6 @@ import QtQuick 2.1
 
 Rectangle {
     id: button
-    width: 220
-    height: 25
     color: "transparent"
 
     property alias label: label.text
@@ -15,7 +13,7 @@ Rectangle {
         id: label
         color: "white"
         font.family: pigFont.name
-        font.pixelSize: 70
+        font.pixelSize: 90
         horizontalAlignment: Text.AlignLeft
         verticalAlignment: Text.AlignVCenter
         anchors.fill: parent

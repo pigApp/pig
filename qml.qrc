@@ -17,7 +17,6 @@
         <file>images/font/pig.ttf</file>
         <file>images/stripes.png</file>
         <file>images/player/play.png</file>
-        <file>images/player/noPlay.png</file>
         <file>images/player/stop.png</file>
         <file>images/player/headphone.png</file>
         <file>images/player/loop.png</file>
@@ -38,5 +37,9 @@
         <file>images/frameLeft.png</file>
         <file>images/frameRight.png</file>
         <file>images/frameCentral.png</file>
+        <file>images/720.png</file>
+        <file>images/1080.png</file>
+        <file>images/notAvailable.png</file>
+        <file>images/player/playPreview.png</file>
     </qresource>
 </RCC>

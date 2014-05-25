@@ -154,6 +154,7 @@ Item {
                     }
                 }
             }
+            /*
             Column {
                 id: datesColumn
                 spacing: 5
@@ -180,7 +181,6 @@ Item {
                     font.family: pigFont.name
                     font.pixelSize: 25
                 }
-                /*
                 Text {
                     id: counterLabel
                     text: "FILM "+currentFilm+" FROM A TOTAL "+totalFilms+" FOUND"
@@ -188,8 +188,8 @@ Item {
                     font.family: "Verdana"
                     font.italic: true
                     font.pixelSize: 15
-                }*/
-            }
+                }
+            }*/
 
             Image {
                 id: frameLeft
@@ -219,11 +219,12 @@ Item {
                 anchors.horizontalCenterOffset: 695
                 Row {
                     id: openScenneRow
-                    spacing: 40
+                    spacing: 15
                     anchors.centerIn: parent
+                    anchors.horizontalCenterOffset: -35
                     ButtonScenne {
                         id: openScenne1
-                        sceneLabel: { if (urlScenne1 != '') "SCENE 1"; else 'SCENE' }
+                        sceneLabel: { if (urlScenne1 != '') "FULL SCENE"; else 'NOT AVAILABLE' }
                         onClicked: {
                             if (urlScenne1 != '') {
                                 previewPlayer.kill()
@@ -235,7 +236,7 @@ Item {
                     }
                     ButtonScenne {
                         id: openScenne2
-                        sceneLabel: { if (urlScenne2 != '') "SCENE 2"; else 'SCENE' }
+                        sceneLabel: { if (urlScenne2 != '') "FULL SCENE"; else 'NOT AVAILABLE' }
                         onClicked: {
                             if (urlScenne2 != '') {
                                 previewPlayer.kill()
@@ -247,7 +248,7 @@ Item {
                     }
                     ButtonScenne {
                         id: openScenne3
-                        sceneLabel: { if (urlScenne3 != '') "SCENE 3"; else 'SCENE' }
+                        sceneLabel: { if (urlScenne3 != '') "FULL SCENE"; else 'NOT AVAILABLE' }
                         onClicked: {
                             if (urlScenne3 != '') {
                                 previewPlayer.kill()
@@ -259,7 +260,7 @@ Item {
                     }
                     ButtonScenne {
                         id: openScenne4
-                        sceneLabel: { if (urlScenne4 != '') "SCENE 4"; else 'SCENE' }
+                        sceneLabel: { if (urlScenne4 != '') "FULL SCENE"; else 'NOT AVAILABLE' }
                         onClicked: {
                             if (urlScenne4 != '') {
                                 previewPlayer.kill()
@@ -278,26 +279,28 @@ Item {
                     onTriggered: root.openPlayer(videoID)
                 }
             }
+            Text {
+                id: categoryLabel
+                y: 211
+                text: categories
+                color: Qt.rgba(1, 1, 1, 0.03)
+                font.family: pigFont.name
+                font.pixelSize: 81/strap
+                anchors.horizontalCenter: frameRight.horizontalCenter
+                anchors.horizontalCenterOffset: -39
+                anchors.top: frameRight.top
+                anchors.topMargin: frameRight.height/6
+            }
 
             Text {
                 id: titleLabel
-                y:127
+                y: 127
                 text: title
                 color: "white"
                 font.family: pigFont.name
                 font.letterSpacing: -10
                 font.pixelSize: 185/strap
                 anchors.left: parent.left
-            }
-            Text {
-                id: categoryLabel
-                y: 211
-                text: categories
-                color: Qt.rgba(1, 1, 1, 0.04)
-                font.family: pigFont.name
-                font.pixelSize: 81/strap
-                anchors.left: titleLabel.right
-                anchors.leftMargin: 5
             }
 
             NumberAnimation { running: recipe.PathView.isCurrentItem; target: posters; property: "opacity"; to: 1; duration: 4000; easing.type: Easing.InOutQuad }

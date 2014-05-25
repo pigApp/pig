@@ -24,7 +24,6 @@ Item {
         spacing: 7
         visible: buttonsFindColumn.visible && buttonsFindColumn.opacity == 1
         anchors.centerIn: parent
-        anchors.verticalCenterOffset: 14
         TextInput {
             id: input
             color: Qt.rgba(0.2, 0.2, 0.2, 0.4)
@@ -82,26 +81,25 @@ Item {
 
     Column {
         id: buttonsFindColumn
-        spacing: 30
+        spacing: 5
         opacity: 0
         visible: showFinder && !showDbError
         enabled: showFinder && !showDbError
         anchors.left: parent.left
-        anchors.leftMargin: 140
+        anchors.leftMargin: 40
         anchors.verticalCenter: parent.verticalCenter
-        anchors.verticalCenterOffset: 20
         z: 2
         Button {
             id: categoryFind
-            width: 360
-            height: 40
+            width: 470
+            height: 65
             label: "CATEGORY"
             onClicked: { finder.state = "showFilter"; filtersManager(categoryFind,null) }
         }
         Button {
             id: pornstarFind
-            width: 373
-            height: 40
+            width: 470
+            height: 65
             label: "PORNSTAR"
             onClicked: { finder.state = "showFilter"; filtersManager(pornstarFind,null) }
         }

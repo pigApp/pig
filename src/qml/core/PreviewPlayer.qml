@@ -15,9 +15,10 @@ Item {
 
     Image {
         id: play
-        source: "qrc:/images/player/play.png"
+        source: "qrc:/images/player/playPreview.png"
         fillMode: Image.PreserveAspectCrop
         anchors.centerIn: parent
+        anchors.verticalCenterOffset: -3
         MouseArea {
             anchors.fill: parent
             onClicked: { if (player.playbackState === MediaPlayer.PlayingState) player.pause(); else player.play() }
@@ -28,9 +29,9 @@ Item {
         text: "PREVIEW"
         color: "white"
         font.family: pigFont.name
-        font.pixelSize: 11
+        font.pixelSize: 15
         anchors.centerIn: parent
-        anchors.verticalCenterOffset: 30
+        anchors.verticalCenterOffset: 48
     }
 
     VideoOutput {
