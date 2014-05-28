@@ -11,8 +11,9 @@ Item {
 
     Column {
         id: formColumn
-        spacing: 10
+        spacing: 5
         anchors.centerIn: parent
+        anchors.horizontalCenterOffset: 70
         Row {
             spacing: 15
             Text {
@@ -76,7 +77,7 @@ Item {
 
     Text {
         id: ok_fail_Label
-        text: { if (root.okPass) "PASSWORD OK.<br>ESC TO BACK"; else "PASSWORD FAIL.<br>TRY LATER.<br>ESC TO BACK" }
+        text: { if (root.okPass) "OK. ESC TO BACK"; else "FAIL. TRY LATER. ESC TO BACK" }
         color: "white"
         font.family: pigFont.name
         font.pixelSize: 25

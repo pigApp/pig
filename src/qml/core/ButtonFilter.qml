@@ -8,6 +8,7 @@ Rectangle {
     radius: 2 
 
     property alias labelText: label.text
+    property alias nLabelText: nLabel.text
     property alias sourceImage: starPic.source
     property bool pornStarsVisible
 
@@ -31,8 +32,17 @@ Rectangle {
         id: label
         color: "white"
         font.family: pigFont.name
+        font.capitalization: Font.AllUppercase
         font.pixelSize: 40
         anchors.centerIn: parent
+    }
+    Text {
+        id: nLabel
+        color: Qt.rgba(1, 1, 1, 0.15)
+        font.family: pigFont.name
+        font.pixelSize: 30
+        anchors.centerIn: parent
+        anchors.verticalCenterOffset: 50
     }
 
     MouseArea {
@@ -52,6 +62,7 @@ Rectangle {
             if (pornStarsVisible) {
                 starPic.visible = true
                 label.visible = false
+                nLabel.visible = false
                 buttonFilter.color = "white"
             } else {
                 label.color = Qt.rgba(0, 0, 0, 1)
@@ -69,6 +80,7 @@ Rectangle {
             if (pornStarsVisible) {
                 starPic.visible = false
                 label.visible = true
+                nLabel.visible = true
                 buttonFilter.color = Qt.rgba(0 ,0 ,0 , 0.03)
             } else {
                 label.color = "white"

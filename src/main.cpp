@@ -8,6 +8,8 @@ int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);
 
+    qmlRegisterType<PIG>("signals", 1, 0, "SIGNALS");
+
     QQuickView *view = new QQuickView(QUrl("qrc:/src/qml/main.qml"));
     view->setResizeMode(QQuickView::SizeRootObjectToView);
     view->setIcon(QIcon("qrc:/images/icon.png"));

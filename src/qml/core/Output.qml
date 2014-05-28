@@ -3,6 +3,7 @@ import QtGraphicalEffects 1.0
 
 Item {
     id: output
+    opacity: 0
 
     property bool posterLoaded
     property bool coverLoaded
@@ -17,7 +18,12 @@ Item {
     property int currentFilm: 1
     property int locationOnList
     property int nIndex: 0
+
+    property bool run: root.listUpdated
     
+    onRunChanged: { listCreator() }
+    Component.onCompleted: { listCreator(root.n, root.list) }
+
     ListModel {
         id: model
     }
@@ -154,42 +160,6 @@ Item {
                     }
                 }
             }
-            /*
-            Column {
-                id: datesColumn
-                spacing: 5
-                anchors.centerIn: parent
-                anchors.verticalCenterOffset: 325
-                Text {
-                    id: atressesLabel
-                    text: actresses
-                    color: Qt.rgba(1, 1, 1, 0.2)
-                    font.family: pigFont.name
-                    font.pixelSize: 25
-                }
-                Text {
-                    id: qualityLabel
-                    text: quality
-                    color: Qt.rgba(1, 1, 1, 0.2)
-                    font.family: pigFont.name
-                    font.pixelSize: 25
-                }
-                Text {
-                    id: collaboratorLabel
-                    text: collaborator
-                    color: Qt.rgba(1, 1, 1, 0.2)
-                    font.family: pigFont.name
-                    font.pixelSize: 25
-                }
-                Text {
-                    id: counterLabel
-                    text: "FILM "+currentFilm+" FROM A TOTAL "+totalFilms+" FOUND"
-                    color: Qt.rgba(1, 1, 1, 0.1)
-                    font.family: "Verdana"
-                    font.italic: true
-                    font.pixelSize: 15
-                }
-            }*/
 
             Image {
                 id: frameLeft
@@ -225,6 +195,16 @@ Item {
                     ButtonScenne {
                         id: openScenne1
                         sceneLabel: { if (urlScenne1 != '') "FULL SCENE"; else 'NOT AVAILABLE' }
+                        sceneQuality: {
+                            if (urlScenne1 == '') {
+                                "qrc:/images/notAvailable.png"
+                            } else {
+                                if (quality == '1080p')
+                                    "qrc:/images/1080.png"
+                                else
+                                    "qrc:/images/720.png"
+                            }
+                        }
                         onClicked: {
                             if (urlScenne1 != '') {
                                 previewPlayer.kill()
@@ -237,6 +217,16 @@ Item {
                     ButtonScenne {
                         id: openScenne2
                         sceneLabel: { if (urlScenne2 != '') "FULL SCENE"; else 'NOT AVAILABLE' }
+                        sceneQuality: {
+                            if (urlScenne2 == '') {
+                                "qrc:/images/notAvailable.png"
+                            } else {
+                                if (quality == '1080p')
+                                    "qrc:/images/1080.png"
+                                else
+                                    "qrc:/images/720.png"
+                            }
+                        }
                         onClicked: {
                             if (urlScenne2 != '') {
                                 previewPlayer.kill()
@@ -249,6 +239,16 @@ Item {
                     ButtonScenne {
                         id: openScenne3
                         sceneLabel: { if (urlScenne3 != '') "FULL SCENE"; else 'NOT AVAILABLE' }
+                        sceneQuality: {
+                            if (urlScenne3 == '') {
+                                "qrc:/images/notAvailable.png"
+                            } else {
+                                if (quality == '1080p')
+                                    "qrc:/images/1080.png"
+                                else
+                                    "qrc:/images/720.png"
+                            }
+                        }
                         onClicked: {
                             if (urlScenne3 != '') {
                                 previewPlayer.kill()
@@ -261,6 +261,16 @@ Item {
                     ButtonScenne {
                         id: openScenne4
                         sceneLabel: { if (urlScenne4 != '') "FULL SCENE"; else 'NOT AVAILABLE' }
+                        sceneQuality: {
+                            if (urlScenne4 == '') {
+                                "qrc:/images/notAvailable.png"
+                            } else {
+                                if (quality == '1080p')
+                                    "qrc:/images/1080.png"
+                                else
+                                    "qrc:/images/720.png"
+                            }
+                        }
                         onClicked: {
                             if (urlScenne4 != '') {
                                 previewPlayer.kill()
@@ -280,16 +290,44 @@ Item {
                 }
             }
             Text {
-                id: categoryLabel
-                y: 211
-                text: categories
-                color: Qt.rgba(1, 1, 1, 0.03)
-                font.family: pigFont.name
-                font.pixelSize: 81/strap
-                anchors.horizontalCenter: frameRight.horizontalCenter
-                anchors.horizontalCenterOffset: -39
-                anchors.top: frameRight.top
-                anchors.topMargin: frameRight.height/6
+                id: counterLabel
+                text: currentFilm+"|"+totalFilms
+                color: Qt.rgba(1, 1, 1, 0.04)
+                font.family: "Verdana"
+                //font.italic: true
+                font.pixelSize: 90
+                anchors.centerIn: frameRight
+                anchors.horizontalCenterOffset: -35
+                anchors.verticalCenterOffset: -130
+            }
+            Column {
+                id: datesColumn
+                spacing: 5
+                anchors.centerIn: frameRight
+                anchors.horizontalCenterOffset: -135
+                anchors.verticalCenterOffset: 100
+                Text {
+                    id: atressesLabel
+                    text: actresses
+                    color: Qt.rgba(1, 1, 1, 0.15)
+                    font.family: pigFont.name
+                    font.pixelSize: 15
+                }
+                Text {
+                    id: categoryLabel
+                    text: categories
+                    color: Qt.rgba(1, 1, 1, 0.15)
+                    font.family: pigFont.name
+                    font.pixelSize: 15
+                }
+                Text {
+                    id: collaboratorLabel
+                    text: collaborator
+                    color: Qt.rgba(1, 1, 1, 0.15)
+                    font.family: pigFont.name
+                    font.pixelSize: 15
+                }
+
             }
 
             Text {
@@ -341,11 +379,11 @@ Item {
                 },
                 Transition {
                     to: "showAll"
-                    NumberAnimation { target: outputCore; property: "opacity"; to: 1; duration: 1000; easing.type: Easing.InOutQuad }
+                    NumberAnimation { target: output; property: "opacity"; to: 1; duration: 1000; easing.type: Easing.InOutQuad }
                 },
                 Transition {
                     to: "hideAll"
-                    NumberAnimation { target: outputCore; property: "opacity"; to: 0; duration: 500; easing.type: Easing.InOutQuad }
+                    NumberAnimation { target: output; property: "opacity"; to: 0; duration: 500; easing.type: Easing.InOutQuad }
                 }
             ]
         }
@@ -370,7 +408,7 @@ Item {
             if(totalFilms > 5 && counter < totalFilms) {
                 offset = offset+5
                 counter = counter+5
-                currentFilm = counter+1 
+                currentFilm = counter-4//+1 
                 listUpdater(offset)
             }
         }
@@ -424,7 +462,7 @@ Item {
             currentFilm = 1
             focusPath = false
             root.showOutput = false
-            outputCore.state = "back"
+            //outputCore.state = "back"
             delayCleanModel.start()
         }
         Timer {
@@ -544,7 +582,7 @@ Item {
         showWaitSpinner = true
         root.list = ''
         root.listUpdated = false
-        outputCore.state = ''
+        //outputCore.state = ''
         model.clear()
         root.findDb(inputText, category, pornstar, offset, false)
     }

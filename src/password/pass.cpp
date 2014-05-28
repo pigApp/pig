@@ -56,7 +56,7 @@ bool Pass::writePass(QString plain)
 bool Pass::checkPass(QString plain)
 {
     const QString hash = hashCalculation(plain);
-    QString diskHash = "81dc9bdb52d04dc20036dbd8313ed055"; // Usar pd leido en requirePassCheck().
+    QString diskHash = "202cb962ac59075b964b07152d234b70"; // Usar pd leido en requirePassCheck().
     if (hash == diskHash)
         return true;
     else

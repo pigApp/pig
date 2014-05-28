@@ -17,6 +17,7 @@ Item {
         id: play
         source: "qrc:/images/player/playPreview.png"
         fillMode: Image.PreserveAspectCrop
+        opacity: 0.2
         anchors.centerIn: parent
         anchors.verticalCenterOffset: -3
         MouseArea {
@@ -30,6 +31,7 @@ Item {
         color: "white"
         font.family: pigFont.name
         font.pixelSize: 15
+        opacity: 0.2
         anchors.centerIn: parent
         anchors.verticalCenterOffset: 48
     }

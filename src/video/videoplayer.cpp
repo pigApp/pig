@@ -1,7 +1,8 @@
-#include <QGraphicsView>
 #ifndef QT_NO_OPENGL
 #include <QtOpenGL/QGLWidget>
 #endif
+#include <QtAV/OSDFilter.h>
+#include <QHBoxLayout>
 #include <QVBoxLayout>
 #include <QDebug>
 
@@ -10,66 +11,76 @@
 using namespace QtAV;
 
 VideoPlayer::VideoPlayer(QWidget *parent)
-    : QWidget(parent), videoItem(0)
+    : QWidget(parent)
 {
-    videoItem = new GraphicsItemRenderer;
-    videoItem->resizeRenderer(1918, 1078);
-    videoItem->setOutAspectRatioMode(VideoRenderer::RendererAspectRatio);
+    renderer.widget()->setFixedWidth(1920);
+    renderer.widget()->setFixedHeight(1080);
+    renderer.osdFilter()->setShowType(QtAV::OSD::ShowNone);
+    mediaPlayer.setRenderer(&renderer);
 
-    QGraphicsScene *scene = new QGraphicsScene(this);
-    scene->addItem(videoItem);
+    play_pause_Button = new QPushButton();
+    play_pause_Button->setGeometry(2, 1048, 30, 30);
+    play_pause_Button->setStyleSheet("background: transparent; border: none");
+    play_pause_Button->setIconSize(QSize(30, 30));
+    play_pause_Button->setParent(renderer.widget());
+    play_pause_Button->setEnabled(false);
+    play_pause_Button->hide();
 
-    QGraphicsView *graphicsView = new QGraphicsView(scene);
-    #if 0
-    #ifndef QT_NO_OPENGL
-        QGLWidget *glw = new QGLWidget(QGLFormat(QGL::SampleBuffers));
-        glw->setAutoFillBackground(false);
-        graphicsView->setCacheMode(QGraphicsView::CacheNone);
-        graphicsView->setViewport(glw);
-    #endif
-    #endif //0
+    stopButton = new QPushButton();
+    stopButton->setGeometry(34, 1048, 30, 30);
+    stopButton->setStyleSheet("background: transparent; border: none");
+    stopButton->setIcon(QIcon("://images/player/stop.png"));
+    stopButton->setIconSize(QSize(30, 30));
+    stopButton->setParent(renderer.widget());
+    stopButton->setEnabled(false);
+    stopButton->hide();
+
+    slider = new QSlider(Qt::Horizontal);
+    slider->setGeometry(118, 1063, 1750, 5); // Arreglar el ancho
+    slider->setStyleSheet("background: white; border: none");
+    slider->setTracking(true);
+    slider->setMinimum(0);
+    slider->setParent(renderer.widget());
+    slider->setEnabled(false);
+    slider->hide();
+
+    volumeButton = new QPushButton();
+    volumeButton->setGeometry(76, 1048, 30, 30);
+    volumeButton->setStyleSheet("background: transparent; border: none");
+    volumeButton->setIcon(QIcon("://images/player/headphone.png"));
+    volumeButton->setIconSize(QSize(30, 30));
+    volumeButton->setParent(renderer.widget());
+    volumeButton->setEnabled(false);
+    volumeButton->hide();
+
+    volumeSlider = new QSlider(Qt::Vertical);
+    volumeSlider->setGeometry(88, 947, 5, 100);
+    volumeSlider->setStyleSheet("background: white; border: none");
+    volumeSlider->setTracking(true);
+    volumeSlider->setMinimum(0);
+    volumeSlider->setMaximum(100);
+    volumeSlider->setParent(renderer.widget());
+    volumeSlider->setEnabled(false);
+    volumeSlider->hide();
 
     QVBoxLayout *layout = new QVBoxLayout;
     layout->setMargin(0);
     layout->setSpacing(0);
-    layout->addWidget(graphicsView);
+    layout->addWidget(renderer.widget());
     setLayout(layout);
 
-    mediaPlayer.setRenderer(videoItem);
-
-    play_pauseButton = new QPushButton();
-    play_pauseButton->setGeometry(2, 1048, 30, 30);
-    play_pauseButton->setParent(graphicsView);
-    play_pauseButton->setIconSize(QSize(30, 30));
-    play_pauseButton->setStyleSheet("background: transparent; border: none");
-    play_pauseButton->hide();
-
-    stopButton = new QPushButton();
-    stopButton->setGeometry(34, 1048, 30, 30);
-    stopButton->setParent(graphicsView);
-    stopButton->setIcon(QIcon("://images/player/stop.png"));
-    stopButton->setIconSize(QSize(30, 30));
-    stopButton->setStyleSheet("background: transparent; border: none");
-    stopButton->hide();
-
-    loopButton = new QPushButton();
-    loopButton->setGeometry(66, 1048, 30, 30);
-    loopButton->setParent(graphicsView);
-    loopButton->setIcon(QIcon("://images/player/loop.png"));
-    loopButton->setIconSize(QSize(30, 30));
-    loopButton->setStyleSheet("background: transparent; border: none");
-    loopButton->hide();
-
-    volumeButton = new QPushButton();
-    volumeButton->setGeometry(106, 1048, 30, 30);
-    volumeButton->setParent(graphicsView);
-    volumeButton->setIcon(QIcon("://images/player/headphone.png"));
-    volumeButton->setIconSize(QSize(30, 30));
-    volumeButton->setStyleSheet("background: transparent; border: none");
-    volumeButton->hide();
-
-    connect(play_pauseButton, SIGNAL(clicked()), this, SLOT(play_pause()));
+    connect(play_pause_Button, SIGNAL(clicked()), this, SLOT(play_pause()));
     connect(stopButton, SIGNAL(clicked()), this, SLOT(stop()));
+    connect(slider, SIGNAL(sliderReleased()), this, SLOT(onPositionSliderChange()));
+    connect(&mediaPlayer, SIGNAL(started()), this, SLOT(onStartPlay()));
+    connect(&mediaPlayer, SIGNAL(positionChanged(qint64)), this, SLOT(onPositionChange(qint64)));
+    connect(volumeButton, SIGNAL(clicked()), this, SLOT(enable_disable_audio()));
+    connect(volumeSlider, SIGNAL(valueChanged(int)), this, SLOT(setVolume()));
+
+    // mediaPlayer.play("/home/ok200/pigVideos/trailer_1080p.ogg.mov");
+    // happyFeet "http://easyhtml5video.com/images/happyfit2.mp4"
+    // animacion "http://p.demo.flowplayer.netdna-cdn.com/vod/demo.flowplayer/bbb-800.mp4"
+    // local "/home/ok200/pigVideos/trailer_1080p.ogg.mov"
 }
 
 VideoPlayer::~VideoPlayer()
@@ -79,24 +90,18 @@ VideoPlayer::~VideoPlayer()
 void VideoPlayer::open(const QString &file)
 {
     mediaPlayer.play(file);
-
-    play_pauseButton->setIcon(QIcon("://images/player/pause.png")); // Esto debe ir cuando inicia el video void started().
-    play_pauseButton->show();
-    loopButton->show();
-    stopButton->show();
-    volumeButton->show();
 }
 
 void VideoPlayer::play_pause()
 {
     if (mediaPlayer.isPaused()) {
         mediaPlayer.pause(false);
-        play_pauseButton->setIcon(QIcon("://images/player/pause.png"));
-        qDebug() << "paused: " << mediaPlayer.isPaused();
+        mediaPlayer.seek(qint64(currentPosition));
+        play_pause_Button->setIcon(QIcon("://images/player/pause.png"));
     } else {
         mediaPlayer.pause(true);
-        play_pauseButton->setIcon(QIcon("://images/player/play.png"));
-        qDebug() << "paused: " << mediaPlayer.isPaused();
+        currentPosition = mediaPlayer.position();
+        play_pause_Button->setIcon(QIcon("://images/player/play.png"));
     }
 }
 
@@ -105,3 +110,52 @@ void VideoPlayer::stop()
     mediaPlayer.stop();
 }
 
+void VideoPlayer::onStartPlay()
+{
+    play_pause_Button->setIcon(QIcon("://images/player/pause.png"));
+    play_pause_Button->setEnabled(true);
+    play_pause_Button->show();
+    stopButton->setEnabled(true);
+    stopButton->show();
+    slider->setMaximum(mediaPlayer.duration());
+    slider->setValue(0);
+    slider->setEnabled(true);
+    slider->show();
+    volumeButton->setEnabled(true);
+    volumeButton->show();
+    volumeSlider->setValue(0); // Setear a 50.
+    volumeSlider->setEnabled(true);
+    volumeSlider->show();
+    setVolume();
+}
+
+void VideoPlayer::onPositionChange(qint64 position)
+{
+    slider->setValue(position);
+}
+
+void VideoPlayer::onPositionSliderChange()
+{
+    mediaPlayer.seek(qint64(slider->value())); // seek o setPosition.
+}
+
+void VideoPlayer::enable_disable_audio()
+{
+    if (mediaPlayer.isMute())
+        mediaPlayer.setMute(false);
+    else
+        mediaPlayer.setMute(true);
+}
+
+void VideoPlayer::setVolume()
+{
+    AudioOutput *ao = mediaPlayer.audio();
+    qreal v = qreal(volumeSlider->value()); // Falta calculo para que el volumen no sature.
+    if (ao)
+        ao->setVolume(v);
+}
+
+void VideoPlayer::setAudioOutput(AudioOutput* ao)
+{
+    Q_UNUSED(ao);
+}

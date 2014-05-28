@@ -35,6 +35,19 @@ public:
     int number() { return mNumber; }
     void setRootObject(QObject *root);
 
+
+    Q_INVOKABLE  void triggerEvent()
+    {
+     emit somethingHappened();
+    }
+    void timerEvent(QTimerEvent *e)
+    {
+     triggerEvent();
+    }
+
+signals:
+    void somethingHappened();
+
 private:
     QSqlDatabase db;
     QString rootPath;

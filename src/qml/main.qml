@@ -1,10 +1,27 @@
 import QtQuick 2.1
 import QtGraphicalEffects 1.0
-import "core" 1.0 as Core
+import signals 1.0
+//import "core" 1.0 as Core
 
 Item {
     id: root
 
+    SIGNALS {
+        onSomethingHappened: {
+            //console.log("something happened");
+            root.signalTrigger = true
+        }
+    }
+
+    property bool signalTrigger
+
+    onSignalTriggerChanged: {
+        if(signalTrigger)
+            console.log("/////TRIGGERED");
+    }
+
+
+    property bool initiation: true
     property bool requirePass
     property bool showAskPass
     property bool okPass
@@ -29,7 +46,9 @@ Item {
     property string dataBaseVersion
     property string release
     property variant categoryList
+    property variant nCategoryList
     property variant pornstarList
+    property variant nPornstarList
     property bool noResult
 
     property bool showOutput
@@ -76,14 +95,41 @@ Item {
             opacity: 0
             anchors.fill: girl
         }
-
-        Core.AskPassword {
-            id: askPasswordCore
-            visible: requirePass && showAskPass
-            enabled: requirePass && showAskPass
+        
+        Loader {
+            id: loaderAskPassword
+            source: "qrc:/src/qml/core/AskPassword.qml"
+            active: false
+            asynchronous: true
+            visible: status == Loader.Ready
+            anchors.fill: parent
+        }
+        Loader {
+            id: loaderUpdate
+            source: "qrc:/src/qml/core/Update.qml"
+            visible: status == Loader.Ready
+            anchors.fill: parent
+        }
+        Loader {
+            id: loaderFinder
+            source: "qrc:/src/qml/core/Finder.qml"
+            active: showFinder
+            focus: showFinder
+            asynchronous: true
+            visible: status == Loader.Ready
+            anchors.fill: parent
+        }
+        Loader {
+            id: loaderOutput
+            source: "qrc:/src/qml/core/Output.qml"
+            active: showOutput
+            focus: showOutput
+            asynchronous: true
+            visible: status == Loader.Ready
             anchors.fill: parent
         }
 
+        /*
         Core.Finder {
             id: finderCore
             opacity: 0
@@ -103,7 +149,8 @@ Item {
                 }
             ]
         }
-        // Probar de al apretar Esc (back) destruir outputcore.
+        */
+        /*
         Core.Output {
             id: outputCore
             opacity: 0
@@ -113,7 +160,7 @@ Item {
                 State {
                     name: "show";
                     when: showOutput
-                    PropertyChanges { target: finderCore; enabled: false }
+                    //PropertyChanges { target: finderCore; enabled: false }
                     PropertyChanges { target: outputCore; enabled: true }
                     StateChangeScript {
                         name:"listCreator"
@@ -131,8 +178,8 @@ Item {
                 State {
                     name: "back"
                     PropertyChanges { target: outputCore; enabled: false }
-                    PropertyChanges { target: finderCore; opacity: 1.0 }
-                    PropertyChanges { target: finderCore; enabled: true }
+                    //PropertyChanges { target: finderCore; opacity: 1.0 }
+                    //PropertyChanges { target: finderCore; enabled: true }
                 }
             ]
             transitions: [
@@ -155,6 +202,7 @@ Item {
                 }
             ]
         }
+        */
 
         Image {
             id: closeButton // Cambiar esto por un shortcut Esc+shift
@@ -177,17 +225,37 @@ Item {
     }
 
     onStatusChanged: {
-        if(status === 'searching updates' || 'ERROR IN DATABASE') {
-            if(root.width >= 1920)
+        if (status === 'searching updates' || 'ERROR IN DATABASE') {
+            if (root.width >= 1920)
                 strap = 1
-            else if(root.width > 1399 && root.width < 1920)
+            else if (root.width > 1399 && root.width < 1920)
                 strap = 1.1
-            else if(root.width > 1023 && root.width < 1400)
+            else if (root.width > 1023 && root.width < 1400)
                 strap = 1.2
             else
                 strap = 1
         }
     }
 
-    Component.onCompleted: { finderCore.state = "show" }
+    onRequirePassChanged: {
+        loaderAskPassword.active = true
+        loaderAskPassword.focus = true
+        loaderUpdate.asynchronous = true
+    }
+    onShowAskPassChanged: {
+        if (!showAskPass) {
+            loaderAskPassword.source = ""
+            loaderAskPassword.active = false
+            loaderAskPassword.focus = false
+        }
+    }
+    onShowFinderChanged: {
+        if (initiation) {
+            if (!requirePass)
+                loaderAskPassword.source = "" // Falta que al cargar update despues de haber ingrsado el password no pegue un pantallazo.
+            loaderUpdate.source = ""
+            loaderUpdate.active = false
+            initiation = false
+        }
+    }
 }

@@ -8,6 +8,7 @@ Rectangle {
     color: "transparent"
 
     property alias sceneLabel: label.text
+    property alias sceneQuality: icon.source
     signal clicked()
     
     RectangularGlow {
@@ -22,7 +23,6 @@ Rectangle {
     }
     Image {
         id: icon
-        source: { if (label.text != 'NOT AVAILABLE') "qrc:/images/1080.png"; else "qrc:/images/notAvailable.png" } // Falta que cargue imagen de 1080p o 720p segun corresponda.
         opacity: { if (label.text != 'NOT AVAILABLE') 1; else 0.15 }
         fillMode: Image.PreserveAspectCrop
         anchors.centerIn: parent

@@ -5,15 +5,14 @@ Item {
     z: 1
     Column {
         id: formColumn
-        spacing: 10
+        spacing: 5
         anchors.centerIn: parent
         Text {
             id: label
-            text: { if (root.failPass) "WRONG PASSWORD"; else "YOUR PASSWORD" }
+            text: { if (root.failPass) "WRONG PASSWORD"; else "PASSWORD" }
             color: Qt.rgba(0.2, 0.2, 0.2, 0.4)
             font.family: pigFont.name
             font.pixelSize: 25
-            anchors.horizontalCenter: parent.horizontalCenter
         }
         Rectangle {
             id: inputLayer
@@ -29,7 +28,7 @@ Item {
                 focus: true
                 maximumLength: 16
                 echoMode: TextInput.Password
-                onCursorPositionChanged: { if(label.text == "WRONG PASSWORD") root.failPass = false }
+                onCursorPositionChanged: { if (label.text == "WRONG PASSWORD") root.failPass = false }
                 onAccepted: {
                     if (input.text !== '')
                         root.passManager(input.text, false, false)

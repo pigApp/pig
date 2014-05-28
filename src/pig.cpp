@@ -31,6 +31,8 @@ PIG::PIG(QObject *parent)
     Esc->setKey(Qt::Key_Escape);
     Esc->setEnabled(false);
     connect(Esc, SIGNAL(activated()), this, SLOT(closePlayer()));
+
+    startTimer(1000);
 }
 
 PIG::~PIG()
@@ -53,14 +55,14 @@ void PIG::passManager(QString plain, bool init, bool write)
                 QTimer::singleShot(1000, this, SLOT(update()));
             init = false;
         }
-    } else if (!init && !write) { // Llama a checkPass le pasa el password ingresado para comprobarlo.
+    } else if (!init && !write) { // Llama a checkPass y le pasa el password ingresado para comprobarlo.
         if (mPass->checkPass(plain)) { // Si el password coincide, inicia.
             QStringList args = qApp->arguments();
             if (args.last() == "WITHOUT_UPDATE") {
                 finder();
             } else {
                 if (mRoot) mActive = false; mRoot->setProperty("showAskPass", mActive);
-                QTimer::singleShot(100, this, SLOT(update()));
+                QTimer::singleShot(350, this, SLOT(update()));
             }
         } else {
            if (mRoot) mActive = true; mRoot->setProperty("failPass", mActive); // Si el password no coincide envia un bool true para que se muestre el mensaje, la contraseña no coincide.
@@ -87,6 +89,7 @@ void PIG::update()
             QSqlQuery qry;
             qry.prepare("SELECT DbVersion, BinVersion FROM PxData");
             if (!qry.exec()) {
+                db.close();
                 errorDbHelper();
             } else {
                 qry.next();
@@ -447,14 +450,18 @@ void PIG::updateControl()
 // Finder
 void PIG::finder()
 {
+    delete networkAccess; 
+    delete networkAccessConfig;
+    
     QFileInfo file(dbPath);
     if (!file.isFile()) {
         errorDbHelper();
     } else {
         if (db.open()) {
             QSqlQuery qry;
-            qry.prepare("SELECT DbVersion, BinVersion, Release, Category, Pornstar FROM PxData, FiltersData");
+            qry.prepare("SELECT DbVersion, BinVersion, Release, Category, NCategory, Pornstar, NPornstar FROM PxData, FiltersData");
             if (!qry.exec()) {
+                db.close();
                 errorDbHelper();
             } else {
                 qry.next();
@@ -462,7 +469,9 @@ void PIG::finder()
                 localBinVersion = qry.value(1).toInt();
                 localRelease = qry.value(2).toInt();
                 QStringList categoryList = qry.value(3).toString().split(",");
-                QStringList pornstarList = qry.value(4).toString().split(",");
+                QStringList nCategoryList = qry.value(4).toString().split(",");
+                QStringList pornstarList = qry.value(5).toString().split(",");
+                QStringList nPornstarList = qry.value(6).toString().split(",");
                 db.close();
 
                 QString strLocalDbVersion = QString::number(localDbVersion);
@@ -476,7 +485,9 @@ void PIG::finder()
                 if (mRoot) mData = strLocalBinVersion; mRoot->setProperty("binaryVersion", mData);
                 if (mRoot) mData = strLocalRelease; mRoot->setProperty("release", mData);
                 if (mRoot) mDataList = categoryList; mRoot->setProperty("categoryList", mDataList);
+                if (mRoot) mDataList = nCategoryList; mRoot->setProperty("nCategoryList", mDataList);
                 if (mRoot) mDataList = pornstarList; mRoot->setProperty("pornstarList", mDataList);
+                if (mRoot) mDataList = nPornstarList; mRoot->setProperty("nPornstarList", mDataList);
             }
         } else {
             errorDbHelper();
@@ -498,6 +509,7 @@ void PIG::finderDb(const QString inputText, QString category, QString pornstar, 
         QSqlQuery qry;
             qry.prepare( "SELECT Title, Pornstar, Quality, Collaborator, Category, UrlCover, UrlPoster, UrlPreview, UrlVideos FROM Films WHERE Title LIKE '%"+inputText+"%' AND Category LIKE '%"+category+"%' AND Pornstar LIKE '%"+pornstar+"%' ORDER BY Title ASC LIMIT 1000 OFFSET '"+strOffset+"'" );
         if (!qry.exec()) {
+            db.close();
             if (mRoot) mActive = true; mRoot->setProperty("showDbError", mActive);
             if (mRoot) mData = "ERROR IN DATABASE"; mRoot->setProperty("status", mData);
             if (mRoot) mData = "database does not exist or is corrupted"; mRoot->setProperty("statusInformation", mData);

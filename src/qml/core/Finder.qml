@@ -10,13 +10,16 @@ Item {
     property string pornstar: ''
     property int widthFilters: screen.width/4
 
+    Component.onCompleted: { input.focus = true }
+    /*
     Loader {
         id: loaderUpdate
         source: "Update.qml"
         active: !showFinder
         anchors.fill: parent
-        onActiveChanged: { if(!loaderUpdate.active) input.focus = true; loaderUpdate.destroy() }
+        onActiveChanged: { if (!loaderUpdate.active) input.focus = true; loaderUpdate.destroy() }
     }
+    */
 
     Row {
         id: inputFindRow
@@ -50,7 +53,7 @@ Item {
                 onTriggered: {
                     if (!noResult) {
                         finder.state = "hideFinder"
-                    }else {
+                    } else {
                         root.noResult = false
                         noResultLabel.visible = true
                     }
@@ -58,12 +61,14 @@ Item {
             }
             onCursorPositionChanged: { if (noResultLabel.visible) noResultLabel.visible = false }
             Keys.onPressed: {
-                if (event.key === Qt.Key_P && (event.modifiers & Qt.ControlModifier) && (event.modifiers & Qt.ShiftModifier) && showFinder && !root.requirePass) {
+                if (event.key === Qt.Key_P && (event.modifiers & Qt.ControlModifier) && (event.modifiers & Qt.ShiftModifier)
+                    && !root.requirePass && !root.okPass && !root.failPass) {
                     if (finder.state == 'showFinder' || finder.state == 'hideFilter') {
                         buttonsFindColumn.visible = false
                         inputFindRow.visible = false
                         input.focus = false
                         loaderSetPassword.active = true
+                        //loaderSetPassword.focus = true
                     }
                     event.accepted = true;
                 }
@@ -81,7 +86,7 @@ Item {
 
     Column {
         id: buttonsFindColumn
-        spacing: 5
+        spacing: 15
         opacity: 0
         visible: showFinder && !showDbError
         enabled: showFinder && !showDbError
@@ -103,6 +108,13 @@ Item {
             label: "PORNSTAR"
             onClicked: { finder.state = "showFilter"; filtersManager(pornstarFind,null) }
         }
+    }
+    Timer {
+        id: bypassFilters
+        running: false
+        repeat: false
+        interval: 1150
+        onTriggered: showFilters = true
     }
     Rectangle {
         id: filtersLayer
@@ -126,23 +138,18 @@ Item {
                    category = label.toUpperCase()
                else
                    pornstar = label.toUpperCase()
-               root.findDb(input.text, category, pornstar, 0, true)
+               
                finder.state = "hideFilter_hideFinder"
-            }else {
+               root.findDb(input.text, category, pornstar, 0, true)
+
+            } else {
                 finder.state = "hideFilter"
             }
-        }else {
+        } else {
             enabledFilters = filterName.label
             bypassFilters.start()
         }
     }
-    Timer {
-        id: bypassFilters
-        running: false
-        repeat: false
-        interval: 1150
-        onTriggered: showFilters = true
-    } 
 
     Row {
         id: waitRow
@@ -156,7 +163,7 @@ Item {
             color: Qt.rgba(0.2, 0.2, 0.2, 0.4)
             font.family: pigFont.name
             font.pixelSize: 25
-            opacity: { if(root.showWaitSpinner) 1; else 0 }
+            opacity: { if (root.showWaitSpinner) 1; else 0 }
         }
         Image {
             id: waitSpinner
@@ -173,10 +180,9 @@ Item {
         id: loaderSetPassword
         source: "SetPassword.qml"
         active: false
-        //focus: true  Ver aca el tema del foco.
+        //focus: true  //Ver aca el tema del foco.
         anchors.fill: parent
     }
-
     Keys.onEscapePressed: {
         if (showFilters) {
             filtersManager(null,null)
@@ -211,7 +217,7 @@ Item {
         anchors.verticalCenterOffset: 30/strap
     }
 
-    states:[
+    states: [
         State {
             name: "showFinder"
             when: showFinder
@@ -233,7 +239,7 @@ Item {
             name: "hideFilter_hideFinder"
         }
     ]
-    transitions:[
+    transitions: [
         Transition {
             to: "showFinder"
             SequentialAnimation {
@@ -289,7 +295,8 @@ Item {
         Transition {
             to: "hideFilter_hideFinder"
             SequentialAnimation {
-                NumberAnimation { target: filtersLayer; easing.amplitude: 1.7; properties: "anchors.leftMargin"; to: 0; duration: 1100; easing.type: Easing.OutQuart }
+                NumberAnimation { target: filtersLayer; easing.amplitude: 1.7; properties: "anchors.leftMargin"; to: 0; duration: 1000; easing.type: Easing.OutQuart }
+                NumberAnimation { target: buttonsFindColumn; properties: "opacity"; to: 1; duration: 50; easing.type: Easing.InOutQuart }
                 ParallelAnimation {
                     NumberAnimation { target: root; easing.amplitude: 1.65; properties: "blurOpacity"; to: 0; duration: 800; easing.type: Easing.OutInElastic }
                     NumberAnimation { target: root; easing.amplitude: 1.65; properties: "girlOpacity"; to: 0; duration: 800; easing.type: Easing.OutInElastic }
