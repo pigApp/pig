@@ -1,23 +1,25 @@
 import QtQuick 2.1
 import QtGraphicalEffects 1.0
+import signals 1.0
 
 Item {
     id: finder
 
-    property bool showFilters
-    property string enabledFilters
     property string category: ''
     property string pornstar: ''
-    property int widthFilters: screen.width/4
+    property string enableFilter
 
-    Component.onCompleted: { input.focus = true }
+    signal showF(variant filter)
+    signal hideF()
+
+    Component.onCompleted: { input.forceActiveFocus() }
+
     /*
-    Loader {
-        id: loaderUpdate
-        source: "Update.qml"
-        active: !showFinder
-        anchors.fill: parent
-        onActiveChanged: { if (!loaderUpdate.active) input.focus = true; loaderUpdate.destroy() }
+    SIGNALS {
+        onSignalNoResult:  {
+            console.log("/////TRIGGEREDNORESULT")
+            noResultLabel.visible = true
+        }
     }
     */
 
@@ -30,15 +32,14 @@ Item {
         TextInput {
             id: input
             color: Qt.rgba(0.2, 0.2, 0.2, 0.4)
-            font.family: pigFont.name
+            font.family: pigLightFont.name
             font.capitalization: Font.AllUppercase
             font.pixelSize: 25
-            focus: true
             enabled: showFinder && !showDbError
             maximumLength: 29
             onAccepted: {
                 if (!waitForResultTimer.running) {
-                    if (!showFilters && !loaderSetPassword.active) {
+                    if (!loaderFilters.active && !loaderSetPassword.active) {
                         if (noResultLabel.visible) { noResultLabel.visible = false }
                         root.findDb(input.text, category, pornstar, 0, true)
                         waitForResultTimer.start()
@@ -66,9 +67,7 @@ Item {
                     if (finder.state == 'showFinder' || finder.state == 'hideFilter') {
                         buttonsFindColumn.visible = false
                         inputFindRow.visible = false
-                        input.focus = false
                         loaderSetPassword.active = true
-                        //loaderSetPassword.focus = true
                     }
                     event.accepted = true;
                 }
@@ -76,10 +75,10 @@ Item {
         }
         Text {
             id: noResultLabel
-            text: "\\ NO RESULT \\"
+            text: " NO RESULT"
             color: Qt.rgba(0.2, 0.2, 0.2, 0.2)
-            font.family: pigFont.name
-            font.pixelSize: 24/strap
+            font.family: pigLightFont.name
+            font.pixelSize: 25/strap
             visible: false
         }
     }
@@ -96,28 +95,37 @@ Item {
         z: 2
         Button {
             id: categoryFind
-            width: 470
-            height: 65
+            width: 480
+            height: 75
             label: "CATEGORY"
-            onClicked: { finder.state = "showFilter"; filtersManager(categoryFind,null) }
+            onClicked: finder.showF(categoryFind)
         }
         Button {
             id: pornstarFind
-            width: 470
-            height: 65
+            width: 485
+            height: 75
             label: "PORNSTAR"
-            onClicked: { finder.state = "showFilter"; filtersManager(pornstarFind,null) }
+            onClicked: finder.showF(pornstarFind)
         }
     }
+    onShowF: {
+        finder.state = "showFilter"
+        enableFilter = filter.label
+        bypassFilter.start()
+    }
+    onHideF: {
+        finder.state = "hideFilter"
+        loaderFilters.active = false
+    }
     Timer {
-        id: bypassFilters
+        id: bypassFilter
         running: false
         repeat: false
         interval: 1150
-        onTriggered: showFilters = true
+        onTriggered: loaderFilters.active = true
     }
     Rectangle {
-        id: filtersLayer
+        id: filterLayer
         color: Qt.rgba(0, 0, 0, 0.5)
         anchors.top: parent.top
         anchors.bottom: parent.bottom
@@ -127,27 +135,35 @@ Item {
     Loader {
         id: loaderFilters
         source: "Filters.qml"
-        active: showFinder
+        asynchronous: true
+        active: false
         anchors.fill: parent
     }
-    function filtersManager(filterName, label) {
-        if (showFilters) {
-            showFilters = false
-            if (label !== null) {
-               if (filterName === 'categoryFind')
-                   category = label.toUpperCase()
-               else
-                   pornstar = label.toUpperCase()
-               
-               finder.state = "hideFilter_hideFinder"
-               root.findDb(input.text, category, pornstar, 0, true)
+    function filtersManager(filter, label) {
 
-            } else {
-                finder.state = "hideFilter"
-            }
+        if (filter === 'categoryFind')
+            category = label.toUpperCase()
+        else
+            pornstar = label.toUpperCase()
+
+        finder.state = "hideFilter_hideFinder"
+        root.findDb(input.text, category, pornstar, 0, true)
+    }
+
+    Loader {
+        id: loaderSetPassword
+        source: "SetPassword.qml"
+        active: false
+        anchors.fill: parent
+    }
+    Keys.onEscapePressed: {
+        if (loaderFilters.active) {
+            finder.hideF()
         } else {
-            enabledFilters = filterName.label
-            bypassFilters.start()
+            loaderSetPassword.active = false
+            buttonsFindColumn.visible = true
+            inputFindRow.visible = true
+            input.forceActiveFocus()
         }
     }
 
@@ -161,7 +177,7 @@ Item {
             id: waitMsg
             text: "PLEASE WAIT"
             color: Qt.rgba(0.2, 0.2, 0.2, 0.4)
-            font.family: pigFont.name
+            font.family: pigLightFont.name
             font.pixelSize: 25
             opacity: { if (root.showWaitSpinner) 1; else 0 }
         }
@@ -173,25 +189,6 @@ Item {
             visible: root.showWaitSpinner
             property bool on: root.showWaitSpinner
             NumberAnimation on rotation { running: waitSpinner.on; from: 0; to: 360; loops: Animation.Infinite; duration: 1200 }
-        }
-    }
-
-    Loader {
-        id: loaderSetPassword
-        source: "SetPassword.qml"
-        active: false
-        //focus: true  //Ver aca el tema del foco.
-        anchors.fill: parent
-    }
-    Keys.onEscapePressed: {
-        if (showFilters) {
-            filtersManager(null,null)
-            input.focus = true
-        } else {
-            loaderSetPassword.active = false
-            buttonsFindColumn.visible = true
-            inputFindRow.visible = true
-            input.focus = true
         }
     }
 
@@ -276,27 +273,36 @@ Item {
                 }
                 PropertyAction { target: root; property: "transition"; value: true }
                 PropertyAction { target: root; property: "showWaitSpinner"; value: true }
+                PropertyAction { target: root; property: "activeOutput"; value: true }
             }
         },
         Transition {
             to: "showFilter"
             SequentialAnimation {
+                PropertyAction { target: inputFindRow; property: "visible"; value: false }
+                PropertyAction { target: input; property: "focus"; value: true }
                 NumberAnimation { target: buttonsFindColumn; properties: "opacity"; to: 0; duration: 50; easing.type: Easing.InOutQuart }
-                NumberAnimation { target: filtersLayer; easing.amplitude: 1.7; properties: "anchors.leftMargin"; to: -screen.width; duration: 1100; easing.type: Easing.OutQuart }
+                PropertyAction { target: buttonsFindColumn; property: "visible"; value: false }
+                NumberAnimation { target: filterLayer; easing.amplitude: 1.7; properties: "anchors.leftMargin"; to: -screen.width; duration: 1100; easing.type: Easing.OutQuart }
             }
         },
         Transition {
             to: "hideFilter"
             SequentialAnimation {
-                NumberAnimation { target: filtersLayer; easing.amplitude: 1.7; properties: "anchors.leftMargin"; to: 0; duration: 700; easing.type: Easing.OutQuart }
+                NumberAnimation { target: filterLayer; easing.amplitude: 1.7; properties: "anchors.leftMargin"; to: 0; duration: 700; easing.type: Easing.OutQuart }
+                PropertyAction { target: buttonsFindColumn; property: "visible"; value: true }
                 NumberAnimation { target: buttonsFindColumn; properties: "opacity"; to: 1; duration: 50; easing.type: Easing.InOutQuart }
+                PropertyAction { target: inputFindRow; property: "visible"; value: true }
             }
         },
         Transition {
             to: "hideFilter_hideFinder"
             SequentialAnimation {
-                NumberAnimation { target: filtersLayer; easing.amplitude: 1.7; properties: "anchors.leftMargin"; to: 0; duration: 1000; easing.type: Easing.OutQuart }
-                NumberAnimation { target: buttonsFindColumn; properties: "opacity"; to: 1; duration: 50; easing.type: Easing.InOutQuart }
+                PropertyAction { target: loaderFilters; property: "visible"; value: false }
+                PropertyAction { target: loaderFilters; property: "source"; value: "" }
+                NumberAnimation { target: filterLayer; easing.amplitude: 1.7; properties: "anchors.leftMargin"; to: 0; duration: 1000; easing.type: Easing.OutQuart }
+                PropertyAction { target: buttonsFindColumn; property: "visible"; value: true }
+                NumberAnimation { target: buttonsFindColumn; properties: "opacity"; to: 0; duration: 50; easing.type: Easing.InOutQuart }
                 ParallelAnimation {
                     NumberAnimation { target: root; easing.amplitude: 1.65; properties: "blurOpacity"; to: 0; duration: 800; easing.type: Easing.OutInElastic }
                     NumberAnimation { target: root; easing.amplitude: 1.65; properties: "girlOpacity"; to: 0; duration: 800; easing.type: Easing.OutInElastic }

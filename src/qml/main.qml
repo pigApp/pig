@@ -7,19 +7,22 @@ Item {
     id: root
 
     SIGNALS {
-        onSomethingHappened: {
-            //console.log("something happened");
-            root.signalTrigger = true
+        onSignalShowFinder: {
+            console.log("/////TRIGGEREDSHOW")
+
+            if (initiation) {
+                if (!requirePass)
+                    loaderAskPassword.source = ""
+                loaderUpdate.source = ""
+                loaderUpdate.active = false
+
+                loaderFinder.active = true
+                loaderFinder.focus = true
+
+                initiation = false
+            }
         }
     }
-
-    property bool signalTrigger
-
-    onSignalTriggerChanged: {
-        if(signalTrigger)
-            console.log("/////TRIGGERED");
-    }
-
 
     property bool initiation: true
     property bool requirePass
@@ -63,6 +66,10 @@ Item {
     property alias blurOpacity: blur.opacity
     property alias blurRadius: blur.radius
 
+    property alias sourceFinder: loaderFinder.source
+    property alias activeFinder: loaderFinder.active
+    property alias activeOutput: loaderOutput.active
+
     signal passManager(string plain, bool init, bool write)
     signal updateAccept()
     signal updateCancel()
@@ -73,6 +80,7 @@ Item {
     signal quit()
 
     FontLoader { id: pigFont; source: "qrc:/images/font/pig.ttf" }
+    FontLoader { id: pigLightFont; source: "qrc:/images/font/pigLight.ttf" }
     
     Rectangle {
         id: screen
@@ -113,8 +121,8 @@ Item {
         Loader {
             id: loaderFinder
             source: "qrc:/src/qml/core/Finder.qml"
-            active: showFinder
-            focus: showFinder
+            active: false//showFinder
+            //focus: showFinder
             asynchronous: true
             visible: status == Loader.Ready
             anchors.fill: parent
@@ -122,11 +130,12 @@ Item {
         Loader {
             id: loaderOutput
             source: "qrc:/src/qml/core/Output.qml"
-            active: showOutput
-            focus: showOutput
+            active: false//showOutput
+            //focus: showOutput
             asynchronous: true
             visible: status == Loader.Ready
             anchors.fill: parent
+            onStatusChanged: { if (status == Loader.Ready) loaderFinder.source = ""; loaderFinder.active = false }
         }
 
         /*
@@ -249,13 +258,16 @@ Item {
             loaderAskPassword.focus = false
         }
     }
+
+    /*
     onShowFinderChanged: {
         if (initiation) {
             if (!requirePass)
-                loaderAskPassword.source = "" // Falta que al cargar update despues de haber ingrsado el password no pegue un pantallazo.
+                loaderAskPassword.source = ""
             loaderUpdate.source = ""
             loaderUpdate.active = false
             initiation = false
         }
     }
+    */
 }

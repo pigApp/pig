@@ -3,7 +3,6 @@ import QtQuick 2.1
 Rectangle {
     id: filters
     color: "transparent"
-    visible: showFilters
     z: 1
     anchors.fill: parent
     Flickable {
@@ -20,12 +19,12 @@ Rectangle {
                 id: categoryRows
                 model: categoryList[0]
                 delegate: ButtonFilter {
-                    width: widthFilters
+                    width: filters.width/4
                     labelText: categoryList[index+1]
                     nLabelText: { if (nCategoryList[index] != '0') nCategoryList[index]; else '' }
                     pornStarsVisible: false
-                    visible: { if (showFilters && enabledFilters == 'CATEGORY' ) true; else false }
-                    enabled: { if (showFilters && enabledFilters == 'CATEGORY' ) true; else false }
+                    visible: { if (enableFilter == 'CATEGORY' ) true; else false }
+                    enabled: { if (enableFilter == 'CATEGORY' ) true; else false }
                     onClicked: { 
                         if (nCategoryList[index] != '0') 
                             filtersManager('categoryFind', labelText)
@@ -36,13 +35,13 @@ Rectangle {
                 id: pornstarRows
                 model: pornstarList[0]
                 delegate: ButtonFilter {
-                    width: widthFilters
+                    width: filters.width/4
                     sourceImage: { if (pornstarList[index+1] === "Asa Akira") "qrc:/images/Asa Akira.png"; else "qrc:/images/Holly Halston.png" }
                     labelText: pornstarList[index+1]
                     nLabelText: { if (nPornstarList[index] != '0') nPornstarList[index]; else '' }
                     pornStarsVisible: true
-                    visible: { if (showFilters && enabledFilters == 'PORNSTAR') true; else false }
-                    enabled: { if (showFilters && enabledFilters == 'PORNSTAR') true; else false }
+                    visible: { if (enableFilter == 'PORNSTAR') true; else false }
+                    enabled: { if (enableFilter == 'PORNSTAR') true; else false }
                     onClicked: { 
                         if (nPornstarList[index] != '0') 
                         filtersManager('pornstarFind', labelText)

@@ -31,18 +31,18 @@ Rectangle {
     Text {
         id: label
         color: "white"
-        font.family: pigFont.name
+        font.family: pigLightFont.name
         font.capitalization: Font.AllUppercase
-        font.pixelSize: 40
+        font.pixelSize: 50
         anchors.centerIn: parent
     }
     Text {
         id: nLabel
-        color: Qt.rgba(1, 1, 1, 0.15)
-        font.family: pigFont.name
-        font.pixelSize: 30
+        color: Qt.rgba(1, 1, 1, 0.1)
+        font.family: pigLightFont.name
+        font.pixelSize: 50
         anchors.centerIn: parent
-        anchors.verticalCenterOffset: 50
+        anchors.verticalCenterOffset: 57
     }
 
     MouseArea {

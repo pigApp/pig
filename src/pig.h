@@ -1,4 +1,4 @@
-#ifndef PIG_H
+﻿#ifndef PIG_H
 #define PIG_H
 
 #include <QObject>
@@ -25,6 +25,7 @@ class PIG : public QObject
 public:
     PIG(QObject *parent = 0);
     ~PIG();
+
     QWidget *window;
     QWidget *container;
     QVBoxLayout *layout;
@@ -35,18 +36,15 @@ public:
     int number() { return mNumber; }
     void setRootObject(QObject *root);
 
+    //Q_INVOKABLE void triggerEvent() { emit signalTest(); }
 
-    Q_INVOKABLE  void triggerEvent()
-    {
-     emit somethingHappened();
-    }
-    void timerEvent(QTimerEvent *e)
-    {
-     triggerEvent();
-    }
+public slots:
+    void signalShowFinderSlot();
+    void signalNoResultSlot();
 
 signals:
-    void somethingHappened();
+    void signalShowFinder();
+    void signalNoResult();
 
 private:
     QSqlDatabase db;

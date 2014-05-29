@@ -7,8 +7,9 @@ Rectangle {
     height: 80
     color: "transparent"
 
-    property alias sceneLabel: label.text
-    property alias sceneQuality: icon.source
+    property alias iconOpacity: icon.opacity
+    property alias iconQuality: icon.source
+
     signal clicked()
     
     RectangularGlow {
@@ -23,7 +24,6 @@ Rectangle {
     }
     Image {
         id: icon
-        opacity: { if (label.text != 'NOT AVAILABLE') 1; else 0.15 }
         fillMode: Image.PreserveAspectCrop
         anchors.centerIn: parent
     }
@@ -31,15 +31,15 @@ Rectangle {
         id: mousearea
         hoverEnabled: true
         onEntered: { 
-            if (label.text != 'NOT AVAILABLE')
+            if (icon.opacity != 0.15)
                 delayIn.restart()
         }
         onHoveredChanged: { 
-            if (label.text != 'NOT AVAILABLE')
+            if (icon.opacity != 0.15)
                 delayOut.restart() 
         }
         onClicked: { 
-            if (label.text != 'NOT AVAILABLE')
+            if (icon.opacity != 0.15)
                 buttonScenne.clicked()
         }
         anchors.fill: parent
@@ -59,21 +59,10 @@ Rectangle {
         onTriggered: { effect.visible = false }
     }
 
-    Text {
-        id: label
-        color: "white"
-        font.family: pigFont.name
-        font.pixelSize: 15
-        opacity: { if (label.text != 'NOT AVAILABLE') 1; else 0.15 }
-        anchors.centerIn: parent
-        anchors.verticalCenterOffset:  50
-    }
-
     states: State {
-        when: mousearea.pressed && label.text != 'NOT AVAILABLE'
+        when: mousearea.pressed && icon.opacity != 0.15
         PropertyChanges { target: icon; opacity: 0.9 }
         PropertyChanges { target: effect; color: Qt.rgba(0.5, 0.5, 0.5, 0.7) }
-        PropertyChanges { target: label; opacity: 0.9 }
     }
 }
 // Espacios hechos.

@@ -109,20 +109,30 @@ Item {
             RectangularGlow {
                 id: coverEffect
                 color: "white"
-                glowRadius: 35
-                spread: 0
-                cornerRadius: 150
+                glowRadius: 20
+                spread: 0.2
+                cornerRadius: 50
                 anchors.fill: cover
             }
             Image {
+                id: frame
+                width: screen.width
+                height: 500
+                sourceSize.width: screen.width
+                sourceSize.height: 500
+                source: "qrc:/images/frame.png"
+                anchors.centerIn: parent
+            }
+            Image {
                 id: cover
-                width: 677
-                height: 435
-                sourceSize.width: 677
-                sourceSize.height: 435
+                width: 318
+                height: 432
+                sourceSize.width: 318
+                sourceSize.height: 432
                 source: urlCover
                 anchors.centerIn: parent
-                anchors.verticalCenterOffset: 1
+                anchors.horizontalCenterOffset: -165
+                anchors.verticalCenterOffset: 2
                 onStatusChanged: {
                     if (cover.source == list[5] && cover.progress == 1.0) {
                         coverLoaded = true
@@ -135,15 +145,6 @@ Item {
                             imagesStatus.start()
                     }
                 }
-            }
-            Image {
-                id: frameCentral
-                width: 683
-                height: 500
-                sourceSize.width: 683
-                sourceSize.height: 500
-                source: "qrc:/images/frameCentral.png"
-                anchors.centerIn: parent
             }
             Timer {
                 id: imagesStatus
@@ -160,185 +161,167 @@ Item {
                     }
                 }
             }
-
-            Image {
-                id: frameLeft
-                width: 713
-                height: 500
-                sourceSize.width: 713
-                sourceSize.height: 500
-                source: "qrc:/images/frameLeft.png"
-                anchors.centerIn: parent
-                anchors.horizontalCenterOffset: -695
-            }
-            PreviewPlayer {
-                id: previewPlayer
-                previewWidth: 620  // Pasarle este parametro como screen.width/?
-                previewHeight: 432.4 // Pasarle este parametro como screen.height/?
-                url: urlPreview
-            }
-
-            Image {
-                id: frameRight
-                width: 713
-                height: 500
-                sourceSize.width: 700
-                sourceSize.height: 500
-                source: "qrc:/images/frameRight.png"
-                anchors.centerIn: parent
-                anchors.horizontalCenterOffset: 695
-                Row {
-                    id: openScenneRow
-                    spacing: 15
-                    anchors.centerIn: parent
-                    anchors.horizontalCenterOffset: -35
-                    ButtonScenne {
-                        id: openScenne1
-                        sceneLabel: { if (urlScenne1 != '') "FULL SCENE"; else 'NOT AVAILABLE' }
-                        sceneQuality: {
-                            if (urlScenne1 == '') {
-                                "qrc:/images/notAvailable.png"
-                            } else {
-                                if (quality == '1080p')
-                                    "qrc:/images/1080.png"
-                                else
-                                    "qrc:/images/720.png"
-                            }
-                        }
-                        onClicked: {
-                            if (urlScenne1 != '') {
-                                previewPlayer.kill()
-                                videoID = urlScenne1
-                                recipe.state = "showPlayerLayer"
-                                delayPlayerLayer.start()
-                            }
-                        }
-                    }
-                    ButtonScenne {
-                        id: openScenne2
-                        sceneLabel: { if (urlScenne2 != '') "FULL SCENE"; else 'NOT AVAILABLE' }
-                        sceneQuality: {
-                            if (urlScenne2 == '') {
-                                "qrc:/images/notAvailable.png"
-                            } else {
-                                if (quality == '1080p')
-                                    "qrc:/images/1080.png"
-                                else
-                                    "qrc:/images/720.png"
-                            }
-                        }
-                        onClicked: {
-                            if (urlScenne2 != '') {
-                                previewPlayer.kill()
-                                videoID = urlScenne2
-                                recipe.state = "showPlayerLayer"
-                                delayPlayerLayer.start()
-                            }
-                        }
-                    }
-                    ButtonScenne {
-                        id: openScenne3
-                        sceneLabel: { if (urlScenne3 != '') "FULL SCENE"; else 'NOT AVAILABLE' }
-                        sceneQuality: {
-                            if (urlScenne3 == '') {
-                                "qrc:/images/notAvailable.png"
-                            } else {
-                                if (quality == '1080p')
-                                    "qrc:/images/1080.png"
-                                else
-                                    "qrc:/images/720.png"
-                            }
-                        }
-                        onClicked: {
-                            if (urlScenne3 != '') {
-                                previewPlayer.kill()
-                                videoID = urlScenne3
-                                recipe.state = "showPlayerLayer"
-                                delayPlayerLayer.start()
-                            }
-                        }
-                    }
-                    ButtonScenne {
-                        id: openScenne4
-                        sceneLabel: { if (urlScenne4 != '') "FULL SCENE"; else 'NOT AVAILABLE' }
-                        sceneQuality: {
-                            if (urlScenne4 == '') {
-                                "qrc:/images/notAvailable.png"
-                            } else {
-                                if (quality == '1080p')
-                                    "qrc:/images/1080.png"
-                                else
-                                    "qrc:/images/720.png"
-                            }
-                        }
-                        onClicked: {
-                            if (urlScenne4 != '') {
-                                previewPlayer.kill()
-                                videoID = urlScenne4
-                                recipe.state = "showPlayerLayer"
-                                delayPlayerLayer.start()
-                            }
-                        }
-                    }
-                }
-                Timer {
-                    id: delayPlayerLayer
-                    running: false
-                    repeat: false
-                    interval: 2010
-                    onTriggered: root.openPlayer(videoID)
-                }
-            }
-            Text {
-                id: counterLabel
-                text: currentFilm+"|"+totalFilms
-                color: Qt.rgba(1, 1, 1, 0.04)
-                font.family: "Verdana"
-                //font.italic: true
-                font.pixelSize: 90
-                anchors.centerIn: frameRight
-                anchors.horizontalCenterOffset: -35
-                anchors.verticalCenterOffset: -130
-            }
             Column {
                 id: datesColumn
                 spacing: 5
-                anchors.centerIn: frameRight
-                anchors.horizontalCenterOffset: -135
-                anchors.verticalCenterOffset: 100
+                anchors.left: cover.right
+                anchors.leftMargin: 20
+                anchors.verticalCenter: frame.verticalCenter
                 Text {
                     id: atressesLabel
                     text: actresses
-                    color: Qt.rgba(1, 1, 1, 0.15)
-                    font.family: pigFont.name
-                    font.pixelSize: 15
+                    color: "white"
+                    font.family: pigLightFont.name
+                    font.bold: true
+                    font.pixelSize: 25
                 }
                 Text {
                     id: categoryLabel
                     text: categories
-                    color: Qt.rgba(1, 1, 1, 0.15)
-                    font.family: pigFont.name
-                    font.pixelSize: 15
+                    color: "white"
+                    font.family: pigLightFont.name
+                    font.bold: true
+                    font.pixelSize: 25
                 }
                 Text {
                     id: collaboratorLabel
                     text: collaborator
-                    color: Qt.rgba(1, 1, 1, 0.15)
-                    font.family: pigFont.name
-                    font.pixelSize: 15
+                    color: "white"
+                    font.family: pigLightFont.name
+                    font.bold: true
+                    font.pixelSize: 25
                 }
+            }
+            Row {
+                id: openScenneRow
+                spacing: 15
+                anchors.centerIn: parent
+                anchors.horizontalCenterOffset: screen.width/3
+                ButtonScenne {
+                    id: openScenne1
+                    iconOpacity: { if (urlScenne1 != '') 1; else 0.15 }
+                    iconQuality: {
+                        if (urlScenne1 == '') {
+                            "qrc:/images/notAvailable.png"
+                        } else {
+                            if (quality == '1080p')
+                                "qrc:/images/1080.png"
+                            else
+                                "qrc:/images/720.png"
+                        }
+                    }
+                    onClicked: {
+                        if (urlScenne1 != '') {
+                            previewPlayer.kill()
+                            videoID = urlScenne1
+                            recipe.state = "showPlayerLayer"
+                            delayPlayerLayer.start()
+                        }
+                    }
+                }
+                ButtonScenne {
+                    id: openScenne2
+                    iconOpacity: { if (urlScenne2 != '') 1; else 0.15 }
+                    iconQuality:  {
+                        if (urlScenne2 == '') {
+                            "qrc:/images/notAvailable.png"
+                        } else {
+                            if (quality == '1080p')
+                                "qrc:/images/1080.png"
+                            else
+                                "qrc:/images/720.png"
+                        }
+                    }
+                    onClicked: {
+                        if (urlScenne2 != '') {
+                            previewPlayer.kill()
+                            videoID = urlScenne2
+                            recipe.state = "showPlayerLayer"
+                            delayPlayerLayer.start()
+                        }
+                    }
+                }
+                ButtonScenne {
+                    id: openScenne3
+                    iconOpacity: { if (urlScenne3 != '') 1; else 0.15 }
+                    iconQuality: {
+                        if (urlScenne3 == '') {
+                            "qrc:/images/notAvailable.png"
+                        } else {
+                            if (quality == '1080p')
+                                "qrc:/images/1080.png"
+                            else
+                                "qrc:/images/720.png"
+                        }
+                    }
+                    onClicked: {
+                        if (urlScenne3 != '') {
+                            previewPlayer.kill()
+                            videoID = urlScenne3
+                            recipe.state = "showPlayerLayer"
+                            delayPlayerLayer.start()
+                        }
+                    }
+                }
+                ButtonScenne {
+                    id: openScenne4
+                    iconOpacity: { if (urlScenne4 != '') 1; else 0.15 }
+                    iconQuality: {
+                        if (urlScenne4 == '') {
+                            "qrc:/images/notAvailable.png"
+                        } else {
+                            if (quality == '1080p')
+                                "qrc:/images/1080.png"
+                            else
+                                "qrc:/images/720.png"
+                        }
+                    }
+                    onClicked: {
+                        if (urlScenne4 != '') {
+                            previewPlayer.kill()
+                            videoID = urlScenne4
+                            recipe.state = "showPlayerLayer"
+                            delayPlayerLayer.start()
+                        }
+                    }
+                }
+            }
+            Text {
+                id: counterLabel
+                text: currentFilm+" » "+totalFilms 
+                color: Qt.rgba(1, 1, 1, 0.15)
+                font.family: pigLightFont.name
+                font.bold: true
+                font.pixelSize: 25
+                anchors.right: parent.right
+                anchors.rightMargin: 30
+                anchors.verticalCenter: parent.verticalCenter
+            }
+            Timer {
+                id: delayPlayerLayer
+                running: false
+                repeat: false
+                interval: 2010
+                onTriggered: root.openPlayer(videoID)
+            }
 
+            PreviewPlayer {
+                id: previewPlayer
+                previewWidth: 635 // Pasarle este parametro como screen.width/?
+                previewHeight: 432.4 // Pasarle este parametro como screen.height/?
+                url: urlPreview
             }
 
             Text {
                 id: titleLabel
-                y: 127
                 text: title
                 color: "white"
                 font.family: pigFont.name
                 font.letterSpacing: -10
-                font.pixelSize: 185/strap
+                font.pixelSize: 225/strap
                 anchors.left: parent.left
+                anchors.bottom: cover.top
+                anchors.bottomMargin: -50
             }
 
             NumberAnimation { running: recipe.PathView.isCurrentItem; target: posters; property: "opacity"; to: 1; duration: 4000; easing.type: Easing.InOutQuad }
@@ -393,7 +376,7 @@ Item {
         id: pathView
         model: model
         delegate: delegate
-        focus: focusPath
+        //focus: focusPath
         interactive: false
 
         property int offset: 0
@@ -461,8 +444,10 @@ Item {
         function back() {
             currentFilm = 1
             focusPath = false
-            root.showOutput = false
+            //root.showOutput = false
             //outputCore.state = "back"
+            root.sourceFinder = "qrc:/src/qml/core/Finder.qml"
+            root.activeFinder = true
             delayCleanModel.start()
         }
         Timer {
@@ -572,6 +557,7 @@ Item {
         }
         location = 0
         locationOnList = 0
+        pathView.forceActiveFocus()
     }
     
     function listUpdater(offset) {

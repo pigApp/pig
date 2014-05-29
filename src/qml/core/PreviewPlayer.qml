@@ -17,9 +17,9 @@ Item {
         id: play
         source: "qrc:/images/player/playPreview.png"
         fillMode: Image.PreserveAspectCrop
-        opacity: 0.2
+        opacity: 0.15
         anchors.centerIn: parent
-        anchors.verticalCenterOffset: -3
+        anchors.verticalCenterOffset: -9.2
         MouseArea {
             anchors.fill: parent
             onClicked: { if (player.playbackState === MediaPlayer.PlayingState) player.pause(); else player.play() }
@@ -28,12 +28,12 @@ Item {
     Text {
         id: label
         text: "PREVIEW"
-        color: "white"
-        font.family: pigFont.name
+        color: Qt.rgba(1, 1, 1, 0.15)
+        font.family: pigLightFont.name
+        font.bold: true
         font.pixelSize: 15
-        opacity: 0.2
         anchors.centerIn: parent
-        anchors.verticalCenterOffset: 48
+        anchors.verticalCenterOffset: 41.6
     }
 
     VideoOutput {

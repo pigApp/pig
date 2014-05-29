@@ -13,7 +13,7 @@ Rectangle {
         id: label
         color: "white"
         font.family: pigFont.name
-        font.pixelSize: 90
+        font.pixelSize: 110
         horizontalAlignment: Text.AlignLeft
         verticalAlignment: Text.AlignVCenter
         anchors.fill: parent

@@ -2,8 +2,6 @@ import QtQuick 2.1
 
 Item {
     id: update
-    //visible: !showFinder
-    //enabled: !showFinder
 
     property string statusReader: root.status
 

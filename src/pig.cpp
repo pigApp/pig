@@ -32,11 +32,24 @@ PIG::PIG(QObject *parent)
     Esc->setEnabled(false);
     connect(Esc, SIGNAL(activated()), this, SLOT(closePlayer()));
 
-    startTimer(1000);
+    QTimer::singleShot(8000, this, SLOT(signalShowFinderSlot()));
+    //QTimer::singleShot(20000, this, SLOT(signalNoResultSlot()));
 }
 
 PIG::~PIG()
 {
+}
+
+void PIG::signalShowFinderSlot()
+{
+    emit signalShowFinder();
+    qDebug() << "//////EMITEDSHOW";
+}
+
+void PIG::signalNoResultSlot()
+{
+    emit signalNoResult();
+    qDebug() << "//////EMITEDNORESULT";
 }
 
 // Password
@@ -452,7 +465,7 @@ void PIG::finder()
 {
     delete networkAccess; 
     delete networkAccessConfig;
-    
+
     QFileInfo file(dbPath);
     if (!file.isFile()) {
         errorDbHelper();
@@ -494,6 +507,8 @@ void PIG::finder()
         }
     }
     if (mRoot) mActive = true; mRoot->setProperty("showFinder", mActive);
+
+    //signalTestSlot();
 }
 
 void PIG::finderDb(const QString inputText, QString category, QString pornstar, int offset, bool init)

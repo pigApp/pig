@@ -3,6 +3,8 @@ import QtQuick 2.1
 Item {
     id: setPassword
 
+    Component.onCompleted: { input.forceActiveFocus() }
+
     Rectangle {
         id: layer
         color: Qt.rgba(0, 0, 0, 0.5)
@@ -52,7 +54,6 @@ Item {
                 color: "white"
                 font.family: pigFont.name
                 font.pixelSize: 25
-                focus: true  // Falta quitar el foco a Finder, por que si apreto Enter sin hacer foco aca(input) Finder carga las peliculas.
                 maximumLength: 16
                 echoMode: TextInput.Password
                 onAccepted: {

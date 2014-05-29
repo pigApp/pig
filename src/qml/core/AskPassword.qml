@@ -11,7 +11,7 @@ Item {
             id: label
             text: { if (root.failPass) "WRONG PASSWORD"; else "PASSWORD" }
             color: Qt.rgba(0.2, 0.2, 0.2, 0.4)
-            font.family: pigFont.name
+            font.family: pigLightFont.name
             font.pixelSize: 25
         }
         Rectangle {
@@ -23,7 +23,7 @@ Item {
                 id: input
                 width: screen.width/4.5
                 color: "white"
-                font.family: pigFont.name
+                font.family: pigLightFont.name
                 font.pixelSize: 25
                 focus: true
                 maximumLength: 16
