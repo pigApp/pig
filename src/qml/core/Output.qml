@@ -1,4 +1,4 @@
-import QtQuick 2.1
+import QtQuick 2.2
 import QtGraphicalEffects 1.0
 
 Item {
@@ -18,11 +18,6 @@ Item {
     property int currentFilm: 1
     property int locationOnList
     property int nIndex: 0
-
-    property bool run: root.listUpdated
-    
-    onRunChanged: { listCreator() }
-    Component.onCompleted: { listCreator(root.n, root.list) }
 
     ListModel {
         id: model
@@ -86,7 +81,7 @@ Item {
                         if (!coverLoaded)
                             imagesStatus.start()
                     } else if (posters.source == list[6] && posters.status == Image.Error) {
-                        //cargar imagen de 'Imagen no disponible'
+                        // TODO: Cargar imagen de 'Imagen no disponible'.
                         posterLoaded = true
                         if (!coverLoaded)
                             imagesStatus.start()
@@ -139,7 +134,7 @@ Item {
                         if (!posterLoaded)
                             imagesStatus.start()
                     } else if (cover.source == list[5] && cover.status == Image.Error) {
-                        //cargar imagen de 'Imagen no disponible'
+                        // TODO: Cargar imagen de 'Imagen no disponible'.
                         coverLoaded = true
                         if (!posterLoaded)
                             imagesStatus.start()
@@ -307,8 +302,8 @@ Item {
 
             PreviewPlayer {
                 id: previewPlayer
-                previewWidth: 635 // Pasarle este parametro como screen.width/?
-                previewHeight: 432.4 // Pasarle este parametro como screen.height/?
+                previewWidth: 635    // TODO: Pasar este parametro como screen.width/?
+                previewHeight: 432.4 // TODO: Pasarle este parametro como screen.height/?
                 url: urlPreview
             }
 
@@ -376,9 +371,9 @@ Item {
         id: pathView
         model: model
         delegate: delegate
-        //focus: focusPath
         interactive: false
-
+        anchors.fill: parent
+        
         property int offset: 0
         property int counter: 5
 
@@ -396,8 +391,8 @@ Item {
             }
         }
         onFiveLess: {
-            if(totalFilms > 5 && currentFilm-4 > 0) { // Falla si esta en el primero(no deberia aceptar ir para abajo)
-                offset = offset-5                     // Se rompe si voy hacia arriba o hacia abajo rapido[creo que no llega a crear y destruir los objetos]
+            if(totalFilms > 5 && currentFilm-4 > 0) { // FIX: Si esta en el primero no deberia aceptar ir para abajo.
+                offset = offset-5                     // FIX: Se rompe si voy hacia arriba o hacia abajo rapido, creo que no llega a crear y destruir los objetos.
                 counter = counter-5                   
                 currentFilm = counter-4
                 listUpdater(offset)
@@ -444,17 +439,8 @@ Item {
         function back() {
             currentFilm = 1
             focusPath = false
-            //root.showOutput = false
-            //outputCore.state = "back"
-            root.sourceFinder = "qrc:/src/qml/core/Finder.qml"
-            root.activeFinder = true
-            delayCleanModel.start()
-        }
-        Timer {
-            id: delayCleanModel
-            repeat: false
-            interval: 800
-            onTriggered: model.clear()
+            loaderFinder.source = "qrc:/src/qml/core/Finder.qml"
+            loaderFinder.active = true
         }
 
         path: Path {
@@ -467,7 +453,6 @@ Item {
             PathAttribute { name: "recipeZ"; value: 0 }
             PathQuad { x: parent.width/2; y: parent.height/2; controlX: -parent.width*2.77; controlY: parent.height/2 }
         }
-        anchors.fill: parent
     }
 
     Rectangle {
@@ -567,9 +552,14 @@ Item {
         coverLoaded = false
         showWaitSpinner = true
         root.list = ''
-        root.listUpdated = false
-        //outputCore.state = ''
         model.clear()
         root.findDb(inputText, category, pornstar, offset, false)
     }
+    
+    Connections {
+        target: cppSignals
+        onListUpdatedSIGNAL: { listCreator() }
+    }
+
+    Component.onCompleted: { listCreator(root.n, root.list) }
 }

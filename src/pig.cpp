@@ -31,25 +31,10 @@ PIG::PIG(QObject *parent)
     Esc->setKey(Qt::Key_Escape);
     Esc->setEnabled(false);
     connect(Esc, SIGNAL(activated()), this, SLOT(closePlayer()));
-
-    QTimer::singleShot(8000, this, SLOT(signalShowFinderSlot()));
-    //QTimer::singleShot(20000, this, SLOT(signalNoResultSlot()));
 }
 
 PIG::~PIG()
 {
-}
-
-void PIG::signalShowFinderSlot()
-{
-    emit signalShowFinder();
-    qDebug() << "//////EMITEDSHOW";
-}
-
-void PIG::signalNoResultSlot()
-{
-    emit signalNoResult();
-    qDebug() << "//////EMITEDNORESULT";
 }
 
 // Password
@@ -58,7 +43,6 @@ void PIG::passManager(QString plain, bool init, bool write)
     if (init) { // Comprueba si se usa password.
         if (mPass->requirePassCheck()) {
             if (mRoot) mActive = true; mRoot->setProperty("requirePass", mActive); // Si se usa password, activa el input para escribirlo y desactiva setear password.
-            if (mRoot) mActive = true; mRoot->setProperty("showAskPass", mActive);
             init = false;
         } else {
             QStringList args = qApp->arguments(); // Si no se usa password, inicia.
@@ -92,6 +76,8 @@ void PIG::passManager(QString plain, bool init, bool write)
 // Update
 void PIG::update()
 {
+    emit showUpdateSIGNAL();
+
     QFileInfo file(dbPath);
     if (!file.isFile()) {
         errorDbHelper();
@@ -506,9 +492,8 @@ void PIG::finder()
             errorDbHelper();
         }
     }
-    if (mRoot) mActive = true; mRoot->setProperty("showFinder", mActive);
 
-    //signalTestSlot();
+    emit showFinderSIGNAL();
 }
 
 void PIG::finderDb(const QString inputText, QString category, QString pornstar, int offset, bool init)
@@ -548,16 +533,16 @@ void PIG::finderDb(const QString inputText, QString category, QString pornstar, 
             db.close();
 
             if (!qry.last() && init) {
-                if (mRoot) mActive = true; mRoot->setProperty("noResult", mActive);
+                emit noResultSIGNAL();
             } else {
                 if (init) {
                     if (mRoot) mNumber = row; mRoot->setProperty("n", mNumber);
                     if (mRoot) mDataList = _list; mRoot->setProperty("list", mDataList);
-                    if (mRoot) mActive = true; mRoot->setProperty("showOutput", mActive);
+                    emit showOutputSIGNAL();
                 } else {
                     if (mRoot) mNumber = row; mRoot->setProperty("n", mNumber);
                     if (mRoot) mDataList = _list; mRoot->setProperty("list", mDataList);
-                    if (mRoot) mActive = true; mRoot->setProperty("listUpdated", mActive);
+                    emit listUpdatedSIGNAL();
                 }
             }
         }
@@ -699,7 +684,7 @@ void PIG::fixerFinished()
         reply->deleteLater();
         return;
     }
-    //POR ACA EL ERROR
+    // FIX: Por aca el error en windows.
     if (reply->error() == QNetworkReply::NoError) {
         timeOut->stop();
         file->flush();

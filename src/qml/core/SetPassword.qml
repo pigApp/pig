@@ -1,4 +1,4 @@
-import QtQuick 2.1
+import QtQuick 2.2
 
 Item {
     id: setPassword
@@ -22,7 +22,7 @@ Item {
                 id: setLabel
                 text: "SET PASSWORD"
                 color: "white"
-                font.family: pigFont.name
+                font.family: pigLightFont.name
                 font.pixelSize: 25
             }
             Text {
@@ -31,7 +31,7 @@ Item {
                 height: 26
                 text: "what is this?"
                 color: Qt.rgba(0.8, 0.8, 0.8, 1)
-                font.family: pigFont.name
+                font.family: pigLightFont.name
                 font.pixelSize: 25
                 MouseArea {
                     id: mousearea
@@ -52,7 +52,7 @@ Item {
                 id: input
                 width: screen.width/4.5
                 color: "white"
-                font.family: pigFont.name
+                font.family: pigLightFont.name
                 font.pixelSize: 25
                 maximumLength: 16
                 echoMode: TextInput.Password
@@ -69,7 +69,7 @@ Item {
             id: whatText
             text: "If set a password will be you requested when starting PIG.<br>Is recommended to use it if you share a computer with someone underage.<br>It is a basic measure of security. Is not invulnerable. Be careful."
             color: Qt.rgba(0.8, 0.8, 0.8, 1)
-            font.family: pigFont.name
+            font.family: pigLightFont.name
             font.italic: true
             font.pixelSize: 15
             opacity: 0
@@ -80,9 +80,9 @@ Item {
         id: ok_fail_Label
         text: { if (root.okPass) "OK. ESC TO BACK"; else "FAIL. TRY LATER. ESC TO BACK" }
         color: "white"
-        font.family: pigFont.name
+        font.family: pigLightFont.name
         font.pixelSize: 25
-        visible: root.okPass || root.failPass && !root.requirePass
+        visible: root.okPass || root.failPass 
         anchors.centerIn: parent
     }
 }

@@ -1,6 +1,5 @@
-import QtQuick 2.1
+import QtQuick 2.2
 import QtGraphicalEffects 1.0
-import signals 1.0
 
 Item {
     id: finder
@@ -11,17 +10,6 @@ Item {
 
     signal showF(variant filter)
     signal hideF()
-
-    Component.onCompleted: { input.forceActiveFocus() }
-
-    /*
-    SIGNALS {
-        onSignalNoResult:  {
-            console.log("/////TRIGGEREDNORESULT")
-            noResultLabel.visible = true
-        }
-    }
-    */
 
     Row {
         id: inputFindRow
@@ -35,35 +23,18 @@ Item {
             font.family: pigLightFont.name
             font.capitalization: Font.AllUppercase
             font.pixelSize: 25
-            enabled: showFinder && !showDbError
+            enabled: !showDbError
             maximumLength: 29
-            onAccepted: {
-                if (!waitForResultTimer.running) {
-                    if (!loaderFilters.active && !loaderSetPassword.active) {
-                        if (noResultLabel.visible) { noResultLabel.visible = false }
+            onAccepted: { 
+                if (!loaderOutput.active && !loaderFilters.active && !loaderSetPassword.active) {
+                    if (noResultLabel.visible) { noResultLabel.visible = false }
                         root.findDb(input.text, category, pornstar, 0, true)
-                        waitForResultTimer.start()
-                    }
-                }
-            }
-            Timer {
-                id: waitForResultTimer
-                running: false
-                repeat: false
-                interval: 1000// ver el tiempo
-                onTriggered: {
-                    if (!noResult) {
-                        finder.state = "hideFinder"
-                    } else {
-                        root.noResult = false
-                        noResultLabel.visible = true
-                    }
                 }
             }
             onCursorPositionChanged: { if (noResultLabel.visible) noResultLabel.visible = false }
             Keys.onPressed: {
                 if (event.key === Qt.Key_P && (event.modifiers & Qt.ControlModifier) && (event.modifiers & Qt.ShiftModifier)
-                    && !root.requirePass && !root.okPass && !root.failPass) {
+                    && !root.okPass && !root.failPass) {  
                     if (finder.state == 'showFinder' || finder.state == 'hideFilter') {
                         buttonsFindColumn.visible = false
                         inputFindRow.visible = false
@@ -87,8 +58,8 @@ Item {
         id: buttonsFindColumn
         spacing: 15
         opacity: 0
-        visible: showFinder && !showDbError
-        enabled: showFinder && !showDbError
+        visible: !showDbError
+        enabled: !showDbError
         anchors.left: parent.left
         anchors.leftMargin: 40
         anchors.verticalCenter: parent.verticalCenter
@@ -217,11 +188,6 @@ Item {
     states: [
         State {
             name: "showFinder"
-            when: showFinder
-        },
-        State {
-            name: "showFinderFast"
-            when: showFinderFast
         },
         State {
             name: "hideFinde"
@@ -240,27 +206,12 @@ Item {
         Transition {
             to: "showFinder"
             SequentialAnimation {
-                NumberAnimation { target: root; easing.amplitude: 1.65; properties: "girlOpacity"; to: 1.0; duration: 800; easing.type: Easing.OutInElastic }
+                NumberAnimation { target: girl; easing.amplitude: 1.65; properties: "opacity"; to: 1.0; duration: 800; easing.type: Easing.OutInElastic }
                 ParallelAnimation {
-                    NumberAnimation { target: root; properties: "blurOpacity"; to: 1; duration: 1700; easing.type: Easing.InOutQuart }
-                    NumberAnimation { target: root; properties: "blurRadius"; to: 40; duration: 1700; easing.type: Easing.InOutQuart }
+                    NumberAnimation { target: blur; properties: "opacity"; to: 1; duration: 1700; easing.type: Easing.InOutQuart }
+                    NumberAnimation { target: blur; properties: "radius"; to: 40; duration: 1700; easing.type: Easing.InOutQuart }
                 }
                 NumberAnimation { target: buttonsFindColumn; properties: "opacity"; to: 1.0; duration: 400; easing.type: Easing.InOutQuart }
-            }
-        },
-        Transition {
-            to: "showFinderFast"
-            SequentialAnimation {
-                NumberAnimation { target: root; properties: "girlOpacity"; to: 0; duration: 200; easing.type: Easing.InOutQuart }
-                ParallelAnimation {
-                    NumberAnimation { target: root; properties: "girlOpacity"; to: 1.0; duration: 500; easing.type: Easing.InOutQuart }
-                    NumberAnimation { target: root; properties: "blurOpacity"; to: 1; duration: 700; easing.type: Easing.InOutQuart }
-                    NumberAnimation { target: root; properties: "blurRadius"; to: 40; duration: 700; easing.type: Easing.InOutQuart }
-                }
-                NumberAnimation { target: buttonsFindColumn; properties: "opacity"; to: 1.0; duration: 200; easing.type: Easing.InOutQuart }
-                PropertyAction { target: input; property: "focus"; value: false }
-                PropertyAction { target: input; property: "focus"; value: true }
-                PropertyAction { target: root; property: "showFinderFast"; value: false }
             }
         },
         Transition {
@@ -268,12 +219,13 @@ Item {
             SequentialAnimation {
                 NumberAnimation { target: buttonsFindColumn; properties: "opacity"; to: 0; duration: 300; easing.type: Easing.InOutQuart }
                 ParallelAnimation {
-                    NumberAnimation { target: root; easing.amplitude: 1.65; properties: "blurOpacity"; to: 0; duration: 800; easing.type: Easing.OutInElastic }
-                    NumberAnimation { target: root; easing.amplitude: 1.65; properties: "girlOpacity"; to: 0; duration: 800; easing.type: Easing.OutInElastic }
+                    NumberAnimation { target: blur; easing.amplitude: 1.65; properties: "opacity"; to: 0; duration: 800; easing.type: Easing.OutInElastic }
+                    NumberAnimation { target: girl; easing.amplitude: 1.65; properties: "opacity"; to: 0; duration: 800; easing.type: Easing.OutInElastic }
                 }
                 PropertyAction { target: root; property: "transition"; value: true }
                 PropertyAction { target: root; property: "showWaitSpinner"; value: true }
-                PropertyAction { target: root; property: "activeOutput"; value: true }
+                PropertyAction { target: loaderOutput; property: "source"; value: "qrc:/src/qml/core/Output.qml" } 
+                PropertyAction { target: loaderOutput; property: "active"; value: true } 
             }
         },
         Transition {
@@ -304,13 +256,31 @@ Item {
                 PropertyAction { target: buttonsFindColumn; property: "visible"; value: true }
                 NumberAnimation { target: buttonsFindColumn; properties: "opacity"; to: 0; duration: 50; easing.type: Easing.InOutQuart }
                 ParallelAnimation {
-                    NumberAnimation { target: root; easing.amplitude: 1.65; properties: "blurOpacity"; to: 0; duration: 800; easing.type: Easing.OutInElastic }
-                    NumberAnimation { target: root; easing.amplitude: 1.65; properties: "girlOpacity"; to: 0; duration: 800; easing.type: Easing.OutInElastic }
+                    NumberAnimation { target: blur; easing.amplitude: 1.65; properties: "opacity"; to: 0; duration: 800; easing.type: Easing.OutInElastic }
+                    NumberAnimation { target: girl; easing.amplitude: 1.65; properties: "opacity"; to: 0; duration: 800; easing.type: Easing.OutInElastic }
                 }
-                PropertyAction { target: root; property: "transition"; value: true }
+                PropertyAction { target: root; property: "transition"; value: true } // TODO Ver transitions.
                 PropertyAction { target: root; property: "showWaitSpinner"; value: true }
+                PropertyAction { target: loaderOutput; property: "source"; value: "qrc:/src/qml/core/Output.qml" } 
+                PropertyAction { target: loaderOutput; property: "active"; value: true }
             }
         }
     ]
+
+    Connections {
+        target: cppSignals
+        
+        onShowOutputSIGNAL:{
+            if (category != '' || pornstar != '')
+                finder.state = "hideFilter_hideFinder"
+            else
+                finder.state = "hideFinder"
+        }
+        onNoResultSIGNAL: {
+            noResultLabel.visible = true
+        }
+    }
+
+    Component.onCompleted: { finder.state = 'showFinder'; input.forceActiveFocus() }
 }
 // Espacios hechos.

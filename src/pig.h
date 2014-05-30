@@ -36,15 +36,12 @@ public:
     int number() { return mNumber; }
     void setRootObject(QObject *root);
 
-    //Q_INVOKABLE void triggerEvent() { emit signalTest(); }
-
-public slots:
-    void signalShowFinderSlot();
-    void signalNoResultSlot();
-
 signals:
-    void signalShowFinder();
-    void signalNoResult();
+    void showUpdateSIGNAL();
+    void showFinderSIGNAL();
+    void showOutputSIGNAL();
+    void listUpdatedSIGNAL();
+    void noResultSIGNAL();
 
 private:
     QSqlDatabase db;

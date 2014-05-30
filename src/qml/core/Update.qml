@@ -1,4 +1,4 @@
-import QtQuick 2.1
+import QtQuick 2.2
 
 Item {
     id: update
@@ -7,7 +7,7 @@ Item {
 
     Row {
         id: statusRow
-        spacing: 15
+        spacing: 10
         anchors.centerIn: parent
         Text {
             id: statusLabel
@@ -30,12 +30,15 @@ Item {
         }
         Image {
             id: spinner
-            width: 29.3
-            height: 29.3
+            width: 26
+            height: 26
             source: "qrc:/images/spinner.png" 
+            opacity: 0.5
             visible: showSpinner
             property bool on: showSpinner
-            NumberAnimation on rotation { running: spinner.on; from: 0; to: 360; loops: Animation.Infinite; duration: 1200 }
+            NumberAnimation on rotation { running: spinner.on; from: 0; to: 360; loops: Animation.Infinite; duration: 400 }
+            anchors.verticalCenter: parent.verticalCenter
+            anchors.verticalCenterOffset: 1
         }
 
         Row {
@@ -101,7 +104,7 @@ Item {
     }
 
     onStatusReaderChanged: {
-        if(!showFinder) {
+        //if(!showFinder) {
             if(root.status.indexOf("update available") !== -1) {
                 statusLabel.color = Qt.rgba(1, 1, 1, 1)
             }else if(root.status.indexOf("updating") !== -1) {
@@ -111,6 +114,6 @@ Item {
                 statusLabel.color = Qt.rgba(0.3, 0, 0, 1)
                 statusInformationLabel.anchors.bottomMargin = 2.33
             }
-        }
+        //}
     }
 }
