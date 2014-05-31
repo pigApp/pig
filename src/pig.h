@@ -5,22 +5,15 @@
 #include <QApplication>
 #include <QVBoxLayout>
 #include <QShortcut>
-#include <QtNetwork>
-#include <QNetworkAccessManager>
-#include <QUrl>
 #include <QtSql>
-#include <QCryptographicHash>
 
 #include "password/pass.h"
+#include "update/update.h"
 #include "video/videoplayer.h"
 
 class PIG : public QObject
 {
     Q_OBJECT
-    Q_PROPERTY(QString data READ data)
-    Q_PROPERTY(QStringList dataList READ dataList)
-    Q_PROPERTY(bool active READ active)
-    Q_PROPERTY(int active READ active)
 
 public:
     PIG(QObject *parent = 0);
@@ -30,10 +23,7 @@ public:
     QWidget *container;
     QVBoxLayout *layout;
 
-    QStringList dataList() const { return mDataList; }
-    QString data() const { return mData; }
-    bool active() { return mActive; }
-    int number() { return mNumber; }
+public slots:
     void setRootObject(QObject *root);
 
 signals:
@@ -45,66 +35,30 @@ signals:
 
 private:
     QSqlDatabase db;
-    QString rootPath;
     QString dbPath;
-    QNetworkAccessManager *networkAccess;
-    QNetworkConfigurationManager *networkAccessConfig;
-    QNetworkReply *reply;
-    QUrl url;
-    QTimer *timeOut;
+    QString rootPath;
     QFile *file;
-    QString fileName;
-
-    QString remoteVersions;
-    QStringList remoteVersionsList;
-    QString remoteUrl;
-    QStringList remoteUrlList;
-    QProcess *execUpdate;
-
+    QShortcut *Esc;
     QStringList _list;
 
-    Pass *mPass;
-    VideoPlayer *mPlayer;
-    QShortcut *Esc;
-
     QObject *mRoot;
-    QString mData;
-    QStringList mDataList;
+    Pass *mPass;
+    Update* mUpdate;
+    VideoPlayer *mPlayer;
 
-    short int localDbVersion, localBinVersion, localRelease, pkgToDownload, row, mNumber;
-    bool remoteDbAvailable, remoteBinAvailable, updateAborted, updateDownload, updateCleanAll, fixDbAborted, mActive;
+    short int localDbVersion, localBinVersion, localRelease, row;
 
 private slots:
     void passManager(QString pass, bool init, bool write);
-
     void update();
-    void updateHttp();
-    void versionsReadyRead();
-    void versionsFinished();
-    void updateDownloadManager();
-    void updateDownloadReadyRead();
-    void updateDownloadFinished();
-    void updateTimeOut();
-    void updateRestartApp();
-    void updateControl();
-    void close();
 
     void finder();
-    void finderDb(const QString inputText, QString category, QString pornstar, int offset, bool init);
+    void findDb(const QString inputText, QString category, QString pornstar, int offset, bool init);
 
     void openPlayer(QString videoID);
     void closePlayer();
 
-    void errorDbHelper();
-    void fixerDb();
-    void fixerDbTimeOut();
-    void getUrlReadyRead();
-    void getUrlFinished();
-    void fixerReadyRead();
-    void fixerFinished();
-
-    bool hashCalculation(QString md5SumPath, QString md5SumHash);
-    bool copyFile(const QString& fileOrigin, const QString& destinationDir);
-    bool removeFile(const QString &fileOrigin);
+    void errorDbMsg();
+    void close();
 };
 #endif
