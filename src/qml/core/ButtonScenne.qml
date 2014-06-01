@@ -39,7 +39,7 @@ Rectangle {
                 delayOut.restart() 
         }
         onClicked: { 
-            if (icon.opacity != 0.15)
+            if (icon.opacity != 0.15) 
                 buttonScenne.clicked()
         }
         anchors.fill: parent
@@ -57,12 +57,6 @@ Rectangle {
         repeat: false
         interval: 20
         onTriggered: { effect.visible = false }
-    }
-
-    states: State {
-        when: mousearea.pressed && icon.opacity != 0.15
-        PropertyChanges { target: icon; opacity: 0.9 }
-        PropertyChanges { target: effect; color: Qt.rgba(0.5, 0.5, 0.5, 0.7) }
     }
 }
 // Espacios hechos.

@@ -3,8 +3,6 @@ import QtQuick 2.2
 Item {
     id: setPassword
 
-    Component.onCompleted: { input.forceActiveFocus() }
-
     Rectangle {
         id: layer
         color: Qt.rgba(0, 0, 0, 0.5)
@@ -85,5 +83,7 @@ Item {
         visible: root.okPass || root.failPass 
         anchors.centerIn: parent
     }
+
+    Component.onCompleted: { input.forceActiveFocus() }
 }
 // Espacios hechos.

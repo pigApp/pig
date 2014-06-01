@@ -32,6 +32,8 @@ signals:
     void showOutputSIGNAL();
     void listUpdatedSIGNAL();
     void noResultSIGNAL();
+    void hidePlayerLayerSIGNAL();
+    void showErrorDbMsgSIGNAL();
 
 private:
     QSqlDatabase db;
@@ -39,6 +41,7 @@ private:
     QString rootPath;
     QFile *file;
     QShortcut *Esc;
+    QShortcut *Quit;
     QStringList _list;
 
     QObject *mRoot;
@@ -58,7 +61,7 @@ private slots:
     void openPlayer(QString videoID);
     void closePlayer();
 
-    void errorDbMsg();
-    void close();
+    void errorDb();
+    void quit();
 };
 #endif

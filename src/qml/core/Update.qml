@@ -50,8 +50,8 @@ Item {
                 id: acceptUpdate
                 label: "update"
                 color: Qt.rgba(0.1 ,0.1 ,0.1 , 0.2)
-                visible: showDecisionButton && !restart && !showFixDbButton
-                enabled: showDecisionButton && !restart && !showFixDbButton
+                visible: showDecisionButton && !restart
+                enabled: showDecisionButton && !restart
                 onClicked: {
                     root.status = ''
                     root.statusInformation  = ''
@@ -62,8 +62,8 @@ Item {
                 id: cancelUpdate
                 label: "skip"
                 color: Qt.rgba(0.1 ,0.1 ,0.1 , 0.2)
-                visible: showDecisionButton && !restart && !showFixDbButton
-                enabled: showDecisionButton && !restart && !showFixDbButton
+                visible: showDecisionButton && !restart
+                enabled: showDecisionButton && !restart
                 onClicked: {
                     root.status = ''
                     root.statusInformation  = ''
@@ -86,34 +86,18 @@ Item {
                 enabled: authorize
                 onClicked: { root.updateRestart() }
             }
-            Button {
-                id: getDb
-                label: "get BD"
-                color: Qt.rgba(0.1 ,0.1 ,0.1 , 0.2)
-                visible: showFixDbButton
-                enabled: showFixDbButton
-                onClicked: {
-                    root.status = ''
-                    root.statusInformation  = ''
-                    getDb.visible = false
-                    getDb.enabled = false
-                    root.fixDb()
-                }
-            }
         }
     }
 
     onStatusReaderChanged: {
-        //if(!showFinder) {
-            if(root.status.indexOf("update available") !== -1) {
-                statusLabel.color = Qt.rgba(1, 1, 1, 1)
-            }else if(root.status.indexOf("updating") !== -1) {
-                statusLabel.color = Qt.rgba(1, 1, 1, 1)
-                statusLabel.font.pixelSize = 11
-            }else if(root.status.indexOf("UPDATE FAILED") !== -1 || root.status.indexOf("ERROR IN DATABASE") !== -1 || root.status.indexOf("FAILED TO UPDATE THE DATABASE") !== -1 || root.status.indexOf("PERMISSION DENIED") !== -1) {
-                statusLabel.color = Qt.rgba(0.3, 0, 0, 1)
-                statusInformationLabel.anchors.bottomMargin = 2.33
-            }
-        //}
+        if(root.status.indexOf("update available") !== -1) {
+            statusLabel.color = Qt.rgba(1, 1, 1, 1)
+        }else if(root.status.indexOf("updating") !== -1) {
+            statusLabel.color = Qt.rgba(1, 1, 1, 1)
+            statusLabel.font.pixelSize = 11
+        }else if(root.status.indexOf("UPDATE FAILED") !== -1 || root.status.indexOf("ERROR IN DATABASE") !== -1 || root.status.indexOf("FAILED TO UPDATE THE DATABASE") !== -1 || root.status.indexOf("PERMISSION DENIED") !== -1) {
+            statusLabel.color = Qt.rgba(0.3, 0, 0, 1)
+            statusInformationLabel.anchors.bottomMargin = 2.33
+        }
     }
 }

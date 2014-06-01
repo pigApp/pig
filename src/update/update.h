@@ -20,7 +20,8 @@ public slots:
     void init(QObject *mRoot);
 
 signals:
-    void callFinderSIGNAL();
+    void updateCallFinderSIGNAL();
+    void updateErrorDbSIGNAL();
 
 private:
     QObject *_mRoot;
@@ -55,10 +56,9 @@ private slots:
     void restartApp();
     void control();
     
-    void errorDbMsg();
     bool hashCalculation(QString md5SumPath, QString md5SumHash);
     bool copyFile(const QString& fileOrigin, const QString& destinationDir);
     bool removeFile(const QString &fileOrigin);
 };
 
-#endif // UPDATE_H
+#endif 

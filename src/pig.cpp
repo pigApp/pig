@@ -18,6 +18,10 @@ PIG::PIG(QObject *parent)
     Esc->setKey(Qt::Key_Escape);
     Esc->setEnabled(false);
     connect(Esc, SIGNAL(activated()), this, SLOT(closePlayer()));
+
+    Quit = new QShortcut(window);
+    Quit->setKey(Qt::Key_Escape && Qt::ShiftModifier);
+    connect(Quit, SIGNAL(activated()), this, SLOT(quit()));
 }
 
 PIG::~PIG()
@@ -67,7 +71,8 @@ void PIG::update()
     mUpdate->init(mRoot);
     emit showUpdateSIGNAL();
 
-    connect(mUpdate, SIGNAL(callFinderSIGNAL()), this, SLOT(finder()));
+    connect(mUpdate, SIGNAL(updateCallFinderSIGNAL()), this, SLOT(finder()));
+    connect(mUpdate, SIGNAL(updateErrorDbSIGNAL()), this, SLOT(errorDb()));
 }
 
 // Finder
@@ -86,14 +91,14 @@ void PIG::finder()
 
     QFileInfo file(dbPath);
     if (!file.isFile()) {
-        errorDbMsg();
+        errorDb();
     } else {
         if (db.open()) {
             QSqlQuery qry;
             qry.prepare("SELECT DbVersion, BinVersion, Release, Category, NCategory, Pornstar, NPornstar FROM PxData, FiltersData");
             if (!qry.exec()) {
                 db.close();
-                errorDbMsg();
+                errorDb();
             } else {
                 qry.next();
                 localDbVersion = qry.value(0).toInt();
@@ -121,7 +126,7 @@ void PIG::finder()
                 mRoot->setProperty("nPornstarList", nPornstarList);
             }
         } else {
-            errorDbMsg();
+            errorDb();
         }
     }
     emit showFinderSIGNAL();
@@ -130,7 +135,7 @@ void PIG::finder()
 void PIG::findDb(const QString inputText, QString category, QString pornstar, int offset, bool init)
 {
     if (!db.open()) {
-        errorDbMsg();
+        errorDb();
     } else {
         row = 0;
        _list.clear();
@@ -139,7 +144,7 @@ void PIG::findDb(const QString inputText, QString category, QString pornstar, in
             qry.prepare( "SELECT Title, Pornstar, Quality, Collaborator, Category, UrlCover, UrlPoster, UrlPreview, UrlVideos FROM Films WHERE Title LIKE '%"+inputText+"%' AND Category LIKE '%"+category+"%' AND Pornstar LIKE '%"+pornstar+"%' ORDER BY Title ASC LIMIT 1000 OFFSET '"+strOffset+"'" );
         if (!qry.exec()) {
             db.close();
-            errorDbMsg();
+            errorDb();
         } else {
             if (init) {
                 qry.last();
@@ -195,23 +200,17 @@ void PIG::openPlayer(QString videoID)
 void PIG::closePlayer()
 {
     container->show();
+    mPlayer->close(); // FIXME: Si salgo del reproductor antes de que reprodusca se rompe.
     delete mPlayer;
 
     Esc->setEnabled(false);
-    mRoot->setProperty("playerClosed", true);
+    emit hidePlayerLayerSIGNAL();
 }
 
 // ErrorDb
-void PIG::errorDbMsg()
+void PIG::errorDb()
 {
-    mRoot->setProperty("showDbError", true);
-    mRoot->setProperty("status", "ERROR IN DATABASE");
-    mRoot->setProperty("statusInformation", "DATABASE DOES NOT EXIST OR IS CORRUPTED"); // TODO: Agregar mensaje de donde descargar la db y en que carpeta alojarla.
-    mRoot->setProperty("showSpinner", false);
-}
-void PIG::close()
-{
-    delete qApp;
+    emit showErrorDbMsgSIGNAL();
 }
 
 void PIG::setRootObject(QObject *root)
@@ -225,7 +224,12 @@ void PIG::setRootObject(QObject *root)
                              this, SLOT(findDb(QString, QString, QString, int, bool)));
     if(mRoot) connect(mRoot, SIGNAL(openPlayer(QString)), this, SLOT(openPlayer(QString)));
     if(mRoot) connect(mRoot, SIGNAL(passManager(QString, bool, bool)), this, SLOT(passManager(QString, bool, bool)));
-    if(mRoot) connect(mRoot, SIGNAL(quit()), this, SLOT(close()));
+    if(mRoot) connect(mRoot, SIGNAL(quit()), this, SLOT(quit()));
 
     passManager("", true, false);
+}
+
+void PIG::quit()
+{
+   exit(0);
 }

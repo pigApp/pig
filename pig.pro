@@ -22,15 +22,17 @@ HEADERS += src/pig.h\
 
 OTHER_FILES += src/qml/main.qml\
 	       src/qml/core/AskPassword.qml\
-	       src/qml/core/SetPassword.qml\
 	       src/qml/core/Update.qml\
-               src/qml/core/Finder.qml\
+         src/qml/core/Finder.qml\
+         src/qml/core/Output.qml\
+	       src/qml/core/SetPassword.qml\
 	       src/qml/core/Filters.qml\
-               src/qml/core/Output.qml\
-               src/qml/core/PreviewPlayer.qml\
+         src/qml/core/PreviewPlayer.qml\
 	       src/qml/core/Button.qml\
+	       src/qml/core/ButtonFilter.qml\
 	       src/qml/core/ButtonScenne.qml\
-	       src/qml/core/ButtonFilter.qml
+	       src/qml/core/WaitMsg.qml\
+	       src/qml/core/ErrorDbMsg.qml
 
 RC_FILE += images/icon.rc
 

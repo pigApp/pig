@@ -36,7 +36,7 @@ VideoPlayer::VideoPlayer(QWidget *parent)
     stopButton->hide();
 
     slider = new QSlider(Qt::Horizontal);
-    slider->setGeometry(118, 1063, 1750, 5); // Arreglar el ancho
+    slider->setGeometry(118, 1063, 1750, 5); // TODO: Ancho
     slider->setStyleSheet("background: white; border: none");
     slider->setTracking(true);
     slider->setMinimum(0);
@@ -85,6 +85,8 @@ VideoPlayer::VideoPlayer(QWidget *parent)
 
 VideoPlayer::~VideoPlayer()
 {
+    if(mediaPlayer.isPlaying() || mediaPlayer.isPaused())
+        mediaPlayer.stop();
 }
 
 void VideoPlayer::open(const QString &file)
@@ -123,7 +125,7 @@ void VideoPlayer::onStartPlay()
     slider->show();
     volumeButton->setEnabled(true);
     volumeButton->show();
-    volumeSlider->setValue(0); // Setear a 50.
+    volumeSlider->setValue(0); // TODO: Setear a 50.
     volumeSlider->setEnabled(true);
     volumeSlider->show();
     setVolume();
@@ -150,7 +152,7 @@ void VideoPlayer::enable_disable_audio()
 void VideoPlayer::setVolume()
 {
     AudioOutput *ao = mediaPlayer.audio();
-    qreal v = qreal(volumeSlider->value()); // Falta calculo para que el volumen no sature.
+    qreal v = qreal(volumeSlider->value()); // TODO: Falta calculo para que el volumen no sature.
     if (ao)
         ao->setVolume(v);
 }

@@ -8,31 +8,26 @@ Item {
     property bool okPass
     property bool failPass
     property bool showCloseButton: true
-    property string status
-    property string statusInformation
-    property real strap:1
-
-    property bool showSpinner
+    property bool showSpinner 
     property bool showDecisionButton
     property bool restart
     property bool authorize
-    property bool showFixDbButton
 
-    property bool showDbError
-    property bool showWaitSpinner
-    property bool transition
+    property string status
+    property string statusInformation
     property string binaryVersion
     property string dataBaseVersion
     property string release
+
     property variant categoryList
     property variant nCategoryList
     property variant pornstarList
     property variant nPornstarList
-
-    property bool playerClosed
     property variant list
+
     property int totalFilms
     property int n
+    property real strap:1
 
     signal passManager(string plain, bool init, bool write)
     signal updateAccept()
@@ -104,38 +99,32 @@ Item {
             visible: status == Loader.Ready
             anchors.fill: parent
             onStatusChanged: { if (status == Loader.Ready) loaderFinder.source = "" }
+            onActiveChanged: { if (loaderOutput.active) showSpinner = true }
         }
 
-        Image {// Qt.quit
-            id: closeButton 
-            width: 14
-            height: 12
-            source: "qrc:/images/close.png"
-            visible: showCloseButton
-            anchors.top: parent.top
-            anchors.right: parent.right
-            anchors.rightMargin: -1
-            z:3
-            MouseArea {
-                anchors.fill: parent
-                hoverEnabled: true
-                onClicked: { quit() }
-                onEntered: { closeButton.source = "qrc:/images/closeHover.png" }
-                onHoveredChanged: { closeButton.source = "qrc:/images/close.png" }
+        Loader {
+            id: loaderWaitMsg
+            source: "qrc:/src/qml/core/WaitMsg.qml"
+            active: false
+            asynchronous: true
+            visible: status == Loader.Ready
+            anchors.fill: parent
+        }
+
+        Loader {
+            id: loaderErrorDbMsg
+            source: "qrc:/src/qml/core/ErrorDbMsg.qml"
+            active: false
+            asynchronous: true
+            visible: status == Loader.Ready
+            anchors.fill: parent
+            onActiveChanged: {
+                loaderAskPassword.source = ""
+                loaderUpdate.source = ""
+                loaderFinder.source = ""
+                loaderOutput.source = ""
+                loaderWaitMsg.source = ""
             }
-        }
-    }
-
-    onStatusChanged: {
-        if (status === 'searching updates' || 'ERROR IN DATABASE') {
-            if (root.width >= 1920)
-                strap = 1
-            else if (root.width > 1399 && root.width < 1920)
-                strap = 1.1
-            else if (root.width > 1023 && root.width < 1400)
-                strap = 1.2
-            else
-                strap = 1
         }
     }
 
@@ -158,14 +147,28 @@ Item {
             loaderAskPassword.source = ""
             loaderAskPassword.active = false
             loaderAskPassword.focus = false
-            
             loaderUpdate.source = ""
             loaderUpdate.active = false
-
             loaderFinder.active = true
             loaderFinder.focus = true
         }
+        onShowErrorDbMsgSIGNAL: {
+            loaderErrorDbMsg.active = true
+        }    
+    }
+
+    Component.onCompleted: {
+        if (root.width >= 1920)
+            strap = 1
+        else if (root.width > 1399 && root.width < 1920)
+            strap = 1.1
+        else if (root.width > 1023 && root.width < 1400)
+            strap = 1.2
+        else
+            strap = 1
     }
 }
 
-// TODO: Spinner como component.
+// TODO: TimeOut's.
+// TODO: Enviar updateErrorDbSIGNAL desde update.
+// TODO: quit en waitMsg y en c++.

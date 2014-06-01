@@ -7,13 +7,14 @@ Item {
 
     property bool posterLoaded
     property bool coverLoaded
-    property bool hideScreens
     property bool hideAll
+    property bool focusPath
+
     property string inputText
     property string category
     property string pornstar
     property string videoID
-    property bool focusPath
+
     property int location: 0
     property int currentFilm: 1
     property int locationOnList
@@ -91,7 +92,7 @@ Item {
             GaussianBlur {
                 id: posterEffect
                 source: posters
-                radius: 20
+                radius: 30
                 samples: 32
                 anchors.fill: posters
             }
@@ -104,7 +105,7 @@ Item {
             RectangularGlow {
                 id: coverEffect
                 color: "white"
-                glowRadius: 20
+                glowRadius: 10
                 spread: 0.2
                 cornerRadius: 50
                 anchors.fill: cover
@@ -147,8 +148,8 @@ Item {
                 repeat: false
                 interval: 20
                 onTriggered: {
-                    if (posterLoaded && coverLoaded && transition) {
-                        root.showWaitSpinner = false
+                    if (posterLoaded && coverLoaded) {
+                        loaderWaitMsg.active = false
                         recipe.state = "showAll"
                         delayFocus.start()
                     }else {
@@ -161,37 +162,46 @@ Item {
                 spacing: 5
                 anchors.left: cover.right
                 anchors.leftMargin: 20
-                anchors.verticalCenter: frame.verticalCenter
+                anchors.top: cover.top
+                anchors.topMargin: 100
                 Text {
                     id: atressesLabel
                     text: actresses
                     color: "white"
                     font.family: pigLightFont.name
+                    font.italic: true
                     font.bold: true
-                    font.pixelSize: 25
+                    font.pixelSize: 30
                 }
                 Text {
                     id: categoryLabel
                     text: categories
                     color: "white"
                     font.family: pigLightFont.name
+                    font.italic: true
                     font.bold: true
-                    font.pixelSize: 25
+                    font.pixelSize: 30
                 }
                 Text {
                     id: collaboratorLabel
                     text: collaborator
                     color: "white"
-                    font.family: pigLightFont.name
-                    font.bold: true
-                    font.pixelSize: 25
+                    font.family: pigFont.name
+                    font.pixelSize: 30
+                }
+                Text {
+                    id: counterLabel
+                    text: currentFilm+" » "+totalFilms
+                    color: "white"
+                    font.family: pigFont.name
+                    font.pixelSize: 30
                 }
             }
             Row {
                 id: openScenneRow
-                spacing: 15
+                spacing: 1
                 anchors.centerIn: parent
-                anchors.horizontalCenterOffset: screen.width/3
+                anchors.horizontalCenterOffset: screen.width/2.8
                 ButtonScenne {
                     id: openScenne1
                     iconOpacity: { if (urlScenne1 != '') 1; else 0.15 }
@@ -281,17 +291,7 @@ Item {
                     }
                 }
             }
-            Text {
-                id: counterLabel
-                text: currentFilm+" » "+totalFilms 
-                color: Qt.rgba(1, 1, 1, 0.15)
-                font.family: pigLightFont.name
-                font.bold: true
-                font.pixelSize: 25
-                anchors.right: parent.right
-                anchors.rightMargin: 30
-                anchors.verticalCenter: parent.verticalCenter
-            }
+
             Timer {
                 id: delayPlayerLayer
                 running: false
@@ -329,11 +329,13 @@ Item {
             states: [
                 State {
                     name: "showPlayerLayer"
+                    PropertyChanges { target: openScenne1; iconOpacity: "0.15" }
+                    PropertyChanges { target: openScenne2; iconOpacity: "0.15" }
+                    PropertyChanges { target: openScenne3; iconOpacity: "0.15" }
+                    PropertyChanges { target: openScenne4; iconOpacity: "0.15" }
                 },
                 State {
                     name: "hidePlayerLayer"
-                    when: playerClosed
-
                 },
                 State {
                     name: "showAll"
@@ -350,10 +352,11 @@ Item {
                 },
                 Transition {
                     to: "hidePlayerLayer"
-                        SequentialAnimation {
-                            NumberAnimation { target: playerLayer; property: "height"; to: 0; duration: 1000; easing.type: Easing.InOutQuart }
-                            PropertyAction { target: root; property: "playerClosed"; value: "false" }
-                        }
+                        NumberAnimation { target: playerLayer; property: "height"; to: 0; duration: 1000; easing.type: Easing.InOutQuart }
+                        PropertyAction { target: openScenne1; property: "iconOpacity"; value: "1" }
+                        PropertyAction { target: openScenne2; property: "iconOpacity"; value: "1" }
+                        PropertyAction { target: openScenne3; property: "iconOpacity"; value: "1" }
+                        PropertyAction { target: openScenne4; property: "iconOpacity"; value: "1" }
                 },
                 Transition {
                     to: "showAll"
@@ -364,6 +367,11 @@ Item {
                     NumberAnimation { target: output; property: "opacity"; to: 0; duration: 500; easing.type: Easing.InOutQuad }
                 }
             ]
+            
+            Connections {
+                target: cppSignals
+                onHidePlayerLayerSIGNAL: { recipe.state = "hidePlayerLayer" }
+            }
         }
     }
 
@@ -391,8 +399,8 @@ Item {
             }
         }
         onFiveLess: {
-            if(totalFilms > 5 && currentFilm-4 > 0) { // FIX: Si esta en el primero no deberia aceptar ir para abajo.
-                offset = offset-5                     // FIX: Se rompe si voy hacia arriba o hacia abajo rapido, creo que no llega a crear y destruir los objetos.
+            if(totalFilms > 5 && currentFilm-4 > 0) { // FIXME: Si esta en el primero no deberia aceptar ir para abajo.
+                offset = offset-5                     // FIXME: Se rompe si voy hacia arriba o hacia abajo rapido, creo que no llega a crear y destruir los objetos.
                 counter = counter-5                   
                 currentFilm = counter-4
                 listUpdater(offset)
@@ -434,8 +442,15 @@ Item {
             onTriggered: focusPath = true
         }
 
-        Keys.onEscapePressed: back()
-        
+        Keys.onPressed: {
+            if (event.key === Qt.Key_Escape && !(event.modifiers & Qt.ShiftModifier)) {  
+                back()
+                event.accepted = true;
+            } else if (event.key === Qt.Key_Escape && (event.modifiers & Qt.ShiftModifier)) {  
+                root.quit()
+                event.accepted = true;
+            }
+        }
         function back() {
             currentFilm = 1
             focusPath = false
@@ -464,7 +479,7 @@ Item {
     Text {
         id: keysInfo
         text: "⌨"
-        color: Qt.rgba(1, 1, 1, 0.05)
+        color: Qt.rgba(1, 1, 1, 0.15)
         font.family: "Verdana"
         font.pixelSize: 30
         visible: { if (playerLayer.height < screen.height -50) true; else false }
@@ -497,35 +512,11 @@ Item {
         id: keymap
         source: "qrc:/images/keymap.png"
         fillMode: Image.PreserveAspectCrop
-        opacity: 0.3
         visible: false
         anchors.horizontalCenter: parent.horizontalCenter
-        anchors.horizontalCenterOffset: 10
+        anchors.horizontalCenterOffset: -41
         anchors.bottom: parent.bottom
-        anchors.bottomMargin: 6
-    }
-
-    Text {
-         id: dbErrorLabel
-         text: status
-         color: "white"
-         font.pixelSize: 18/strap
-         textFormat: Text.RichText
-         visible: showDbError
-         anchors.horizontalCenter: parent.horizontalCenter
-         anchors.bottom: parent.bottom
-         anchors.bottomMargin: 60
-    }
-    Text {
-         id: dbErrorInformationLabel
-         text: statusInformation
-         color: Qt.rgba(0.5, 0.5, 0.5, 1)
-         font.pixelSize: 15/strap
-         textFormat: Text.RichText
-         visible: showDbError
-         anchors.horizontalCenter: parent.horizontalCenter
-         anchors.bottom: parent.bottom
-         anchors.bottomMargin: 20*strap
+        anchors.bottomMargin: 23
     }
     
     function listCreator() {
@@ -550,14 +541,15 @@ Item {
         focusPath = false
         posterLoaded = false
         coverLoaded = false
-        showWaitSpinner = true
         root.list = ''
         model.clear()
+        loaderWaitMsg.active = true
         root.findDb(inputText, category, pornstar, offset, false)
     }
     
     Connections {
         target: cppSignals
+
         onListUpdatedSIGNAL: { listCreator() }
     }
 

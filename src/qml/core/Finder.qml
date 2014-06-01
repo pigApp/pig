@@ -15,7 +15,7 @@ Item {
         id: inputFindRow
         height: 10
         spacing: 7
-        visible: buttonsFindColumn.visible && buttonsFindColumn.opacity == 1
+        visible: { buttonsFindColumn.visible && buttonsFindColumn.opacity == 1 }
         anchors.centerIn: parent
         TextInput {
             id: input
@@ -23,10 +23,9 @@ Item {
             font.family: pigLightFont.name
             font.capitalization: Font.AllUppercase
             font.pixelSize: 25
-            enabled: !showDbError
             maximumLength: 29
             onAccepted: { 
-                if (!loaderOutput.active && !loaderFilters.active && !loaderSetPassword.active) {
+                if (!loaderFilters.active && !loaderSetPassword.active) {
                     if (noResultLabel.visible) { noResultLabel.visible = false }
                         root.findDb(input.text, category, pornstar, 0, true)
                 }
@@ -40,6 +39,10 @@ Item {
                         inputFindRow.visible = false
                         loaderSetPassword.active = true
                     }
+                    event.accepted = true;
+                }
+                if (event.key === Qt.Key_Escape && (event.modifiers & Qt.ShiftModifier)) {  
+                    root.quit()
                     event.accepted = true;
                 }
             }
@@ -58,8 +61,6 @@ Item {
         id: buttonsFindColumn
         spacing: 15
         opacity: 0
-        visible: !showDbError
-        enabled: !showDbError
         anchors.left: parent.left
         anchors.leftMargin: 40
         anchors.verticalCenter: parent.verticalCenter
@@ -127,62 +128,22 @@ Item {
         active: false
         anchors.fill: parent
     }
-    Keys.onEscapePressed: {
-        if (loaderFilters.active) {
-            finder.hideF()
-        } else {
-            loaderSetPassword.active = false
-            buttonsFindColumn.visible = true
-            inputFindRow.visible = true
-            input.forceActiveFocus()
-        }
-    }
 
-    Row {
-        id: waitRow
-        spacing: 15
-        anchors.horizontalCenter: parent.horizontalCenter
-        anchors.horizontalCenterOffset: -27
-        anchors.verticalCenter: parent.verticalCenter
-        Text {
-            id: waitMsg
-            text: "PLEASE WAIT"
-            color: Qt.rgba(0.2, 0.2, 0.2, 0.4)
-            font.family: pigLightFont.name
-            font.pixelSize: 25
-            opacity: { if (root.showWaitSpinner) 1; else 0 }
+    Keys.onPressed: {
+        if (event.key === Qt.Key_Escape && !(event.modifiers & Qt.ShiftModifier)) {  
+            if (loaderFilters.active) {
+                finder.hideF()
+            } else {
+                loaderSetPassword.active = false
+                buttonsFindColumn.visible = true
+                inputFindRow.visible = true
+                input.forceActiveFocus()
+            }
+            event.accepted = true;
+        } else if (event.key === Qt.Key_Escape && (event.modifiers & Qt.ShiftModifier)) {  
+            root.quit()
+            event.accepted = true;
         }
-        Image {
-            id: waitSpinner
-            width: 29.3
-            height: 29.3
-            source: "qrc:/images/spinner.png";
-            visible: root.showWaitSpinner
-            property bool on: root.showWaitSpinner
-            NumberAnimation on rotation { running: waitSpinner.on; from: 0; to: 360; loops: Animation.Infinite; duration: 1200 }
-        }
-    }
-
-    Text {
-        id: dbErrorLabel
-        text: status
-        color: "white"
-        font.pixelSize: 18/strap
-        textFormat: Text.RichText
-        visible: showDbError
-        anchors.horizontalCenter: parent.horizontalCenter
-        anchors.verticalCenter: parent.verticalCenter
-    }
-    Text {
-        id: dbErrorInformationLabel
-        text: statusInformation
-        color: Qt.rgba(0.5, 0.5, 0.5, 1)
-        font.pixelSize: 15/strap
-        textFormat: Text.RichText
-        visible: showDbError
-        anchors.horizontalCenter: parent.horizontalCenter
-        anchors.verticalCenter: parent.verticalCenter
-        anchors.verticalCenterOffset: 30/strap
     }
 
     states: [
@@ -222,8 +183,7 @@ Item {
                     NumberAnimation { target: blur; easing.amplitude: 1.65; properties: "opacity"; to: 0; duration: 800; easing.type: Easing.OutInElastic }
                     NumberAnimation { target: girl; easing.amplitude: 1.65; properties: "opacity"; to: 0; duration: 800; easing.type: Easing.OutInElastic }
                 }
-                PropertyAction { target: root; property: "transition"; value: true }
-                PropertyAction { target: root; property: "showWaitSpinner"; value: true }
+                PropertyAction { target: loaderWaitMsg; property: "active"; value: true }
                 PropertyAction { target: loaderOutput; property: "source"; value: "qrc:/src/qml/core/Output.qml" } 
                 PropertyAction { target: loaderOutput; property: "active"; value: true } 
             }
@@ -259,8 +219,7 @@ Item {
                     NumberAnimation { target: blur; easing.amplitude: 1.65; properties: "opacity"; to: 0; duration: 800; easing.type: Easing.OutInElastic }
                     NumberAnimation { target: girl; easing.amplitude: 1.65; properties: "opacity"; to: 0; duration: 800; easing.type: Easing.OutInElastic }
                 }
-                PropertyAction { target: root; property: "transition"; value: true } // TODO Ver transitions.
-                PropertyAction { target: root; property: "showWaitSpinner"; value: true }
+                PropertyAction { target: loaderWaitMsg; property: "active"; value: true }
                 PropertyAction { target: loaderOutput; property: "source"; value: "qrc:/src/qml/core/Output.qml" } 
                 PropertyAction { target: loaderOutput; property: "active"; value: true }
             }

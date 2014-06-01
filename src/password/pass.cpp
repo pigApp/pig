@@ -26,7 +26,7 @@ bool Pass::requirePassCheck()
             QByteArray line = file.readLine();
             QString pd = QString(line).toUtf8();
             if(pd != "") {
-                file.close(); // Falta guardar el valor de pd (hash guardado en el disco) para poder usarlo en checkPass.
+                file.close(); // TODO: Guardar el valor de pd (hash guardado en el disco) para poder usarlo en checkPass.
                 return true;
                 break;
             }
