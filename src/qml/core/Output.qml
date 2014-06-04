@@ -107,6 +107,7 @@ Item {
                 color: "white"
                 glowRadius: 10
                 spread: 0.2
+                opacity: 0.5
                 cornerRadius: 50
                 anchors.fill: cover
             }

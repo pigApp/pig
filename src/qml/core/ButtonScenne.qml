@@ -15,10 +15,10 @@ Rectangle {
     RectangularGlow {
         id: effect
         color: "white"
-        glowRadius: 5
+        glowRadius: 1
         spread: 0
-        cornerRadius: 50
-        opacity: 0.6
+        cornerRadius: 90
+        opacity: 0.5
         visible: false
         anchors.fill: icon
     }

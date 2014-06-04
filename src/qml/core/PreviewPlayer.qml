@@ -1,5 +1,4 @@
 import QtQuick 2.2
-import QtAV 1.3
 
 Item {
     id: previewPlayer
@@ -22,7 +21,7 @@ Item {
         anchors.verticalCenterOffset: -9.2
         MouseArea {
             anchors.fill: parent
-            onClicked: { if (player.playbackState === MediaPlayer.PlayingState) player.pause(); else player.play() }
+            //onClicked: { if (player.playbackState === MediaPlayer.PlayingState) player.pause(); else player.play() }
         }
     }
     Text {
@@ -36,6 +35,7 @@ Item {
         anchors.verticalCenterOffset: 41.6
     }
 
+    /*
     VideoOutput {
         id: videoOutput
         source: player
@@ -59,10 +59,12 @@ Item {
             label.opacity = 1
         }
     }
+    */
 
     MouseArea {
         anchors.fill: parent
         onClicked: {
+            /*
             if (player.playbackState === MediaPlayer.PlayingState) {
                 player.pause()
             } else {
@@ -72,6 +74,7 @@ Item {
                 label.anchors.verticalCenterOffset = 5
                 player.play()
             }
+            */
         }
     }
 }

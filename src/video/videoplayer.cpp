@@ -1,37 +1,30 @@
-#ifndef QT_NO_OPENGL
-#include <QtOpenGL/QGLWidget>
-#endif
-#include <QtAV/OSDFilter.h>
+#include <QDebug>
 #include <QHBoxLayout>
 #include <QVBoxLayout>
-#include <QDebug>
 
 #include "videoplayer.h"
-
-using namespace QtAV;
 
 VideoPlayer::VideoPlayer(QWidget *parent)
     : QWidget(parent)
 {
-    renderer.widget()->setFixedWidth(1920);
-    renderer.widget()->setFixedHeight(1080);
-    renderer.osdFilter()->setShowType(QtAV::OSD::ShowNone);
-    mediaPlayer.setRenderer(&renderer);
+    videoWidget = new QVideoWidget(this);
+    player = new QMediaPlayer(this);
+    player->setVideoOutput(videoWidget);
 
-    play_pause_Button = new QPushButton();
-    play_pause_Button->setGeometry(2, 1048, 30, 30);
-    play_pause_Button->setStyleSheet("background: transparent; border: none");
-    play_pause_Button->setIconSize(QSize(30, 30));
-    play_pause_Button->setParent(renderer.widget());
-    play_pause_Button->setEnabled(false);
-    play_pause_Button->hide();
+    playPauseButton = new QPushButton();
+    playPauseButton->setGeometry(2, 1048, 30, 30);
+    playPauseButton->setStyleSheet("background: transparent; border: none");
+    playPauseButton->setIconSize(QSize(30, 30));
+    playPauseButton->setParent(videoWidget);
+    playPauseButton->setEnabled(false);
+    playPauseButton->hide();
 
     stopButton = new QPushButton();
     stopButton->setGeometry(34, 1048, 30, 30);
     stopButton->setStyleSheet("background: transparent; border: none");
     stopButton->setIcon(QIcon("://images/player/stop.png"));
     stopButton->setIconSize(QSize(30, 30));
-    stopButton->setParent(renderer.widget());
+    stopButton->setParent(videoWidget);
     stopButton->setEnabled(false);
     stopButton->hide();
 
@@ -40,7 +33,7 @@ VideoPlayer::VideoPlayer(QWidget *parent)
     slider->setStyleSheet("background: white; border: none");
     slider->setTracking(true);
     slider->setMinimum(0);
-    slider->setParent(renderer.widget());
+    slider->setParent(videoWidget);
     slider->setEnabled(false);
     slider->hide();
 
@@ -49,115 +42,118 @@ VideoPlayer::VideoPlayer(QWidget *parent)
     volumeButton->setStyleSheet("background: transparent; border: none");
     volumeButton->setIcon(QIcon("://images/player/headphone.png"));
     volumeButton->setIconSize(QSize(30, 30));
-    volumeButton->setParent(renderer.widget());
+    volumeButton->setParent(videoWidget);
     volumeButton->setEnabled(false);
     volumeButton->hide();
 
     volumeSlider = new QSlider(Qt::Vertical);
     volumeSlider->setGeometry(88, 947, 5, 100);
     volumeSlider->setStyleSheet("background: white; border: none");
-    volumeSlider->setTracking(true);
-    volumeSlider->setMinimum(0);
-    volumeSlider->setMaximum(100);
-    volumeSlider->setParent(renderer.widget());
+    volumeSlider->setRange(0, 100);
+    volumeSlider->setParent(videoWidget);
     volumeSlider->setEnabled(false);
     volumeSlider->hide();
+
+    timeLabel = new QLabel();
+    timeLabel->setStyleSheet("background: transparent; border: none; color: white");
+    timeLabel->setGeometry(1875, 1048, 36, 30);
+    timeLabel->setParent(videoWidget);
+    timeLabel->hide();
 
     QVBoxLayout *layout = new QVBoxLayout;
     layout->setMargin(0);
     layout->setSpacing(0);
-    layout->addWidget(renderer.widget());
+    layout->addWidget(videoWidget);
     setLayout(layout);
 
-    connect(play_pause_Button, SIGNAL(clicked()), this, SLOT(play_pause()));
+    connect(player, SIGNAL(mediaStatusChanged(QMediaPlayer::MediaStatus)), this, SLOT(statusChange()));
+    connect(player, SIGNAL(positionChanged(qint64)), this, SLOT(positionChange(qint64)));
+    connect(playPauseButton, SIGNAL(clicked()), this, SLOT(playPause()));
     connect(stopButton, SIGNAL(clicked()), this, SLOT(stop()));
-    connect(slider, SIGNAL(sliderReleased()), this, SLOT(onPositionSliderChange()));
-    connect(&mediaPlayer, SIGNAL(started()), this, SLOT(onStartPlay()));
-    connect(&mediaPlayer, SIGNAL(positionChanged(qint64)), this, SLOT(onPositionChange(qint64)));
-    connect(volumeButton, SIGNAL(clicked()), this, SLOT(enable_disable_audio()));
-    connect(volumeSlider, SIGNAL(valueChanged(int)), this, SLOT(setVolume()));
+    connect(slider, SIGNAL(sliderReleased()), this, SLOT(positionSliderChange()));
+    connect(volumeButton, SIGNAL(clicked()), this, SLOT(showHideVolumeSlider()));
+    connect(volumeSlider, SIGNAL(sliderMoved(int)), this, SLOT(setVolume(int)));
 
-    // mediaPlayer.play("/home/ok200/pigVideos/trailer_1080p.ogg.mov");
-    // happyFeet "http://easyhtml5video.com/images/happyfit2.mp4"
-    // animacion "http://p.demo.flowplayer.netdna-cdn.com/vod/demo.flowplayer/bbb-800.mp4"
-    // local "/home/ok200/pigVideos/trailer_1080p.ogg.mov"
+    // TODO: Falta barra de carga del buffer.
 }
 
 VideoPlayer::~VideoPlayer()
 {
-    if(mediaPlayer.isPlaying() || mediaPlayer.isPaused())
-        mediaPlayer.stop();
+    player->stop();
+    delete player;
+    delete videoWidget;
 }
 
 void VideoPlayer::open(const QString &file)
 {
-    mediaPlayer.play(file);
+    player->setMedia(QUrl::fromLocalFile(file));
+    player->play();
 }
 
-void VideoPlayer::play_pause()
+void VideoPlayer::playPause()
 {
-    if (mediaPlayer.isPaused()) {
-        mediaPlayer.pause(false);
-        mediaPlayer.seek(qint64(currentPosition));
-        play_pause_Button->setIcon(QIcon("://images/player/pause.png"));
-    } else {
-        mediaPlayer.pause(true);
-        currentPosition = mediaPlayer.position();
-        play_pause_Button->setIcon(QIcon("://images/player/play.png"));
+    switch(player->state()) {
+    case QMediaPlayer::PlayingState:
+        player->pause();
+        playPauseButton->setIcon(QIcon("://images/player/play.png"));
+        break;
+    default:
+        player->play();
+        playPauseButton->setIcon(QIcon("://images/player/pause.png"));
+        break;
     }
 }
 
 void VideoPlayer::stop()
 {
-    mediaPlayer.stop();
+    player->stop();
 }
 
-void VideoPlayer::onStartPlay()
+void VideoPlayer::statusChange()
 {
-    play_pause_Button->setIcon(QIcon("://images/player/pause.png"));
-    play_pause_Button->setEnabled(true);
-    play_pause_Button->show();
-    stopButton->setEnabled(true);
-    stopButton->show();
-    slider->setMaximum(mediaPlayer.duration());
-    slider->setValue(0);
-    slider->setEnabled(true);
-    slider->show();
-    volumeButton->setEnabled(true);
-    volumeButton->show();
-    volumeSlider->setValue(0); // TODO: Setear a 50.
-    volumeSlider->setEnabled(true);
-    volumeSlider->show();
-    setVolume();
+    if (QMediaPlayer::LoadedMedia && QMediaPlayer::PlayingState) {
+        playPauseButton->setIcon(QIcon("://images/player/pause.png"));
+        playPauseButton->setEnabled(true);
+        playPauseButton->show();
+        stopButton->setEnabled(true);
+        stopButton->show();
+        slider->setRange(0, player->duration()); // TODO: Enviar la duracion total desde torrentInfo.
+        slider->setEnabled(true);
+        slider->show();
+        volumeButton->setEnabled(true);
+        volumeButton->show();
+        volumeSlider->setValue(70);
+        volumeSlider->setEnabled(true);
+        QString timeStr;
+        QString format = "mm:ss";
+        //timeStr = duracion_enviada_desde_torrentInfo.toString(format); // TODO: Enviar la duracion total desde torrentInfo.
+        timeStr = "35:48";
+        timeLabel->setText(timeStr);
+        timeLabel->show();
+    }
 }
 
-void VideoPlayer::onPositionChange(qint64 position)
+
+void VideoPlayer::positionChange(qint64 position)
 {
     slider->setValue(position);
 }
 
-void VideoPlayer::onPositionSliderChange()
+void VideoPlayer::positionSliderChange()
 {
-    mediaPlayer.seek(qint64(slider->value())); // seek o setPosition.
+    player->setPosition(qint64(slider->value())); 
 }
 
-void VideoPlayer::enable_disable_audio()
+void VideoPlayer::showHideVolumeSlider()
 {
-    if (mediaPlayer.isMute())
-        mediaPlayer.setMute(false);
+    if (volumeSlider->isHidden())
+        volumeSlider->show();
     else
-        mediaPlayer.setMute(true);
+        volumeSlider->hide();
 }
 
-void VideoPlayer::setVolume()
+void VideoPlayer::setVolume(int volume)
 {
-    AudioOutput *ao = mediaPlayer.audio();
-    qreal v = qreal(volumeSlider->value()); // TODO: Falta calculo para que el volumen no sature.
-    if (ao)
-        ao->setVolume(v);
+    player->setVolume(volume);
 }
 
-void VideoPlayer::setAudioOutput(AudioOutput* ao)
-{
-    Q_UNUSED(ao);
-}

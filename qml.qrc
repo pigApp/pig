@@ -8,14 +8,12 @@
         <file>src/qml/core/SetPassword.qml</file>
         <file>src/qml/core/Filters.qml</file>
         <file>src/qml/core/PreviewPlayer.qml</file>
-        <file>src/qml/QtAV/Video.qml</file>
         <file>src/qml/core/Button.qml</file>
         <file>src/qml/core/ButtonFilter.qml</file>
         <file>src/qml/core/ButtonScenne.qml</file>
         <file>src/qml/core/WaitMsg.qml</file>
         <file>src/qml/core/Help.qml</file>
         <file>src/qml/core/ErrorDbMsg.qml</file>
-        <file>src/qml/QtAV/libQmlAV.so</file>
         <file>images/girl.png</file>
         <file>images/frame.png</file>
         <file>images/stripes.png</file>
@@ -38,7 +36,5 @@
         <file>images/font/pigLight.ttf</file>
         <file>images/Asa Akira.png</file>
         <file>images/Holly Halston.png</file>
-        <file>images/close.png</file>
-        <file>images/closeHover.png</file>
     </qresource>
 </RCC>
