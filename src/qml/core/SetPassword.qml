@@ -28,7 +28,7 @@ Item {
                 width: 140
                 height: 26
                 text: "what is this?"
-                color: Qt.rgba(0.8, 0.8, 0.8, 1)
+                color: Qt.rgba(1, 1, 1, 0.2)
                 font.family: pigLightFont.name
                 font.pixelSize: 25
                 MouseArea {
@@ -66,7 +66,7 @@ Item {
         Text {
             id: whatText
             text: "If set a password will be you requested when starting PIG.<br>Is recommended to use it if you share a computer with someone underage.<br>It is a basic measure of security. Is not invulnerable. Be careful."
-            color: Qt.rgba(0.8, 0.8, 0.8, 1)
+            color: Qt.rgba(1, 1, 1, 0.5)
             font.family: pigLightFont.name
             font.italic: true
             font.pixelSize: 15

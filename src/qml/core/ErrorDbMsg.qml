@@ -14,7 +14,7 @@ Item {
     Text {
         id: errorInformationLabel
         text: "statusInformation", "DATABASE DOES NOT EXIST OR IS CORRUPTED" // TODO: Agregar mensaje de donde descargar la db y en que carpeta alojarla.
-        color: Qt.rgba(0, 0, 0, 0.8)
+        color: Qt.rgba(0.5, 0.5, 0.5, 0.3)
         font.family: pigFont.name
         font.pixelSize: 25
         anchors.horizontalCenter: parent.horizontalCenter

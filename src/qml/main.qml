@@ -34,7 +34,7 @@ Item {
     signal updateCancel()
     signal updateRestart()
     signal findDb(string inputText, string category, string pornstar, int offset, bool init)
-    signal openPlayer(string videoID)
+    signal getTorrent(string serverTorrent, string urlTorrent, string scenneID)
     signal fixDb()
     signal quit()
 
@@ -51,6 +51,10 @@ Item {
             source: "qrc:/images/girl.png"
             cache: false
             fillMode: Image.PreserveAspectCrop
+            anchors.left: parent.left
+            anchors.leftMargin: -270
+            anchors.verticalCenter: parent.verticalCenter
+            anchors.verticalCenterOffset: 70
             opacity: 0
         }
         GaussianBlur {
@@ -171,4 +175,4 @@ Item {
 
 // TODO: TimeOut's.
 // TODO: Enviar updateErrorDbSIGNAL desde update.
-// TODO: quit en waitMsg y en c++.
+// TODO: quit en waitMsg AskPassword y en c++.

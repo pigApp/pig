@@ -19,7 +19,7 @@ Item {
         anchors.centerIn: parent
         TextInput {
             id: input
-            color: Qt.rgba(0.2, 0.2, 0.2, 0.4)
+            color: "black"
             font.family: pigLightFont.name
             font.capitalization: Font.AllUppercase
             font.pixelSize: 25

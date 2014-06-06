@@ -2,6 +2,7 @@
 #include <windows.h>
 #endif
 
+#include "socket/tcpSocket.h"
 #include "pig.h"
 
 PIG::PIG(QObject *parent)
@@ -141,7 +142,7 @@ void PIG::findDb(const QString inputText, QString category, QString pornstar, in
        _list.clear();
         QString strOffset = QString::number(offset);
         QSqlQuery qry;
-            qry.prepare( "SELECT Title, Pornstar, Quality, Collaborator, Category, UrlCover, UrlPoster, UrlPreview, UrlVideos FROM Films WHERE Title LIKE '%"+inputText+"%' AND Category LIKE '%"+category+"%' AND Pornstar LIKE '%"+pornstar+"%' ORDER BY Title ASC LIMIT 1000 OFFSET '"+strOffset+"'" );
+            qry.prepare( "SELECT Title, Pornstar, Quality, Collaborator, Category, UrlCover, UrlPoster, UrlPreview, Torrent FROM Films WHERE Title LIKE '%"+inputText+"%' AND Category LIKE '%"+category+"%' AND Pornstar LIKE '%"+pornstar+"%' ORDER BY Title ASC LIMIT 1000 OFFSET '"+strOffset+"'" );
         if (!qry.exec()) {
             db.close();
             errorDb();
@@ -162,8 +163,8 @@ void PIG::findDb(const QString inputText, QString category, QString pornstar, in
                 QString _urlCover = qry.value(5).toString();
                 QString _urlPoster = qry.value(6).toString();
                 QString _urlPreview = qry.value(7).toString();
-                QString _urlVideos = qry.value(8).toString();
-                _list << _title << _pornstars << _quality << _collaborator << _category << _urlCover << _urlPoster << _urlPreview << _urlVideos << inputText << category << pornstar;
+                QString _torrent = qry.value(8).toString();
+                _list << _title << _pornstars << _quality << _collaborator << _category << _urlCover << _urlPoster << _urlPreview << _torrent << inputText << category << pornstar;
             }
             db.close();
 
@@ -184,6 +185,13 @@ void PIG::findDb(const QString inputText, QString category, QString pornstar, in
     }
 }
 
+void PIG::getTorrent(QString serverTorrent, QString urlTorrent, QString scenneID)
+{
+    //TcpSocket s; // TODO: Instanciar el socket desde aca no de .h.
+    s.serverTorrent = serverTorrent;
+    s.urlTorrent = urlTorrent;
+    s.doConnect();
+}
 
 // Player
 void PIG::openPlayer(QString videoID)
@@ -220,9 +228,9 @@ void PIG::setRootObject(QObject *root)
     //if(mRoot) connect(mRoot, SIGNAL(updateAccept()), this, SLOT(updateHttp())); // TODO: Reemplazar this por mUpdate.
     //if(mRoot) connect(mRoot, SIGNAL(updateCancel()), this, SLOT(finder()));
     //if(mRoot) connect(mRoot, SIGNAL(updateRestart()), this, SLOT(updateRestartApp()));
-    if(mRoot) connect(mRoot, SIGNAL(findDb(QString, QString, QString, int, bool)),
-                             this, SLOT(findDb(QString, QString, QString, int, bool)));
-    if(mRoot) connect(mRoot, SIGNAL(openPlayer(QString)), this, SLOT(openPlayer(QString)));
+
+    if(mRoot) connect(mRoot, SIGNAL(findDb(QString, QString, QString, int, bool)), this, SLOT(findDb(QString, QString, QString, int, bool)));
+    if(mRoot) connect(mRoot, SIGNAL(getTorrent(QString, QString, QString)), this, SLOT(getTorrent(QString, QString, QString)));
     if(mRoot) connect(mRoot, SIGNAL(passManager(QString, bool, bool)), this, SLOT(passManager(QString, bool, bool)));
     if(mRoot) connect(mRoot, SIGNAL(quit()), this, SLOT(quit()));
 

@@ -5,9 +5,8 @@ Item {
     Row {
         id: row
         spacing: 15
-        anchors.horizontalCenter: parent.horizontalCenter
-        anchors.horizontalCenterOffset: -27
-        anchors.verticalCenter: parent.verticalCenter
+        anchors.centerIn: parent
+        anchors.verticalCenterOffset: 20
         Text {
             id: msg
             text: "PLEASE WAIT"
@@ -17,10 +16,14 @@ Item {
         }
         Image {
             id: spinner
-            width: 29.3
-            height: 29.3
-            source: "qrc:/images/spinner.png";
-            NumberAnimation on rotation { running: true; from: 0; to: 360; loops: Animation.Infinite; duration: 1200 }
+            width: 50
+            height: 34
+            source: "qrc:/images/spinner.png"
+            visible: showSpinner
+            property bool on: showSpinner
+            NumberAnimation { running: spinner.on; target: spinner; properties: "opacity"; from: 0.0; to: 1.0; loops: Animation.Infinite; duration: 1500 }
+            anchors.verticalCenter: parent.verticalCenter
+            anchors.verticalCenterOffset: -1
         }
     }
 }

@@ -38,8 +38,9 @@ Rectangle {
     }
     Text {
         id: nLabel
-        color: Qt.rgba(1, 1, 1, 0.1)
+        color: Qt.rgba(1, 1, 1, 1)
         font.family: pigLightFont.name
+        font.bold: true
         font.pixelSize: 50
         anchors.centerIn: parent
         anchors.verticalCenterOffset: 57

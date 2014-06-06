@@ -7,8 +7,10 @@ Item {
 
     Row {
         id: statusRow
-        spacing: 10
+        spacing: 15
         anchors.centerIn: parent
+        anchors.verticalCenterOffset: 20
+
         Text {
             id: statusLabel
             text: root.status
@@ -20,25 +22,22 @@ Item {
         Text {
             id: statusInformationLabel
             text: root.statusInformation
-            color: Qt.rgba(0.5, 0.5, 0.5, 0.15)
+            color: "black"
             font.family: pigFont.name
             font.capitalization: Font.AllUppercase
             font.italic: true
             font.pixelSize: 13
-            anchors.verticalCenter: parent.verticalCenter
-            anchors.verticalCenterOffset: 20
         }
         Image {
             id: spinner
-            width: 26
-            height: 26
-            source: "qrc:/images/spinner.png" 
-            opacity: 0.5
+            width: 50
+            height: 34
+            source: "qrc:/images/spinner.png"
             visible: showSpinner
             property bool on: showSpinner
-            NumberAnimation on rotation { running: spinner.on; from: 0; to: 360; loops: Animation.Infinite; duration: 400 }
+            NumberAnimation { running: spinner.on; target: spinner; properties: "opacity"; from: 0.0; to: 1.0; loops: Animation.Infinite; duration: 1500 }
             anchors.verticalCenter: parent.verticalCenter
-            anchors.verticalCenterOffset: 1
+            anchors.verticalCenterOffset: -1
         }
 
         Row {

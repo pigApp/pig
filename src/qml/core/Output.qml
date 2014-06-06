@@ -13,7 +13,6 @@ Item {
     property string inputText
     property string category
     property string pornstar
-    property string videoID
 
     property int location: 0
     property int currentFilm: 1
@@ -41,7 +40,7 @@ Item {
             opacity: PathView.recipeOpacity || 1
             z: PathView.recipeZ || 1
 
-            Keys.onUpPressed: { previewPlayer.kill(); fiveMoreTimer.start() }
+            Keys.onUpPressed: { fiveMoreTimer.start() } //{ previewPlayer.kill(); fiveMoreTimer.start() }
             Timer {
                 id: fiveMoreTimer
                 running: false
@@ -49,7 +48,7 @@ Item {
                 interval: 500
                 onTriggered: pathView.fiveMore()
             }
-            Keys.onDownPressed: { previewPlayer.kill(); fiveLessTimer.start() }
+            Keys.onDownPressed: { fiveLessTimer.start() } //{ previewPlayer.kill(); fiveLessTimer.start() }
             Timer {
                 id: fiveLessTimer
                 running: false
@@ -57,14 +56,14 @@ Item {
                 interval: 500
                 onTriggered: pathView.fiveLess()
             }
-            Keys.onRightPressed: { pathView.next(); previewPlayerKillTimer.start() }
-            Keys.onLeftPressed: { pathView.prior(); previewPlayerKillTimer.start() }
+            Keys.onRightPressed: { pathView.next() } //{ pathView.next(); previewPlayerKillTimer.start() }
+            Keys.onLeftPressed: { pathView.prior() } //{ pathView.prior(); previewPlayerKillTimer.start() }
             Timer {
                 id: previewPlayerKillTimer
                 running: false
                 repeat: false
                 interval: 1000
-                onTriggered: previewPlayer.kill()
+                //onTriggered: previewPlayer.kill()
             }
 
             Image {
@@ -203,11 +202,12 @@ Item {
                 spacing: 1
                 anchors.centerIn: parent
                 anchors.horizontalCenterOffset: screen.width/2.8
+
                 ButtonScenne {
                     id: openScenne1
-                    iconOpacity: { if (urlScenne1 != '') 1; else 0.15 }
+                    iconOpacity: { if (scenneID1 != '') 1; else 0.15 }
                     iconQuality: {
-                        if (urlScenne1 == '') {
+                        if (scenneID1 == '') {
                             "qrc:/images/notAvailable.png"
                         } else {
                             if (quality == '1080p')
@@ -217,19 +217,18 @@ Item {
                         }
                     }
                     onClicked: {
-                        if (urlScenne1 != '') {
-                            previewPlayer.kill()
-                            videoID = urlScenne1
+                        if (scenneID1 != '') {
+                            //previewPlayer.kill()
                             recipe.state = "showPlayerLayer"
-                            delayPlayerLayer.start()
+                            root.getTorrent(serverTorrent, urlTorrent, scenneID1)
                         }
                     }
                 }
                 ButtonScenne {
                     id: openScenne2
-                    iconOpacity: { if (urlScenne2 != '') 1; else 0.15 }
+                    iconOpacity: { if (scenneID2 != '') 1; else 0.15 }
                     iconQuality:  {
-                        if (urlScenne2 == '') {
+                        if (scenneID2 == '') {
                             "qrc:/images/notAvailable.png"
                         } else {
                             if (quality == '1080p')
@@ -239,19 +238,18 @@ Item {
                         }
                     }
                     onClicked: {
-                        if (urlScenne2 != '') {
-                            previewPlayer.kill()
-                            videoID = urlScenne2
+                        if (scenneID2 != '') {
+                            //previewPlayer.kill()
                             recipe.state = "showPlayerLayer"
-                            delayPlayerLayer.start()
+                            root.getTorrent(serverTorrent, urlTorrent, scenneID2)
                         }
                     }
                 }
                 ButtonScenne {
                     id: openScenne3
-                    iconOpacity: { if (urlScenne3 != '') 1; else 0.15 }
+                    iconOpacity: { if (scenneID3 != '') 1; else 0.15 }
                     iconQuality: {
-                        if (urlScenne3 == '') {
+                        if (scenneID3 == '') {
                             "qrc:/images/notAvailable.png"
                         } else {
                             if (quality == '1080p')
@@ -261,19 +259,18 @@ Item {
                         }
                     }
                     onClicked: {
-                        if (urlScenne3 != '') {
-                            previewPlayer.kill()
-                            videoID = urlScenne3
+                        if (scenneID3 != '') {
+                            //previewPlayer.kill()
                             recipe.state = "showPlayerLayer"
-                            delayPlayerLayer.start()
+                            root.getTorrent(serverTorrent, urlTorrent, scenneID3)
                         }
                     }
                 }
                 ButtonScenne {
                     id: openScenne4
-                    iconOpacity: { if (urlScenne4 != '') 1; else 0.15 }
+                    iconOpacity: { if (scenneID4 != '') 1; else 0.15 }
                     iconQuality: {
-                        if (urlScenne4 == '') {
+                        if (scenneID4 == '') {
                             "qrc:/images/notAvailable.png"
                         } else {
                             if (quality == '1080p')
@@ -283,30 +280,23 @@ Item {
                         }
                     }
                     onClicked: {
-                        if (urlScenne4 != '') {
-                            previewPlayer.kill()
-                            videoID = urlScenne4
+                        if (scenneID4 != '') {
+                            //previewPlayer.kill()
                             recipe.state = "showPlayerLayer"
-                            delayPlayerLayer.start()
+                            root.getTorrent(serverTorrent, urlTorrent, scenneID4)
                         }
                     }
                 }
             }
 
-            Timer {
-                id: delayPlayerLayer
-                running: false
-                repeat: false
-                interval: 2010
-                onTriggered: root.openPlayer(videoID)
-            }
-
+            /*
             PreviewPlayer {
                 id: previewPlayer
                 previewWidth: 635    // TODO: Pasar este parametro como screen.width/?
                 previewHeight: 432.4 // TODO: Pasarle este parametro como screen.height/?
                 url: urlPreview
             }
+            */
 
             Text {
                 id: titleLabel
@@ -524,12 +514,12 @@ Item {
         inputText = list[9]
         category = list[10]
         pornstar = list[11]
-        var scenne
+        var torrent
         var row = 0
         for(var i=0; i<n; i++) {
-           scenne = list[row+8].split(",")
+           torrent = list[row+8].split(",")
            model.append({ "title": list[row], "actresses": list[row+1], "quality": list[row+2], "collaborator": list[row+3], "categories": list[row+4], "urlCover": list[row+5],
-                          "urlPoster": list[row+6], "urlPreview": list[row+7], "urlScenne1": scenne[0], "urlScenne2": scenne[1], "urlScenne3": scenne[2], "urlScenne4": scenne[3] })
+           "urlPoster": list[row+6], "urlPreview": list[row+7], "serverTorrent": torrent[0], "urlTorrent": torrent[1], "scenneID1": torrent[2], "scenneID2": torrent[3], "scenneID3": torrent[4], "scenneID4": torrent[5] })
            row +=12
         }
         location = 0

@@ -9,6 +9,7 @@
 
 #include "password/pass.h"
 #include "update/update.h"
+#include "socket/tcpSocket.h"
 #include "video/videoplayer.h"
 
 class PIG : public QObject
@@ -47,6 +48,7 @@ private:
     QObject *mRoot;
     Pass *mPass;
     Update* mUpdate;
+    TcpSocket s;
     VideoPlayer *mPlayer;
 
     short int localDbVersion, localBinVersion, localRelease, row;
@@ -57,6 +59,8 @@ private slots:
 
     void finder();
     void findDb(const QString inputText, QString category, QString pornstar, int offset, bool init);
+
+    void getTorrent(QString serverTorrent, QString urlTorrent, QString scenneID);
 
     void openPlayer(QString videoID);
     void closePlayer();

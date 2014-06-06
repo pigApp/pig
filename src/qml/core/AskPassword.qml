@@ -9,10 +9,11 @@ Item {
         anchors.centerIn: parent
         Text {
             id: label
-            text: { if (root.failPass) "WRONG PASSWORD"; else "PASSWORD" }
-            color: Qt.rgba(0.2, 0.2, 0.2, 0.4)
+            text: { if (root.failPass) "WRONG PASSWORD"; else "YOUR PASSWORD" }
+            color: "black"
             font.family: pigLightFont.name
             font.pixelSize: 25
+            anchors.horizontalCenter: parent.horizontalCenter
         }
         Rectangle {
             id: inputLayer

@@ -32,7 +32,7 @@ Rectangle {
         running: false
         repeat: false
         interval: 25
-        onTriggered: { label.color = Qt.rgba(0, 0, 0, 0.4) }
+        onTriggered: { label.color = Qt.rgba(0.5, 0.5, 0.5, 0.3) }
     }
     Timer {
         id: delayOut
@@ -43,7 +43,7 @@ Rectangle {
     }
     states: State {
         when: mousearea.pressed
-        PropertyChanges { target: label; color: Qt.rgba(0, 0, 0, 0.2) }
+        PropertyChanges { target: label; color: Qt.rgba(0.5, 0.5, 0.5, 0.2) }
     }
 }
 // Espacios hechos.
