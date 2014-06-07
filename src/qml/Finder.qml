@@ -167,7 +167,7 @@ Item {
         Transition {
             to: "showFinder"
             SequentialAnimation {
-                NumberAnimation { target: girl; easing.amplitude: 1.65; properties: "opacity"; to: 1.0; duration: 800; easing.type: Easing.OutInElastic }
+                NumberAnimation { target: pigLogo; easing.amplitude: 1.65; properties: "opacity"; to: 1.0; duration: 800; easing.type: Easing.OutInElastic }
                 ParallelAnimation {
                     NumberAnimation { target: blur; properties: "opacity"; to: 1; duration: 1700; easing.type: Easing.InOutQuart }
                     NumberAnimation { target: blur; properties: "radius"; to: 40; duration: 1700; easing.type: Easing.InOutQuart }
@@ -181,10 +181,10 @@ Item {
                 NumberAnimation { target: buttonsFindColumn; properties: "opacity"; to: 0; duration: 300; easing.type: Easing.InOutQuart }
                 ParallelAnimation {
                     NumberAnimation { target: blur; easing.amplitude: 1.65; properties: "opacity"; to: 0; duration: 800; easing.type: Easing.OutInElastic }
-                    NumberAnimation { target: girl; easing.amplitude: 1.65; properties: "opacity"; to: 0; duration: 800; easing.type: Easing.OutInElastic }
+                    NumberAnimation { target: pigLogo; easing.amplitude: 1.65; properties: "opacity"; to: 0; duration: 800; easing.type: Easing.OutInElastic }
                 }
                 PropertyAction { target: loaderWaitMsg; property: "active"; value: true }
-                PropertyAction { target: loaderOutput; property: "source"; value: "qrc:/src/qml/core/Output.qml" } 
+                PropertyAction { target: loaderOutput; property: "source"; value: "qrc:/src/qml/Output.qml" }
                 PropertyAction { target: loaderOutput; property: "active"; value: true } 
             }
         },
@@ -217,10 +217,10 @@ Item {
                 NumberAnimation { target: buttonsFindColumn; properties: "opacity"; to: 0; duration: 50; easing.type: Easing.InOutQuart }
                 ParallelAnimation {
                     NumberAnimation { target: blur; easing.amplitude: 1.65; properties: "opacity"; to: 0; duration: 800; easing.type: Easing.OutInElastic }
-                    NumberAnimation { target: girl; easing.amplitude: 1.65; properties: "opacity"; to: 0; duration: 800; easing.type: Easing.OutInElastic }
+                    NumberAnimation { target: pigLogo; easing.amplitude: 1.65; properties: "opacity"; to: 0; duration: 800; easing.type: Easing.OutInElastic }
                 }
                 PropertyAction { target: loaderWaitMsg; property: "active"; value: true }
-                PropertyAction { target: loaderOutput; property: "source"; value: "qrc:/src/qml/core/Output.qml" } 
+                PropertyAction { target: loaderOutput; property: "source"; value: "qrc:/src/qml/Output.qml" }
                 PropertyAction { target: loaderOutput; property: "active"; value: true }
             }
         }

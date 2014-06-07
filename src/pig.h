@@ -7,10 +7,11 @@
 #include <QShortcut>
 #include <QtSql>
 
-#include "password/pass.h"
-#include "update/update.h"
-#include "socket/tcpSocket.h"
-#include "video/videoplayer.h"
+#include "password.h"
+#include "update.h"
+#include "tcpSocket.h"
+#include "torrent.h"
+#include "videoplayer.h"
 
 class PIG : public QObject
 {
@@ -39,29 +40,30 @@ signals:
 private:
     QSqlDatabase db;
     QString dbPath;
-    QString rootPath;
+    QString tmpPath;
     QFile *file;
     QShortcut *Esc;
     QShortcut *Quit;
     QStringList _list;
 
     QObject *mRoot;
-    Pass *mPass;
+    Password *mPass;
     Update* mUpdate;
-    TcpSocket s;
+    TcpSocket mSocket;
+    Torrent mTorrent;
     VideoPlayer *mPlayer;
 
     short int localDbVersion, localBinVersion, localRelease, row;
 
 private slots:
-    void passManager(QString pass, bool init, bool write);
+    void passwordManager(QString pass, bool init, bool write);
     void update();
 
     void finder();
     void findDb(const QString inputText, QString category, QString pornstar, int offset, bool init);
 
     void getTorrent(QString serverTorrent, QString urlTorrent, QString scenneID);
-
+    void torrentManager(QString file);
     void openPlayer(QString videoID);
     void closePlayer();
 

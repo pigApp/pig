@@ -2,7 +2,9 @@
 #include <windows.h>
 #endif
 
-#include "socket/tcpSocket.h"
+#include <QDir>
+
+#include "tcpSocket.h"
 #include "pig.h"
 
 PIG::PIG(QObject *parent)
@@ -23,6 +25,20 @@ PIG::PIG(QObject *parent)
     Quit = new QShortcut(window);
     Quit->setKey(Qt::Key_Escape && Qt::ShiftModifier);
     connect(Quit, SIGNAL(activated()), this, SLOT(quit()));
+
+    #ifdef _WIN32
+        dbPath  = "C:/pig/.pig/db.sqlite";
+        tmpPath = "C:/tmp/pig/";
+    #else
+        dbPath  = QDir::homePath()+"/.pig/db.sqlite";
+        tmpPath = "/tmp/pig/";
+    #endif
+    db = QSqlDatabase::addDatabase("QSQLITE");
+    db.setDatabaseName(dbPath);
+
+    QDir tmpDir(tmpPath);
+    if (!tmpDir.exists())
+        tmpDir.mkdir(tmpPath);
 }
 
 PIG::~PIG()
@@ -30,10 +46,10 @@ PIG::~PIG()
 }
 
 // Password
-void PIG::passManager(QString plain, bool init, bool write)
+void PIG::passwordManager(QString plain, bool init, bool write)
 {
     if (init) { // Comprueba si se usa password.
-        if (mPass->requirePassCheck()) {
+        if (mPass->requirePassword()) {
             mRoot->setProperty("requirePass", true); // Si se usa password, activa el input para escribirlo y desactiva setear password.
             init = false;
         } else {
@@ -44,8 +60,8 @@ void PIG::passManager(QString plain, bool init, bool write)
                 QTimer::singleShot(1000, this, SLOT(update()));
             init = false;
         }
-    } else if (!init && !write) { // Llama a checkPass y le pasa el password ingresado para comprobarlo.
-        if (mPass->checkPass(plain)) { // Si el password coincide, inicia.
+    } else if (!init && !write) { // Llama a rightPassword y le pasa el password ingresado para comprobarlo.
+        if (mPass->rightPassword(plain)) { // Si el password coincide, inicia.
             QStringList args = qApp->arguments();
             if (args.last() == "WITHOUT_UPDATE") {
                 finder();
@@ -57,7 +73,7 @@ void PIG::passManager(QString plain, bool init, bool write)
             mRoot->setProperty("failPass", true); // Si el password no coincide envia un bool true para que se muestre el mensaje, la contraseña no coincide.
         }
     } else if (write) { // Para setear el password con la aplicacion ya iniciada.
-        if (mPass->writePass(plain)) {
+        if (mPass->writePassword(plain)) {
             mRoot->setProperty("okPass", true); // Se escribio.
         } else {
             mRoot->setProperty("failPass", true); // No se escribio.
@@ -69,6 +85,8 @@ void PIG::passManager(QString plain, bool init, bool write)
 void PIG::update()
 {
     mUpdate = new Update();
+    mUpdate->dbPath = dbPath;// No va.
+    mUpdate->db = db; // No va.
     mUpdate->init(mRoot);
     emit showUpdateSIGNAL();
 
@@ -80,15 +98,6 @@ void PIG::update()
 void PIG::finder()
 {
     delete mUpdate;
-
-    #ifdef _WIN32
-        rootPath = "C:/pig/";
-        dbPath = rootPath+".pig/db.sqlite";
-    #else
-        dbPath = QDir::homePath()+"/.pig/db.sqlite";
-    #endif
-        db = QSqlDatabase::addDatabase("QSQLITE");
-        db.setDatabaseName(dbPath);
 
     QFileInfo file(dbPath);
     if (!file.isFile()) {
@@ -185,12 +194,24 @@ void PIG::findDb(const QString inputText, QString category, QString pornstar, in
     }
 }
 
-void PIG::getTorrent(QString serverTorrent, QString urlTorrent, QString scenneID)
+void PIG::getTorrent(QString hostTorrent, QString urlTorrent, QString scenneID)
 {
+    QString fileTorrent = urlTorrent.replace("/torrent/", "", Qt::CaseSensitive);
     //TcpSocket s; // TODO: Instanciar el socket desde aca no de .h.
-    s.serverTorrent = serverTorrent;
-    s.urlTorrent = urlTorrent;
-    s.doConnect();
+    mSocket.host = hostTorrent;
+    mSocket.url = urlTorrent;
+    mSocket.path = tmpPath;
+    mSocket.fileName = fileTorrent;
+    mSocket.doConnect();
+    //mSocket.close();
+    connect(&mSocket, SIGNAL(fileWrited(QString)), this, SLOT(torrentManager(QString)));
+}
+
+void PIG::torrentManager(QString fileTorrent)
+{
+    qDebug() << "FILE_TORRENT: " << fileTorrent;
+    //Torrent t;
+    mTorrent.download();//(tmpPath, fileTorrent);
 }
 
 // Player
@@ -231,10 +252,10 @@ void PIG::setRootObject(QObject *root)
 
     if(mRoot) connect(mRoot, SIGNAL(findDb(QString, QString, QString, int, bool)), this, SLOT(findDb(QString, QString, QString, int, bool)));
     if(mRoot) connect(mRoot, SIGNAL(getTorrent(QString, QString, QString)), this, SLOT(getTorrent(QString, QString, QString)));
-    if(mRoot) connect(mRoot, SIGNAL(passManager(QString, bool, bool)), this, SLOT(passManager(QString, bool, bool)));
+    if(mRoot) connect(mRoot, SIGNAL(passwordManager(QString, bool, bool)), this, SLOT(passwordManager(QString, bool, bool)));
     if(mRoot) connect(mRoot, SIGNAL(quit()), this, SLOT(quit()));
 
-    passManager("", true, false);
+    passwordManager("", true, false);
 }
 
 void PIG::quit()

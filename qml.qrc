@@ -1,20 +1,5 @@
 <RCC>
     <qresource prefix="/">
-        <file>src/qml/main.qml</file>
-        <file>src/qml/core/AskPassword.qml</file>
-        <file>src/qml/core/Update.qml</file>
-        <file>src/qml/core/Finder.qml</file>
-        <file>src/qml/core/Output.qml</file>
-        <file>src/qml/core/SetPassword.qml</file>
-        <file>src/qml/core/Filters.qml</file>
-        <file>src/qml/core/PreviewPlayer.qml</file>
-        <file>src/qml/core/Button.qml</file>
-        <file>src/qml/core/ButtonFilter.qml</file>
-        <file>src/qml/core/ButtonScenne.qml</file>
-        <file>src/qml/core/WaitMsg.qml</file>
-        <file>src/qml/core/Help.qml</file>
-        <file>src/qml/core/ErrorDbMsg.qml</file>
-        <file>images/girl.png</file>
         <file>images/frame.png</file>
         <file>images/stripes.png</file>
         <file>images/keymap.png</file>
@@ -36,5 +21,20 @@
         <file>images/font/pigLight.ttf</file>
         <file>images/Asa Akira.png</file>
         <file>images/Holly Halston.png</file>
+        <file>src/qml/main.qml</file>
+        <file>src/qml/AskPassword.qml</file>
+        <file>src/qml/Update.qml</file>
+        <file>src/qml/Finder.qml</file>
+        <file>src/qml/Output.qml</file>
+        <file>src/qml/SetPassword.qml</file>
+        <file>src/qml/Filters.qml</file>
+        <file>src/qml/WaitMsg.qml</file>
+        <file>src/qml/PreviewPlayer.qml</file>
+        <file>src/qml/Button.qml</file>
+        <file>src/qml/ButtonFilter.qml</file>
+        <file>src/qml/ButtonScenne.qml</file>
+        <file>src/qml/Help.qml</file>
+        <file>src/qml/ErrorDbMsg.qml</file>
+        <file>images/pig.png</file>
     </qresource>
 </RCC>

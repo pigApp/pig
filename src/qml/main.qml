@@ -29,12 +29,12 @@ Item {
     property int n
     property real strap:1
 
-    signal passManager(string plain, bool init, bool write)
+    signal passwordManager(string plain, bool init, bool write)
     signal updateAccept()
     signal updateCancel()
     signal updateRestart()
     signal findDb(string inputText, string category, string pornstar, int offset, bool init)
-    signal getTorrent(string serverTorrent, string urlTorrent, string scenneID)
+    signal getTorrent(string hostTorrent, string urlTorrent, string scenneID)
     signal fixDb()
     signal quit()
 
@@ -47,8 +47,8 @@ Item {
         anchors.fill: parent
 
         Image {
-            id: girl
-            source: "qrc:/images/girl.png"
+            id: pigLogo
+            source: "qrc:/images/pig.png"
             cache: false
             fillMode: Image.PreserveAspectCrop
             anchors.left: parent.left
@@ -59,17 +59,17 @@ Item {
         }
         GaussianBlur {
             id: blur
-            source: girl
+            source: pigLogo
             radius: 0
             samples: 32
             cached: true
             opacity: 0
-            anchors.fill: girl
+            anchors.fill: pigLogo
         }
         
         Loader {
             id: loaderAskPassword
-            source: "qrc:/src/qml/core/AskPassword.qml"
+            source: "qrc:/src/qml/AskPassword.qml"
             active: false
             asynchronous: true
             visible: status == Loader.Ready
@@ -77,14 +77,14 @@ Item {
         }
         Loader {
             id: loaderUpdate
-            source: "qrc:/src/qml/core/Update.qml"
+            source: "qrc:/src/qml/Update.qml"
             active: false
             visible: status == Loader.Ready
             anchors.fill: parent
         }
         Loader {
             id: loaderFinder
-            source: "qrc:/src/qml/core/Finder.qml"
+            source: "qrc:/src/qml/Finder.qml"
             active: false
             asynchronous: true
             visible: status == Loader.Ready
@@ -97,7 +97,7 @@ Item {
         }
         Loader {
             id: loaderOutput
-            source: "qrc:/src/qml/core/Output.qml"
+            source: "qrc:/src/qml/Output.qml"
             active: false
             asynchronous: true
             visible: status == Loader.Ready
@@ -108,7 +108,7 @@ Item {
 
         Loader {
             id: loaderWaitMsg
-            source: "qrc:/src/qml/core/WaitMsg.qml"
+            source: "qrc:/src/qml/WaitMsg.qml"
             active: false
             asynchronous: true
             visible: status == Loader.Ready
@@ -117,7 +117,7 @@ Item {
 
         Loader {
             id: loaderErrorDbMsg
-            source: "qrc:/src/qml/core/ErrorDbMsg.qml"
+            source: "qrc:/src/qml/ErrorDbMsg.qml"
             active: false
             asynchronous: true
             visible: status == Loader.Ready

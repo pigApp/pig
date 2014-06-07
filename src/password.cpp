@@ -3,18 +3,18 @@
 #include <QTextStream>
 #include <QDebug>
 
-#include "pass.h"
+#include "password.h"
 
-Pass::Pass(QObject *parent) :
+Password::Password(QObject *parent) :
     QObject(parent)
 {
 }
 
-Pass::~Pass()
+Password::~Password()
 {
 }
 
-bool Pass::requirePassCheck()
+bool Password::requirePassword()
 {
     #ifdef _WIN32
         QFile file("C:/PIG/.pig/pd.txt");
@@ -26,7 +26,7 @@ bool Pass::requirePassCheck()
             QByteArray line = file.readLine();
             QString pd = QString(line).toUtf8();
             if(pd != "") {
-                file.close(); // TODO: Guardar el valor de pd (hash guardado en el disco) para poder usarlo en checkPass.
+                file.close(); // TODO: Guardar el valor de pd (hash guardado en el disco) para poder usarlo en rightPassword.
                 return true;
                 break;
             }
@@ -35,7 +35,7 @@ bool Pass::requirePassCheck()
     return false;
 }
 
-bool Pass::writePass(QString plain)
+bool Password::writePassword(QString plain)
 {
     const QString hash = hashCalculation(plain);
 
@@ -53,17 +53,17 @@ bool Pass::writePass(QString plain)
     return false;
 }
 
-bool Pass::checkPass(QString plain)
+bool Password::rightPassword(QString plain)
 {
     const QString hash = hashCalculation(plain);
-    QString diskHash = "202cb962ac59075b964b07152d234b70"; // Usar pd leido en requirePassCheck().
+    QString diskHash = "202cb962ac59075b964b07152d234b70"; // Usar pd leido en requirePassword().
     if (hash == diskHash)
         return true;
     else
         return false;
 }
 
-QString Pass::hashCalculation(QString plain)
+QString Password::hashCalculation(QString plain)
 {
     QByteArray plainB = QString(plain).toUtf8();
     QString hash = QString(QCryptographicHash::hash(plainB,QCryptographicHash::Md5).toHex());

@@ -16,6 +16,10 @@ public:
     explicit Update(QObject *parent = 0);
     ~Update();
 
+    QSqlDatabase db;
+    QString rootPath;
+    QString dbPath;
+
 public slots:
     void init(QObject *mRoot);
 
@@ -25,9 +29,6 @@ signals:
 
 private:
     QObject *_mRoot;
-    QSqlDatabase db;
-    QString rootPath;
-    QString dbPath;
     QNetworkAccessManager *networkAccess;
     QNetworkConfigurationManager *networkAccessConfig;
     QNetworkReply *reply;

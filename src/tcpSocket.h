@@ -12,11 +12,16 @@ class TcpSocket : public QObject
 public:
     explicit TcpSocket(QObject *parent = 0);
 
-    QString serverTorrent;
-    QString urlTorrent;
+    QString host;
+    QString url;
+    QString path;
+    QString fileName;
 
 public slots:
     void doConnect();
+
+signals:
+    void fileWrited(QString fileName);
 
 private:
     QTcpSocket *socket;

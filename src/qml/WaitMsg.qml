@@ -4,7 +4,7 @@ Item {
   id: waitMsg
     Row {
         id: row
-        spacing: 15
+        spacing: 11
         anchors.centerIn: parent
         anchors.verticalCenterOffset: 20
         Text {
@@ -16,14 +16,14 @@ Item {
         }
         Image {
             id: spinner
-            width: 50
-            height: 34
+            width: 25
+            height: 25
             source: "qrc:/images/spinner.png"
             visible: showSpinner
             property bool on: showSpinner
-            NumberAnimation { running: spinner.on; target: spinner; properties: "opacity"; from: 0.0; to: 1.0; loops: Animation.Infinite; duration: 1500 }
+            NumberAnimation { running: spinner.on; target: spinner; properties: "opacity"; from: 0.0; to: 1.0; loops: Animation.Infinite; duration: 2000 }
             anchors.verticalCenter: parent.verticalCenter
-            anchors.verticalCenterOffset: -1
+            anchors.verticalCenterOffset: 1
         }
     }
 }

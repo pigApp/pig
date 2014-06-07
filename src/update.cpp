@@ -5,7 +5,8 @@
 Update::Update(QObject *parent) :
     QObject(parent)
 {
-    #ifdef _WIN32
+   /*
+   #ifdef _WIN32
         rootPath = "C:/pig/";
         dbPath = rootPath+".pig/db.sqlite";
     #else
@@ -13,10 +14,8 @@ Update::Update(QObject *parent) :
     #endif
     db = QSqlDatabase::addDatabase("QSQLITE");
     db.setDatabaseName(dbPath);
-
-    networkAccess = new QNetworkAccessManager();
-    networkAccessConfig = new QNetworkConfigurationManager();
-    networkAccess->setConfiguration(networkAccessConfig->defaultConfiguration());
+    */
+     rootPath = "C:/pig/";
 }
 
 Update::~Update()
@@ -29,11 +28,15 @@ void Update::init(QObject *mRoot)
 {
     _mRoot = mRoot;
 
+    networkAccess = new QNetworkAccessManager();
+    networkAccessConfig = new QNetworkConfigurationManager();
+    networkAccess->setConfiguration(networkAccessConfig->defaultConfiguration());
+
     QFileInfo file(dbPath);
     if (!file.isFile()) {
         emit updateErrorDbSIGNAL();
     } else {
-        _mRoot->setProperty("status", "searching update");
+        _mRoot->setProperty("status", "SEEK UPDATE");
         _mRoot->setProperty("showSpinner", true);
         if (db.open()) {
             QSqlQuery qry;

@@ -445,7 +445,7 @@ Item {
         function back() {
             currentFilm = 1
             focusPath = false
-            loaderFinder.source = "qrc:/src/qml/core/Finder.qml"
+            loaderFinder.source = "qrc:/src/qml/Finder.qml"
             loaderFinder.active = true
         }
 
