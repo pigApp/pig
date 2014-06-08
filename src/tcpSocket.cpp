@@ -1,11 +1,9 @@
 #include <QFile>
 #include <QDataStream>
-#include <QTimer>
 
 #include "tcpSocket.h"
 
-TcpSocket::TcpSocket(QObject *parent) :
-    QObject(parent)
+TcpSocket::TcpSocket(QObject *parent) : QObject(parent)
 {
     socket = new QTcpSocket(this);
     connect(socket, SIGNAL(connected()),this, SLOT(connected()));
@@ -17,7 +15,6 @@ TcpSocket::TcpSocket(QObject *parent) :
 void TcpSocket::doConnect()
 {
     socket->connectToHost(host, 80);
-
     if(!socket->waitForConnected(5000))
         qDebug() << "Error: " << socket->errorString();
 }
@@ -45,17 +42,29 @@ void TcpSocket::bytesWritten(qint64 bytes)
 void TcpSocket::readyRead()
 {
     while (!socket->atEnd())
-        data.append(socket->read(100)); // TODO: Remover el header.
+        data.append(socket->read(100));
 }
 
 void TcpSocket::write()
 {    
-    QFile file(path+fileName);
-    file.open(QIODevice::WriteOnly);
-    QDataStream out(&file);
-    data.remove(0, 330); // TODO: Limpiar el header de otra manera.
-    out << (QByteArray) data;
-    file.close();
+    #ifdef _WIN32
+        static QString path = "C:/tmp/pig/";
+    #else
+        static QString path = "/tmp/pig/";
+    #endif
 
-    emit fileWrited(fileName);
+    if (order == "getVersion") {
+        QString version(data);
+        emit versionReady(version);
+    } else if (order == "getPreview") {
+        //...
+    } else if (order == "getTorrent" || order == "getUpdate") {
+        QFile file(path+fileName);
+        file.open(QIODevice::WriteOnly);
+        QDataStream out(&file);
+        data.remove(0, 330); // TODO: Limpiar el header de otra manera.
+        out << (QByteArray) data;
+        file.close();
+        emit fileReady(path, fileName);
+    }
 }

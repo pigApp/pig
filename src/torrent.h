@@ -13,6 +13,7 @@ using namespace libtorrent;
 
 class Torrent
 {
+
 public:
     Torrent();
     ~Torrent();

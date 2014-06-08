@@ -27,12 +27,13 @@ PIG::PIG(QObject *parent)
     connect(Quit, SIGNAL(activated()), this, SLOT(quit()));
 
     #ifdef _WIN32
-        dbPath  = "C:/pig/.pig/db.sqlite";
-        tmpPath = "C:/tmp/pig/";
+        QString dbPath = "C:/pig/.pig/db.sqlite";
+        QString tmpPath = "C:/tmp/pig/";
     #else
-        dbPath  = QDir::homePath()+"/.pig/db.sqlite";
-        tmpPath = "/tmp/pig/";
+        QString dbPath = QDir::homePath()+"/.pig/db.sqlite";
+        QString tmpPath = "/tmp/pig/";
     #endif
+
     db = QSqlDatabase::addDatabase("QSQLITE");
     db.setDatabaseName(dbPath);
 
@@ -46,10 +47,10 @@ PIG::~PIG()
 }
 
 // Password
-void PIG::passwordManager(QString plain, bool init, bool write)
+void PIG::passwordHandle(QString plain, bool init, bool write)
 {
     if (init) { // Comprueba si se usa password.
-        if (mPass->requirePassword()) {
+        if (mPassword->requirePassword()) {
             mRoot->setProperty("requirePass", true); // Si se usa password, activa el input para escribirlo y desactiva setear password.
             init = false;
         } else {
@@ -57,23 +58,23 @@ void PIG::passwordManager(QString plain, bool init, bool write)
             if (args.last() == "WITHOUT_UPDATE")
                 finder();
             else
-                QTimer::singleShot(1000, this, SLOT(update()));
+                QTimer::singleShot(1000, this, SLOT(updateHandle()));
             init = false;
         }
     } else if (!init && !write) { // Llama a rightPassword y le pasa el password ingresado para comprobarlo.
-        if (mPass->rightPassword(plain)) { // Si el password coincide, inicia.
+        if (mPassword->rightPassword(plain)) { // Si el password coincide, inicia.
             QStringList args = qApp->arguments();
             if (args.last() == "WITHOUT_UPDATE") {
                 finder();
             } else {
                 mRoot->setProperty("showAskPass", false);
-                QTimer::singleShot(350, this, SLOT(update()));
+                QTimer::singleShot(350, this, SLOT(updateHandle()));
             }
         } else {
             mRoot->setProperty("failPass", true); // Si el password no coincide envia un bool true para que se muestre el mensaje, la contraseña no coincide.
         }
     } else if (write) { // Para setear el password con la aplicacion ya iniciada.
-        if (mPass->writePassword(plain)) {
+        if (mPassword->writePassword(plain)) {
             mRoot->setProperty("okPass", true); // Se escribio.
         } else {
             mRoot->setProperty("failPass", true); // No se escribio.
@@ -82,16 +83,15 @@ void PIG::passwordManager(QString plain, bool init, bool write)
 }
 
 // Update
-void PIG::update()
+void PIG::updateHandle()
 {
     mUpdate = new Update();
-    mUpdate->dbPath = dbPath;// No va.
-    mUpdate->db = db; // No va.
-    mUpdate->init(mRoot);
+    mUpdate->db = db;
+    mUpdate->init(mRoot);//mUpdate->doCheck(mRoot);
     emit showUpdateSIGNAL();
 
-    connect(mUpdate, SIGNAL(updateCallFinderSIGNAL()), this, SLOT(finder()));
-    connect(mUpdate, SIGNAL(updateErrorDbSIGNAL()), this, SLOT(errorDb()));
+    connect(mUpdate, SIGNAL(updateCallFinder()), this, SLOT(finder()));
+    connect(mUpdate, SIGNAL(updateErrorDb()), this, SLOT(errorDb()));
 }
 
 // Finder
@@ -99,56 +99,53 @@ void PIG::finder()
 {
     delete mUpdate;
 
-    QFileInfo file(dbPath);
-    if (!file.isFile()) {
-        errorDb();
-    } else {
-        if (db.open()) {
-            QSqlQuery qry;
-            qry.prepare("SELECT DbVersion, BinVersion, Release, Category, NCategory, Pornstar, NPornstar FROM PxData, FiltersData");
-            if (!qry.exec()) {
-                db.close();
-                errorDb();
-            } else {
-                qry.next();
-                localDbVersion = qry.value(0).toInt();
-                localBinVersion = qry.value(1).toInt();
-                localRelease = qry.value(2).toInt();
-                QStringList categoryList = qry.value(3).toString().split(",");
-                QStringList nCategoryList = qry.value(4).toString().split(",");
-                QStringList pornstarList = qry.value(5).toString().split(",");
-                QStringList nPornstarList = qry.value(6).toString().split(",");
-                db.close();
-
-                QString strLocalDbVersion = QString::number(localDbVersion);
-                QString strLocalBinVersion = QString::number(localBinVersion);
-                QString strLocalRelease = QString::number(localRelease);
-
-                categoryList.prepend(QString::number(categoryList.count()));
-                pornstarList.prepend(QString::number(pornstarList.count()));
-
-                mRoot->setProperty("dataBaseVersion", strLocalDbVersion);
-                mRoot->setProperty("binaryVersion", strLocalBinVersion);
-                mRoot->setProperty("release", strLocalRelease);
-                mRoot->setProperty("categoryList", categoryList);
-                mRoot->setProperty("nCategoryList", nCategoryList);
-                mRoot->setProperty("pornstarList", pornstarList);
-                mRoot->setProperty("nPornstarList", nPornstarList);
-            }
-        } else {
+    if (db.open()) {
+        QSqlQuery qry;
+        qry.prepare("SELECT DbVersion, BinVersion, Release, Category, NCategory, Pornstar, NPornstar FROM PigData, FiltersData");
+        if (!qry.exec()) {
+            db.close();
             errorDb();
+        } else {
+            qry.next();
+            int currentDBVersion = qry.value(0).toInt();
+            int currentBinaryVersion = qry.value(1).toInt();
+            int currentRelease = qry.value(2).toInt();
+            QStringList categoryList = qry.value(3).toString().split(",");
+            QStringList nCategoryList = qry.value(4).toString().split(",");
+            QStringList pornstarList = qry.value(5).toString().split(",");
+            QStringList nPornstarList = qry.value(6).toString().split(",");
+            db.close();
+
+            QString strCurrentDBVersion = QString::number(currentDBVersion);
+            QString strCurrentBinaryVersion = QString::number(currentBinaryVersion);
+            QString strCurrentRelease = QString::number(currentRelease);
+
+            categoryList.prepend(QString::number(categoryList.count()));
+            pornstarList.prepend(QString::number(pornstarList.count()));
+
+            mRoot->setProperty("dataBaseVersion", strCurrentDBVersion);
+            mRoot->setProperty("binaryVersion", strCurrentBinaryVersion);
+            mRoot->setProperty("release", strCurrentRelease);
+            mRoot->setProperty("categoryList", categoryList);
+            mRoot->setProperty("nCategoryList", nCategoryList);
+            mRoot->setProperty("pornstarList", pornstarList);
+            mRoot->setProperty("nPornstarList", nPornstarList);
         }
+    } else {
+        errorDb();
     }
     emit showFinderSIGNAL();
 }
 
 void PIG::findDb(const QString inputText, QString category, QString pornstar, int offset, bool init)
 {
+    static QStringList _list;
+    int row = 0;
+
     if (!db.open()) {
         errorDb();
     } else {
-        row = 0;
-       _list.clear();
+        _list.clear();
         QString strOffset = QString::number(offset);
         QSqlQuery qry;
             qry.prepare( "SELECT Title, Pornstar, Quality, Collaborator, Category, UrlCover, UrlPoster, UrlPreview, Torrent FROM Films WHERE Title LIKE '%"+inputText+"%' AND Category LIKE '%"+category+"%' AND Pornstar LIKE '%"+pornstar+"%' ORDER BY Title ASC LIMIT 1000 OFFSET '"+strOffset+"'" );
@@ -194,24 +191,24 @@ void PIG::findDb(const QString inputText, QString category, QString pornstar, in
     }
 }
 
-void PIG::getTorrent(QString hostTorrent, QString urlTorrent, QString scenneID)
+void PIG::getTorrent(QString host, QString url, QString scenneID)
 {
-    QString fileTorrent = urlTorrent.replace("/torrent/", "", Qt::CaseSensitive);
+    QString fileName = url.replace("/torrent/", "", Qt::CaseSensitive);
     //TcpSocket s; // TODO: Instanciar el socket desde aca no de .h.
-    mSocket.host = hostTorrent;
-    mSocket.url = urlTorrent;
-    mSocket.path = tmpPath;
-    mSocket.fileName = fileTorrent;
+    mSocket.host = host;
+    mSocket.url = url;
+    mSocket.fileName = fileName;
+    mSocket.order = "getTorrent";
     mSocket.doConnect();
     //mSocket.close();
-    connect(&mSocket, SIGNAL(fileWrited(QString)), this, SLOT(torrentManager(QString)));
+    connect(&mSocket, SIGNAL(fileReady(QString, QString)), this, SLOT(torrentHandle(QString, QString)));
 }
 
-void PIG::torrentManager(QString fileTorrent)
+void PIG::torrentHandle(QString path, QString fileName)
 {
-    qDebug() << "FILE_TORRENT: " << fileTorrent;
+    qDebug() << "PATH_TORRENT: " << path << "FILE_TORRENT: " << fileName;
     //Torrent t;
-    mTorrent.download();//(tmpPath, fileTorrent);
+    mTorrent.download();//(path, fileName);
 }
 
 // Player
@@ -252,13 +249,14 @@ void PIG::setRootObject(QObject *root)
 
     if(mRoot) connect(mRoot, SIGNAL(findDb(QString, QString, QString, int, bool)), this, SLOT(findDb(QString, QString, QString, int, bool)));
     if(mRoot) connect(mRoot, SIGNAL(getTorrent(QString, QString, QString)), this, SLOT(getTorrent(QString, QString, QString)));
-    if(mRoot) connect(mRoot, SIGNAL(passwordManager(QString, bool, bool)), this, SLOT(passwordManager(QString, bool, bool)));
+    if(mRoot) connect(mRoot, SIGNAL(passwordHandle(QString, bool, bool)), this, SLOT(passwordHandle(QString, bool, bool)));
     if(mRoot) connect(mRoot, SIGNAL(quit()), this, SLOT(quit()));
 
-    passwordManager("", true, false);
+    passwordHandle("", true, false);
 }
 
 void PIG::quit()
 {
-   exit(0);
+    qApp->exit();
+    exit(0);
 }

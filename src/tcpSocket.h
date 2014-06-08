@@ -14,14 +14,15 @@ public:
 
     QString host;
     QString url;
-    QString path;
     QString fileName;
+    QString order;
 
 public slots:
     void doConnect();
 
 signals:
-    void fileWrited(QString fileName);
+    void versionReady(QString version);
+    void fileReady(QString path, QString fileName);
 
 private:
     QTcpSocket *socket;

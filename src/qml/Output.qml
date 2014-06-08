@@ -220,7 +220,7 @@ Item {
                         if (scenneID1 != '') {
                             //previewPlayer.kill()
                             recipe.state = "showPlayerLayer"
-                            root.getTorrent(serverTorrent, urlTorrent, scenneID1)
+                            root.getTorrent(hostTorrent, urlTorrent, scenneID1)
                         }
                     }
                 }
@@ -241,7 +241,7 @@ Item {
                         if (scenneID2 != '') {
                             //previewPlayer.kill()
                             recipe.state = "showPlayerLayer"
-                            root.getTorrent(serverTorrent, urlTorrent, scenneID2)
+                            root.getTorrent(hostTorrent, urlTorrent, scenneID2)
                         }
                     }
                 }
@@ -262,7 +262,7 @@ Item {
                         if (scenneID3 != '') {
                             //previewPlayer.kill()
                             recipe.state = "showPlayerLayer"
-                            root.getTorrent(serverTorrent, urlTorrent, scenneID3)
+                            root.getTorrent(hostTorrent, urlTorrent, scenneID3)
                         }
                     }
                 }
@@ -283,7 +283,7 @@ Item {
                         if (scenneID4 != '') {
                             //previewPlayer.kill()
                             recipe.state = "showPlayerLayer"
-                            root.getTorrent(serverTorrent, urlTorrent, scenneID4)
+                            root.getTorrent(hostTorrent, urlTorrent, scenneID4)
                         }
                     }
                 }
@@ -519,7 +519,7 @@ Item {
         for(var i=0; i<n; i++) {
            torrent = list[row+8].split(",")
            model.append({ "title": list[row], "actresses": list[row+1], "quality": list[row+2], "collaborator": list[row+3], "categories": list[row+4], "urlCover": list[row+5],
-           "urlPoster": list[row+6], "urlPreview": list[row+7], "serverTorrent": torrent[0], "urlTorrent": torrent[1], "scenneID1": torrent[2], "scenneID2": torrent[3], "scenneID3": torrent[4], "scenneID4": torrent[5] })
+           "urlPoster": list[row+6], "urlPreview": list[row+7], "hostTorrent": torrent[0], "urlTorrent": torrent[1], "scenneID1": torrent[2], "scenneID2": torrent[3], "scenneID3": torrent[4], "scenneID4": torrent[5] })
            row +=12
         }
         location = 0

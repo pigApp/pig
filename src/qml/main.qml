@@ -29,12 +29,12 @@ Item {
     property int n
     property real strap:1
 
-    signal passwordManager(string plain, bool init, bool write)
+    signal passwordHandle(string plain, bool init, bool write)
     signal updateAccept()
     signal updateCancel()
     signal updateRestart()
     signal findDb(string inputText, string category, string pornstar, int offset, bool init)
-    signal getTorrent(string hostTorrent, string urlTorrent, string scenneID)
+    signal getTorrent(string host, string url, string scenneID)
     signal fixDb()
     signal quit()
 

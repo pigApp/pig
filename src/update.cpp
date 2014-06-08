@@ -2,8 +2,7 @@
 
 #include "update.h"
 
-Update::Update(QObject *parent) :
-    QObject(parent)
+Update::Update(QObject *parent) : QObject(parent)
 {
    /*
    #ifdef _WIN32
@@ -32,34 +31,30 @@ void Update::init(QObject *mRoot)
     networkAccessConfig = new QNetworkConfigurationManager();
     networkAccess->setConfiguration(networkAccessConfig->defaultConfiguration());
 
-    QFileInfo file(dbPath);
-    if (!file.isFile()) {
-        emit updateErrorDbSIGNAL();
-    } else {
-        _mRoot->setProperty("status", "SEEK UPDATE");
-        _mRoot->setProperty("showSpinner", true);
-        if (db.open()) {
-            QSqlQuery qry;
-            qry.prepare("SELECT DbVersion, BinVersion FROM PxData");
-            if (!qry.exec()) {
-                db.close();
-                emit updateErrorDbSIGNAL();
-            } else {
-                qry.next();
-                localDbVersion  = qry.value(0).toInt();
-                localBinVersion = qry.value(1).toInt();
-                db.close();
-
-                remoteBinAvailable = false;
-                remoteDbAvailable = false;
-                updateDownload = false;
-                updateAborted = false;
-
-                http();
-            }
+    _mRoot->setProperty("status", "SEEK UPDATE");
+    _mRoot->setProperty("showSpinner", true);
+    if (db.open()) {
+        qDebug() << "DB";
+        QSqlQuery qry;
+        qry.prepare("SELECT DbVersion, BinVersion FROM PigData");
+        if (!qry.exec()) {
+            db.close();
+            emit updateErrorDb();
         } else {
-          emit updateErrorDbSIGNAL();
+            qry.next();
+            localDbVersion  = qry.value(0).toInt();
+            localBinVersion = qry.value(1).toInt();
+            db.close();
+
+            remoteBinAvailable = false;
+            remoteDbAvailable = false;
+            updateDownload = false;
+            updateAborted = false;
+
+            http();
         }
+    } else {
+      emit updateErrorDb();
     }
 }
 
@@ -110,7 +105,7 @@ void Update::http()
 void Update::updateTimeOut()
 {
     updateAborted = true;
-    emit updateCallFinderSIGNAL();
+    emit updateCallFinder();
 }
 
 void Update::versionsReadyRead()
@@ -148,7 +143,7 @@ void Update::versionsFinished()
         reply->close();
         reply = 0;
         _mRoot->setProperty("showSpinner", false);
-        emit updateCallFinderSIGNAL();
+        emit updateCallFinder();
         //QTimer::singleShot(2000, this, SLOT(finder()));
     }
 }
@@ -188,7 +183,7 @@ void Update::downloadManager()
       reply->close();
       reply = 0;
       _mRoot->setProperty("showSpinner", false);
-      emit updateCallFinderSIGNAL();
+      emit updateCallFinder();
     }
 }
 
@@ -202,6 +197,7 @@ void Update::downloadFinished()
     static short int pkgToDownloadControl = 0;
     QString hashDb = remoteVersionsList[2];
     #ifdef _WIN32
+        QString dbPath  = "C:/pig/.pig/db.sqlite";
         QString fileOriginDb = "C:/tmp/db.sqlite";
         QString fileTarget = rootPath+".pig/db.sqlite";
         QString md5SumPathDb = fileOriginDb;
@@ -209,6 +205,7 @@ void Update::downloadFinished()
         QString hashBin = remoteVersionsList[8];
         QString md5SumPathBin = "C:/tmp/PIG.exe";
     #else
+        QString dbPath  = QDir::homePath()+"/.pig/db.sqlite";
         QString fileOriginDb = "/tmp/db.sqlite";
         QString fileTarget = QDir::homePath()+"/.pig/db.sqlite";
         QString md5SumPathDb = fileOriginDb;
@@ -248,18 +245,18 @@ void Update::downloadFinished()
                             #else
                                 _mRoot->setProperty("status", "FAILED TO UPDATE THE DATABASE");
                                 _mRoot->setProperty("statusInformation", "TRY LATER");
-                                emit updateCallFinderSIGNAL();
+                                emit updateCallFinder();
                                 //QTimer::singleShot(3000, this, SLOT(finder()));
                             #endif
                         } else {
                             removeFile(fileOriginDb);
                             _mRoot->setProperty("status", "UPDATED DATABASE");
-                            emit updateCallFinderSIGNAL();
+                            emit updateCallFinder();
                             //QTimer::singleShot(3000, this, SLOT(finder()));
                         }
                 } else {
                    removeFile(fileOriginDb);
-                   emit updateCallFinderSIGNAL();
+                   emit updateCallFinder();
                 }
             } else {
                 if (hashCalculation(md5SumPathBin, hashBin)) {
@@ -274,7 +271,7 @@ void Update::downloadFinished()
                     #endif
                 } else {
                     removeFile(fileOriginBin);
-                    emit updateCallFinderSIGNAL();
+                    emit updateCallFinder();
                 }
            }
         } else {
@@ -293,7 +290,7 @@ void Update::downloadFinished()
                 } else {
                     removeFile(fileOriginDb);
                     _mRoot->setProperty("showSpinner", false);
-                    emit updateCallFinderSIGNAL();
+                    emit updateCallFinder();
                 }
             } else {
                 reply->close();
@@ -311,7 +308,7 @@ void Update::downloadFinished()
                         #else
                             _mRoot->setProperty("status", "UPDATE FAILED");
                             _mRoot->setProperty("statusInformation", "TRY LATER");
-                            emit updateCallFinderSIGNAL();
+                            emit updateCallFinder();
                             //QTimer::singleShot(3000, this, SLOT(finder()));
                         #endif
                     } else {
@@ -329,7 +326,7 @@ void Update::downloadFinished()
                 } else {
                     removeFile(fileOriginDb);
                     removeFile(fileOriginBin);
-                    emit updateCallFinderSIGNAL();
+                    emit updateCallFinder();
                 }
             }
         }
@@ -341,7 +338,7 @@ void Update::downloadFinished()
         reply->close();
         reply = 0;
         _mRoot->setProperty("showSpinner", false);
-        emit updateCallFinderSIGNAL();
+        emit updateCallFinder();
     }
 }
 
@@ -376,7 +373,7 @@ void Update::control()
         if (remoteBinAvailable && !remoteDbAvailable) {
             if (db.open()) {
                 QSqlQuery qry;
-                qry.prepare("UPDATE PxData SET BinVersion='"+remoteVersionsList[6]+"'");
+                qry.prepare("UPDATE PigData SET BinVersion='"+remoteVersionsList[6]+"'");
                 qry.exec();
                 db.close();
             }
@@ -387,7 +384,7 @@ void Update::control()
             if (remoteBinAvailable && !remoteDbAvailable) {
                 if (db.open()) {
                     QSqlQuery qry;
-                    qry.prepare("UPDATE PxData SET BinVersion='"+remoteVersionsList[6]+"'");
+                    qry.prepare("UPDATE PigData SET BinVersion='"+remoteVersionsList[6]+"'");
                     qry.exec();
                     db.close();
                 }
@@ -396,7 +393,7 @@ void Update::control()
         } else {
             _mRoot->setProperty("status", "UPDATE FAILED");
             _mRoot->setProperty("statusInformation", "TRY LATER");
-            emit updateCallFinderSIGNAL();
+            emit updateCallFinder();
             //QTimer::singleShot(3000, this, SLOT(finder()));
         }
     #endif

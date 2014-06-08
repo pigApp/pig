@@ -32,7 +32,7 @@ Item {
                 onCursorPositionChanged: { if (label.text == "WRONG PASSWORD") root.failPass = false }
                 onAccepted: {
                     if (input.text !== '')
-                        root.passwordManager(input.text, false, false)
+                        root.passwordHandle(input.text, false, false)
                 }
             }
         }

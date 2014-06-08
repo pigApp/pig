@@ -56,7 +56,7 @@ Item {
                 echoMode: TextInput.Password
                 onAccepted: {
                     if (input.text !== '') {
-                        root.passwordManager(input.text, false, true)
+                        root.passwordHandle(input.text, false, true)
                         formColumn.visible = false
                         formColumn.enabled = false
                     }

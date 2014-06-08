@@ -8,6 +8,7 @@
 #include <QtSql>
 #include <QCryptographicHash>
 
+
 class Update : public QObject
 {
     Q_OBJECT
@@ -17,18 +18,17 @@ public:
     ~Update();
 
     QSqlDatabase db;
-    QString rootPath;
-    QString dbPath;
 
 public slots:
     void init(QObject *mRoot);
 
 signals:
-    void updateCallFinderSIGNAL();
-    void updateErrorDbSIGNAL();
+    void updateCallFinder();
+    void updateErrorDb();
 
 private:
     QObject *_mRoot;
+    QString rootPath;
     QNetworkAccessManager *networkAccess;
     QNetworkConfigurationManager *networkAccessConfig;
     QNetworkReply *reply;

@@ -38,32 +38,26 @@ signals:
     void showErrorDbMsgSIGNAL();
 
 private:
-    QSqlDatabase db;
-    QString dbPath;
-    QString tmpPath;
-    QFile *file;
-    QShortcut *Esc;
-    QShortcut *Quit;
-    QStringList _list;
-
     QObject *mRoot;
-    Password *mPass;
+    Password *mPassword;
     Update* mUpdate;
     TcpSocket mSocket;
     Torrent mTorrent;
     VideoPlayer *mPlayer;
 
-    short int localDbVersion, localBinVersion, localRelease, row;
+    QSqlDatabase db;
+    QShortcut *Esc;
+    QShortcut *Quit;
 
 private slots:
-    void passwordManager(QString pass, bool init, bool write);
-    void update();
+    void passwordHandle(QString pass, bool init, bool write);
+    void updateHandle();
 
     void finder();
     void findDb(const QString inputText, QString category, QString pornstar, int offset, bool init);
 
-    void getTorrent(QString serverTorrent, QString urlTorrent, QString scenneID);
-    void torrentManager(QString file);
+    void getTorrent(QString host, QString url, QString scenneID);
+    void torrentHandle(QString path, QString fileName);
     void openPlayer(QString videoID);
     void closePlayer();
 
