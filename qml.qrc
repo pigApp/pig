@@ -36,5 +36,6 @@
         <file>src/qml/Help.qml</file>
         <file>src/qml/ErrorDbMsg.qml</file>
         <file>images/pig.png</file>
+        <file>src/qml/News.qml</file>
     </qresource>
 </RCC>

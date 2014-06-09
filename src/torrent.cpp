@@ -1,8 +1,9 @@
+#include <QDebug>
 #include "torrent.h"
 
-Torrent::Torrent()
+Torrent::Torrent(QObject *parent) : QObject(parent)
 {
-    s.listen_on(std::make_pair(6881, 6889), ec);
+    client.listen_on(std::make_pair(6881, 6889), ec);
 
     /*
     if (ec)
@@ -13,14 +14,11 @@ Torrent::Torrent()
     */
 }
 
-Torrent::~Torrent()
-{
-}
-
-void Torrent::download()//(QString tmpPath, QString fileTorrent)
+void Torrent::download(QString path, QString file)
 {   
-    params.save_path = "/tmp/";//tmpPath;
-    params.ti = new torrent_info("AE6D1A22C6E7DD5490A8F21E9A57D78E691E389C.torrent", ec);//(fileTorrent, ec);
+    params.save_path = path.toStdString() ;
+    params.ti = new torrent_info(path.toStdString()+file.toStdString(), ec); //torrent_info(path+file, ec);
+
     /*
     p.ti = new torrent_info(argv[1], ec);
     if (ec)
@@ -30,7 +28,7 @@ void Torrent::download()//(QString tmpPath, QString fileTorrent)
     }
     */
 
-    handle = s.add_torrent(params, ec);
+    handle = client.add_torrent(params, ec);
 
     /*
     if (ec)
@@ -40,7 +38,11 @@ void Torrent::download()//(QString tmpPath, QString fileTorrent)
     }
     */
 
-    handle.set_sequential_download(true); // Descarga sequencial.
+    handle.set_sequential_download(true);
+
+    //std::vector<size_type> file_progress;
+    //handle.file_progress(file_progress);
+
 
     /* 
     handle.file_priority(0, 7); // Prioridad de fila maxima, solo descarga esta fila.
@@ -57,5 +59,15 @@ void Torrent::download()//(QString tmpPath, QString fileTorrent)
           handle.piece_priority(i, 7);
     }
     */
+
+    //torrent_info info(path.toStdString()+file.toStdString());
+
+    //if (torrent_status::downloading)
+        //qDebug() << info.file_at(0).size;
+
 }
 
+void Torrent::progressX()
+{
+
+}

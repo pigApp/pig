@@ -1,6 +1,8 @@
 #ifndef TORRENT_H
 #define TORRENT_H
 
+#include <QObject>
+
 #include <stdlib.h>
 #include <iostream>
 
@@ -11,20 +13,28 @@
 
 using namespace libtorrent;
 
-class Torrent
+class Torrent : public QObject
 {
+    Q_OBJECT
 
 public:
-    Torrent();
-    ~Torrent();
+    explicit Torrent(QObject *parent = 0);
 
-    void download();//(QString tmpPath, QString fileTorrent);
+public slots:
+    void download(QString path, QString file);
+
+signals:
+    void readyToRead();
 
 private:
-    session s;
-    error_code ec;
-    add_torrent_params params;
+    session client;
     torrent_handle handle;
+    add_torrent_params params;
+    error_code ec;
+
+private slots:
+    void progressX();
+
 };
 
 #endif

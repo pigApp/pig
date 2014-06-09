@@ -146,6 +146,14 @@ Item {
         }
     }
 
+    Loader {
+        id: loaderNews
+        source: "qrc:/src/qml/News.qml"
+        active: false
+        visible: status == Loader.Ready
+        anchors.fill: parent
+    }
+
     states: [
         State {
             name: "showFinder"

@@ -16,8 +16,8 @@ Item {
     property string status
     property string statusInformation
     property string binaryVersion
+    property string binaryRelease
     property string dataBaseVersion
-    property string release
 
     property variant categoryList
     property variant nCategoryList

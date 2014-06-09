@@ -34,7 +34,6 @@ void Update::init(QObject *mRoot)
     _mRoot->setProperty("status", "SEEK UPDATE");
     _mRoot->setProperty("showSpinner", true);
     if (db.open()) {
-        qDebug() << "DB";
         QSqlQuery qry;
         qry.prepare("SELECT DbVersion, BinVersion FROM PigData");
         if (!qry.exec()) {

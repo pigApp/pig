@@ -39,8 +39,8 @@ private slots:
     void doCheck(QObject *mRoot);
     void getLastVersion();
     void evaluate(QString lastVersion);
-    void integrityFile(QString path, QString fileName);
-    void replaceFile(QString path, QString fileName);
+    void integrityFile(QString path, QString file);
+    void replaceFile(QString path, QString file);
 
 
 

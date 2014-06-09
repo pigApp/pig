@@ -1,5 +1,6 @@
 #include <QFile>
 #include <QDataStream>
+#include <QTextStream>
 
 #include "tcpSocket.h"
 
@@ -15,18 +16,16 @@ TcpSocket::TcpSocket(QObject *parent) : QObject(parent)
 void TcpSocket::doConnect()
 {
     socket->connectToHost(host, 80);
-    if(!socket->waitForConnected(5000))
+    if(!socket->waitForConnected(10000))
         qDebug() << "Error: " << socket->errorString();
 }
 
 void TcpSocket::connected()
 {
-    /*
-    QString get = "GET "+url+" HTTP/1.1\r\nHost: "+host+"\r\n\r\n"; // TODO: Hacer bien la conversion.
-    const char *_get = get.toStdString().c_str();
-    socket->write(_get);
-    */
-    socket->write("GET /torrent/32D5DF418A00AD359F71713484B595A852B719E2.torrent HTTP/1.1\r\nHost: 178.73.198.210\r\n\r\n\r\n");
+    QString get = "GET "+url+" HTTP/1.1\r\nHost: "+host+"\r\n\r\n\r\n";
+    const QByteArray ba = get.toUtf8();
+    const char *request = ba.constData();
+    socket->write(request);
 }
 
 void TcpSocket::disconnected()
@@ -47,11 +46,11 @@ void TcpSocket::readyRead()
 
 void TcpSocket::write()
 {    
-    #ifdef _WIN32
+#ifdef _WIN32
         static QString path = "C:/tmp/pig/";
-    #else
+#else
         static QString path = "/tmp/pig/";
-    #endif
+#endif
 
     if (order == "getVersion") {
         QString version(data);
@@ -59,12 +58,13 @@ void TcpSocket::write()
     } else if (order == "getPreview") {
         //...
     } else if (order == "getTorrent" || order == "getUpdate") {
-        QFile file(path+fileName);
-        file.open(QIODevice::WriteOnly);
-        QDataStream out(&file);
-        data.remove(0, 330); // TODO: Limpiar el header de otra manera.
-        out << (QByteArray) data;
-        file.close();
-        emit fileReady(path, fileName);
+        QByteArray initData("d8");
+        int index = data.indexOf(initData);
+        QFile newFile(path+file);
+        newFile.open(QIODevice::WriteOnly);
+        data.remove(0, index);
+        newFile.write(data);
+        newFile.close();
+        emit fileReady(path, file);
     }
 }

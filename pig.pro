@@ -20,7 +20,13 @@ HEADERS += src/pig.h\
 	   src/update.h\
 	   src/tcpSocket.h\
 	   src/torrent.h\
-	   src/videoplayer.h
+	   src/videoplayer.h\
+	   /usr/include/libtorrent/entry.hpp\
+	   /usr/include/libtorrent/bencode.hpp\
+	   /usr/include/libtorrent/session.hpp\
+	   /usr/include/libtorrent/torrent_info.hpp\
+	   /usr/include/libtorrent/torrent_handle.hpp
+
 
 OTHER_FILES += src/qml/main.qml\
 	       src/qml/AskPassword.qml\
@@ -34,6 +40,7 @@ OTHER_FILES += src/qml/main.qml\
 	       src/qml/Button.qml\
 	       src/qml/ButtonFilter.qml\
 	       src/qml/ButtonScenne.qml\
+	       src/qml/News.qml\
 	       src/qml/help.qml\
 	       src/qml/ErrorDbMsg.qml
 

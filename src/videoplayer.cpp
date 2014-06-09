@@ -86,8 +86,10 @@ VideoPlayer::~VideoPlayer()
 
 void VideoPlayer::open(const QString &file)
 {
+    qDebug() << "videoPlayer OPEN1";
     player->setMedia(QUrl::fromLocalFile(file));
     player->play();
+    qDebug() << "videoPlayer OPEN2";
 }
 
 void VideoPlayer::playPause()

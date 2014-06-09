@@ -42,7 +42,7 @@ private:
     Password *mPassword;
     Update* mUpdate;
     TcpSocket mSocket;
-    Torrent mTorrent;
+    Torrent *mTorrent;
     VideoPlayer *mPlayer;
 
     QSqlDatabase db;
@@ -57,7 +57,7 @@ private slots:
     void findDb(const QString inputText, QString category, QString pornstar, int offset, bool init);
 
     void getTorrent(QString host, QString url, QString scenneID);
-    void torrentHandle(QString path, QString fileName);
+    void torrentHandle(QString path, QString file);
     void openPlayer(QString videoID);
     void closePlayer();
 

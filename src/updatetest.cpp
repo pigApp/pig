@@ -45,7 +45,7 @@ void UpdateTest::getLastVersion()
     // TODO: Chekear si host 1 o 2 estan up. Entonces QString host = x.
     mSocket.host = host;
     mSocket.url = url;
-    mSocket.fileName = '';
+    mSocket.file = '';
     mSocket.order = "getVersion";
     mSocket.doConnect();
 
@@ -78,16 +78,16 @@ void UpdateTest::getUpdate(QString host, QString dbUrl, QString binaryUrl)
     if (newDBAvailable) {
         mSocket.host = "gamenetworkmanager.herokuapp.com"; //host // TODO: Falta el host verdadero.
         mSocket.url = dbUrl;
-        mSocket.fileName = "db.sqlite";
+        mSocket.file = "db.sqlite";
         mSocket.order = "getUpdate";
         mSocket.doConnect();
     } else if (newBinaryAvailable) {
         mSocket.host = "gamenetworkmanager.herokuapp.com"; //host // TODO: Falta el host verdadero.
         mSocket.url = binaryUrl;
         #ifdef _WIN32
-            mSocket.fileName = "pig.exe";
+            mSocket.file = "pig.exe";
         #else
-            mSocket.fileName = "pig";
+            mSocket.file = "pig";
         #endif
         mSocket.order = "getUpdate";
         mSocket.doConnect();
@@ -96,26 +96,27 @@ void UpdateTest::getUpdate(QString host, QString dbUrl, QString binaryUrl)
     connect(&mSocket, SIGNAL(fileReady(QString, QString)), this, SLOT(integrityFile(QString, QString)));
 }
 
-void UpdateTest::integrityFile(QString path, QString fileName)
+void UpdateTest::integrityFile(QString path, QString file)
 {
-    QFile file(path+fileName);
-    file.open(QIODevice::ReadOnly);
-    QByteArray fileMD5 = QCryptographicHash::hash(file.readAll(),QCryptographicHash::Md5);
+    QFile newFile(path+file);
+    newFile.open(QIODevice::ReadOnly);
+    QByteArray fileMD5 = QCryptographicHash::hash(newFile.readAll(),QCryptographicHash::Md5);
+    newFile.close();
 
-    if (fileName == "db.sqlite") {
+    if (file == "db.sqlite") {
         if (fileMD5 == dbMD5)
-            remplaceFile(path, fileName);
+            remplaceFile(path, file);
         else
             emit updateFail();
     } else {
         if (fileMD5 == binaryMD5)
-            replaceFile(path, fileName);
+            replaceFile(path, file);
         else
             emit updateFail();
     }
 }
 
-void UpdateTest::replaceFile(QString path, QString fileName)
+void UpdateTest::replaceFile(QString path, QString file)
 {
     #ifdef _WIN32
         QString target = "C:/PIG/.pig/db.sqlite";
@@ -123,9 +124,9 @@ void UpdateTest::replaceFile(QString path, QString fileName)
         QString target = QDir::homePath()+"/.pig/db.sqlite";
     #endif
 
-    if (fileName == "db.sqlite") {
+    if (file == "db.sqlite") {
         newDBAvailable = false;
-        QFile::copy(path+fileName, target);
+        QFile::copy(path+file, target);
         if (newBinaryAvailable)
             getUpdate(); // TODO: Pasarle los paramentros.
     } else {

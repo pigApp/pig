@@ -3,6 +3,7 @@
 #endif
 
 #include <QDir>
+#include <QUuid>
 
 #include "tcpSocket.h"
 #include "pig.h"
@@ -109,7 +110,7 @@ void PIG::finder()
             qry.next();
             int currentDBVersion = qry.value(0).toInt();
             int currentBinaryVersion = qry.value(1).toInt();
-            int currentRelease = qry.value(2).toInt();
+            int currentBinaryRelease = qry.value(2).toInt();
             QStringList categoryList = qry.value(3).toString().split(",");
             QStringList nCategoryList = qry.value(4).toString().split(",");
             QStringList pornstarList = qry.value(5).toString().split(",");
@@ -118,14 +119,14 @@ void PIG::finder()
 
             QString strCurrentDBVersion = QString::number(currentDBVersion);
             QString strCurrentBinaryVersion = QString::number(currentBinaryVersion);
-            QString strCurrentRelease = QString::number(currentRelease);
+            QString strCurrentBinaryRelease= QString::number(currentBinaryRelease);
 
             categoryList.prepend(QString::number(categoryList.count()));
             pornstarList.prepend(QString::number(pornstarList.count()));
 
             mRoot->setProperty("dataBaseVersion", strCurrentDBVersion);
             mRoot->setProperty("binaryVersion", strCurrentBinaryVersion);
-            mRoot->setProperty("release", strCurrentRelease);
+            mRoot->setProperty("binaryRelease", strCurrentBinaryRelease);
             mRoot->setProperty("categoryList", categoryList);
             mRoot->setProperty("nCategoryList", nCategoryList);
             mRoot->setProperty("pornstarList", pornstarList);
@@ -191,24 +192,29 @@ void PIG::findDb(const QString inputText, QString category, QString pornstar, in
     }
 }
 
+// Torrent
 void PIG::getTorrent(QString host, QString url, QString scenneID)
 {
-    QString fileName = url.replace("/torrent/", "", Qt::CaseSensitive);
+
+    int base = 1000000;
+    int randomID = qrand() % base;
+    QString file = QString::number(randomID);
+
     //TcpSocket s; // TODO: Instanciar el socket desde aca no de .h.
     mSocket.host = host;
     mSocket.url = url;
-    mSocket.fileName = fileName;
+    mSocket.file = file+".torrent";
     mSocket.order = "getTorrent";
     mSocket.doConnect();
     //mSocket.close();
     connect(&mSocket, SIGNAL(fileReady(QString, QString)), this, SLOT(torrentHandle(QString, QString)));
 }
 
-void PIG::torrentHandle(QString path, QString fileName)
+void PIG::torrentHandle(QString path, QString file)
 {
-    qDebug() << "PATH_TORRENT: " << path << "FILE_TORRENT: " << fileName;
-    //Torrent t;
-    mTorrent.download();//(path, fileName);
+    mTorrent = new Torrent;
+    mTorrent->download(path, file);
+    //connect(&mTorrent, SIGNAL(cuando_halla_bajado_1Mega), this, SLOT(openPlayer(path, file)));
 }
 
 // Player

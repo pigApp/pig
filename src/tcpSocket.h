@@ -14,7 +14,7 @@ public:
 
     QString host;
     QString url;
-    QString fileName;
+    QString file;
     QString order;
 
 public slots:
@@ -22,7 +22,7 @@ public slots:
 
 signals:
     void versionReady(QString version);
-    void fileReady(QString path, QString fileName);
+    void fileReady(QString path, QString file);
 
 private:
     QTcpSocket *socket;
