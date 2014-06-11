@@ -18,22 +18,27 @@ class Torrent : public QObject
     Q_OBJECT
 
 public:
-    explicit Torrent(QObject *parent = 0);
+    explicit Torrent(QObject *parent, QObject *obj);
+
+    Q_INVOKABLE void offsetDownload(int offset);
 
 public slots:
-    void download(QString path, QString file);
-
-signals:
-    void readyToRead();
+    void download(QString path, QString file, int scenne);
 
 private:
     session client;
     torrent_handle handle;
     add_torrent_params params;
+    torrent_info *info;
     error_code ec;
+    QObject *_pig;
+
+    QString pathx;
+    QString filex;
+    int pieces;
 
 private slots:
-    void progressX();
+    void callPlayer();
 
 };
 

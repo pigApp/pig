@@ -1,11 +1,11 @@
 ﻿#ifndef PIG_H
 #define PIG_H
 
+#include <QtSql>
+#include <QShortcut>
+#include <QVBoxLayout>
 #include <QObject>
 #include <QApplication>
-#include <QVBoxLayout>
-#include <QShortcut>
-#include <QtSql>
 
 #include "password.h"
 #include "update.h"
@@ -20,6 +20,8 @@ class PIG : public QObject
 public:
     PIG(QObject *parent = 0);
     ~PIG();
+
+    Q_INVOKABLE void openPlayer(const QString path, const QString file);
 
     QWidget *window;
     QWidget *container;
@@ -48,6 +50,7 @@ private:
     QSqlDatabase db;
     QShortcut *Esc;
     QShortcut *Quit;
+    int scenne;
 
 private slots:
     void passwordHandle(QString pass, bool init, bool write);
@@ -58,9 +61,8 @@ private slots:
 
     void getTorrent(QString host, QString url, QString scenneID);
     void torrentHandle(QString path, QString file);
-    void openPlayer(QString videoID);
-    void closePlayer();
 
+    void closePlayer();
     void errorDb();
     void quit();
 };

@@ -18,7 +18,10 @@ public:
 
 
 public slots:
-    void open(const QString& file);
+    void open(const QString& file, QObject *obj);
+
+signals:
+    void offsetx(int offset);
 
 private slots:
     void playPause();
@@ -32,6 +35,7 @@ private slots:
 private:
     QVideoWidget *videoWidget;
     QMediaPlayer *player;
+    QObject *_torrent;
 
     QPushButton *playPauseButton;
     QPushButton *stopButton;

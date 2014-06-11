@@ -195,10 +195,11 @@ void PIG::findDb(const QString inputText, QString category, QString pornstar, in
 // Torrent
 void PIG::getTorrent(QString host, QString url, QString scenneID)
 {
+    scenne = scenneID.toInt();
 
     int base = 1000000;
-    int randomID = qrand() % base;
-    QString file = QString::number(randomID);
+    int randomTorrentID = qrand() % base;
+    QString file = QString::number(randomTorrentID);
 
     //TcpSocket s; // TODO: Instanciar el socket desde aca no de .h.
     mSocket.host = host;
@@ -212,16 +213,15 @@ void PIG::getTorrent(QString host, QString url, QString scenneID)
 
 void PIG::torrentHandle(QString path, QString file)
 {
-    mTorrent = new Torrent;
-    mTorrent->download(path, file);
-    //connect(&mTorrent, SIGNAL(cuando_halla_bajado_1Mega), this, SLOT(openPlayer(path, file)));
+    mTorrent = new Torrent(this, this);
+    mTorrent->download(path, file, scenne);
 }
 
 // Player
-void PIG::openPlayer(QString videoID)
+void PIG::openPlayer(const QString path, const QString file)
 {
     mPlayer = new VideoPlayer();
-    mPlayer->open(videoID);
+    mPlayer->open(path+file, mTorrent);
 
     container->hide();
     layout->addWidget(mPlayer);
@@ -232,7 +232,7 @@ void PIG::openPlayer(QString videoID)
 void PIG::closePlayer()
 {
     container->show();
-    mPlayer->close(); // FIXME: Si salgo del reproductor antes de que reprodusca se rompe.
+    mPlayer->close();
     delete mPlayer;
 
     Esc->setEnabled(false);

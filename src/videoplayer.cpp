@@ -29,7 +29,7 @@ VideoPlayer::VideoPlayer(QWidget *parent)
     stopButton->hide();
 
     slider = new QSlider(Qt::Horizontal);
-    slider->setGeometry(118, 1063, 1750, 5); // TODO: Ancho
+    slider->setGeometry(118, 1063, 1750, 10); // TODO: Ancho
     slider->setStyleSheet("background: white; border: none");
     slider->setTracking(true);
     slider->setMinimum(0);
@@ -84,12 +84,11 @@ VideoPlayer::~VideoPlayer()
     delete videoWidget;
 }
 
-void VideoPlayer::open(const QString &file)
+void VideoPlayer::open(const QString &file, QObject *obj)
 {
-    qDebug() << "videoPlayer OPEN1";
+    _torrent = obj;
     player->setMedia(QUrl::fromLocalFile(file));
     player->play();
-    qDebug() << "videoPlayer OPEN2";
 }
 
 void VideoPlayer::playPause()
@@ -99,7 +98,12 @@ void VideoPlayer::playPause()
         player->pause();
         playPauseButton->setIcon(QIcon("://images/player/play.png"));
         break;
-    default:
+    case QMediaPlayer::PausedState:
+        player->setPosition(qint64(slider->value()));
+        player->play();
+        playPauseButton->setIcon(QIcon("://images/player/pause.png"));
+        break;
+    case QMediaPlayer::StoppedState:
         player->play();
         playPauseButton->setIcon(QIcon("://images/player/pause.png"));
         break;
@@ -143,7 +147,11 @@ void VideoPlayer::positionChange(qint64 position)
 
 void VideoPlayer::positionSliderChange()
 {
-    player->setPosition(qint64(slider->value())); 
+    // TODO: Saber si la parte a la que se mueve esta descargada, si no lo esta, hacer la siguiente llamada.
+    int offset = slider->value()/655;
+    QMetaObject::invokeMethod(_torrent, "offsetDownload", Qt::QueuedConnection, Q_ARG(int, offset));
+
+    player->setPosition(qint64(slider->value()));
 }
 
 void VideoPlayer::showHideVolumeSlider()
