@@ -14,7 +14,7 @@ Item {
 
     Image {
         id: play
-        source: "qrc:/images/player/playPreview.png"
+        source: "qrc:/images/playPreview.png"
         fillMode: Image.PreserveAspectCrop
         opacity: 0.15
         anchors.centerIn: parent

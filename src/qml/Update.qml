@@ -14,7 +14,7 @@ Item {
         Text {
             id: statusLabel
             text: root.status
-            color: Qt.rgba(0.2, 0.2, 0.2, 0.4)
+            color: Qt.rgba(0.2, 0.2, 0.2, 0.2)
             font.family: pigLightFont.name
             font.pixelSize: 25
         }
@@ -31,6 +31,7 @@ Item {
             width: 25
             height: 25
             source: "qrc:/images/spinner.png"
+            fillMode: Image.PreserveAspectCrop
             visible: showSpinner
             property bool on: showSpinner
             NumberAnimation { running: spinner.on; target: spinner; properties: "opacity"; from: 0.0; to: 1.0; loops: Animation.Infinite; duration: 2000 }

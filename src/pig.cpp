@@ -149,7 +149,7 @@ void PIG::findDb(const QString inputText, QString category, QString pornstar, in
         _list.clear();
         QString strOffset = QString::number(offset);
         QSqlQuery qry;
-            qry.prepare( "SELECT Title, Pornstar, Quality, Collaborator, Category, UrlCover, UrlPoster, UrlPreview, Torrent FROM Films WHERE Title LIKE '%"+inputText+"%' AND Category LIKE '%"+category+"%' AND Pornstar LIKE '%"+pornstar+"%' ORDER BY Title ASC LIMIT 1000 OFFSET '"+strOffset+"'" );
+            qry.prepare( "SELECT Title, Pornstar, Quality, Category, UrlCover, UrlPoster, UrlPreview, Torrent FROM Films WHERE Title LIKE '%"+inputText+"%' AND Category LIKE '%"+category+"%' AND Pornstar LIKE '%"+pornstar+"%' ORDER BY Title ASC LIMIT 1000 OFFSET '"+strOffset+"'" );
         if (!qry.exec()) {
             db.close();
             errorDb();
@@ -165,13 +165,12 @@ void PIG::findDb(const QString inputText, QString category, QString pornstar, in
                 QString _title = qry.value(0).toString();
                 QString _pornstars = qry.value(1).toString();
                 QString _quality = qry.value(2).toString();
-                QString _collaborator = qry.value(3).toString();
-                QString _category = qry.value(4).toString();
-                QString _urlCover = qry.value(5).toString();
-                QString _urlPoster = qry.value(6).toString();
-                QString _urlPreview = qry.value(7).toString();
-                QString _torrent = qry.value(8).toString();
-                _list << _title << _pornstars << _quality << _collaborator << _category << _urlCover << _urlPoster << _urlPreview << _torrent << inputText << category << pornstar;
+                QString _category = qry.value(3).toString();
+                QString _urlCover = qry.value(4).toString();
+                QString _urlPoster = qry.value(5).toString();
+                QString _urlPreview = qry.value(6).toString();
+                QString _torrent = qry.value(7).toString();
+                _list << _title << _pornstars << _quality << _category << _urlCover << _urlPoster << _urlPreview << _torrent << inputText << category << pornstar;
             }
             db.close();
 
@@ -218,15 +217,30 @@ void PIG::torrentHandle(QString path, QString file)
 }
 
 // Player
-void PIG::openPlayer(const QString path, const QString file)
+void PIG::playerHandle(const QString path, const QString file)
 {
-    mPlayer = new VideoPlayer();
+    QRect screen = window->geometry();
+
+    mPlayer = new VideoPlayer(window, screen.width(), screen.height());
     mPlayer->open(path+file, mTorrent);
 
     container->hide();
     layout->addWidget(mPlayer);
 
-    Esc->setEnabled(true);
+    SpaceBar = new QShortcut(window);
+    SpaceBar->setEnabled(true);
+    SpaceBar->setKey(Qt::Key_Space);
+    connect(SpaceBar, SIGNAL(activated()), mPlayer, SLOT(playPause()));
+
+    UpArrow = new QShortcut(window);
+    UpArrow->setEnabled(true);
+    UpArrow->setKey(Qt::Key_Up);
+    connect(UpArrow, SIGNAL(activated()), mPlayer, SLOT(setPositiveVolume()));
+
+    DownArrow = new QShortcut(window);
+    DownArrow->setEnabled(true);
+    DownArrow->setKey(Qt::Key_Down);
+    connect(DownArrow, SIGNAL(activated()), mPlayer, SLOT(setNegativeVolume()));
 }
 
 void PIG::closePlayer()
@@ -235,7 +249,11 @@ void PIG::closePlayer()
     mPlayer->close();
     delete mPlayer;
 
+    SpaceBar->setEnabled(false);
+    UpArrow->setEnabled(false);
+    DownArrow->setEnabled(false);
     Esc->setEnabled(false);
+
     emit hidePlayerLayerSIGNAL();
 }
 

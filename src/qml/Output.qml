@@ -76,11 +76,11 @@ Item {
                     anchors.fill: parent
                 }
                 onStatusChanged: { 
-                    if (posters.source == list[6] && posters.progress == 1.0) {
+                    if (posters.source == list[5] && posters.progress == 1.0) {
                         posterLoaded = true
                         if (!coverLoaded)
                             imagesStatus.start()
-                    } else if (posters.source == list[6] && posters.status == Image.Error) {
+                    } else if (posters.source == list[5] && posters.status == Image.Error) {
                         // TODO: Cargar imagen de 'Imagen no disponible'.
                         posterLoaded = true
                         if (!coverLoaded)
@@ -103,12 +103,22 @@ Item {
 
             RectangularGlow {
                 id: coverEffect
-                color: "white"
-                glowRadius: 10
+                color: "black"
+                glowRadius: 35
                 spread: 0.2
-                opacity: 0.5
-                cornerRadius: 50
+                cornerRadius: 40
                 anchors.fill: cover
+            }
+            Text {
+                id: titleLabel
+                text: title
+                color: "white"
+                font.family: pigFont.name
+                font.letterSpacing: -10
+                font.pixelSize: 225/strap
+                anchors.left: parent.left
+                anchors.bottom: cover.top
+                anchors.bottomMargin: -41
             }
             Image {
                 id: frame
@@ -121,20 +131,21 @@ Item {
             }
             Image {
                 id: cover
-                width: 318
-                height: 432
-                sourceSize.width: 318
-                sourceSize.height: 432
+                width: 415
+                height: 600
+                sourceSize.width: 415
+                sourceSize.height: 600
                 source: urlCover
                 anchors.centerIn: parent
-                anchors.horizontalCenterOffset: -165
-                anchors.verticalCenterOffset: 2
+                anchors.horizontalCenterOffset: -121
+                anchors.verticalCenter: parent.verticalCenter
+                anchors.verticalCenterOffset: -4
                 onStatusChanged: {
-                    if (cover.source == list[5] && cover.progress == 1.0) {
+                    if (cover.source == list[4] && cover.progress == 1.0) {
                         coverLoaded = true
                         if (!posterLoaded)
                             imagesStatus.start()
-                    } else if (cover.source == list[5] && cover.status == Image.Error) {
+                    } else if (cover.source == list[4] && cover.status == Image.Error) {
                         // TODO: Cargar imagen de 'Imagen no disponible'.
                         coverLoaded = true
                         if (!posterLoaded)
@@ -161,9 +172,9 @@ Item {
                 id: datesColumn
                 spacing: 5
                 anchors.left: cover.right
-                anchors.leftMargin: 20
-                anchors.top: cover.top
-                anchors.topMargin: 100
+                anchors.leftMargin: 25
+                anchors.verticalCenter: parent.verticalCenter
+                anchors.verticalCenterOffset: -68
                 Text {
                     id: atressesLabel
                     text: actresses
@@ -182,26 +193,14 @@ Item {
                     font.bold: true
                     font.pixelSize: 30
                 }
-                Text {
-                    id: collaboratorLabel
-                    text: collaborator
-                    color: "white"
-                    font.family: pigFont.name
-                    font.pixelSize: 30
-                }
-                Text {
-                    id: counterLabel
-                    text: currentFilm+" » "+totalFilms
-                    color: "white"
-                    font.family: pigFont.name
-                    font.pixelSize: 30
-                }
             }
             Row {
                 id: openScenneRow
                 spacing: 1
-                anchors.centerIn: parent
-                anchors.horizontalCenterOffset: screen.width/2.8
+                anchors.horizontalCenter: parent.horizontalCenter
+                anchors.horizontalCenterOffset: 310
+                anchors.verticalCenter: parent.verticalCenter
+                anchors.verticalCenterOffset: 31
 
                 ButtonScenne {
                     id: openScenne1
@@ -289,6 +288,18 @@ Item {
                 }
             }
 
+            Text {
+                id: counterLabel
+                text: currentFilm+" » "+totalFilms
+                color: "white"
+                font.family: pigFont.name
+                font.bold: true
+                font.pixelSize: 35
+                visible: false//
+                anchors.right: parent.right
+                anchors.rightMargin: 10
+                anchors.verticalCenter: parent.verticalCenter
+            }
             /*
             PreviewPlayer {
                 id: previewPlayer
@@ -297,18 +308,6 @@ Item {
                 url: urlPreview
             }
             */
-
-            Text {
-                id: titleLabel
-                text: title
-                color: "white"
-                font.family: pigFont.name
-                font.letterSpacing: -10
-                font.pixelSize: 225/strap
-                anchors.left: parent.left
-                anchors.bottom: cover.top
-                anchors.bottomMargin: -50
-            }
 
             NumberAnimation { running: recipe.PathView.isCurrentItem; target: posters; property: "opacity"; to: 1; duration: 4000; easing.type: Easing.InOutQuad }
             NumberAnimation { running: recipe.PathView.isCurrentItem; target: posterEffect; property: "opacity"; to: 1; duration: 4000; easing.type: Easing.InOutQuad }
@@ -385,7 +384,7 @@ Item {
             if(totalFilms > 5 && counter < totalFilms) {
                 offset = offset+5
                 counter = counter+5
-                currentFilm = counter-4//+1 
+                currentFilm = counter-4
                 listUpdater(offset)
             }
         }
@@ -400,12 +399,12 @@ Item {
         onNext: {
             focusPath = false
             incrementCurrentIndex()
-            if (locationOnList == list.length-12) {
+            if (locationOnList == list.length-11) {
                 locationOnList = 0
                 location = 0
                 currentFilm = currentFilm-n+1 
             } else {
-                locationOnList = locationOnList+12
+                locationOnList = locationOnList+11
                 ++currentFilm
                 ++location
             }
@@ -415,11 +414,11 @@ Item {
             focusPath = false
             decrementCurrentIndex()
             if (locationOnList == 0) {
-                locationOnList = list.length-12
+                locationOnList = list.length-11
                 location = n-1
                 currentFilm = currentFilm+n-1 
             } else {
-                locationOnList = locationOnList-12
+                locationOnList = locationOnList-11
                 --currentFilm
                 --location
             }
@@ -504,23 +503,23 @@ Item {
         source: "qrc:/images/keymap.png"
         fillMode: Image.PreserveAspectCrop
         visible: false
-        anchors.horizontalCenter: parent.horizontalCenter
-        anchors.horizontalCenterOffset: -41
+        anchors.right: parent.right
         anchors.bottom: parent.bottom
-        anchors.bottomMargin: 23
+        anchors.bottomMargin: 4
     }
     
     function listCreator() {
-        inputText = list[9]
-        category = list[10]
-        pornstar = list[11]
+        inputText = list[8]
+        category = list[9]
+        pornstar = list[10]
         var torrent
         var row = 0
         for(var i=0; i<n; i++) {
-           torrent = list[row+8].split(",")
-           model.append({ "title": list[row], "actresses": list[row+1], "quality": list[row+2], "collaborator": list[row+3], "categories": list[row+4], "urlCover": list[row+5],
-           "urlPoster": list[row+6], "urlPreview": list[row+7], "hostTorrent": torrent[0], "urlTorrent": torrent[1], "scenneID1": torrent[2], "scenneID2": torrent[3], "scenneID3": torrent[4], "scenneID4": torrent[5] })
-           row +=12
+           torrent = list[row+7].split(",")
+           model.append({ "title": list[row], "actresses": list[row+1], "quality": list[row+2], "categories": list[row+3],
+                          "urlCover": list[row+4], "urlPoster": list[row+5], "urlPreview": list[row+6], "hostTorrent": torrent[0],
+                          "urlTorrent": torrent[1], "scenneID1": torrent[2], "scenneID2": torrent[3], "scenneID3": torrent[4], "scenneID4": torrent[5] })
+           row +=11
         }
         location = 0
         locationOnList = 0

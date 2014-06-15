@@ -38,8 +38,8 @@ Item {
     signal fixDb()
     signal quit()
 
-    FontLoader { id: pigFont; source: "qrc:/images/font/pig.ttf" }
-    FontLoader { id: pigLightFont; source: "qrc:/images/font/pigLight.ttf" }
+    FontLoader { id: pigFont; source: "qrc:/images/fonts/pig.ttf" }
+    FontLoader { id: pigLightFont; source: "qrc:/images/fonts/pigLight.ttf" }
     
     Rectangle {
         id: screen

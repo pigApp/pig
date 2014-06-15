@@ -21,7 +21,7 @@ public:
     PIG(QObject *parent = 0);
     ~PIG();
 
-    Q_INVOKABLE void openPlayer(const QString path, const QString file);
+    Q_INVOKABLE void playerHandle(const QString path, const QString file);
 
     QWidget *window;
     QWidget *container;
@@ -48,6 +48,9 @@ private:
     VideoPlayer *mPlayer;
 
     QSqlDatabase db;
+    QShortcut *SpaceBar;
+    QShortcut *UpArrow;
+    QShortcut *DownArrow;
     QShortcut *Esc;
     QShortcut *Quit;
     int scenne;

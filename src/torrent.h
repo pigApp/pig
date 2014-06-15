@@ -20,7 +20,8 @@ class Torrent : public QObject
 public:
     explicit Torrent(QObject *parent, QObject *obj);
 
-    Q_INVOKABLE void offsetDownload(int offset);
+    Q_INVOKABLE bool availablePiece(int piece);
+    Q_INVOKABLE void offsetPiece(int offset);
 
 public slots:
     void download(QString path, QString file, int scenne);
@@ -35,11 +36,9 @@ private:
 
     QString pathx;
     QString filex;
-    int pieces;
 
 private slots:
-    void callPlayer();
-
+    void neededPiecesToPlay();
 };
 
 #endif

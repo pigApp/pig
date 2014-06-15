@@ -25,37 +25,84 @@ void Torrent::download(QString path, QString file, int scenne)
     handle.file_priority(scenne, 7);
     handle.set_priority(255);
 
-    // TODO: Nombre de la fila original(extenxion).
-    std::string fileID = file.remove(".torrent", Qt::CaseSensitive).toStdString();
-    std::string fileScenne = QString::number(scenne).toStdString();
-    std::string fileName = fileID+"-"+fileScenne+".mkv";
-    handle.rename_file(scenne-1, fileName);
-
-    pieces = info->num_pieces(); // TODO: Saber el numero de piezas de la fila a bajar, no de todas las filas del .torrent.
+    std::string origFileName = info->name(); // TODO: No devuelve el nombre de una fila individual.
+    std::string ID = file.remove(".torrent", Qt::CaseSensitive).toStdString();
+    std::string scenneID = QString::number(scenne).toStdString();
+    std::string format = origFileName.erase(0, origFileName.length()-4);
+    std::string newFileName = ID+"-"+scenneID+format;
+    handle.rename_file(scenne-1, newFileName);
 
     pathx = path;
-    filex = QString::fromStdString(fileName);
-
+    filex = QString::fromStdString(newFileName);
     if (torrent_status::downloading)
-        callPlayer();
+        neededPiecesToPlay();
 }
 
-void Torrent::callPlayer()
+void Torrent::neededPiecesToPlay()
 {
+    int neededPices;
+    int lengthPieces = info->piece_length()/1024;
+    int downloadedPieces = handle.status().num_pieces;
+
+    if (lengthPieces >= 256 && lengthPieces < 512)
+        neededPices = 25;
+    else if (lengthPieces >= 512 && lengthPieces < 1024)
+        neededPices = 13;
+    else if (lengthPieces >= 1024 && lengthPieces < 2048)
+        neededPices = 6;
+    else if (lengthPieces >= 2048 && lengthPieces < 4096)
+        neededPices = 3;
+    else
+        neededPices = 1;
+
+    qDebug() << "PIECES-NEEDED: " << neededPices;
+    qDebug() << "PIECES-LENGTH: " << lengthPieces;
+    qDebug() << "DOWNLOADED-PIECES: " << downloadedPieces;
+
+    int download_rate = handle.status().download_rate/1024;
+    qDebug() << "BitRate: " << download_rate <<"/KBs";
+
+    /*
+    int begin = handle.status().pieces.begin();
+    int end = handle.status().pieces.end();
+    int count = handle.status().pieces.count();
+
+    qDebug() << "====================================";
+
+    qDebug() << "PIECES-BEGIN: " << begin;
+    qDebug() << "PIECES-END: " << end;
+    qDebug() << "PIECES-COUNT: " << count;
+    */
+
+    if(downloadedPieces < neededPices)
+        QTimer::singleShot(2000, this, SLOT(neededPiecesToPlay()));
+    else
+        QMetaObject::invokeMethod(_pig, "playerHandle", Qt::QueuedConnection, Q_ARG(QString, pathx), Q_ARG(QString, filex));
+
+    /*
     //qDebug() << "SIZE: " << info->file_at(0).size;
 
     int progress = handle.status().progress_ppm ;
     qDebug() << "PROGRESS: " << progress;
 
-    if(progress < 38637)
-        QTimer::singleShot(2000, this, SLOT(sizeDownload()));
+    if(progress < 50000)
+        QTimer::singleShot(2000, this, SLOT(neededPiecesToPlay()));
     else
-        QMetaObject::invokeMethod(_pig, "openPlayer", Qt::QueuedConnection, Q_ARG(QString, pathx), Q_ARG(QString, filex));
+        QMetaObject::invokeMethod(_pig, "playerHandle", Qt::QueuedConnection, Q_ARG(QString, pathx), Q_ARG(QString, filex));
+    */
 }
 
-void Torrent::offsetDownload(int offset)
+bool Torrent::availablePiece(int piece)
 {
-    qDebug() << "TORRENT OFFSET: " << offset;
+    return handle.have_piece(piece);
+}
+
+void Torrent::offsetPiece(int offset)
+{
+    int pieces = info->num_pieces(); // TODO: Saber el numero de piezas de la fila a bajar, no de todas las filas del .torrent.
+
+    qDebug() << "TOTAL PIECES: " << pieces;
+    qDebug() << "PIECE TO DOWNLOAD: " << offset;
 
     for (int i=0; i<=pieces; i++) {
         if(i < offset)

@@ -13,9 +13,8 @@ class VideoPlayer : public QWidget
     Q_OBJECT
 
 public:
-    VideoPlayer(QWidget *parent = 0);
+    VideoPlayer(QWidget *parent, int screenWidth, int screenHeight);
     ~VideoPlayer();
-
 
 public slots:
     void open(const QString& file, QObject *obj);
@@ -25,25 +24,26 @@ signals:
 
 private slots:
     void playPause();
-    void stop();
+    void setCurrentTime(qint64 time);
+    void setTotalTime(qint64 time);
+    void setSliderPosition(qint64 position);
+    void sliderPressed();
+    void sliderMoved(int position);
+    void sliderReleased();
+    void setPositiveVolume();
+    void setNegativeVolume();
     void statusChange();
-    void positionChange(qint64 position);
-    void positionSliderChange();
-    void showHideVolumeSlider();
-    void setVolume(int volume);
+    void test();
 
 private:
     QVideoWidget *videoWidget;
     QMediaPlayer *player;
     QObject *_torrent;
-
-    QPushButton *playPauseButton;
-    QPushButton *stopButton;
+    QLabel *currentTimeLabel;
+    QLabel *totalTimeLabel;
     QSlider *slider;
-    QPushButton *volumeButton;
-    QSlider *volumeSlider;
-    QLabel *timeLabel;
 
-    qint64 currentPosition;
+    bool init;
+    int volume;
 };
 #endif
