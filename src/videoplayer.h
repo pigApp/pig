@@ -1,12 +1,12 @@
 #ifndef VIDEOPLAYER_H
 #define VIDEOPLAYER_H
 
+#include <QWidget>
+#include <QVideoWidget>
+#include <QMediaPlayer>
 #include <QPushButton>
 #include <QLabel>
 #include <QSlider>
-#include <QMediaPlayer>
-#include <QVideoWidget>
-#include <QWidget>
 
 class VideoPlayer : public QWidget
 {
@@ -18,14 +18,15 @@ public:
 
 public slots:
     void open(const QString& file, QObject *obj);
+    void update();
 
 signals:
     void offsetx(int offset);
 
 private slots:
     void playPause();
-    void setCurrentTime(qint64 time);
-    void setTotalTime(qint64 time);
+    void setCurrentTime(qint64 msecs);
+    void setTotalTime(qint64 msecs);
     void setSliderPosition(qint64 position);
     void sliderPressed();
     void sliderMoved(int position);
@@ -33,7 +34,7 @@ private slots:
     void setPositiveVolume();
     void setNegativeVolume();
     void statusChange();
-    void test();
+    void error(QMediaPlayer::Error);
 
 private:
     QVideoWidget *videoWidget;

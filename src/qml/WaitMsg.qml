@@ -10,8 +10,8 @@ Item {
         Text {
             id: msg
             text: "PLEASE WAIT"
-            color: Qt.rgba(0.2, 0.2, 0.2, 0.2)
-            font.family: pigLightFont.name
+            color:  Qt.rgba(0, 0, 0, 0.15)
+            font.family: pigFont.name
             font.pixelSize: 25
         }
         Image {
@@ -20,6 +20,7 @@ Item {
             height: 25
             source: "qrc:/images/spinner.png"
             fillMode: Image.PreserveAspectCrop
+            clip: true
             visible: showSpinner
             property bool on: showSpinner
             NumberAnimation { running: spinner.on; target: spinner; properties: "opacity"; from: 0.0; to: 1.0; loops: Animation.Infinite; duration: 2000 }

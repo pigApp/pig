@@ -19,8 +19,8 @@ Item {
         anchors.centerIn: parent
         TextInput {
             id: input
-            color: "black"
-            font.family: pigLightFont.name
+            color: Qt.rgba(0, 0, 0, 0.3)
+            font.family: pigFont.name
             font.capitalization: Font.AllUppercase
             font.pixelSize: 25
             maximumLength: 29
@@ -144,14 +144,6 @@ Item {
             root.quit()
             event.accepted = true;
         }
-    }
-
-    Loader {
-        id: loaderNews
-        source: "qrc:/src/qml/News.qml"
-        active: false
-        visible: status == Loader.Ready
-        anchors.fill: parent
     }
 
     states: [

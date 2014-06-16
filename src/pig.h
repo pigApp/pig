@@ -1,17 +1,17 @@
 ﻿#ifndef PIG_H
 #define PIG_H
 
-#include <QtSql>
-#include <QShortcut>
-#include <QVBoxLayout>
-#include <QObject>
-#include <QApplication>
-
 #include "password.h"
 #include "update.h"
 #include "tcpSocket.h"
 #include "torrent.h"
 #include "videoplayer.h"
+
+#include <QObject>
+#include <QApplication>
+#include <QtSql>
+#include <QShortcut>
+#include <QVBoxLayout>
 
 class PIG : public QObject
 {
@@ -21,7 +21,7 @@ public:
     PIG(QObject *parent = 0);
     ~PIG();
 
-    Q_INVOKABLE void playerHandle(const QString path, const QString file);
+    Q_INVOKABLE void playerHandle(const QString path, const QString file, bool update);
 
     QWidget *window;
     QWidget *container;

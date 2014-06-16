@@ -18,6 +18,7 @@ Item {
     property string binaryVersion
     property string binaryRelease
     property string dataBaseVersion
+    property string bitRate
 
     property variant categoryList
     property variant nCategoryList
@@ -28,6 +29,8 @@ Item {
     property int totalFilms
     property int n
     property real strap:1
+    property int neededPieces: 0
+    property int downloadedPieces: 0
 
     signal passwordHandle(string plain, bool init, bool write)
     signal updateAccept()

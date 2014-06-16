@@ -1,15 +1,13 @@
+#include "pig.h"
+#include "tcpSocket.h"
+
+#include <stdlib.h>
+#include <QDir>
 #ifdef _WIN32
 #include <windows.h>
 #endif
 
-#include <QDir>
-#include <QUuid>
-
-#include "tcpSocket.h"
-#include "pig.h"
-
-PIG::PIG(QObject *parent)
-    : QObject(parent), mRoot(0)
+PIG::PIG(QObject *parent) : QObject(parent), mRoot(0)
 {
     window = new QWidget;
     layout = new QVBoxLayout;
@@ -50,20 +48,20 @@ PIG::~PIG()
 // Password
 void PIG::passwordHandle(QString plain, bool init, bool write)
 {
-    if (init) { // Comprueba si se usa password.
+    if (init) {
         if (mPassword->requirePassword()) {
-            mRoot->setProperty("requirePass", true); // Si se usa password, activa el input para escribirlo y desactiva setear password.
+            mRoot->setProperty("requirePass", true);
             init = false;
         } else {
-            QStringList args = qApp->arguments(); // Si no se usa password, inicia.
+            QStringList args = qApp->arguments();
             if (args.last() == "WITHOUT_UPDATE")
                 finder();
             else
                 QTimer::singleShot(1000, this, SLOT(updateHandle()));
             init = false;
         }
-    } else if (!init && !write) { // Llama a rightPassword y le pasa el password ingresado para comprobarlo.
-        if (mPassword->rightPassword(plain)) { // Si el password coincide, inicia.
+    } else if (!init && !write) {
+        if (mPassword->rightPassword(plain)) {
             QStringList args = qApp->arguments();
             if (args.last() == "WITHOUT_UPDATE") {
                 finder();
@@ -72,13 +70,13 @@ void PIG::passwordHandle(QString plain, bool init, bool write)
                 QTimer::singleShot(350, this, SLOT(updateHandle()));
             }
         } else {
-            mRoot->setProperty("failPass", true); // Si el password no coincide envia un bool true para que se muestre el mensaje, la contraseña no coincide.
+            mRoot->setProperty("failPass", true);
         }
-    } else if (write) { // Para setear el password con la aplicacion ya iniciada.
+    } else if (write) {
         if (mPassword->writePassword(plain)) {
-            mRoot->setProperty("okPass", true); // Se escribio.
+            mRoot->setProperty("okPass", true);
         } else {
-            mRoot->setProperty("failPass", true); // No se escribio.
+            mRoot->setProperty("failPass", true);
         }
     }
 }
@@ -196,9 +194,8 @@ void PIG::getTorrent(QString host, QString url, QString scenneID)
 {
     scenne = scenneID.toInt();
 
-    int base = 1000000;
-    int randomTorrentID = qrand() % base;
-    QString file = QString::number(randomTorrentID);
+    int torrentID = rand() % 30 + 10000;
+    QString file = QString::number(torrentID);
 
     //TcpSocket s; // TODO: Instanciar el socket desde aca no de .h.
     mSocket.host = host;
@@ -212,35 +209,39 @@ void PIG::getTorrent(QString host, QString url, QString scenneID)
 
 void PIG::torrentHandle(QString path, QString file)
 {
-    mTorrent = new Torrent(this, this);
+    mTorrent = new Torrent(this, this, mRoot);
     mTorrent->download(path, file, scenne);
 }
 
 // Player
-void PIG::playerHandle(const QString path, const QString file)
+void PIG::playerHandle(const QString path, const QString file, bool update)
 {
-    QRect screen = window->geometry();
+    if (!update) {
+        QRect screen = window->geometry();
 
-    mPlayer = new VideoPlayer(window, screen.width(), screen.height());
-    mPlayer->open(path+file, mTorrent);
+        mPlayer = new VideoPlayer(window, screen.width(), screen.height());
+        mPlayer->open(path+file, mTorrent);
 
-    container->hide();
-    layout->addWidget(mPlayer);
+        container->hide();
+        layout->addWidget(mPlayer);
 
-    SpaceBar = new QShortcut(window);
-    SpaceBar->setEnabled(true);
-    SpaceBar->setKey(Qt::Key_Space);
-    connect(SpaceBar, SIGNAL(activated()), mPlayer, SLOT(playPause()));
+        SpaceBar = new QShortcut(window);
+        SpaceBar->setEnabled(true);
+        SpaceBar->setKey(Qt::Key_Space);
+        connect(SpaceBar, SIGNAL(activated()), mPlayer, SLOT(playPause()));
 
-    UpArrow = new QShortcut(window);
-    UpArrow->setEnabled(true);
-    UpArrow->setKey(Qt::Key_Up);
-    connect(UpArrow, SIGNAL(activated()), mPlayer, SLOT(setPositiveVolume()));
+        UpArrow = new QShortcut(window);
+        UpArrow->setEnabled(true);
+        UpArrow->setKey(Qt::Key_Up);
+        connect(UpArrow, SIGNAL(activated()), mPlayer, SLOT(setPositiveVolume()));
 
-    DownArrow = new QShortcut(window);
-    DownArrow->setEnabled(true);
-    DownArrow->setKey(Qt::Key_Down);
-    connect(DownArrow, SIGNAL(activated()), mPlayer, SLOT(setNegativeVolume()));
+        DownArrow = new QShortcut(window);
+        DownArrow->setEnabled(true);
+        DownArrow->setKey(Qt::Key_Down);
+        connect(DownArrow, SIGNAL(activated()), mPlayer, SLOT(setNegativeVolume()));
+    } else {
+        mPlayer->update();
+    }
 }
 
 void PIG::closePlayer()

@@ -23,16 +23,16 @@ Update::~Update()
     delete networkAccessConfig;
 }
 
-void Update::init(QObject *mRoot)
+void Update::init(QObject *obj)
 {
-    _mRoot = mRoot;
+    _root = obj;
 
     networkAccess = new QNetworkAccessManager();
     networkAccessConfig = new QNetworkConfigurationManager();
     networkAccess->setConfiguration(networkAccessConfig->defaultConfiguration());
 
-    _mRoot->setProperty("status", "SEEK UPDATE");
-    _mRoot->setProperty("showSpinner", true);
+    _root->setProperty("status", "SEEK UPDATE");
+    _root->setProperty("showSpinner", true);
     if (db.open()) {
         QSqlQuery qry;
         qry.prepare("SELECT DbVersion, BinVersion FROM PigData");
@@ -70,9 +70,9 @@ void Update::http()
         connect(timeOut, SIGNAL(timeout()), this, SLOT(updateTimeOut()));
         timeOut->start(15000);
     } else {
-        _mRoot->setProperty("status", "UPDATING");
-        _mRoot->setProperty("showSpinner", true);
-        _mRoot->setProperty("showDecisionButton", true);
+        _root->setProperty("status", "UPDATING");
+        _root->setProperty("showSpinner", true);
+        _root->setProperty("showDecisionButton", true);
 
         #ifdef _WIN32
             file = new QFile("C:/tmp/"+fileName);
@@ -80,14 +80,14 @@ void Update::http()
             file = new QFile("/tmp/"+fileName);
         #endif
         if (!file->open(QIODevice::WriteOnly)) {
-            _mRoot->setProperty("showSpinner", false);
-            _mRoot->setProperty("showDecisionButton", false);
+            _root->setProperty("showSpinner", false);
+            _root->setProperty("showDecisionButton", false);
             #ifdef _WIN32
-                _mRoot->setProperty("status", "PERMISSION DENIED");
-                _mRoot->setProperty("statusInformation", "restart the application with administrator rights");
+                _root->setProperty("status", "PERMISSION DENIED");
+                _root->setProperty("statusInformation", "restart the application with administrator rights");
             #else
-                _mRoot->setProperty("status", "FAILED TO UPDATE THE DATABASE");
-                _mRoot->setProperty("statusInformation", "TRY LTER");
+                _root->setProperty("status", "FAILED TO UPDATE THE DATABASE");
+                _root->setProperty("statusInformation", "TRY LTER");
                 QTimer::singleShot(3000, this, SLOT(finder()));
             #endif
         } else {
@@ -118,7 +118,7 @@ void Update::versionsFinished()
         timeOut->stop();
         reply->deleteLater();
         updateAborted = false;
-        _mRoot->setProperty("showSpinner", false);
+        _root->setProperty("showSpinner", false);
         return;
     }
 
@@ -141,7 +141,7 @@ void Update::versionsFinished()
         timeOut->stop();
         reply->close();
         reply = 0;
-        _mRoot->setProperty("showSpinner", false);
+        _root->setProperty("showSpinner", false);
         emit updateCallFinder();
         //QTimer::singleShot(2000, this, SLOT(finder()));
     }
@@ -155,13 +155,13 @@ void Update::downloadManager()
         reply = 0;
         fileName = "db.sqlite";
         url = remoteVersionsList[1];
-        _mRoot->setProperty("status", "UPDATE AVAILABLE");
-        _mRoot->setProperty("showSpinner", false);
-        _mRoot->setProperty("showDecisionButton", true);
+        _root->setProperty("status", "UPDATE AVAILABLE");
+        _root->setProperty("showSpinner", false);
+        _root->setProperty("showDecisionButton", true);
         if (remoteBinAvailable) {
-            _mRoot->setProperty("statusInformation", "THERE IS A NEW VERSION OF DATABASE AND BINARY PACKAGE");
+            _root->setProperty("statusInformation", "THERE IS A NEW VERSION OF DATABASE AND BINARY PACKAGE");
         } else {
-            _mRoot->setProperty("statusInformation", "THERE IS A NEW VERSION OF DATABASE");
+            _root->setProperty("statusInformation", "THERE IS A NEW VERSION OF DATABASE");
         }
     } else if(remoteBinAvailable) {
         updateDownload = true;
@@ -174,14 +174,14 @@ void Update::downloadManager()
             fileName = "PIG";
             url = remoteVersionsList[7];
         #endif
-        _mRoot->setProperty("status", "UPDATE AVAILABLE");
-        _mRoot->setProperty("showSpinner", false);
-        _mRoot->setProperty("showDecisionButton", true);
-        _mRoot->setProperty("statusInformation", "THERE IS A NEW VERSION OF BINARY PACKAGE");
+        _root->setProperty("status", "UPDATE AVAILABLE");
+        _root->setProperty("showSpinner", false);
+        _root->setProperty("showDecisionButton", true);
+        _root->setProperty("statusInformation", "THERE IS A NEW VERSION OF BINARY PACKAGE");
     } else {
       reply->close();
       reply = 0;
-      _mRoot->setProperty("showSpinner", false);
+      _root->setProperty("showSpinner", false);
       emit updateCallFinder();
     }
 }
@@ -218,7 +218,7 @@ void Update::downloadFinished()
         if (file)
             file->close();
         reply->deleteLater();
-        _mRoot->setProperty("showSpinner", false);
+        _root->setProperty("showSpinner", false);
         return;
     }
 
@@ -231,7 +231,7 @@ void Update::downloadFinished()
         if (pkgToDownload < 2) {
             reply->close();
             reply = 0;
-            _mRoot->setProperty("showSpinner", false);
+            _root->setProperty("showSpinner", false);
             if (!remoteBinAvailable) {
                 QFileInfo file(dbPath);
                 if (file.isFile())
@@ -239,17 +239,17 @@ void Update::downloadFinished()
                 if (hashCalculation(md5SumPathDb, hashDb)) {
                         if (!copyFile(fileOriginDb, fileTarget)) {
                             #ifdef _WIN32
-                                _mRoot->setProperty("status", "PERMISSION DENIED");
-                                _mRoot->setProperty("statusInformation", "RESTART THE APPLICATION WITH ADMINITRATOR RIGHTS");
+                                _root->setProperty("status", "PERMISSION DENIED");
+                                _root->setProperty("statusInformation", "RESTART THE APPLICATION WITH ADMINITRATOR RIGHTS");
                             #else
-                                _mRoot->setProperty("status", "FAILED TO UPDATE THE DATABASE");
-                                _mRoot->setProperty("statusInformation", "TRY LATER");
+                                _root->setProperty("status", "FAILED TO UPDATE THE DATABASE");
+                                _root->setProperty("statusInformation", "TRY LATER");
                                 emit updateCallFinder();
                                 //QTimer::singleShot(3000, this, SLOT(finder()));
                             #endif
                         } else {
                             removeFile(fileOriginDb);
-                            _mRoot->setProperty("status", "UPDATED DATABASE");
+                            _root->setProperty("status", "UPDATED DATABASE");
                             emit updateCallFinder();
                             //QTimer::singleShot(3000, this, SLOT(finder()));
                         }
@@ -260,13 +260,13 @@ void Update::downloadFinished()
             } else {
                 if (hashCalculation(md5SumPathBin, hashBin)) {
                     #ifdef _WIN32
-                        _mRoot->setProperty("status", "UPDATED");
-                        _mRoot->setProperty("statusInformation", "RESTART THE TO MAKE THE CHANGES EFFECTIVE");
-                        _mRoot->setProperty("restart", true);
+                        _root->setProperty("status", "UPDATED");
+                        _root->setProperty("statusInformation", "RESTART THE TO MAKE THE CHANGES EFFECTIVE");
+                        _root->setProperty("restart", true);
                     #else
-                        _mRoot->setProperty("status", "UPDATED");
-                        _mRoot->setProperty("statusInformation", "AUTHORIZATION IS REQUIRED");
-                        _mRoot->setProperty("authorize", true);
+                        _root->setProperty("status", "UPDATED");
+                        _root->setProperty("statusInformation", "AUTHORIZATION IS REQUIRED");
+                        _root->setProperty("authorize", true);
                     #endif
                 } else {
                     removeFile(fileOriginBin);
@@ -288,38 +288,38 @@ void Update::downloadFinished()
                     http();
                 } else {
                     removeFile(fileOriginDb);
-                    _mRoot->setProperty("showSpinner", false);
+                    _root->setProperty("showSpinner", false);
                     emit updateCallFinder();
                 }
             } else {
                 reply->close();
                 reply = 0;
                 updateCleanAll = true;
-                _mRoot->setProperty("showSpinner", false);
+                _root->setProperty("showSpinner", false);
                 if (hashCalculation(md5SumPathBin, hashBin)) {
                     QFileInfo file(dbPath);
                     if (file.isFile())
                         removeFile(dbPath);
                     if (!copyFile(fileOriginDb, fileTarget)) {
                         #ifdef _WIN32
-                            _mRoot->setProperty("status", "PERMISSION DENIED");
-                            _mRoot->setProperty("statusInformation", "RESTART THE APPLICATION WITH ADMINITRATOR RIGHTS");
+                            _root->setProperty("status", "PERMISSION DENIED");
+                            _root->setProperty("statusInformation", "RESTART THE APPLICATION WITH ADMINITRATOR RIGHTS");
                         #else
-                            _mRoot->setProperty("status", "UPDATE FAILED");
-                            _mRoot->setProperty("statusInformation", "TRY LATER");
+                            _root->setProperty("status", "UPDATE FAILED");
+                            _root->setProperty("statusInformation", "TRY LATER");
                             emit updateCallFinder();
                             //QTimer::singleShot(3000, this, SLOT(finder()));
                         #endif
                     } else {
                         removeFile(fileOriginDb);
                         #ifdef _WIN32
-                            _mRoot->setProperty("status", "UPDATED");
-                            _mRoot->setProperty("statusInformation", "RESTART THE TO MAKE THE CHANGES EFFECTIVE");
-                            _mRoot->setProperty("restart", true);
+                            _root->setProperty("status", "UPDATED");
+                            _root->setProperty("statusInformation", "RESTART THE TO MAKE THE CHANGES EFFECTIVE");
+                            _root->setProperty("restart", true);
                         #else
-                            _mRoot->setProperty("status", "UPDATED");
-                            _mRoot->setProperty("statusInformation", "AUTHORIZATION IS REQUIRED");
-                            _mRoot->setProperty("authorize", true);
+                            _root->setProperty("status", "UPDATED");
+                            _root->setProperty("statusInformation", "AUTHORIZATION IS REQUIRED");
+                            _root->setProperty("authorize", true);
                         #endif
                     }
                 } else {
@@ -336,7 +336,7 @@ void Update::downloadFinished()
             file->close();
         reply->close();
         reply = 0;
-        _mRoot->setProperty("showSpinner", false);
+        _root->setProperty("showSpinner", false);
         emit updateCallFinder();
     }
 }
@@ -352,8 +352,8 @@ void Update::restartApp()
         si.cb = sizeof(si);
         ZeroMemory(&pi, sizeof(pi));
         if (!CreateProcess((TCHAR*)(pathUpdateBin.utf16()), (TCHAR*)(updateBinArgument.utf16()), NULL, NULL, FALSE, CREATE_NO_WINDOW, NULL, NULL, &si, &pi)) {
-            _mRoot->setProperty("status", "PERMISSION DENIED");
-            _mRoot->setProperty("statusInformation", "RESTART THE APPLICATION WITH ADMINITRATOR RIGHTS");
+            _root->setProperty("status", "PERMISSION DENIED");
+            _root->setProperty("statusInformation", "RESTART THE APPLICATION WITH ADMINITRATOR RIGHTS");
         } else {
             control();
         }
@@ -390,8 +390,8 @@ void Update::control()
             }
             exit(0);
         } else {
-            _mRoot->setProperty("status", "UPDATE FAILED");
-            _mRoot->setProperty("statusInformation", "TRY LATER");
+            _root->setProperty("status", "UPDATE FAILED");
+            _root->setProperty("statusInformation", "TRY LATER");
             emit updateCallFinder();
             //QTimer::singleShot(3000, this, SLOT(finder()));
         }

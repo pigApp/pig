@@ -20,14 +20,14 @@ public:
     QSqlDatabase db;
 
 public slots:
-    void init(QObject *mRoot);
+    void init(QObject *obj);
 
 signals:
     void updateCallFinder();
     void updateErrorDb();
 
 private:
-    QObject *_mRoot;
+    QObject *_root;
     QString rootPath;
     QNetworkAccessManager *networkAccess;
     QNetworkConfigurationManager *networkAccessConfig;

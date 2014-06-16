@@ -3,10 +3,11 @@
 
 #include "torrent.h"
 
-Torrent::Torrent(QObject *parent, QObject *obj) : QObject(parent)
+Torrent::Torrent(QObject *parent, QObject *obj, QObject *obj2) : QObject(parent)
 {
     client.listen_on(std::make_pair(6881, 6889), ec);
     _pig = obj;
+    _root = obj2;
 }
 
 void Torrent::download(QString path, QString file, int scenne)
@@ -25,42 +26,55 @@ void Torrent::download(QString path, QString file, int scenne)
     handle.file_priority(scenne, 7);
     handle.set_priority(255);
 
-    std::string origFileName = info->name(); // TODO: No devuelve el nombre de una fila individual.
+    //std::string origFileName = info->name(); // TODO: No devuelve el nombre de una fila individual.
     std::string ID = file.remove(".torrent", Qt::CaseSensitive).toStdString();
     std::string scenneID = QString::number(scenne).toStdString();
-    std::string format = origFileName.erase(0, origFileName.length()-4);
-    std::string newFileName = ID+"-"+scenneID+format;
-    handle.rename_file(scenne-1, newFileName);
+    //std::string format = origFileName.erase(0, origFileName.length()-4); //Ver si es necesario en windows.
+    std::string fileName = ID+"-"+scenneID;//+format;
+    handle.rename_file(scenne-1, fileName);
 
-    pathx = path;
-    filex = QString::fromStdString(newFileName);
-    if (torrent_status::downloading)
+    newFilePath = path;
+    newFileName = QString::fromStdString(fileName);
+
+    if (torrent_status::downloading) {
+        currentDownloadedPieces = 0;
         neededPiecesToPlay();
+    }
 }
 
 void Torrent::neededPiecesToPlay()
 {
     int neededPices;
     int lengthPieces = info->piece_length()/1024;
-    int downloadedPieces = handle.status().num_pieces;
+    int totalDownloadedPieces = handle.status().num_pieces;
 
     if (lengthPieces >= 256 && lengthPieces < 512)
-        neededPices = 25;
+        neededPices = 50;
     else if (lengthPieces >= 512 && lengthPieces < 1024)
-        neededPices = 13;
+        neededPices = 15;
     else if (lengthPieces >= 1024 && lengthPieces < 2048)
-        neededPices = 6;
+        neededPices = 7;
     else if (lengthPieces >= 2048 && lengthPieces < 4096)
         neededPices = 3;
     else
         neededPices = 1;
 
-    qDebug() << "PIECES-NEEDED: " << neededPices;
-    qDebug() << "PIECES-LENGTH: " << lengthPieces;
-    qDebug() << "DOWNLOADED-PIECES: " << downloadedPieces;
+    int bitRate = handle.status().download_rate/1024;
+    _root->setProperty("neededPieces", neededPices);
+    _root->setProperty("downloadedPieces", totalDownloadedPieces);
+    _root->setProperty("bitRate", QString::number(bitRate));
 
-    int download_rate = handle.status().download_rate/1024;
-    qDebug() << "BitRate: " << download_rate <<"/KBs";
+    qDebug() << "TOTAL_DOWNLOADED_PIECES: " << totalDownloadedPieces;
+    qDebug() << "RESTA: " << totalDownloadedPieces-currentDownloadedPieces;
+
+    if(totalDownloadedPieces-currentDownloadedPieces < neededPices) {
+        QTimer::singleShot(1000, this, SLOT(neededPiecesToPlay()));
+    } else {
+        if (currentDownloadedPieces == 0)
+            QMetaObject::invokeMethod(_pig, "playerHandle", Qt::QueuedConnection, Q_ARG(QString, newFilePath), Q_ARG(QString, newFileName), Q_ARG(bool, false));
+        else
+            QMetaObject::invokeMethod(_pig, "playerHandle", Qt::DirectConnection, Q_ARG(QString, newFilePath), Q_ARG(QString, newFileName), Q_ARG(bool, true));
+    }
 
     /*
     int begin = handle.status().pieces.begin();
@@ -72,14 +86,7 @@ void Torrent::neededPiecesToPlay()
     qDebug() << "PIECES-BEGIN: " << begin;
     qDebug() << "PIECES-END: " << end;
     qDebug() << "PIECES-COUNT: " << count;
-    */
 
-    if(downloadedPieces < neededPices)
-        QTimer::singleShot(2000, this, SLOT(neededPiecesToPlay()));
-    else
-        QMetaObject::invokeMethod(_pig, "playerHandle", Qt::QueuedConnection, Q_ARG(QString, pathx), Q_ARG(QString, filex));
-
-    /*
     //qDebug() << "SIZE: " << info->file_at(0).size;
 
     int progress = handle.status().progress_ppm ;
@@ -110,6 +117,8 @@ void Torrent::offsetPiece(int offset)
         else
           handle.piece_priority(i, 7);
     }
+    currentDownloadedPieces = handle.status().num_pieces;
+    neededPiecesToPlay();
 }
 
 

@@ -5,7 +5,7 @@ CONFIG += link_pkgconfig
 PKGCONFIG += libtorrent-rasterbar
 DEFINES += BOOST_ASIO_DYN_LINK
 
-QT += qml quick sql network multimediawidgets
+QT += qml quick sql network multimedia multimediawidgets
 
 SOURCES += src/main.cpp\
 	   src/pig.cpp\
@@ -37,9 +37,11 @@ OTHER_FILES += src/qml/main.qml\
 	       src/qml/Filters.qml\
 	       src/qml/WaitMsg.qml\
 	       src/qml/PreviewPlayer.qml\
+	       src/qml/Player.qml\
 	       src/qml/Button.qml\
 	       src/qml/ButtonFilter.qml\
 	       src/qml/ButtonScenne.qml\
+	       src/qml/ProgressBar.qml\
 	       src/qml/News.qml\
 	       src/qml/help.qml\
 	       src/qml/ErrorDbMsg.qml

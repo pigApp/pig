@@ -9,9 +9,9 @@ Item {
         anchors.centerIn: parent
         Text {
             id: label
-            text: { if (root.failPass) "WRONG PASSWORD"; else "YOUR PASSWORD" }
-            color: "black"
-            font.family: pigLightFont.name
+            text: { if (root.failPass) "WRONG PASSWORD"; else "YOUR PASSWORD" } // ôner esto dentro de imputLayer.**
+            color:  Qt.rgba(0, 0, 0, 0.3)
+            font.family: pigFont.name
             font.pixelSize: 25
             anchors.horizontalCenter: parent.horizontalCenter
         }
@@ -24,7 +24,7 @@ Item {
                 id: input
                 width: screen.width/4.5
                 color: "white"
-                font.family: pigLightFont.name
+                font.family: pigFont.name
                 font.pixelSize: 25
                 focus: true
                 maximumLength: 16

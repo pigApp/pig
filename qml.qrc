@@ -31,5 +31,6 @@
         <file>images/fonts/pig.ttf</file>
         <file>images/fonts/pigLight.ttf</file>
         <file>images/playPreview.png</file>
+        <file>src/qml/ProgressBar.qml</file>
     </qresource>
 </RCC>

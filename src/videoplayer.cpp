@@ -1,8 +1,8 @@
-#include <QDebug>
-#include <QTimer>
-#include <QVBoxLayout>
-
 #include "videoplayer.h"
+
+#include <QVBoxLayout>
+#include <QTimer>
+#include <QDebug>
 
 VideoPlayer::VideoPlayer(QWidget *parent, int screenWidth, int screenHeight) : QWidget(parent)
 {    
@@ -14,19 +14,19 @@ VideoPlayer::VideoPlayer(QWidget *parent, int screenWidth, int screenHeight) : Q
     player->setVolume(volume);
 
     currentTimeLabel = new QLabel();
-    currentTimeLabel->setGeometry(0, screenHeight-30, 55, 30);
+    currentTimeLabel->setGeometry((screenWidth/2)-40, 0, 55, 30);
     currentTimeLabel->setStyleSheet("background-color: transparent; border: none; color: white");
     currentTimeLabel->setParent(videoWidget);
     currentTimeLabel->hide();
 
     totalTimeLabel = new QLabel();
-    totalTimeLabel->setGeometry(55, screenHeight-30, 55, 30);
+    totalTimeLabel->setGeometry((screenWidth/2)+40, 0, 55, 30);
     totalTimeLabel->setStyleSheet("background-color: transparent; border: none; color: white");
     totalTimeLabel->setParent(videoWidget);
     totalTimeLabel->hide();
 
     slider = new QSlider(Qt::Horizontal);
-    slider->setGeometry(110, screenHeight-15, screenWidth-110, 5);
+    slider->setGeometry(4, screenHeight-15, screenWidth-8, 5);
     slider->setStyleSheet("background: white; border: none");
     slider->setMinimum(0);
     slider->setTracking(true);
@@ -47,9 +47,9 @@ VideoPlayer::VideoPlayer(QWidget *parent, int screenWidth, int screenHeight) : Q
     connect(slider, SIGNAL(sliderMoved(int)), this, SLOT(sliderMoved(int)));
     connect(slider, SIGNAL(sliderReleased()), this, SLOT(sliderReleased()));
     connect(player, SIGNAL(mediaStatusChanged(QMediaPlayer::MediaStatus)), this, SLOT(statusChange()));
+    connect(player, SIGNAL(error(QMediaPlayer::Error)), this, SLOT(error(QMediaPlayer::Error)));
 
     // TODO: Barra de carga del buffer.
-    // TODO: Tiempo reproducido.
 }
 
 VideoPlayer::~VideoPlayer()
@@ -75,27 +75,43 @@ void VideoPlayer::playPause()
     else if (player->state() == QMediaPlayer::PausedState)
         player->play();
     else if (player->state() == QMediaPlayer::StoppedState)
-        qDebug() << "LLEGO COMO STOPED(play/pause)";
+        player->play();
 }
 
-void VideoPlayer::setCurrentTime(qint64 time)
+void VideoPlayer::setCurrentTime(qint64 msecs)
 {
-    QString format = "hh:mm:ss";
-    QString strTime = QString::number(time);// time.toString(format);
-    currentTimeLabel->setText(strTime+" | ");
+    int hours = msecs/(1000*60*60);
+    int minutes = (msecs-(hours*1000*60*60))/(1000*60);
+    int seconds = (msecs-(minutes*1000*60)-(hours*1000*60*60))/1000;
+
+    QString formattedTime;
+    formattedTime.append(QString( "%1" ).arg(hours, 2, 10, QLatin1Char('0')) + ":" +
+                         QString( "%1" ).arg(minutes, 2, 10, QLatin1Char('0')) + ":" +
+                         QString( "%1" ).arg(seconds, 2, 10, QLatin1Char('0')));
+
+    currentTimeLabel->setText(formattedTime);
 }
 
-void VideoPlayer::setTotalTime(qint64 time)
+void VideoPlayer::setTotalTime(qint64 msecs)
 {
-    slider->setRange(0, time);
-    QString format = "hh:mm:ss";
-    QString strTime = QString::number(time);// time.toString(format);
-    totalTimeLabel->setText(strTime);
+    slider->setRange(0, msecs);
+
+    int hours = msecs/(1000*60*60);
+    int minutes = (msecs-(hours*1000*60*60))/(1000*60);
+    int seconds = (msecs-(minutes*1000*60)-(hours*1000*60*60))/1000;
+
+    QString formattedTime;
+    formattedTime.append(QString( "%1" ).arg(hours, 2, 10, QLatin1Char('0')) + ":" +
+                         QString( "%1" ).arg(minutes, 2, 10, QLatin1Char('0')) + ":" +
+                         QString( "%1" ).arg(seconds, 2, 10, QLatin1Char('0')));
+
+    totalTimeLabel->setText(formattedTime);
 }
 
 void VideoPlayer::setSliderPosition(qint64 position)
 {
     slider->setValue(position);
+    qDebug() << "BUFFERED_MEDIA: " << player->bufferStatus();
     qDebug() << "SLIDER POSITION ACTUALIZACION: " << slider->value();
 }
 
@@ -121,18 +137,16 @@ void VideoPlayer::sliderReleased()
     QMetaObject::invokeMethod(_torrent, "availablePiece", Qt::DirectConnection, Q_RETURN_ARG(bool, ret), Q_ARG(int, offset));
     if(!ret) {
         QMetaObject::invokeMethod(_torrent, "offsetPiece", Qt::DirectConnection, Q_ARG(int, offset));
-        QTimer::singleShot(120000, this, SLOT(test()));
     } else {
         player->setPosition(qint64(slider->value()));
         playPause();
     }
 }
 
-void VideoPlayer::test()
+void VideoPlayer::update()
 {
     player->setPosition(qint64(slider->value()+1000));
-    QTimer::singleShot(10000, this, SLOT(playPause()));
-    qDebug() << "TEST POSITION: " << slider->value();
+    QTimer::singleShot(15000, this, SLOT(playPause()));
 }
 
 void VideoPlayer::setPositiveVolume()
@@ -218,5 +232,9 @@ void VideoPlayer::statusChange()
     */
 }
 
+void VideoPlayer::error(QMediaPlayer::Error)
+{
+    qDebug() << player->QMediaPlayer::error();
+}
 
 

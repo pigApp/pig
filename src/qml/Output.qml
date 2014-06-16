@@ -464,6 +464,30 @@ Item {
         id: playerLayer
         width: screen.width
         color: "black"
+
+        ProgressBar {
+           id: progressBar
+           value: { if (root.downloadedPieces == 0 && root.bitRate != 0) 1; else root.downloadedPieces }
+           visible: { if (playerLayer.height > 24) true; else false }
+           anchors.centerIn: parent
+        }
+        Text {
+            id: bitRateLabel
+            text: {
+                if (root.bitRate != 0 && playerLayer.height == screen.height)
+                    root.bitRate+"kb/s"
+                else if (playerLayer.height == screen.height)
+                    "CONNECTING"
+                else
+                    ""
+            }
+            color: "white"
+            font.family: pigFont.name
+            font.bold: true
+            font.pixelSize: 30
+            anchors.centerIn: parent
+            anchors.horizontalCenterOffset: { if (bitRateLabel.text == "CONNECTING") 225; else 190 }
+        }
     }
 
     Text {
