@@ -53,7 +53,6 @@ private:
     QShortcut *DownArrow;
     QShortcut *Esc;
     QShortcut *Quit;
-    int scenne;
 
 private slots:
     void passwordHandle(QString pass, bool init, bool write);
@@ -62,8 +61,7 @@ private slots:
     void finder();
     void findDb(const QString inputText, QString category, QString pornstar, int offset, bool init);
 
-    void getTorrent(QString host, QString url, QString scenneID);
-    void torrentHandle(QString path, QString file);
+    void torrentHandle(QString magnetUrl, QString scenneId);
 
     void closePlayer();
     void errorDb();

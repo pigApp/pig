@@ -204,9 +204,9 @@ Item {
 
                 ButtonScenne {
                     id: openScenne1
-                    iconOpacity: { if (scenneID1 != '') 1; else 0.15 }
+                    iconOpacity: { if (scenneId1 != '') 1; else 0.15 }
                     iconQuality: {
-                        if (scenneID1 == '') {
+                        if (scenneId1 == '') {
                             "qrc:/images/notAvailable.png"
                         } else {
                             if (quality == '1080p')
@@ -216,18 +216,18 @@ Item {
                         }
                     }
                     onClicked: {
-                        if (scenneID1 != '') {
+                        if (scenneId1 != '') {
                             //previewPlayer.kill()
                             recipe.state = "showPlayerLayer"
-                            root.getTorrent(hostTorrent, urlTorrent, scenneID1)
+                            root.torrentHandle(magnetUrl, scenneId1)
                         }
                     }
                 }
                 ButtonScenne {
                     id: openScenne2
-                    iconOpacity: { if (scenneID2 != '') 1; else 0.15 }
+                    iconOpacity: { if (scenneId2 != '') 1; else 0.15 }
                     iconQuality:  {
-                        if (scenneID2 == '') {
+                        if (scenneId2 == '') {
                             "qrc:/images/notAvailable.png"
                         } else {
                             if (quality == '1080p')
@@ -237,18 +237,18 @@ Item {
                         }
                     }
                     onClicked: {
-                        if (scenneID2 != '') {
+                        if (scenneId2 != '') {
                             //previewPlayer.kill()
                             recipe.state = "showPlayerLayer"
-                            root.getTorrent(hostTorrent, urlTorrent, scenneID2)
+                            root.torrentHandle(magnetUrl, scenneId2)
                         }
                     }
                 }
                 ButtonScenne {
                     id: openScenne3
-                    iconOpacity: { if (scenneID3 != '') 1; else 0.15 }
+                    iconOpacity: { if (scenneId3 != '') 1; else 0.15 }
                     iconQuality: {
-                        if (scenneID3 == '') {
+                        if (scenneId3 == '') {
                             "qrc:/images/notAvailable.png"
                         } else {
                             if (quality == '1080p')
@@ -258,18 +258,18 @@ Item {
                         }
                     }
                     onClicked: {
-                        if (scenneID3 != '') {
+                        if (scenneId3 != '') {
                             //previewPlayer.kill()
                             recipe.state = "showPlayerLayer"
-                            root.getTorrent(hostTorrent, urlTorrent, scenneID3)
+                            root.torrentHandle(magnetUrl, scenneId3)
                         }
                     }
                 }
                 ButtonScenne {
                     id: openScenne4
-                    iconOpacity: { if (scenneID4 != '') 1; else 0.15 }
+                    iconOpacity: { if (scenneId4 != '') 1; else 0.15 }
                     iconQuality: {
-                        if (scenneID4 == '') {
+                        if (scenneId4 == '') {
                             "qrc:/images/notAvailable.png"
                         } else {
                             if (quality == '1080p')
@@ -279,10 +279,10 @@ Item {
                         }
                     }
                     onClicked: {
-                        if (scenneID4 != '') {
+                        if (scenneId4 != '') {
                             //previewPlayer.kill()
                             recipe.state = "showPlayerLayer"
-                            root.getTorrent(hostTorrent, urlTorrent, scenneID4)
+                            root.torrentHandle(magnetUrl, scenneId4)
                         }
                     }
                 }
@@ -541,8 +541,8 @@ Item {
         for(var i=0; i<n; i++) {
            torrent = list[row+7].split(",")
            model.append({ "title": list[row], "actresses": list[row+1], "quality": list[row+2], "categories": list[row+3],
-                          "urlCover": list[row+4], "urlPoster": list[row+5], "urlPreview": list[row+6], "hostTorrent": torrent[0],
-                          "urlTorrent": torrent[1], "scenneID1": torrent[2], "scenneID2": torrent[3], "scenneID3": torrent[4], "scenneID4": torrent[5] })
+                          "urlCover": list[row+4], "urlPoster": list[row+5], "urlPreview": list[row+6], "magnetUrl": torrent[0],
+                          "scenneId1": torrent[1], "scenneId2": torrent[2], "scenneId3": torrent[3], "scenneId4": torrent[4] })
            row +=11
         }
         location = 0

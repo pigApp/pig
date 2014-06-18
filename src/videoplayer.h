@@ -13,15 +13,14 @@ class VideoPlayer : public QWidget
     Q_OBJECT
 
 public:
-    VideoPlayer(QWidget *parent, int screenWidth, int screenHeight);
+    VideoPlayer(QWidget *parent, QObject *obj, int screenWidth, int screenHeight);
     ~VideoPlayer();
 
-public slots:
-    void open(const QString& file, QObject *obj);
-    void update();
+    QMediaPlayer *player;
 
-signals:
-    void offsetx(int offset);
+public slots:
+    bool availableFile();
+    void update();
 
 private slots:
     void playPause();
@@ -35,11 +34,12 @@ private slots:
     void setNegativeVolume();
     void statusChange();
     void error(QMediaPlayer::Error);
+    void buffered();
 
 private:
-    QVideoWidget *videoWidget;
-    QMediaPlayer *player;
     QObject *_torrent;
+
+    QVideoWidget *videoWidget;
     QLabel *currentTimeLabel;
     QLabel *totalTimeLabel;
     QSlider *slider;

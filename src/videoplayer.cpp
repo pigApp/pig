@@ -4,8 +4,10 @@
 #include <QTimer>
 #include <QDebug>
 
-VideoPlayer::VideoPlayer(QWidget *parent, int screenWidth, int screenHeight) : QWidget(parent)
+VideoPlayer::VideoPlayer(QWidget *parent, QObject *obj, int screenWidth, int screenHeight) : QWidget(parent)
 {    
+    _torrent = obj;
+
     videoWidget = new QVideoWidget(this);
 
     player = new QMediaPlayer(this);
@@ -47,7 +49,7 @@ VideoPlayer::VideoPlayer(QWidget *parent, int screenWidth, int screenHeight) : Q
     connect(slider, SIGNAL(sliderMoved(int)), this, SLOT(sliderMoved(int)));
     connect(slider, SIGNAL(sliderReleased()), this, SLOT(sliderReleased()));
     connect(player, SIGNAL(mediaStatusChanged(QMediaPlayer::MediaStatus)), this, SLOT(statusChange()));
-    connect(player, SIGNAL(error(QMediaPlayer::Error)), this, SLOT(error(QMediaPlayer::Error)));
+    //connect(player, SIGNAL(error(QMediaPlayer::Error)), this, SLOT(error(QMediaPlayer::Error)));
 
     // TODO: Barra de carga del buffer.
 }
@@ -59,13 +61,10 @@ VideoPlayer::~VideoPlayer()
     delete videoWidget;
 }
 
-void VideoPlayer::open(const QString &file, QObject *obj)
+bool VideoPlayer::availableFile()
 {   
     init = true;
-    _torrent = obj;
-
-    player->setMedia(QUrl::fromLocalFile(file));
-    player->play();
+    return player->isVideoAvailable();
 }
 
 void VideoPlayer::playPause()
@@ -131,12 +130,13 @@ void VideoPlayer::sliderReleased()
 {
     qDebug() << "SLIDER RELEASED";
 
-    int offset = slider->value()/655;
-    bool ret;
+    int totalMsec = player->duration();
+    int offsetMsec = slider->value();
+    bool available;
 
-    QMetaObject::invokeMethod(_torrent, "availablePiece", Qt::DirectConnection, Q_RETURN_ARG(bool, ret), Q_ARG(int, offset));
-    if(!ret) {
-        QMetaObject::invokeMethod(_torrent, "offsetPiece", Qt::DirectConnection, Q_ARG(int, offset));
+    QMetaObject::invokeMethod(_torrent, "availablePiece", Qt::DirectConnection, Q_RETURN_ARG(bool, available), Q_ARG(int, totalMsec), Q_ARG(int, offsetMsec));
+    if(!available) {
+        QMetaObject::invokeMethod(_torrent, "offsetPiece", Qt::DirectConnection, Q_ARG(int, totalMsec), Q_ARG(int, offsetMsec));
     } else {
         player->setPosition(qint64(slider->value()));
         playPause();
@@ -145,8 +145,15 @@ void VideoPlayer::sliderReleased()
 
 void VideoPlayer::update()
 {
-    player->setPosition(qint64(slider->value()+1000));
-    QTimer::singleShot(15000, this, SLOT(playPause()));
+    qDebug() << "IS_VIDEO_AVAILABLE: " << player->isVideoAvailable();
+    qDebug() << "IS_SEEKABLE: " << player->isSeekable();
+
+    if (player->isVideoAvailable() && player->isSeekable()) {
+        player->setPosition(qint64(slider->value()+10));
+        QTimer::singleShot(2000, this, SLOT(playPause()));
+    } else {
+        QTimer::singleShot(1000, this, SLOT(update()));
+    }
 }
 
 void VideoPlayer::setPositiveVolume()
@@ -234,7 +241,24 @@ void VideoPlayer::statusChange()
 
 void VideoPlayer::error(QMediaPlayer::Error)
 {
-    qDebug() << player->QMediaPlayer::error();
+    if (player->QMediaPlayer::ResourceError) {
+        qDebug() << "--ERROR: " << player->QMediaPlayer::error();
+        player->pause();
+        buffered();
+    } else {
+        qDebug() << "--OTRO_TIPO_ERROR: " << player->QMediaPlayer::error();
+    }
+}
+
+void VideoPlayer::buffered()
+{
+    if (player->bufferStatus() == 100) { // TODO: resolver si el buffer es lleno con la señal bufferStatusChanged(int percentFilled).
+        qDebug() << "buffered";
+        player->setPosition(qint64(slider->value()-1));
+        playPause();
+    } else {
+        QTimer::singleShot(5000, this, SLOT(statusChange()));
+    }
 }
 
 

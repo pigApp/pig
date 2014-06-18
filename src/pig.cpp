@@ -190,27 +190,11 @@ void PIG::findDb(const QString inputText, QString category, QString pornstar, in
 }
 
 // Torrent
-void PIG::getTorrent(QString host, QString url, QString scenneID)
-{
-    scenne = scenneID.toInt();
-
-    int torrentID = rand() % 30 + 10000;
-    QString file = QString::number(torrentID);
-
-    //TcpSocket s; // TODO: Instanciar el socket desde aca no de .h.
-    mSocket.host = host;
-    mSocket.url = url;
-    mSocket.file = file+".torrent";
-    mSocket.order = "getTorrent";
-    mSocket.doConnect();
-    //mSocket.close();
-    connect(&mSocket, SIGNAL(fileReady(QString, QString)), this, SLOT(torrentHandle(QString, QString)));
-}
-
-void PIG::torrentHandle(QString path, QString file)
+void PIG::torrentHandle(QString magnetUrl, QString scenneId)
 {
     mTorrent = new Torrent(this, this, mRoot);
-    mTorrent->download(path, file, scenne);
+    mTorrent->scenne = scenneId.toInt();
+    mTorrent->download(magnetUrl);
 }
 
 // Player
@@ -219,26 +203,30 @@ void PIG::playerHandle(const QString path, const QString file, bool update)
     if (!update) {
         QRect screen = window->geometry();
 
-        mPlayer = new VideoPlayer(window, screen.width(), screen.height());
-        mPlayer->open(path+file, mTorrent);
+        mPlayer = new VideoPlayer(window, mTorrent, screen.width(), screen.height());
+        mPlayer->player->setMedia(QUrl::fromLocalFile(path+file));
 
-        container->hide();
-        layout->addWidget(mPlayer);
+        qDebug() << mPlayer->availableFile(); // TODO: resolver si el video esta disponible con la señal videoAvailableChanged(bool videoAvailable).
+        //if (mPlayer->availableFile()) {
+            container->hide();
+            layout->addWidget(mPlayer);
+            mPlayer->player->play();
 
-        SpaceBar = new QShortcut(window);
-        SpaceBar->setEnabled(true);
-        SpaceBar->setKey(Qt::Key_Space);
-        connect(SpaceBar, SIGNAL(activated()), mPlayer, SLOT(playPause()));
-
-        UpArrow = new QShortcut(window);
-        UpArrow->setEnabled(true);
-        UpArrow->setKey(Qt::Key_Up);
-        connect(UpArrow, SIGNAL(activated()), mPlayer, SLOT(setPositiveVolume()));
-
-        DownArrow = new QShortcut(window);
-        DownArrow->setEnabled(true);
-        DownArrow->setKey(Qt::Key_Down);
-        connect(DownArrow, SIGNAL(activated()), mPlayer, SLOT(setNegativeVolume()));
+            SpaceBar = new QShortcut(window);
+            SpaceBar->setEnabled(true);
+            SpaceBar->setKey(Qt::Key_Space);
+            UpArrow = new QShortcut(window);
+            UpArrow->setEnabled(true);
+            UpArrow->setKey(Qt::Key_Up);
+            DownArrow = new QShortcut(window);
+            DownArrow->setEnabled(true);
+            DownArrow->setKey(Qt::Key_Down);
+            connect(SpaceBar, SIGNAL(activated()), mPlayer, SLOT(playPause()));
+            connect(UpArrow, SIGNAL(activated()), mPlayer, SLOT(setPositiveVolume()));
+            connect(DownArrow, SIGNAL(activated()), mPlayer, SLOT(setNegativeVolume()));
+        //} else {
+            //qDebug() << "video no disponible";
+        //}
     } else {
         mPlayer->update();
     }
@@ -273,7 +261,7 @@ void PIG::setRootObject(QObject *root)
     //if(mRoot) connect(mRoot, SIGNAL(updateRestart()), this, SLOT(updateRestartApp()));
 
     if(mRoot) connect(mRoot, SIGNAL(findDb(QString, QString, QString, int, bool)), this, SLOT(findDb(QString, QString, QString, int, bool)));
-    if(mRoot) connect(mRoot, SIGNAL(getTorrent(QString, QString, QString)), this, SLOT(getTorrent(QString, QString, QString)));
+    if(mRoot) connect(mRoot, SIGNAL(torrentHandle(QString, QString)), this, SLOT(torrentHandle(QString, QString)));
     if(mRoot) connect(mRoot, SIGNAL(passwordHandle(QString, bool, bool)), this, SLOT(passwordHandle(QString, bool, bool)));
     if(mRoot) connect(mRoot, SIGNAL(quit()), this, SLOT(quit()));
 

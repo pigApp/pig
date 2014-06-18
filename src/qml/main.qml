@@ -37,7 +37,7 @@ Item {
     signal updateCancel()
     signal updateRestart()
     signal findDb(string inputText, string category, string pornstar, int offset, bool init)
-    signal getTorrent(string host, string url, string scenneID)
+    signal torrentHandle(string magnetUrl, string scenneId)
     signal fixDb()
     signal quit()
 

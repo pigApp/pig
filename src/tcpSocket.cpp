@@ -35,7 +35,7 @@ void TcpSocket::disconnected()
 
 void TcpSocket::bytesWritten(qint64 bytes)
 {
-
+    qDebug() << bytes;
 }
 
 void TcpSocket::readyRead()
