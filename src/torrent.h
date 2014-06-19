@@ -18,20 +18,20 @@ class Torrent : public QObject
     Q_OBJECT
 
 public:
-    explicit Torrent(QObject *parent, QObject *obj, QObject *obj2);
+    explicit Torrent(QObject *parent=0);
 
     Q_INVOKABLE bool availablePiece(int totalMsec, int offsetMsec);
     Q_INVOKABLE void offsetPiece(int totalMsec, int offsetMsec);
 
+    QObject *_pig;
+    QObject *_player;
+    QObject *_root;
     int scenne;
 
 public slots:
     void download(QString mangnetUrl);
 
 private:
-    QObject *_pig;
-    QObject *_root;
-
     session client;
     torrent_handle handle;
     add_torrent_params params;

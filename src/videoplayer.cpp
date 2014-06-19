@@ -1,14 +1,11 @@
 #include "videoplayer.h"
 
-#include <QVBoxLayout>
 #include <QTimer>
 #include <QDebug>
 
-VideoPlayer::VideoPlayer(QWidget *parent, QObject *obj, int screenWidth, int screenHeight) : QWidget(parent)
+VideoPlayer::VideoPlayer(QObject *parent, int screenWidth, int screenHeight) : QObject(parent)
 {    
-    _torrent = obj;
-
-    videoWidget = new QVideoWidget(this);
+    videoWidget = new QVideoWidget();
 
     player = new QMediaPlayer(this);
     player->setVideoOutput(videoWidget);
@@ -36,11 +33,10 @@ VideoPlayer::VideoPlayer(QWidget *parent, QObject *obj, int screenWidth, int scr
     slider->setParent(videoWidget);
     slider->hide();
 
-    QVBoxLayout *layout = new QVBoxLayout;
+    layout = new QVBoxLayout;
     layout->setMargin(0);
     layout->setSpacing(0);
     layout->addWidget(videoWidget);
-    setLayout(layout);
 
     connect(player, SIGNAL(positionChanged(qint64)), this, SLOT(setCurrentTime(qint64)));
     connect(player, SIGNAL(durationChanged(qint64)), this, SLOT(setTotalTime(qint64)));
@@ -48,10 +44,12 @@ VideoPlayer::VideoPlayer(QWidget *parent, QObject *obj, int screenWidth, int scr
     connect(slider, SIGNAL(sliderPressed()), this, SLOT(sliderPressed()));
     connect(slider, SIGNAL(sliderMoved(int)), this, SLOT(sliderMoved(int)));
     connect(slider, SIGNAL(sliderReleased()), this, SLOT(sliderReleased()));
-    connect(player, SIGNAL(mediaStatusChanged(QMediaPlayer::MediaStatus)), this, SLOT(statusChange()));
-    //connect(player, SIGNAL(error(QMediaPlayer::Error)), this, SLOT(error(QMediaPlayer::Error)));
+    connect(player, SIGNAL(mediaStatusChanged(QMediaPlayer::MediaStatus)), this, SLOT(statusChange(QMediaPlayer::MediaStatus)));
+    connect(player, SIGNAL(error(QMediaPlayer::Error)), this, SLOT(error(QMediaPlayer::Error)));
 
     // TODO: Barra de carga del buffer.
+
+    init = true; //
 }
 
 VideoPlayer::~VideoPlayer()
@@ -61,20 +59,16 @@ VideoPlayer::~VideoPlayer()
     delete videoWidget;
 }
 
-bool VideoPlayer::availableFile()
-{   
-    init = true;
-    return player->isVideoAvailable();
-}
-
 void VideoPlayer::playPause()
 {
-    if (player->state() == QMediaPlayer::PlayingState)
+    if (player->state() == QMediaPlayer::PlayingState) {
         player->pause();
-    else if (player->state() == QMediaPlayer::PausedState)
+    } else if (player->state() == QMediaPlayer::PausedState) {
         player->play();
-    else if (player->state() == QMediaPlayer::StoppedState)
+    }else if (player->state() == QMediaPlayer::StoppedState) {
+        player->setPosition(qint64(slider->value()-1000));
         player->play();
+    }
 }
 
 void VideoPlayer::setCurrentTime(qint64 msecs)
@@ -110,7 +104,6 @@ void VideoPlayer::setTotalTime(qint64 msecs)
 void VideoPlayer::setSliderPosition(qint64 position)
 {
     slider->setValue(position);
-    qDebug() << "BUFFERED_MEDIA: " << player->bufferStatus();
     qDebug() << "SLIDER POSITION ACTUALIZACION: " << slider->value();
 }
 
@@ -143,19 +136,6 @@ void VideoPlayer::sliderReleased()
     }
 }
 
-void VideoPlayer::update()
-{
-    qDebug() << "IS_VIDEO_AVAILABLE: " << player->isVideoAvailable();
-    qDebug() << "IS_SEEKABLE: " << player->isSeekable();
-
-    if (player->isVideoAvailable() && player->isSeekable()) {
-        player->setPosition(qint64(slider->value()+10));
-        QTimer::singleShot(2000, this, SLOT(playPause()));
-    } else {
-        QTimer::singleShot(1000, this, SLOT(update()));
-    }
-}
-
 void VideoPlayer::setPositiveVolume()
 {
     if (volume < 100)
@@ -170,95 +150,49 @@ void VideoPlayer::setNegativeVolume()
     player->setVolume(volume);
 }
 
-void VideoPlayer::statusChange()
+void VideoPlayer::update()
 {
-    if (init && QMediaPlayer::LoadedMedia && QMediaPlayer::PlayingState) {
-        currentTimeLabel->setText("-- : -- : -- | ");
+    player->setPosition(qint64(slider->value()+1000));
+    QTimer::singleShot(2000, this, SLOT(playPause()));
+}
+
+void VideoPlayer::progress(int totalPieces, int currentPiece)
+{
+    qDebug() << "TOTAL: " << totalPieces;
+    qDebug() << "CURRENT: " << currentPiece;
+
+    int downloadedMsec = (currentPiece*player->duration())/totalPieces;
+    qDebug() << "DONLOADED_Msec: " << downloadedMsec-25000; // TODO: Revisar este calculo.
+    if (slider->value() >= downloadedMsec-25000) {
+        player->pause();
+        qDebug() << "----PAUSED_FROM_PROGRESS";
+    } else {
+        qDebug() << "++++PLAY FROM PROGRESS";
+        if(player->state() == QMediaPlayer::PausedState)
+            player->play();
+    }
+}
+
+void VideoPlayer::statusChange(QMediaPlayer::MediaStatus status)
+{
+    qDebug() << "===STATUS: " << status;
+    if (init && status == QMediaPlayer::BufferedMedia) {
+        currentTimeLabel->setText("-- : -- : -- ");
         currentTimeLabel->show();
         totalTimeLabel->setText("-- : -- : --");
         totalTimeLabel->show();
         slider->setEnabled(true);
         slider->show();
         init = false;
-    }
-
-    /*
-    if (QMediaPlayer::PlayingState) {
-        if (tEST != 0 ) {
-            qDebug() << "TEST" << ++tEST;
-            qDebug() << "LLEGO COMO PLAYING";
-            //player->pause();
-            playPauseButton->setIcon(QIcon("://images/player/pause.png"));
-        }
-        tEST = 1;
-    } else if (player->state() == QMediaPlayer::PausedState) {
-        qDebug() << "LLEGO COMO PAUSED";
-        //player->play();
-        playPauseButton->setIcon(QIcon("://images/player/play.png"));
-    } else if (player->state() == QMediaPlayer::StoppedState) {
-        qDebug() << "LLEGO COMO STOPED";
-        //player->play();
-        //playPauseButton->setIcon(QIcon("://images/player/pause.png"));
-    }
-
-    switch(player->state()) {
-    case QMediaPlayer::PlayingState:
-        player->pause();
-        playPauseButton->setIcon(QIcon("://images/player/play.png"));
-        break;
-    case QMediaPlayer::PausedState:
+    } else if (!init && status == QMediaPlayer::BufferedMedia) {
         player->play();
-        playPauseButton->setIcon(QIcon("://images/player/pause.png"));
-        break;
-    case QMediaPlayer::StoppedState:
-        //player->setPosition(qint64(slider->value()));
-        break;
+    } else if (status == QMediaPlayer::InvalidMedia || status == QMediaPlayer::EndOfMedia) {
+        player->pause();
+        QTimer::singleShot(15000, this, SLOT(playPause()));
     }
-
-
-    if (QMediaPlayer::LoadedMedia && QMediaPlayer::PlayingState ) { //&& TEST == 0
-        playPauseButton->setIcon(QIcon("://images/player/pause.png"));
-        playPauseButton->setEnabled(true);
-        playPauseButton->show();
-        slider->setRange(0, player->duration()); // TODO: Enviar la duracion total desde torrentInfo.
-        slider->setEnabled(true);
-        slider->show();
-        volumeButton->setEnabled(true);
-        volumeButton->show();
-        volumeSlider->setValue(70);
-        volumeSlider->setEnabled(true);
-        QString timeStr;
-        QString format = "mm:ss";
-        //timeStr = duracion_enviada_desde_torrentInfo.toString(format); // TODO: Enviar la duracion total desde torrentInfo.
-        timeStr = "35:48";
-        totalTimeLabel->setText(timeStr);
-        totalTimeLabel->show();
-
-        //TEST = 1;
-    }
-    */
 }
 
 void VideoPlayer::error(QMediaPlayer::Error)
 {
-    if (player->QMediaPlayer::ResourceError) {
-        qDebug() << "--ERROR: " << player->QMediaPlayer::error();
-        player->pause();
-        buffered();
-    } else {
-        qDebug() << "--OTRO_TIPO_ERROR: " << player->QMediaPlayer::error();
-    }
+    qDebug() << "--ERROR: " << player->QMediaPlayer::error();
 }
-
-void VideoPlayer::buffered()
-{
-    if (player->bufferStatus() == 100) { // TODO: resolver si el buffer es lleno con la señal bufferStatusChanged(int percentFilled).
-        qDebug() << "buffered";
-        player->setPosition(qint64(slider->value()-1));
-        playPause();
-    } else {
-        QTimer::singleShot(5000, this, SLOT(statusChange()));
-    }
-}
-
-

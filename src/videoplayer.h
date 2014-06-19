@@ -1,26 +1,27 @@
 #ifndef VIDEOPLAYER_H
 #define VIDEOPLAYER_H
 
-#include <QWidget>
 #include <QVideoWidget>
 #include <QMediaPlayer>
+#include <QSlider>
 #include <QPushButton>
 #include <QLabel>
-#include <QSlider>
+#include <QVBoxLayout>
 
-class VideoPlayer : public QWidget
+class VideoPlayer : public QObject
 {
     Q_OBJECT
 
 public:
-    VideoPlayer(QWidget *parent, QObject *obj, int screenWidth, int screenHeight);
+    explicit VideoPlayer(QObject *parent, int screenWidth, int screenHeight);
     ~VideoPlayer();
 
-    QMediaPlayer *player;
+    Q_INVOKABLE void progress(int totalPieces, int currentPiece);
+    Q_INVOKABLE void update();
 
-public slots:
-    bool availableFile();
-    void update();
+    QObject *_torrent;
+    QMediaPlayer *player;
+    QVBoxLayout *layout;
 
 private slots:
     void playPause();
@@ -32,13 +33,10 @@ private slots:
     void sliderReleased();
     void setPositiveVolume();
     void setNegativeVolume();
-    void statusChange();
+    void statusChange(QMediaPlayer::MediaStatus status);
     void error(QMediaPlayer::Error);
-    void buffered();
 
 private:
-    QObject *_torrent;
-
     QVideoWidget *videoWidget;
     QLabel *currentTimeLabel;
     QLabel *totalTimeLabel;

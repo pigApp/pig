@@ -16,12 +16,29 @@ Item {
         anchors.horizontalCenterOffset: 70
         Row {
             spacing: 12
-            Text {
-                id: setLabel
-                text: "SET PASSWORD"
-                color: "white"
-                font.family: pigFont.name
-                font.pixelSize: 25
+            Rectangle {
+                id: inputLayer
+                width: screen.width/5.48
+                height: 35
+                radius: 2
+                color: "black"
+                TextInput {
+                    id: input
+                    width: screen.width/4.5
+                    color: "white"
+                    font.family: pigFont.name
+                    font.pixelSize: 25
+                    maximumLength: 16
+                    echoMode: TextInput.Password
+                    onCursorPositionChanged: { setLabel.visible = false }
+                    onAccepted: {
+                        if (input.text !== '') {
+                            root.passwordHandle(input.text, false, true)
+                            formColumn.visible = false
+                            formColumn.enabled = false
+                        }
+                    }
+                }
             }
             Text {
                 id: whatLabel
@@ -41,28 +58,6 @@ Item {
                 }
             }
         }
-        Rectangle {
-            id: inputLayer
-            width: screen.width/5.48
-            height: 35
-            color: "black"
-            TextInput {
-                id: input
-                width: screen.width/4.5
-                color: "white"
-                font.family: pigFont.name
-                font.pixelSize: 25
-                maximumLength: 16
-                echoMode: TextInput.Password
-                onAccepted: {
-                    if (input.text !== '') {
-                        root.passwordHandle(input.text, false, true)
-                        formColumn.visible = false
-                        formColumn.enabled = false
-                    }
-                }
-            }
-        }
         Text {
             id: whatText
             text: "If set a password will be you requested when starting PIG.<br>Is recommended to use it if you share a computer with someone underage.<br>It is a basic measure of security. Is not invulnerable. Be careful."
@@ -73,7 +68,17 @@ Item {
             opacity: 0
         }
     }
-
+    Text {
+        id: setLabel
+        text: "SET PASSWORD"
+        color: "white"
+        font.family: pigFont.name
+        font.bold: true
+        font.pixelSize: 25
+        anchors.centerIn: parent
+        anchors.horizontalCenterOffset: -8
+        anchors.verticalCenterOffset: -33
+    }
     Text {
         id: ok_fail_Label
         text: { if (root.okPass) "DONE. ESC TO BACK"; else "FAIL. TRY LATER. ESC TO BACK" }

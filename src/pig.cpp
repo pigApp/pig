@@ -10,6 +10,7 @@
 PIG::PIG(QObject *parent) : QObject(parent), mRoot(0)
 {
     window = new QWidget;
+    window->setMouseTracking(true);
     layout = new QVBoxLayout;
     layout->setContentsMargins(0, 0, 0, 0);
     layout->setMargin(0);
@@ -67,7 +68,7 @@ void PIG::passwordHandle(QString plain, bool init, bool write)
                 finder();
             } else {
                 mRoot->setProperty("showAskPass", false);
-                QTimer::singleShot(350, this, SLOT(updateHandle()));
+                updateHandle();
             }
         } else {
             mRoot->setProperty("failPass", true);
@@ -192,50 +193,47 @@ void PIG::findDb(const QString inputText, QString category, QString pornstar, in
 // Torrent
 void PIG::torrentHandle(QString magnetUrl, QString scenneId)
 {
-    mTorrent = new Torrent(this, this, mRoot);
+    mTorrent = new Torrent();
+    mTorrent->_pig = this;
+    mTorrent->_root = mRoot;
     mTorrent->scenne = scenneId.toInt();
     mTorrent->download(magnetUrl);
 }
 
 // Player
-void PIG::playerHandle(const QString path, const QString file, bool update)
+void PIG::playerHandle(const QString path, const QString file)
 {
-    if (!update) {
-        QRect screen = window->geometry();
+    mPlayer = new VideoPlayer(this, window->geometry().width(), window->geometry().height());
+    mPlayer->_torrent = mTorrent;
+    mTorrent->_player = mPlayer; // TODO: Asegurarse en torrent.cpp que sea un puntero valido antes de llamar a progress().
+    mPlayer->player->setMedia(QUrl::fromLocalFile(path+file));
+    mPlayer->player->play();
+    container->hide();
+    layout->addLayout(mPlayer->layout);
 
-        mPlayer = new VideoPlayer(window, mTorrent, screen.width(), screen.height());
-        mPlayer->player->setMedia(QUrl::fromLocalFile(path+file));
+    SpaceBar = new QShortcut(window);
+    SpaceBar->setEnabled(true);
+    SpaceBar->setKey(Qt::Key_Space);
+    UpArrow = new QShortcut(window);
+    UpArrow->setEnabled(true);
+    UpArrow->setKey(Qt::Key_Up);
+    DownArrow = new QShortcut(window);
+    DownArrow->setEnabled(true);
+    DownArrow->setKey(Qt::Key_Down);
+    connect(SpaceBar, SIGNAL(activated()), mPlayer, SLOT(playPause()));
+    connect(UpArrow, SIGNAL(activated()), mPlayer, SLOT(setPositiveVolume()));
+    connect(DownArrow, SIGNAL(activated()), mPlayer, SLOT(setNegativeVolume()));
+}
 
-        qDebug() << mPlayer->availableFile(); // TODO: resolver si el video esta disponible con la señal videoAvailableChanged(bool videoAvailable).
-        //if (mPlayer->availableFile()) {
-            container->hide();
-            layout->addWidget(mPlayer);
-            mPlayer->player->play();
-
-            SpaceBar = new QShortcut(window);
-            SpaceBar->setEnabled(true);
-            SpaceBar->setKey(Qt::Key_Space);
-            UpArrow = new QShortcut(window);
-            UpArrow->setEnabled(true);
-            UpArrow->setKey(Qt::Key_Up);
-            DownArrow = new QShortcut(window);
-            DownArrow->setEnabled(true);
-            DownArrow->setKey(Qt::Key_Down);
-            connect(SpaceBar, SIGNAL(activated()), mPlayer, SLOT(playPause()));
-            connect(UpArrow, SIGNAL(activated()), mPlayer, SLOT(setPositiveVolume()));
-            connect(DownArrow, SIGNAL(activated()), mPlayer, SLOT(setNegativeVolume()));
-        //} else {
-            //qDebug() << "video no disponible";
-        //}
-    } else {
-        mPlayer->update();
-    }
+void PIG::mouseMoveEvent(QMouseEvent *event)
+{
+    qDebug() << "=======================MOUSE_MOVE";
 }
 
 void PIG::closePlayer()
 {
     container->show();
-    mPlayer->close();
+    //mPlayer->close();
     delete mPlayer;
 
     SpaceBar->setEnabled(false);

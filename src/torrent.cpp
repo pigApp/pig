@@ -4,11 +4,9 @@
 
 #include "torrent.h"
 
-Torrent::Torrent(QObject *parent, QObject *obj, QObject *obj2) : QObject(parent)
+Torrent::Torrent(QObject *parent) : QObject(parent)
 {
     client.listen_on(std::make_pair(6881, 6889), ec);
-    _pig = obj;
-    _root = obj2;
 }
 
 void Torrent::download(QString mangnetUrl)
@@ -80,7 +78,7 @@ void Torrent::controlPieces()
         else if (lengthPieces >= 1024 && lengthPieces < 2048)
             neededPices = 7;
         else if (lengthPieces >= 2048 && lengthPieces < 4096)
-            neededPices = 3;
+            neededPices = 2;//3
         else
             neededPices = 1;
 
@@ -107,10 +105,10 @@ void Torrent::controlPieces()
             else
                 newFilePath = QString::fromStdString(handle.save_path());
             QString newFileName = "Non.Stop.2014.720p.BluRay.x264.YIFY.mp4"; // TODO: Obtener nombre de la fila.
-            QMetaObject::invokeMethod(_pig, "playerHandle", Qt::QueuedConnection, Q_ARG(QString, newFilePath), Q_ARG(QString, newFileName), Q_ARG(bool, false));
-            progress();
+            QMetaObject::invokeMethod(_pig, "playerHandle", Qt::QueuedConnection, Q_ARG(QString, newFilePath), Q_ARG(QString, newFileName));
+            QTimer::singleShot(5000, this, SLOT(progress()));;
         } else {
-            QMetaObject::invokeMethod(_pig, "playerHandle", Qt::DirectConnection, Q_ARG(QString, "."), Q_ARG(QString, "."), Q_ARG(bool, true));
+            QMetaObject::invokeMethod(_player, "update", Qt::QueuedConnection);
         }
     }
 
@@ -155,14 +153,14 @@ void Torrent::offsetPiece(int totalMsec, int offsetMsec)
           handle.piece_priority(i, 7);
     }
     currentDownloadedPieces = handle.status().num_pieces;
-    //remap = true;
     controlPieces();
 }
 
 void Torrent::progress()
 {
-     qDebug() << "XX";
-     QTimer::singleShot(4000, this, SLOT(progress()));
+    // offset + ...
+    QMetaObject::invokeMethod(_player, "progress", Qt::QueuedConnection, Q_ARG(int, handle.get_torrent_info().num_pieces()), Q_ARG(int, handle.status().num_pieces));
+    QTimer::singleShot(5000, this, SLOT(progress()));
 }
 
 
