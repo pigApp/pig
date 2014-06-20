@@ -6,6 +6,10 @@ Rectangle {
 
     property alias label: label.text
     property alias labelColor: label.color
+    property alias labelSize: label.font.pixelSize
+    property alias labelBold: label.font.bold
+    property color labelInColor
+    property color labelOutColor
 
     signal clicked()
     
@@ -13,37 +17,23 @@ Rectangle {
         id: label
         color: "white"
         font.family: pigFont.name
+        font.bold: false
         font.pixelSize: 110
         horizontalAlignment: Text.AlignLeft
         verticalAlignment: Text.AlignVCenter
         anchors.fill: parent
     }
-
     MouseArea {
         id: mousearea
         hoverEnabled: true
-        onEntered: delayIn.restart()
-        onHoveredChanged: delayOut.restart()
+        onEntered: label.color = labelInColor
+        onHoveredChanged: label.color = labelOutColor
         onClicked: button.clicked()
         anchors.fill: parent
     }
-    Timer {
-        id: delayIn
-        running: false
-        repeat: false
-        interval: 25
-        onTriggered: { label.color = Qt.rgba(0.5, 0.5, 0.5, 0.3) }
-    }
-    Timer {
-        id: delayOut
-        running: false
-        repeat: false
-        interval: 20
-        onTriggered: { label.color = "white" }
-    }
     states: State {
         when: mousearea.pressed
-        PropertyChanges { target: label; color: Qt.rgba(0.5, 0.5, 0.5, 0.2) }
+        PropertyChanges { target: label; color: Qt.rgba(0.1, 0.1, 0.1, 0.4) }
     }
 }
 // Espacios hechos.

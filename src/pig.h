@@ -22,7 +22,7 @@ public:
     PIG(QObject *parent = 0);
     ~PIG();
 
-    Q_INVOKABLE void playerHandle(const QString path, const QString file);
+    Q_INVOKABLE void playerHandle(const QString absoluteFilePath);
 
     QWidget *window;
     QWidget *container;
@@ -63,7 +63,7 @@ private slots:
     void updateHandle();
     void finder();
     void findDb(const QString inputText, QString category, QString pornstar, int offset, bool init);
-    void torrentHandle(QString magnetUrl, QString scenneId);
+    void torrentHandle(QString magnetUrl, QString scenne);
     void closePlayer();
     void errorDb();
     void quit();

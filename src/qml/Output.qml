@@ -19,6 +19,8 @@ Item {
     property int locationOnList
     property int nIndex: 0
 
+    property bool onShowPlayerLayer
+
     ListModel {
         id: model
     }
@@ -198,92 +200,16 @@ Item {
                 id: openScenneRow
                 spacing: 1
                 anchors.horizontalCenter: parent.horizontalCenter
-                anchors.horizontalCenterOffset: 310
+                anchors.horizontalCenterOffset: 100+(52.5*scennes)
                 anchors.verticalCenter: parent.verticalCenter
                 anchors.verticalCenterOffset: 31
-
-                ButtonScenne {
-                    id: openScenne1
-                    iconOpacity: { if (scenneId1 != '') 1; else 0.15 }
-                    iconQuality: {
-                        if (scenneId1 == '') {
-                            "qrc:/images/notAvailable.png"
-                        } else {
-                            if (quality == '1080p')
-                                "qrc:/images/1080.png"
-                            else
-                                "qrc:/images/720.png"
-                        }
-                    }
-                    onClicked: {
-                        if (scenneId1 != '') {
-                            //previewPlayer.kill()
-                            recipe.state = "showPlayerLayer"
-                            root.torrentHandle(magnetUrl, scenneId1)
-                        }
-                    }
-                }
-                ButtonScenne {
-                    id: openScenne2
-                    iconOpacity: { if (scenneId2 != '') 1; else 0.15 }
-                    iconQuality:  {
-                        if (scenneId2 == '') {
-                            "qrc:/images/notAvailable.png"
-                        } else {
-                            if (quality == '1080p')
-                                "qrc:/images/1080.png"
-                            else
-                                "qrc:/images/720.png"
-                        }
-                    }
-                    onClicked: {
-                        if (scenneId2 != '') {
-                            //previewPlayer.kill()
-                            recipe.state = "showPlayerLayer"
-                            root.torrentHandle(magnetUrl, scenneId2)
-                        }
-                    }
-                }
-                ButtonScenne {
-                    id: openScenne3
-                    iconOpacity: { if (scenneId3 != '') 1; else 0.15 }
-                    iconQuality: {
-                        if (scenneId3 == '') {
-                            "qrc:/images/notAvailable.png"
-                        } else {
-                            if (quality == '1080p')
-                                "qrc:/images/1080.png"
-                            else
-                                "qrc:/images/720.png"
-                        }
-                    }
-                    onClicked: {
-                        if (scenneId3 != '') {
-                            //previewPlayer.kill()
-                            recipe.state = "showPlayerLayer"
-                            root.torrentHandle(magnetUrl, scenneId3)
-                        }
-                    }
-                }
-                ButtonScenne {
-                    id: openScenne4
-                    iconOpacity: { if (scenneId4 != '') 1; else 0.15 }
-                    iconQuality: {
-                        if (scenneId4 == '') {
-                            "qrc:/images/notAvailable.png"
-                        } else {
-                            if (quality == '1080p')
-                                "qrc:/images/1080.png"
-                            else
-                                "qrc:/images/720.png"
-                        }
-                    }
-                    onClicked: {
-                        if (scenneId4 != '') {
-                            //previewPlayer.kill()
-                            recipe.state = "showPlayerLayer"
-                            root.torrentHandle(magnetUrl, scenneId4)
-                        }
+                Component.onCompleted: {
+                    for (var i=1; i<=scennes; i++) {
+                        var component = Qt.createComponent("ButtonScenne.qml")
+                        var object = component.createObject(openScenneRow)
+                        object.quality = quality
+                        object.magnetUrl = magnetUrl
+                        object.scenne = i
                     }
                 }
             }
@@ -300,6 +226,7 @@ Item {
                 anchors.rightMargin: 10
                 anchors.verticalCenter: parent.verticalCenter
             }
+
             /*
             PreviewPlayer {
                 id: previewPlayer
@@ -319,10 +246,7 @@ Item {
             states: [
                 State {
                     name: "showPlayerLayer"
-                    PropertyChanges { target: openScenne1; iconOpacity: "0.15" }
-                    PropertyChanges { target: openScenne2; iconOpacity: "0.15" }
-                    PropertyChanges { target: openScenne3; iconOpacity: "0.15" }
-                    PropertyChanges { target: openScenne4; iconOpacity: "0.15" }
+                    when: onShowPlayerLayer;
                 },
                 State {
                     name: "hidePlayerLayer"
@@ -343,10 +267,6 @@ Item {
                 Transition {
                     to: "hidePlayerLayer"
                         NumberAnimation { target: playerLayer; property: "height"; to: 0; duration: 1000; easing.type: Easing.InOutQuart }
-                        PropertyAction { target: openScenne1; property: "iconOpacity"; value: "1" }
-                        PropertyAction { target: openScenne2; property: "iconOpacity"; value: "1" }
-                        PropertyAction { target: openScenne3; property: "iconOpacity"; value: "1" }
-                        PropertyAction { target: openScenne4; property: "iconOpacity"; value: "1" }
                 },
                 Transition {
                     to: "showAll"
@@ -465,28 +385,75 @@ Item {
         width: screen.width
         color: "black"
 
-        ProgressBar {
-           id: progressBar
-           value: { if (root.downloadedPieces == 0 && root.bitRate != 0) 1; else root.downloadedPieces }
-           visible: { if (playerLayer.height > 24) true; else false }
-           anchors.centerIn: parent
-        }
-        Text {
-            id: bitRateLabel
-            text: {
-                if (root.bitRate != 0 && playerLayer.height == screen.height)
-                    root.bitRate+"kb/s"
-                else if (playerLayer.height == screen.height)
-                    "CONNECTING"
-                else
-                    ""
-            }
-            color: "white"
-            font.family: pigFont.name
-            font.bold: true
-            font.pixelSize: 30
+        Button {
+            id: cancelDownloadButton
+            width: 100
+            height: 25
+            label: { if (root.bitRate != 0 && playerLayer.height == screen.height) "CANCEL"; else "" }
+            labelColor: Qt.rgba(0.1, 0.1, 0.1, 0.5)
+            labelInColor: "white"
+            labelOutColor: Qt.rgba(0.1, 0.1, 0.1, 0.5)
+            labelBold: true
+            labelSize: 30
             anchors.centerIn: parent
-            anchors.horizontalCenterOffset: { if (bitRateLabel.text == "CONNECTING") 225; else 190 }
+            anchors.horizontalCenter: parent.horizontalCenter
+            anchors.horizontalCenterOffset: -197
+        }
+
+        ProgressBar {
+            id: progressBar
+            value: { if (root.downloadedPieces == 0 && root.bitRate != 0) 1; else root.downloadedPieces }
+            visible: { if (playerLayer.height > 24) true; else false }
+            anchors.centerIn: parent
+        }
+        Row {
+            id: downloadInfoLabel
+            spacing: 17
+            anchors.left: progressBar.right
+            anchors.leftMargin: 20
+            anchors.verticalCenter: parent.verticalCenter
+
+            Text {
+                id: bitRateLabel
+                text: {
+                    if (root.bitRate != 0 && playerLayer.height == screen.height)
+                        root.bitRate+"kb/s"
+                    else if (playerLayer.height == screen.height)
+                        "CONNECTING"
+                    else
+                        ""
+                }
+                color: "white"
+                font.family: pigFont.name
+                font.bold: true
+                font.pixelSize: 30
+            }
+            Text {
+                id: seedsLabel
+                text: {
+                    if (root.seeds != 0 && playerLayer.height == screen.height)
+                        "SEEDS "+root.seeds
+                    else
+                        ""
+                }
+                color: "white"
+                font.family: pigFont.name
+                font.bold: true
+                font.pixelSize: 30
+            }
+            Text {
+                id: peersLabel
+                text: {
+                    if (root.peers != 0 && playerLayer.height == screen.height)
+                        "PEERS "+root.peers
+                    else
+                        ""
+                }
+                color: "white"
+                font.family: pigFont.name
+                font.bold: true
+                font.pixelSize: 30
+            }
         }
     }
 
@@ -540,9 +507,10 @@ Item {
         var row = 0
         for(var i=0; i<n; i++) {
            torrent = list[row+7].split(",")
+           var nScennes = Number(torrent[1])
            model.append({ "title": list[row], "actresses": list[row+1], "quality": list[row+2], "categories": list[row+3],
                           "urlCover": list[row+4], "urlPoster": list[row+5], "urlPreview": list[row+6], "magnetUrl": torrent[0],
-                          "scenneId1": torrent[1], "scenneId2": torrent[2], "scenneId3": torrent[3], "scenneId4": torrent[4] })
+                          "scennes": nScennes })
            row +=11
         }
         location = 0

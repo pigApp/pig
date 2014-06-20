@@ -70,6 +70,8 @@ Item {
             width: 480
             height: 75
             label: "CATEGORY"
+            labelInColor: Qt.rgba(0.1, 0.1, 0.1, 0.5)
+            labelOutColor: "white"
             onClicked: finder.showF(categoryFind)
         }
         Button {
@@ -77,6 +79,8 @@ Item {
             width: 485
             height: 75
             label: "PORNSTAR"
+            labelInColor: Qt.rgba(0.1, 0.1, 0.1, 0.5)
+            labelOutColor: "white"
             onClicked: finder.showF(pornstarFind)
         }
     }

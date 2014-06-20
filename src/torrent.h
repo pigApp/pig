@@ -1,17 +1,12 @@
 #ifndef TORRENT_H
 #define TORRENT_H
 
-#include <QObject>
+#include <libtorrent/session.hpp>
 
 #include <stdlib.h>
 #include <iostream>
 
-#include <libtorrent/entry.hpp>
-#include <libtorrent/bencode.hpp>
-#include <libtorrent/session.hpp>
-#include <libtorrent/torrent_info.hpp>
-
-using namespace libtorrent;
+#include <QObject>
 
 class Torrent : public QObject
 {
@@ -26,21 +21,24 @@ public:
     QObject *_pig;
     QObject *_player;
     QObject *_root;
+
     int scenne;
 
 public slots:
     void download(QString mangnetUrl);
 
 private:
-    session client;
-    torrent_handle handle;
-    add_torrent_params params;
-    error_code ec;
+    libtorrent::session client;
+    libtorrent::torrent_handle handle;
+    libtorrent::add_torrent_params params;
+    libtorrent::error_code ec;
 
     bool remap;
+    int offset;
     int currentDownloadedPieces;
 
 private slots:
+    void metadataReady();
     void controlPieces();
     void progress();
 };

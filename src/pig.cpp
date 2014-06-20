@@ -191,22 +191,22 @@ void PIG::findDb(const QString inputText, QString category, QString pornstar, in
 }
 
 // Torrent
-void PIG::torrentHandle(QString magnetUrl, QString scenneId)
+void PIG::torrentHandle(QString magnetUrl, QString scenne)
 {
     mTorrent = new Torrent();
     mTorrent->_pig = this;
     mTorrent->_root = mRoot;
-    mTorrent->scenne = scenneId.toInt();
+    mTorrent->scenne = scenne.toInt();
     mTorrent->download(magnetUrl);
 }
 
 // Player
-void PIG::playerHandle(const QString path, const QString file)
+void PIG::playerHandle(const QString absoluteFilePath)
 {
     mPlayer = new VideoPlayer(this, window->geometry().width(), window->geometry().height());
     mPlayer->_torrent = mTorrent;
     mTorrent->_player = mPlayer; // TODO: Asegurarse en torrent.cpp que sea un puntero valido antes de llamar a progress().
-    mPlayer->player->setMedia(QUrl::fromLocalFile(path+file));
+    mPlayer->player->setMedia(QUrl::fromLocalFile(absoluteFilePath));
     mPlayer->player->play();
     container->hide();
     layout->addLayout(mPlayer->layout);

@@ -29,6 +29,8 @@ Item {
     property int totalFilms
     property int n
     property real strap:1
+    property int seeds: 0
+    property int peers: 0
     property int neededPieces: 0
     property int downloadedPieces: 0
 
@@ -37,7 +39,7 @@ Item {
     signal updateCancel()
     signal updateRestart()
     signal findDb(string inputText, string category, string pornstar, int offset, bool init)
-    signal torrentHandle(string magnetUrl, string scenneId)
+    signal torrentHandle(string magnetUrl, string scenne)
     signal fixDb()
     signal quit()
 

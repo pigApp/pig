@@ -1,8 +1,9 @@
-#include <QDebug>
-#include <QDir>
-#include <QTimer>
-
 #include "torrent.h"
+
+#include <QDir>
+#include <QFileInfo>
+#include <QTimer>
+#include <QDebug>
 
 Torrent::Torrent(QObject *parent) : QObject(parent)
 {
@@ -18,50 +19,23 @@ void Torrent::download(QString mangnetUrl)
 #endif
     params.save_path = path;
     params.url = mangnetUrl.toStdString();
-    handle = client.add_torrent(params,  ec);
+    handle = client.add_torrent(params);
     handle.set_sequential_download(true);
     handle.set_priority(255);
 
-    currentDownloadedPieces = 0;
-    remap = true;
-    QTimer::singleShot(30000, this, SLOT(controlPieces())); // Saber cuando descargo la metadata para llamar a controlPieces. status:: ...
+    metadataReady();
+}
 
-    //if (torrent_status::downloading) {
-    //    currentDownloadedPieces = 0;
-    //    controlPieces();
-    //}
-
-    /*
-    params.ti = new torrent_info(path.toStdString()+file.toStdString(), ec);
-    handle.move_storage(params.save_path);
-
-    nfo = new torrent_info(path.toStdString()+file.toStdString());
-
-    for (int i=1; i<=scennes; i++)
-        handle.file_priority(i, 0);
-    handle.file_priority(scenne, 7);
-
-    std::string origFileName = info->name(); // TODO: No devuelve el nombre de una fila individual.
-    std::string format = origFileName.erase(0, origFileName.length()-4); //Ver si es necesario en windows.
-
-    std::string ID = file.remove(".torrent", Qt::CaseSensitive).toStdString();
-    std::string scenneID = QString::number(scenne).toStdString();
-    std::string fileName = ID+"-"+scenneID;//+format;
-
-    storage.rename_file(scenne, fileName);
-    info->remap_files(storage);
-
-    handle.rename_file(2, fileName);
-    info->remap_files(storage);
-
-
-    newFileName = QString::fromStdString(fileName);
-
-    if (torrent_status::downloading) {
+void Torrent::metadataReady()
+{
+    if (handle.status(1).state != 2) {
+        remap = true;
+        offset = 0;
         currentDownloadedPieces = 0;
         controlPieces();
+    } else {
+        QTimer::singleShot(1000, this, SLOT(metadataReady()));
     }
-    */
 }
 
 void Torrent::controlPieces()
@@ -92,65 +66,47 @@ void Torrent::controlPieces()
     _root->setProperty("neededPieces", neededPices);
     _root->setProperty("downloadedPieces", handle.status().num_pieces);
     _root->setProperty("bitRate", QString::number(handle.status().download_rate/1024));
+    _root->setProperty("seeds", handle.status().num_seeds);
+    _root->setProperty("peers", handle.status().num_peers);
 
     if(handle.status().num_pieces-currentDownloadedPieces < neededPices) {
         QTimer::singleShot(1000, this, SLOT(controlPieces()));
     } else {
         if (currentDownloadedPieces == 0) {
-            static QString newFilePath;
-            QString tmpPath = QString::fromStdString(handle.save_path())+QString::fromStdString(handle.name());
-            QDir dir(tmpPath);
-            if (dir.exists())
-                newFilePath = tmpPath+"/";
-            else
-                newFilePath = QString::fromStdString(handle.save_path());
-            QString newFileName = "Non.Stop.2014.720p.BluRay.x264.YIFY.mp4"; // TODO: Obtener nombre de la fila.
-            QMetaObject::invokeMethod(_pig, "playerHandle", Qt::QueuedConnection, Q_ARG(QString, newFilePath), Q_ARG(QString, newFileName));
+            static QStringList scennes;
+            QString dirPath = QString::fromStdString(handle.save_path())+QString::fromStdString(handle.name());
+            QDir dir(dirPath);
+            if (!dir.exists())
+                dir.setPath(QString::fromStdString(handle.save_path()));
+            dir.setNameFilters(QStringList() << "*.avi" << "*.flv" << "*.h264" << "*.mkv" << "*.mp4" << "*.mpg" << "*.mpeg" << "*.ogm"<< "*.ogv" << "*.wmv");
+            QFileInfoList filesList(dir.entryInfoList(QDir::Files, QDir::Name));
+            foreach(const QFileInfo & fi, filesList )
+                scennes << fi.absoluteFilePath();
+
+            QMetaObject::invokeMethod(_pig, "playerHandle", Qt::QueuedConnection, Q_ARG(QString, scennes[scenne-1]));
             QTimer::singleShot(5000, this, SLOT(progress()));;
         } else {
             QMetaObject::invokeMethod(_player, "update", Qt::QueuedConnection);
         }
     }
-
-    /*
-    int begin = handle.status().pieces.begin();
-    int end = handle.status().pieces.end();
-    int count = handle.status().pieces.count();
-
-    qDebug() << "====================================";
-
-    qDebug() << "PIECES-BEGIN: " << begin;
-    qDebug() << "PIECES-END: " << end;
-    qDebug() << "PIECES-COUNT: " << count;
-
-    //qDebug() << "SIZE: " << info->file_at(0).size;
-
-    int progress = handle.status().progress_ppm ;
-    qDebug() << "PROGRESS: " << progress;
-
-    if(progress < 50000)
-        QTimer::singleShot(2000, this, SLOT(controlPieces()));
-    else
-        QMetaObject::invokeMethod(_pig, "playerHandle", Qt::QueuedConnection, Q_ARG(QString, pathx), Q_ARG(QString, filex));
-    */
 }
 
 bool Torrent::availablePiece(int totalMsec, int offsetMsec)
 {
-    int offset = (offsetMsec*handle.get_torrent_info().num_pieces())/totalMsec;
+    offset = (offsetMsec*handle.get_torrent_info().num_pieces())/totalMsec;
     return handle.have_piece(offset);
 }
 
 void Torrent::offsetPiece(int totalMsec, int offsetMsec)
 {
-    int offset = (offsetMsec*handle.get_torrent_info().num_pieces())/totalMsec;
+    offset = (offsetMsec*handle.get_torrent_info().num_pieces())/totalMsec;
     qDebug() << "TOTAL_PIECES: " << handle.get_torrent_info().num_pieces();
     qDebug() << "OFFSET: " << offset;
     for (int i=0; i <= handle.get_torrent_info().num_pieces(); i++) { // TODO: Saber el numero de piezas de la fila a bajar. file_at.
         if(i < offset)
             handle.piece_priority(i, 0);
         else
-          handle.piece_priority(i, 7);
+            handle.piece_priority(i, 7);
     }
     currentDownloadedPieces = handle.status().num_pieces;
     controlPieces();
@@ -158,8 +114,7 @@ void Torrent::offsetPiece(int totalMsec, int offsetMsec)
 
 void Torrent::progress()
 {
-    // offset + ...
-    QMetaObject::invokeMethod(_player, "progress", Qt::QueuedConnection, Q_ARG(int, handle.get_torrent_info().num_pieces()), Q_ARG(int, handle.status().num_pieces));
+    QMetaObject::invokeMethod(_player, "progress", Qt::QueuedConnection, Q_ARG(int, handle.get_torrent_info().num_pieces()), Q_ARG(int, offset+handle.status().num_pieces));
     QTimer::singleShot(5000, this, SLOT(progress()));
 }
 
@@ -204,3 +159,56 @@ void Torrent::progress()
 
 
 
+/*
+params.ti = new torrent_info(path.toStdString()+file.toStdString(), ec);
+handle.move_storage(params.save_path);
+
+nfo = new torrent_info(path.toStdString()+file.toStdString());
+
+for (int i=1; i<=scennes; i++)
+    handle.file_priority(i, 0);
+handle.file_priority(scenne, 7);
+
+std::string origFileName = info->name(); // TODO: No devuelve el nombre de una fila individual.
+std::string format = origFileName.erase(0, origFileName.length()-4); //Ver si es necesario en windows.
+
+std::string ID = file.remove(".torrent", Qt::CaseSensitive).toStdString();
+std::string scenneID = QString::number(scenne).toStdString();
+std::string fileName = ID+"-"+scenneID;//+format;
+
+storage.rename_file(scenne, fileName);
+info->remap_files(storage);
+
+handle.rename_file(2, fileName);
+info->remap_files(storage);
+
+
+newFileName = QString::fromStdString(fileName);
+
+if (torrent_status::downloading) {
+    currentDownloadedPieces = 0;
+    controlPieces();
+}
+*/
+
+/*
+int begin = handle.status().pieces.begin();
+int end = handle.status().pieces.end();
+int count = handle.status().pieces.count();
+
+qDebug() << "====================================";
+
+qDebug() << "PIECES-BEGIN: " << begin;
+qDebug() << "PIECES-END: " << end;
+qDebug() << "PIECES-COUNT: " << count;
+
+//qDebug() << "SIZE: " << info->file_at(0).size;
+
+int progress = handle.status().progress_ppm ;
+qDebug() << "PROGRESS: " << progress;
+
+if(progress < 50000)
+    QTimer::singleShot(2000, this, SLOT(controlPieces()));
+else
+    QMetaObject::invokeMethod(_pig, "playerHandle", Qt::QueuedConnection, Q_ARG(QString, pathx), Q_ARG(QString, filex));
+*/

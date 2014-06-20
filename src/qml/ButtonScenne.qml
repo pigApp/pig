@@ -7,10 +7,12 @@ Rectangle {
     height: 80
     color: "transparent"
 
-    property alias iconOpacity: icon.opacity
-    property alias iconQuality: icon.source
+    property string quality
+    property string magnetUrl
+    property string scenne
 
     signal clicked()
+    onClicked: { onShowPlayerLayer = true; root.torrentHandle(magnetUrl, scenne) }
     
     RectangularGlow {
         id: effect
@@ -24,24 +26,16 @@ Rectangle {
     }
     Image {
         id: icon
+        source: { if (quality == '1080p') "qrc:/images/1080.png"; else "qrc:/images/720.png" }
         fillMode: Image.PreserveAspectCrop
         anchors.centerIn: parent
     }
     MouseArea {
         id: mousearea
         hoverEnabled: true
-        onEntered: { 
-            if (icon.opacity != 0.15)
-                delayIn.restart()
-        }
-        onHoveredChanged: { 
-            if (icon.opacity != 0.15)
-                delayOut.restart() 
-        }
-        onClicked: { 
-            if (icon.opacity != 0.15) 
-                buttonScenne.clicked()
-        }
+        onEntered: delayIn.restart()
+        onHoveredChanged: delayOut.restart()
+        onClicked: buttonScenne.clicked()
         anchors.fill: parent
     }
     Timer {
