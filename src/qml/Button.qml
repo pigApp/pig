@@ -31,9 +31,5 @@ Rectangle {
         onClicked: button.clicked()
         anchors.fill: parent
     }
-    states: State {
-        when: mousearea.pressed
-        PropertyChanges { target: label; color: Qt.rgba(0.1, 0.1, 0.1, 0.4) }
-    }
 }
 // Espacios hechos.

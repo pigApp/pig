@@ -41,7 +41,7 @@ Item {
         anchors.centerIn: parent
         Text {
             id: label
-            text: "YOUR PASSWORD"
+            text: "INTRO YOUR PASSWORD"
             color: "white"
             font.family: pigFont.name
             font.bold: true

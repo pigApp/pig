@@ -200,11 +200,11 @@ Item {
                 id: openScenneRow
                 spacing: 1
                 anchors.horizontalCenter: parent.horizontalCenter
-                anchors.horizontalCenterOffset: 100+(52.5*scennes)
+                anchors.horizontalCenterOffset: { if (scennes <= 2) 100+(59*scennes); else 100+(52.5*scennes) }
                 anchors.verticalCenter: parent.verticalCenter
                 anchors.verticalCenterOffset: 31
                 Component.onCompleted: {
-                    for (var i=1; i<=scennes; i++) {
+                    for (var i=1; i<=scennes && i<=8; i++) {
                         var component = Qt.createComponent("ButtonScenne.qml")
                         var object = component.createObject(openScenneRow)
                         object.quality = quality
@@ -246,10 +246,14 @@ Item {
             states: [
                 State {
                     name: "showPlayerLayer"
-                    when: onShowPlayerLayer;
+                    when: onShowPlayerLayer
                 },
                 State {
                     name: "hidePlayerLayer"
+                    PropertyChanges { target: root; peers: 0 }
+                    PropertyChanges { target: root; seeds: 0 }
+                    PropertyChanges { target: root; neededPieces: 0 }
+                    PropertyChanges { target: root; downloadedPieces: 0 }
                 },
                 State {
                     name: "showAll"
@@ -429,10 +433,10 @@ Item {
                 font.pixelSize: 30
             }
             Text {
-                id: seedsLabel
+                id: peersLabel
                 text: {
-                    if (root.seeds != 0 && playerLayer.height == screen.height)
-                        "SEEDS "+root.seeds
+                    if (root.peers != 0 && playerLayer.height == screen.height)
+                        "PEERS "+root.peers
                     else
                         ""
                 }
@@ -442,10 +446,10 @@ Item {
                 font.pixelSize: 30
             }
             Text {
-                id: peersLabel
+                id: seedsLabel
                 text: {
-                    if (root.peers != 0 && playerLayer.height == screen.height)
-                        "PEERS "+root.peers
+                    if (root.seeds != 0 && playerLayer.height == screen.height)
+                        "SEEDS "+root.seeds
                     else
                         ""
                 }

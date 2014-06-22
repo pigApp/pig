@@ -4,13 +4,13 @@ Item {
   id: waitMsg
     Row {
         id: row
-        spacing: 11
+        spacing: 17
         anchors.centerIn: parent
         anchors.verticalCenterOffset: 20
         Text {
             id: msg
             text: "PLEASE WAIT"
-            color:  Qt.rgba(0, 0, 0, 0.15)
+            color: Qt.rgba(0.1, 0.1, 0.1, 0.13)
             font.family: pigFont.name
             font.pixelSize: 25
         }
@@ -23,7 +23,7 @@ Item {
             clip: true
             visible: showSpinner
             property bool on: showSpinner
-            NumberAnimation { running: spinner.on; target: spinner; properties: "opacity"; from: 0.0; to: 1.0; loops: Animation.Infinite; duration: 2000 }
+            NumberAnimation on rotation { running: spinner.on; from: 0; to: 360; loops: Animation.Infinite; duration: 1200 }
             anchors.verticalCenter: parent.verticalCenter
             anchors.verticalCenterOffset: 1
         }

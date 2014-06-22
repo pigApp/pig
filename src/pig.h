@@ -22,7 +22,7 @@ public:
     PIG(QObject *parent = 0);
     ~PIG();
 
-    Q_INVOKABLE void playerHandle(const QString absoluteFilePath);
+    Q_INVOKABLE void playerHandle(const QString absoluteFilePath, int totalPieces, int currentPiece);
 
     QWidget *window;
     QWidget *container;

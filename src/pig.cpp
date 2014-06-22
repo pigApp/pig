@@ -201,13 +201,13 @@ void PIG::torrentHandle(QString magnetUrl, QString scenne)
 }
 
 // Player
-void PIG::playerHandle(const QString absoluteFilePath)
+void PIG::playerHandle(const QString absoluteFilePath, int totalPieces, int currentPiece)
 {
     mPlayer = new VideoPlayer(this, window->geometry().width(), window->geometry().height());
     mPlayer->_torrent = mTorrent;
     mTorrent->_player = mPlayer; // TODO: Asegurarse en torrent.cpp que sea un puntero valido antes de llamar a progress().
-    mPlayer->player->setMedia(QUrl::fromLocalFile(absoluteFilePath));
-    mPlayer->player->play();
+    mPlayer->run(absoluteFilePath, totalPieces, currentPiece);
+    // TODO: Desde aca, pasarlo a otro slot, que sea llamado si el video es valido.
     container->hide();
     layout->addLayout(mPlayer->layout);
 

@@ -19,8 +19,9 @@ Item {
         anchors.centerIn: parent
         TextInput {
             id: input
-            color: Qt.rgba(0, 0, 0, 0.3)
+            color: Qt.rgba(0.1, 0.1, 0.1, 0.2)
             font.family: pigFont.name
+            font.bold: true
             font.capitalization: Font.AllUppercase
             font.pixelSize: 25
             maximumLength: 29
@@ -50,7 +51,7 @@ Item {
         Text {
             id: noResultLabel
             text: " NO RESULT"
-            color: Qt.rgba(0.2, 0.2, 0.2, 0.2)
+            color: Qt.rgba(0.1, 0.1, 0.1, 0.13)
             font.family: pigLightFont.name
             font.pixelSize: 25/strap
             visible: false

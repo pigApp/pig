@@ -9,75 +9,40 @@ Item {
         anchors.fill: parent
     }
 
-    Column {
-        id: formColumn
-        spacing: 5
+    Rectangle {
+        id: inputLayer
+        width: screen.width/5.48
+        height: 35
+        radius: 2
+        color: "black"
         anchors.centerIn: parent
-        anchors.horizontalCenterOffset: 70
-        Row {
-            spacing: 12
-            Rectangle {
-                id: inputLayer
-                width: screen.width/5.48
-                height: 35
-                radius: 2
-                color: "black"
-                TextInput {
-                    id: input
-                    width: screen.width/4.5
-                    color: "white"
-                    font.family: pigFont.name
-                    font.pixelSize: 25
-                    maximumLength: 16
-                    echoMode: TextInput.Password
-                    onCursorPositionChanged: { setLabel.visible = false }
-                    onAccepted: {
-                        if (input.text !== '') {
-                            root.passwordHandle(input.text, false, true)
-                            formColumn.visible = false
-                            formColumn.enabled = false
-                        }
-                    }
-                }
-            }
-            Text {
-                id: whatLabel
-                width: 140
-                height: 26
-                text: "what is this?"
-                color: Qt.rgba(1, 1, 1, 0.5)
-                font.family: pigFont.name
-                font.pixelSize: 25
-                MouseArea {
-                    id: mousearea
-                    anchors.fill: parent
-                }
-                states: State {
-                    when: mousearea.pressed
-                    PropertyChanges { target: whatText; opacity: 1 }
+        TextInput {
+            id: input
+            width: screen.width/4.5
+            color: "white"
+            font.family: pigFont.name
+            font.pixelSize: 25
+            maximumLength: 16
+            echoMode: TextInput.Password
+            onCursorPositionChanged: { label.visible = false }
+            onAccepted: {
+                if (input.text !== '') {
+                    root.passwordHandle(input.text, false, true)
+                    inputLayer.visible = false
                 }
             }
         }
         Text {
-            id: whatText
-            text: "If set a password will be you requested when starting PIG.<br>Is recommended to use it if you share a computer with someone underage.<br>It is a basic measure of security. Is not invulnerable. Be careful."
-            color: Qt.rgba(1, 1, 1, 0.7)
-            font.family: pigLightFont.name
-            font.italic: true
-            font.pixelSize: 15
-            opacity: 0
+            id: label
+            text: "SET A PASSWORD"
+            anchors.left: parent.left
+            anchors.leftMargin: 0
+            color: "white"
+            font.family: pigFont.name
+            font.bold: true
+            font.pixelSize: 25
+            anchors.centerIn: parent
         }
-    }
-    Text {
-        id: setLabel
-        text: "SET PASSWORD"
-        color: "white"
-        font.family: pigFont.name
-        font.bold: true
-        font.pixelSize: 25
-        anchors.centerIn: parent
-        anchors.horizontalCenterOffset: -8
-        anchors.verticalCenterOffset: -33
     }
     Text {
         id: ok_fail_Label

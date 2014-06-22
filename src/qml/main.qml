@@ -29,8 +29,8 @@ Item {
     property int totalFilms
     property int n
     property real strap:1
-    property int seeds: 0
     property int peers: 0
+    property int seeds: 0
     property int neededPieces: 0
     property int downloadedPieces: 0
 

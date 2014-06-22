@@ -34,12 +34,15 @@ private:
     libtorrent::error_code ec;
 
     bool remap;
+    bool toPlayer;
+    int neededPices;
     int offset;
     int currentDownloadedPieces;
 
 private slots:
     void metadataReady();
     void controlPieces();
+    void downloadInfo();
     void progress();
 };
 
