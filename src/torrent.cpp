@@ -8,10 +8,15 @@
 
 Torrent::Torrent(QObject *parent) : QObject(parent)
 {
+    remap = true;
+    toBox = false;
+    offset = 0;
+    downloadOffsetPieces = 0;
+
     client.listen_on(std::make_pair(6881, 6889), ec);
 }
 
-void Torrent::download(QString mangnetUrl)
+void Torrent::run(QString mangnetUrl)
 {       
 #ifdef _WIN32
         static std::string path = "C:/tmp/pig/";
@@ -21,8 +26,11 @@ void Torrent::download(QString mangnetUrl)
     params.save_path = path;
     params.url = mangnetUrl.toStdString();
     handle = client.add_torrent(params);
-    handle.set_sequential_download(true);
-    handle.set_priority(255);
+
+    //std::string tracker = "udp://tracker.publicbt.com:80/announce";
+    //std::string trackerTwo = "udp://tracker.istole.it:80/announce";
+    //handle.add_tracker(tracker);
+    //handle.add_tracker(trackerTwo);
 
     metadataReady();
 }
@@ -30,65 +38,94 @@ void Torrent::download(QString mangnetUrl)
 void Torrent::metadataReady()
 {
     if (handle.status(1).state != 2) {
-        remap = true;
-        offset = 0;
-        currentDownloadedPieces = 0;
-        controlPieces();
+        minimumPiecesReady();
     } else {
         QTimer::singleShot(1000, this, SLOT(metadataReady()));
     }
 }
 
-void Torrent::controlPieces()
+void Torrent::minimumPiecesReady()
 {
     if (remap) {
         static int lengthPieces;
         lengthPieces = handle.get_torrent_info().piece_length()/1024;
-        if (lengthPieces >= 256 && lengthPieces < 512)
-            neededPices = 30;
+
+        if (lengthPieces < 256)
+            neededPices = 60;
+        else if (lengthPieces >= 256 && lengthPieces < 512)
+            neededPices = 40;
         else if (lengthPieces >= 512 && lengthPieces < 1024)
-            neededPices = 15;
+            neededPices = 20;
         else if (lengthPieces >= 1024 && lengthPieces < 2048)
-            neededPices = 7;
+            neededPices = 10;
         else if (lengthPieces >= 2048 && lengthPieces < 4096)
-            neededPices = 2;
+            neededPices = 6;
         else
-            neededPices = 1;
+            neededPices = 3;
+
+        qDebug() << "NEEDED_PIECES" << neededPices;
+
+        libtorrent::file_storage fs = handle.get_torrent_info().orig_files();
+        std::string nm = fs.name();
+        std::cout << nm;
 
         for (int i=1; i <= handle.get_torrent_info().num_files(); i++)
             handle.file_priority(i, 0); // TODO: filter_files.
         handle.file_priority(scenne, 7); // TODO: Saber el nombre de las filas, filtradas por formato.
+        //handle.set_upload_limit(100*1024);//
+        handle.set_sequential_download(true);
+        handle.set_priority(255);
         remap = false;
-        toPlayer = false;
+        
         downloadInfo();
     }
 
-    if(handle.status().num_pieces-currentDownloadedPieces < neededPices) {
-        QTimer::singleShot(1000, this, SLOT(controlPieces()));
+    if(handle.status().num_pieces-downloadOffsetPieces < neededPices) {
+        QTimer::singleShot(1000, this, SLOT(minimumPiecesReady()));
     } else {
-        if (currentDownloadedPieces == 0) {
+        if (downloadOffsetPieces == 0) {
             static QStringList scennesAbsolutePath;
             QString dirPath = QString::fromStdString(handle.save_path())+QString::fromStdString(handle.name());
+
             QDir dir(dirPath);
             if (!dir.exists())
                 dir.setPath(QString::fromStdString(handle.save_path()));
+
             dir.setNameFilters(QStringList() << "*.avi" << "*.divx" << "*.flv" << "*.h264" << "*.mkv" << "*.mp4" << "*.mpg" << "*.mpeg" << "*.ogm"<< "*.ogv" << "*.wmv");
             QFileInfoList filesList(dir.entryInfoList(QDir::Files, QDir::Name));
             foreach(const QFileInfo & fi, filesList )
                 scennesAbsolutePath << fi.absoluteFilePath();
 
-            QMetaObject::invokeMethod(_pig, "playerHandle", Qt::QueuedConnection, Q_ARG(QString, scennesAbsolutePath[scenne-1]), Q_ARG(int, handle.get_torrent_info().num_pieces()), Q_ARG(int, handle.status().num_pieces));            
-            QTimer::singleShot(5000, this, SLOT(progress()));
-            toPlayer = true;
+            toBox = true;
+            availablePiece = offset+handle.status().num_pieces;
+            QMetaObject::invokeMethod(_pig, "playerHandle", Qt::QueuedConnection, Q_ARG(QString, scennesAbsolutePath[scenne-1]));
+
+            QTimer::singleShot(1000, this, SLOT(progress()));
         } else {
             QMetaObject::invokeMethod(_player, "update", Qt::QueuedConnection);
         }
     }
 }
 
+void Torrent::progress()
+{
+    //if (isAvailable(0, 0, availablePiece+1)) {
+    if (isAvailable(0, 0, handle.status().num_pieces-1)) {
+        //++availablePiece;
+        availablePiece = handle.status().num_pieces-1;
+        qDebug() << "TRUE AP: " << availablePiece;
+        QMetaObject::invokeMethod(_player, "progress", Qt::QueuedConnection, Q_ARG(int, handle.get_torrent_info().num_pieces()), Q_ARG(int, availablePiece));
+    } else {
+        availablePiece = handle.status().num_pieces-1;
+        qDebug() << "FALSE AP: " << availablePiece;
+        QMetaObject::invokeMethod(_player, "progress", Qt::QueuedConnection, Q_ARG(int, handle.get_torrent_info().num_pieces()), Q_ARG(int, availablePiece));
+    }
+    QTimer::singleShot(1000, this, SLOT(progress()));
+}
+
 void Torrent::downloadInfo()
 {
-    if (toPlayer) {
+    if (toBox) {
         QMetaObject::invokeMethod(_player, "downloadInfo", Qt::QueuedConnection, Q_ARG(int, handle.status().download_rate/1024), Q_ARG(int, handle.status().num_peers), Q_ARG(int, handle.status().num_peers));
     } else {
         _root->setProperty("neededPieces", neededPices);
@@ -100,31 +137,27 @@ void Torrent::downloadInfo()
     QTimer::singleShot(1000, this, SLOT(downloadInfo()));
 }
 
-void Torrent::progress()
+bool Torrent::isAvailable(int totalMsec, int offsetMsec,int availablePiece)
 {
-    QMetaObject::invokeMethod(_player, "progress", Qt::QueuedConnection, Q_ARG(int, handle.get_torrent_info().num_pieces()), Q_ARG(int, offset+handle.status().num_pieces));
-    QTimer::singleShot(5000, this, SLOT(progress()));
-}
-
-bool Torrent::availablePiece(int totalMsec, int offsetMsec)
-{
-    offset = (offsetMsec*handle.get_torrent_info().num_pieces())/totalMsec;
-    return handle.have_piece(offset);
+    if (availablePiece == 0) {
+        offset = (offsetMsec*handle.get_torrent_info().num_pieces())/totalMsec;
+        return handle.have_piece(offset);
+    } else {
+        return handle.have_piece(availablePiece);
+    }
 }
 
 void Torrent::offsetPiece(int totalMsec, int offsetMsec)
 {
     offset = (offsetMsec*handle.get_torrent_info().num_pieces())/totalMsec;
-    qDebug() << "TOTAL_PIECES: " << handle.get_torrent_info().num_pieces();
-    qDebug() << "OFFSET: " << offset;
     for (int i=0; i <= handle.get_torrent_info().num_pieces(); i++) { // TODO: Saber el numero de piezas de la fila a bajar. file_at.
         if(i < offset)
             handle.piece_priority(i, 0);
         else
             handle.piece_priority(i, 7);
     }
-    currentDownloadedPieces = handle.status().num_pieces;
-    controlPieces();
+    downloadOffsetPieces = handle.status().num_pieces;
+    minimumPiecesReady();
 }
 
 
@@ -196,8 +229,8 @@ info->remap_files(storage);
 newFileName = QString::fromStdString(fileName);
 
 if (torrent_status::downloading) {
-    currentDownloadedPieces = 0;
-    controlPieces();
+    downloadOffsetPieces = 0;
+    minimumPiecesReady();
 }
 */
 
@@ -218,7 +251,7 @@ int progress = handle.status().progress_ppm ;
 qDebug() << "PROGRESS: " << progress;
 
 if(progress < 50000)
-    QTimer::singleShot(2000, this, SLOT(controlPieces()));
+    QTimer::singleShot(2000, this, SLOT(minimumPiecesReady()));
 else
     QMetaObject::invokeMethod(_pig, "playerHandle", Qt::QueuedConnection, Q_ARG(QString, pathx), Q_ARG(QString, filex));
 */

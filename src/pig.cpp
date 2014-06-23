@@ -197,17 +197,17 @@ void PIG::torrentHandle(QString magnetUrl, QString scenne)
     mTorrent->_pig = this;
     mTorrent->_root = mRoot;
     mTorrent->scenne = scenne.toInt();
-    mTorrent->download(magnetUrl);
+    mTorrent->run(magnetUrl);
 }
 
 // Player
-void PIG::playerHandle(const QString absoluteFilePath, int totalPieces, int currentPiece)
+void PIG::playerHandle(const QString absoluteFilePath)
 {
     mPlayer = new VideoPlayer(this, window->geometry().width(), window->geometry().height());
     mPlayer->_torrent = mTorrent;
     mTorrent->_player = mPlayer; // TODO: Asegurarse en torrent.cpp que sea un puntero valido antes de llamar a progress().
-    mPlayer->run(absoluteFilePath, totalPieces, currentPiece);
-    // TODO: Desde aca, pasarlo a otro slot, que sea llamado si el video es valido.
+    mPlayer->run(absoluteFilePath);
+                                 // TODO: Desde aca, pasarlo a otro slot, que sea llamado si el video es valido.
     container->hide();
     layout->addLayout(mPlayer->layout);
 
@@ -220,7 +220,7 @@ void PIG::playerHandle(const QString absoluteFilePath, int totalPieces, int curr
     DownArrow = new QShortcut(window);
     DownArrow->setEnabled(true);
     DownArrow->setKey(Qt::Key_Down);
-    connect(SpaceBar, SIGNAL(activated()), mPlayer, SLOT(playPause()));
+    connect(SpaceBar, SIGNAL(activated()), mPlayer, SLOT(playPauseForUser()));
     connect(UpArrow, SIGNAL(activated()), mPlayer, SLOT(setPositiveVolume()));
     connect(DownArrow, SIGNAL(activated()), mPlayer, SLOT(setNegativeVolume()));
 }

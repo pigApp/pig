@@ -17,15 +17,15 @@ public:
     explicit VideoPlayer(QObject *parent, int screenWidth, int screenHeight);
     ~VideoPlayer();
 
+    Q_INVOKABLE void progress(int totalPieces, int availablePiece);
     Q_INVOKABLE void downloadInfo(int bitRate, int peers, int seeds);
-    Q_INVOKABLE void progress(int totalPieces, int currentPiece);
     Q_INVOKABLE void update();
 
     QObject *_torrent;
     QVBoxLayout *layout;
 
 public slots:
-    void run(QString absoluteFilePath, int totalPieces, int currentPiece);
+    void run(QString absoluteFilePath);
 
 private slots:
     void playPause();
@@ -40,23 +40,24 @@ private slots:
     void setPositiveVolume();
     void setNegativeVolume();
 
+    void playPauseForUser();
 
 private:
-    QWidget *blackBox;
     QVideoWidget *videoWidget;
     QMediaPlayer *player;
+    QWidget *box;
+    QLabel *totalTimeLabel;
+    QLabel *currentTimeLabel;
     QLabel *bitRateLabel;
     QLabel *peersLabel;
     QLabel *seedsLabel;
-    QLabel *currentTimeLabel;
-    QLabel *totalTimeLabel;
     QProgressBar *bar;
     QSlider *slider;
 
     bool init;
-    bool check;
+    bool control;
     int volume;
 
-    int test;//
+    bool pausedForUser;
 };
 #endif

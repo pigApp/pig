@@ -15,7 +15,7 @@ class Torrent : public QObject
 public:
     explicit Torrent(QObject *parent=0);
 
-    Q_INVOKABLE bool availablePiece(int totalMsec, int offsetMsec);
+    Q_INVOKABLE bool isAvailable(int totalMsec, int offsetMsec, int availablePiece);
     Q_INVOKABLE void offsetPiece(int totalMsec, int offsetMsec);
 
     QObject *_pig;
@@ -25,7 +25,7 @@ public:
     int scenne;
 
 public slots:
-    void download(QString mangnetUrl);
+    void run(QString mangnetUrl);
 
 private:
     libtorrent::session client;
@@ -34,16 +34,17 @@ private:
     libtorrent::error_code ec;
 
     bool remap;
-    bool toPlayer;
-    int neededPices;
+    bool toBox;
     int offset;
-    int currentDownloadedPieces;
+    int neededPices;
+    int availablePiece;
+    int downloadOffsetPieces;
 
 private slots:
     void metadataReady();
-    void controlPieces();
-    void downloadInfo();
+    void minimumPiecesReady();
     void progress();
+    void downloadInfo();
 };
 
 #endif

@@ -7,7 +7,6 @@
 VideoPlayer::VideoPlayer(QObject *parent, int screenWidth, int screenHeight) : QObject(parent)
 {    
     videoWidget = new QVideoWidget();
-
     player = new QMediaPlayer(this);
     player->setVideoOutput(videoWidget);
     volume = 70;
@@ -15,18 +14,11 @@ VideoPlayer::VideoPlayer(QObject *parent, int screenWidth, int screenHeight) : Q
 
     QFont font( "helvetica", 30);
    
-    blackBox = new QWidget();
-    blackBox->setGeometry(0, 10, screenWidth, 70);
-    blackBox->setStyleSheet("background-color: rgba(0, 0, 0, 20%); border: none;");
-    blackBox->setParent(videoWidget);
-    blackBox->hide();
-
-    currentTimeLabel = new QLabel();
-    currentTimeLabel->setGeometry((screenWidth/2)-160, 20, 160, 50);
-    currentTimeLabel->setStyleSheet("background-color: transparent; border: none; color: white");
-    currentTimeLabel->setFont(font);
-    currentTimeLabel->setParent(videoWidget);
-    currentTimeLabel->hide();
+    box = new QWidget();
+    box->setGeometry(0, 10, screenWidth, 70);
+    box->setStyleSheet("background-color: rgba(0, 0, 0, 20%); border: none;");
+    box->setParent(videoWidget);
+    box->hide();
 
     totalTimeLabel = new QLabel();
     totalTimeLabel->setGeometry((screenWidth/2)+10, 20, 160, 50);
@@ -34,6 +26,13 @@ VideoPlayer::VideoPlayer(QObject *parent, int screenWidth, int screenHeight) : Q
     totalTimeLabel->setFont(font);
     totalTimeLabel->setParent(videoWidget);
     totalTimeLabel->hide();
+
+    currentTimeLabel = new QLabel();
+    currentTimeLabel->setGeometry((screenWidth/2)-160, 20, 160, 50);
+    currentTimeLabel->setStyleSheet("background-color: transparent; border: none; color: white");
+    currentTimeLabel->setFont(font);
+    currentTimeLabel->setParent(videoWidget);
+    currentTimeLabel->hide();
 
     bitRateLabel = new QLabel();
     bitRateLabel->setGeometry(screenWidth-648, 20, 200, 50);
@@ -57,7 +56,7 @@ VideoPlayer::VideoPlayer(QObject *parent, int screenWidth, int screenHeight) : Q
     seedsLabel->hide();
 
     bar = new QProgressBar();
-    bar->setGeometry(4, screenHeight-25, screenWidth-8, 1);
+    bar->setGeometry(4, screenHeight-25, screenWidth-8, 3);
     bar->setMinimum(0);
     bar->setParent(videoWidget);
     bar->hide();
@@ -84,8 +83,6 @@ VideoPlayer::VideoPlayer(QObject *parent, int screenWidth, int screenHeight) : Q
     connect(slider, SIGNAL(sliderReleased()), this, SLOT(sliderReleased()));
     connect(player, SIGNAL(mediaStatusChanged(QMediaPlayer::MediaStatus)), this, SLOT(statusChange(QMediaPlayer::MediaStatus)));
     connect(player, SIGNAL(error(QMediaPlayer::Error)), this, SLOT(error(QMediaPlayer::Error)));
-
-    // TODO: Barra de carga del buffer.
 }
 
 VideoPlayer::~VideoPlayer()
@@ -95,15 +92,23 @@ VideoPlayer::~VideoPlayer()
     delete videoWidget;
 }
 
-void VideoPlayer::run(QString absoluteFilePath, int totalPieces, int currentPiece)
+void VideoPlayer::run(QString absoluteFilePath)
 {
-    test = 0;//
-
-    init = true;
-    check = true;
+    pausedForUser = false;
+    control = true;
     player->setMedia(QUrl::fromLocalFile(absoluteFilePath));
     player->play();
-    progress(totalPieces, currentPiece);
+}
+
+void VideoPlayer::playPauseForUser()
+{
+    if (player->state() == QMediaPlayer::PlayingState) {
+        player->pause();
+        pausedForUser = true;
+    } else if (player->state() == QMediaPlayer::PausedState) {
+        player->play();
+        pausedForUser = false;
+    }
 }
 
 void VideoPlayer::playPause()
@@ -118,31 +123,18 @@ void VideoPlayer::playPause()
     }
 }
 
-void VideoPlayer::downloadInfo(int bitRate, int peers, int seeds)
+void VideoPlayer::progress(int totalPieces=0, int availablePiece=0)
 {
-    bitRateLabel->setText(QString::number(bitRate)+"Kb/s");
-    peersLabel->setText("PEERS "+QString::number(peers));
-    seedsLabel->setText("SEEDS "+QString::number(seeds));
-}
+    int pieceMsec = player->duration()/totalPieces;
+    //qDebug() << "PIECE_Msec: " << pieceMsec;
 
-void VideoPlayer::progress(int totalPieces=0, int currentPiece=0)
-{
-    int downloadedMsec = (currentPiece*player->duration())/totalPieces;
-    int msecForPiece = player->duration()/totalPieces;
-    int safePlay = downloadedMsec-((player->duration()/totalPieces)*7);
+    int downloadedMsec = ((availablePiece*player->duration())/totalPieces)+(pieceMsec*5);
+    int availableMsec = ((availablePiece*player->duration())/totalPieces)-(pieceMsec*5); 
 
     bar->setValue(downloadedMsec);
 
-    //qDebug() << "TOTAL_PIECES: " << totalPieces;
-    //qDebug() << "CURRENT_PIECE: " << currentPiece;
-    //qDebug() << "MSec x PIECE: " << msecForPiece;
-    //qDebug() << "SAFE_PLAY_Msec: " << safePlay;
-
-    test = test+3000;
-    if (check && player->state() != QMediaPlayer::PausedState) { //&& safePlay !=0 && safePlay >= 0-(msecForPiece*2)) {
-
-        //if (slider->value() < safePlay) {
-        if (slider->value() < test) {
+    if (control && !pausedForUser) {
+        if (slider->value() < availableMsec) {
             if(player->state() == QMediaPlayer::PausedState) {
                 qDebug() << "++++PLAY FROM PROGRESS";
                 player->play();
@@ -154,8 +146,16 @@ void VideoPlayer::progress(int totalPieces=0, int currentPiece=0)
             }
         }
     }
-    qDebug() << "TEST   Msec: " << test;//
-    qDebug() << "SLIDER Msec: " << slider->value();
+
+    qDebug() << "AVAILABLE_Msec: " << availableMsec;
+    qDebug() << "CURRENT_Msec: " << player->position();
+}
+
+void VideoPlayer::downloadInfo(int bitRate, int peers, int seeds)
+{
+    bitRateLabel->setText(QString::number(bitRate)+"Kb/s");
+    peersLabel->setText("PEERS "+QString::number(peers));
+    seedsLabel->setText("SEEDS "+QString::number(seeds));
 }
 
 void VideoPlayer::update()
@@ -173,24 +173,23 @@ void VideoPlayer::statusChange(QMediaPlayer::MediaStatus status)
 {
     qDebug() << "===STATUS: " << status;
 
-    if (init && status == QMediaPlayer::BufferedMedia) {
-        blackBox->show();
-        bar->show();
-        currentTimeLabel->show();
-        totalTimeLabel->show();
-        bitRateLabel->show();
-        peersLabel->show();
-        seedsLabel->show();
-        slider->setEnabled(true);
-        slider->show();
-        init = false;
-    } else if (!init && status == QMediaPlayer::BufferedMedia) {
-        player->play();
-        check = true;
+    if (status == QMediaPlayer::BufferedMedia) {
+        if (!slider->isEnabled()) {
+            box->show();
+            totalTimeLabel->show();
+            currentTimeLabel->show();
+            bitRateLabel->show();
+            peersLabel->show();
+            seedsLabel->show();
+            bar->show();
+            slider->setEnabled(true);
+            slider->show();
+        } else {
+            player->play();
+            control = true;
+        }
     } else if (status == QMediaPlayer::InvalidMedia || status == QMediaPlayer::EndOfMedia) {
-        check = false;
-        //player->pause();
-        qDebug() << "FALLO EN Msec: " << slider->value();
+        control = false;
         QTimer::singleShot(40000, this, SLOT(playPause()));
     }
 }
@@ -234,24 +233,20 @@ void VideoPlayer::setSliderPosition(qint64 position)
 void VideoPlayer::sliderPressed()
 {
     player->pause();
-    qDebug() << "SLIDER PRESSED";
 }
 
 void VideoPlayer::sliderMoved(int position)
 {
     slider->setValue(position);
-    qDebug() << "SLIDER MOVED TO: " << position;
 }
 
 void VideoPlayer::sliderReleased()
 {
-    qDebug() << "SLIDER RELEASED";
-
     int totalMsec = player->duration();
     int offsetMsec = slider->value();
     bool available;
 
-    QMetaObject::invokeMethod(_torrent, "availablePiece", Qt::DirectConnection, Q_RETURN_ARG(bool, available), Q_ARG(int, totalMsec), Q_ARG(int, offsetMsec));
+    QMetaObject::invokeMethod(_torrent, "isAvailable", Qt::DirectConnection, Q_RETURN_ARG(bool, available), Q_ARG(int, totalMsec), Q_ARG(int, offsetMsec), Q_ARG(int, 0));
     if(!available) {
         QMetaObject::invokeMethod(_torrent, "offsetPiece", Qt::DirectConnection, Q_ARG(int, totalMsec), Q_ARG(int, offsetMsec));
     } else {
@@ -263,15 +258,49 @@ void VideoPlayer::sliderReleased()
 void VideoPlayer::setPositiveVolume()
 {
     if (volume < 100)
-        volume = volume+10;
+        volume = volume+5;
     player->setVolume(volume);
 }
 
 void VideoPlayer::setNegativeVolume()
 {
     if (volume > 0)
-        volume = volume-10;
+        volume = volume-5;
     player->setVolume(volume);
 }
 
 
+
+
+
+
+
+/*
+int downloadedMsec = (currentPiece*player->duration())/totalPieces;
+int msecForPiece = player->duration()/totalPieces;
+int safePlay = downloadedMsec-((player->duration()/totalPieces)*7);
+
+//qDebug() << "TOTAL_PIECES: " << totalPieces;
+//qDebug() << "CURRENT_PIECE: " << currentPiece;
+//qDebug() << "MSec x PIECE: " << msecForPiece;
+//qDebug() << "SAFE_PLAY_Msec: " << safePlay;
+
+test = test+3000;
+if (control && player->state() != QMediaPlayer::PausedState) { //&& safePlay !=0 && safePlay >= 0-(msecForPiece*2)) {
+
+    //if (slider->value() < safePlay) {
+    if (slider->value() < test) {
+        if(player->state() == QMediaPlayer::PausedState) {
+            qDebug() << "++++PLAY FROM PROGRESS";
+            player->play();
+        }
+    } else {
+        if(player->state() == QMediaPlayer::PlayingState) {
+            qDebug() << "----PAUSED_FROM_PROGRESS";
+            player->pause();
+        }
+    }
+}
+qDebug() << "TEST   Msec: " << test;//
+qDebug() << "SLIDER Msec: " << slider->value();
+*/
