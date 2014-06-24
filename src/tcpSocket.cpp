@@ -1,8 +1,8 @@
-#include <QFile>
+#include "tcpSocket.h"
+
 #include <QDataStream>
 #include <QTextStream>
-
-#include "tcpSocket.h"
+#include <QFile>
 
 TcpSocket::TcpSocket(QObject *parent) : QObject(parent)
 {
@@ -52,12 +52,12 @@ void TcpSocket::write()
         static QString path = "/tmp/pig/";
 #endif
 
-    if (order == "getVersion") {
+    if (order == "getUpdateVersion") {
         QString version(data);
         emit versionReady(version);
     } else if (order == "getPreview") {
         //...
-    } else if (order == "getTorrent" || order == "getUpdate") {
+    } else if (order == "getUpdateFiles") {
         QByteArray initData("d8");
         int index = data.indexOf(initData);
         QFile newFile(path+file);

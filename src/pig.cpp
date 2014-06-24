@@ -3,9 +3,7 @@
 
 #include <stdlib.h>
 #include <QDir>
-#ifdef _WIN32
-#include <windows.h>
-#endif
+
 
 PIG::PIG(QObject *parent) : QObject(parent), mRoot(0)
 {
@@ -58,7 +56,7 @@ void PIG::passwordHandle(QString plain, bool init, bool write)
             if (args.last() == "WITHOUT_UPDATE")
                 finder();
             else
-                QTimer::singleShot(1000, this, SLOT(updateHandle()));
+                updateHandle();
             init = false;
         }
     } else if (!init && !write) {
@@ -87,11 +85,14 @@ void PIG::updateHandle()
 {
     mUpdate = new Update();
     mUpdate->db = db;
-    mUpdate->init(mRoot);//mUpdate->doCheck(mRoot);
+    mUpdate->_root = mRoot;
+    mUpdate->doCheck();
     emit showUpdateSIGNAL();
 
     connect(mUpdate, SIGNAL(updateCallFinder()), this, SLOT(finder()));
     connect(mUpdate, SIGNAL(updateErrorDb()), this, SLOT(errorDb()));
+    if(mRoot) connect(mRoot, SIGNAL(getFiles()), mUpdate, SLOT(getFiles()));
+    if(mRoot) connect(mRoot, SIGNAL(restart()), mUpdate, SLOT(replaceBinaryAndRestart()));
 }
 
 // Finder
@@ -101,31 +102,31 @@ void PIG::finder()
 
     if (db.open()) {
         QSqlQuery qry;
-        qry.prepare("SELECT DbVersion, BinVersion, Release, Category, NCategory, Pornstar, NPornstar FROM PigData, FiltersData");
+        qry.prepare("SELECT DatabaseVersion, BinaryVersion, Release, Category, NCategory, Pornstar, NPornstar FROM PigData, FiltersData");
         if (!qry.exec()) {
             db.close();
             errorDb();
         } else {
             qry.next();
-            int currentDBVersion = qry.value(0).toInt();
+            int currentDatabaseVersion = qry.value(0).toInt();
             int currentBinaryVersion = qry.value(1).toInt();
-            int currentBinaryRelease = qry.value(2).toInt();
+            int currentRelease = qry.value(2).toInt();
             QStringList categoryList = qry.value(3).toString().split(",");
             QStringList nCategoryList = qry.value(4).toString().split(",");
             QStringList pornstarList = qry.value(5).toString().split(",");
             QStringList nPornstarList = qry.value(6).toString().split(",");
             db.close();
 
-            QString strCurrentDBVersion = QString::number(currentDBVersion);
+            QString strCurrentDatabaseVersion = QString::number(currentDatabaseVersion);
             QString strCurrentBinaryVersion = QString::number(currentBinaryVersion);
-            QString strCurrentBinaryRelease= QString::number(currentBinaryRelease);
+            QString strCurrentRelease= QString::number(currentRelease);
 
             categoryList.prepend(QString::number(categoryList.count()));
             pornstarList.prepend(QString::number(pornstarList.count()));
 
-            mRoot->setProperty("dataBaseVersion", strCurrentDBVersion);
+            mRoot->setProperty("databaseVersion", strCurrentDatabaseVersion);
             mRoot->setProperty("binaryVersion", strCurrentBinaryVersion);
-            mRoot->setProperty("binaryRelease", strCurrentBinaryRelease);
+            mRoot->setProperty("release", strCurrentRelease);
             mRoot->setProperty("categoryList", categoryList);
             mRoot->setProperty("nCategoryList", nCategoryList);
             mRoot->setProperty("pornstarList", pornstarList);
@@ -197,7 +198,7 @@ void PIG::torrentHandle(QString magnetUrl, QString scenne)
     mTorrent->_pig = this;
     mTorrent->_root = mRoot;
     mTorrent->scenne = scenne.toInt();
-    mTorrent->run(magnetUrl);
+    mTorrent->doRun(magnetUrl);
 }
 
 // Player
@@ -206,7 +207,7 @@ void PIG::playerHandle(const QString absoluteFilePath)
     mPlayer = new VideoPlayer(this, window->geometry().width(), window->geometry().height());
     mPlayer->_torrent = mTorrent;
     mTorrent->_player = mPlayer; // TODO: Asegurarse en torrent.cpp que sea un puntero valido antes de llamar a progress().
-    mPlayer->run(absoluteFilePath);
+    mPlayer->doRun(absoluteFilePath);
                                  // TODO: Desde aca, pasarlo a otro slot, que sea llamado si el video es valido.
     container->hide();
     layout->addLayout(mPlayer->layout);
@@ -254,13 +255,10 @@ void PIG::setRootObject(QObject *root)
 {
     if(mRoot!=0) mRoot->disconnect(this); mRoot = root;
 
-    //if(mRoot) connect(mRoot, SIGNAL(updateAccept()), this, SLOT(updateHttp())); // TODO: Reemplazar this por mUpdate.
-    //if(mRoot) connect(mRoot, SIGNAL(updateCancel()), this, SLOT(finder()));
-    //if(mRoot) connect(mRoot, SIGNAL(updateRestart()), this, SLOT(updateRestartApp()));
-
+    if(mRoot) connect(mRoot, SIGNAL(passwordHandle(QString, bool, bool)), this, SLOT(passwordHandle(QString, bool, bool)));
+    if(mRoot) connect(mRoot, SIGNAL(updateCancel()), this, SLOT(finder()));
     if(mRoot) connect(mRoot, SIGNAL(findDb(QString, QString, QString, int, bool)), this, SLOT(findDb(QString, QString, QString, int, bool)));
     if(mRoot) connect(mRoot, SIGNAL(torrentHandle(QString, QString)), this, SLOT(torrentHandle(QString, QString)));
-    if(mRoot) connect(mRoot, SIGNAL(passwordHandle(QString, bool, bool)), this, SLOT(passwordHandle(QString, bool, bool)));
     if(mRoot) connect(mRoot, SIGNAL(quit()), this, SLOT(quit()));
 
     passwordHandle("", true, false);

@@ -3,6 +3,14 @@ import QtQuick 2.2
 Item {
     id: update
 
+    Text {
+        id: statusLabel
+        text: "XXXXX"//root.status
+        color: "black"
+        font.family: pigFont.name
+        font.pixelSize: 125
+    }
+    /*
     property string statusReader: root.status
 
     Row {
@@ -48,42 +56,32 @@ Item {
             Button {
                 id: acceptUpdate
                 label: "update"
-                color: Qt.rgba(0.1 ,0.1 ,0.1 , 0.2)
-                visible: showDecisionButton && !restart
-                enabled: showDecisionButton && !restart
+                color: Qt.rgba(0.1, 0.1, 0.1, 0.2)
+                visible: root.requireAccept
+                enabled: root.requireAccept
                 onClicked: {
                     root.status = ''
                     root.statusInformation  = ''
-                    root.updateAccept()
+                    root.getFiles()
                 }
             }
             Button {
                 id: cancelUpdate
                 label: "skip"
-                color: Qt.rgba(0.1 ,0.1 ,0.1 , 0.2)
-                visible: showDecisionButton && !restart
-                enabled: showDecisionButton && !restart
+                color: Qt.rgba(0.1, 0.1, 0.1, 0.2)
+                visible: root.requireAccept
+                enabled: root.requireAccept
                 onClicked: {
-                    root.status = ''
-                    root.statusInformation  = ''
                     root.updateCancel()
                 }
             }
             Button {
                 id: restartUpdate
                 label: "restart"
-                color: Qt.rgba(0.1 ,0.1 ,0.1 , 0.2)
-                visible: restart
-                enabled: restart
-                onClicked: { root.updateRestart() }
-            }
-            Button {
-                id: authorizeUpdate
-                label: "authorize"
-                color: Qt.rgba(0.1 ,0.1 ,0.1 , 0.2)
-                visible: authorize
-                enabled: authorize
-                onClicked: { root.updateRestart() }
+                color: Qt.rgba(0.1, 0.1, 0.1, 0.2)
+                visible: root.requireRestart
+                enabled: root.requireRestart
+                onClicked: { root.restart() } // TODO: Si os unix, mostrar mensaje que requiere autorizacion.
             }
         }
     }
@@ -99,4 +97,5 @@ Item {
             statusInformationLabel.anchors.bottomMargin = 2.33
         }
     }
+    */
 }

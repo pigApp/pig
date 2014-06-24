@@ -16,7 +16,7 @@ Torrent::Torrent(QObject *parent) : QObject(parent)
     client.listen_on(std::make_pair(6881, 6889), ec);
 }
 
-void Torrent::run(QString mangnetUrl)
+void Torrent::doRun(QString mangnetUrl)
 {       
 #ifdef _WIN32
         static std::string path = "C:/tmp/pig/";

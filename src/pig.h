@@ -46,7 +46,7 @@ protected:
 private:
     QObject *mRoot;
     Password *mPassword;
-    Update* mUpdate;
+    Update *mUpdate;
     TcpSocket mSocket;
     Torrent *mTorrent;
     VideoPlayer *mPlayer;

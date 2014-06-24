@@ -1,13 +1,11 @@
 #ifndef UPDATE_H
 #define UPDATE_H
 
-#include <QObject>
-#include <QtNetwork>
-#include <QNetworkAccessManager>
-#include <QUrl>
-#include <QtSql>
-#include <QCryptographicHash>
+#include "tcpSocket.h"
 
+#include <QObject>
+#include <QProcess>
+#include <QtSql>
 
 class Update : public QObject
 {
@@ -17,49 +15,41 @@ public:
     explicit Update(QObject *parent = 0);
     ~Update();
 
+    QObject *_root;
     QSqlDatabase db;
 
 public slots:
-    void init(QObject *obj);
+    void doCheck();
 
 signals:
     void updateCallFinder();
+    void updateFail();
     void updateErrorDb();
 
 private:
-    QObject *_root;
-    QString rootPath;
-    QNetworkAccessManager *networkAccess;
-    QNetworkConfigurationManager *networkAccessConfig;
-    QNetworkReply *reply;
-    QUrl url;
-    QTimer *timeOut;
-    QFile *file;
-    QString fileName;
+    TcpSocket mSocket;
 
-    QString remoteVersions;
-    QStringList remoteVersionsList;
-    QString remoteUrl;
-    QStringList remoteUrlList;
-    QProcess *execUpdate;
-    
-    short int localDbVersion, localBinVersion, localRelease, pkgToDownload;
-    bool remoteDbAvailable, remoteBinAvailable, updateAborted, updateDownload, updateCleanAll;
+    QString hostFiles;
+    QString databaseUrl;
+    QString databaseHash;
+    QString binaryUrl;
+    QString binaryHash;
+    QString newsUrl;
+    QString newsHash;
+    QString binaryAbsolutePath;
+    QProcess *runUpdater;
+
+    int currentDatabaseVersion, currentBinaryVersion, currentRelease;
+    bool newsAvailable, newDatabaseAvailable, newBinaryAvailable, databaseUpdated;
 
 private slots:
-    void http();
-    void versionsReadyRead();
-    void versionsFinished();
-    void downloadManager();
-    void downloadReadyRead();
-    void downloadFinished();
-    void updateTimeOut();
-    void restartApp();
-    void control();
-    
-    bool hashCalculation(QString md5SumPath, QString md5SumHash);
-    bool copyFile(const QString& fileOrigin, const QString& destinationDir);
-    bool removeFile(const QString &fileOrigin);
+    void getLastVersion(QString host, QString url);
+    void evaluate(QString lastVersion);
+    void getFiles();
+    void integrityFile(QString path, QString file);
+    void replace(QString path, QString file);
+    void replaceBinaryAndRestart();
+    void replaceBinaryReady();
 };
 
-#endif 
+#endif

@@ -25,22 +25,7 @@ public:
     QVBoxLayout *layout;
 
 public slots:
-    void run(QString absoluteFilePath);
-
-private slots:
-    void playPause();
-    void error(QMediaPlayer::Error);
-    void statusChange(QMediaPlayer::MediaStatus status);
-    void setCurrentTime(qint64 msecs);
-    void setTotalTime(qint64 msecs);
-    void setSliderPosition(qint64 position);
-    void sliderPressed();
-    void sliderMoved(int position);
-    void sliderReleased();
-    void setPositiveVolume();
-    void setNegativeVolume();
-
-    void playPauseForUser();
+    void doRun(QString absoluteFilePath);
 
 private:
     QVideoWidget *videoWidget;
@@ -59,5 +44,20 @@ private:
     int volume;
 
     bool pausedForUser;
+
+private slots:
+    void playPause();
+    void error(QMediaPlayer::Error);
+    void statusChange(QMediaPlayer::MediaStatus status);
+    void setCurrentTime(qint64 msecs);
+    void setTotalTime(qint64 msecs);
+    void setSliderPosition(qint64 position);
+    void sliderPressed();
+    void sliderMoved(int position);
+    void sliderReleased();
+    void setPositiveVolume();
+    void setNegativeVolume();
+
+    void playPauseForUser();
 };
 #endif

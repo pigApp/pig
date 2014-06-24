@@ -92,7 +92,7 @@ VideoPlayer::~VideoPlayer()
     delete videoWidget;
 }
 
-void VideoPlayer::run(QString absoluteFilePath)
+void VideoPlayer::doRun(QString absoluteFilePath)
 {
     pausedForUser = false;
     control = true;

@@ -475,36 +475,36 @@ compiler_rcc_make_all: qrc_qml.cpp
 compiler_rcc_clean:
 	-$(DEL_FILE) qrc_qml.cpp
 qrc_qml.cpp: qml.qrc \
-		images/pig.png \
-		images/icon.rc \
-		images/icon.ico \
-		images/720.png \
-		images/1080.png \
-		images/spinner.png \
-		images/playPreview.png \
 		images/keymap.png \
-		images/notAvailable.png \
-		images/frame.png \
 		images/icon.png \
+		images/notAvailable.png \
+		images/pig.png \
+		images/playPreview.png \
+		images/icon.rc \
+		images/720.png \
+		images/spinner.png \
+		images/1080.png \
+		images/icon.ico \
+		images/frame.png \
 		images/stripes.png \
 		images/fonts/pig.ttf \
 		images/fonts/pigLight.ttf \
-		src/qml/Output.qml \
-		src/qml/SetPassword.qml \
+		src/qml/main.qml \
+		src/qml/WaitMsg.qml \
+		src/qml/Help.qml \
 		src/qml/Filters.qml \
 		src/qml/PreviewPlayer.qml \
-		src/qml/ProgressBar.qml \
+		src/qml/Button.qml \
+		src/qml/ButtonFilter.qml \
+		src/qml/ErrorDbMsg.qml \
+		src/qml/Output.qml \
+		src/qml/AskPassword.qml \
 		src/qml/Update.qml \
 		src/qml/Finder.qml \
+		src/qml/SetPassword.qml \
+		src/qml/ProgressBar.qml \
 		src/qml/ButtonScenne.qml \
-		src/qml/ErrorDbMsg.qml \
-		src/qml/News.qml \
-		src/qml/main.qml \
-		src/qml/Help.qml \
-		src/qml/ButtonFilter.qml \
-		src/qml/WaitMsg.qml \
-		src/qml/Button.qml \
-		src/qml/AskPassword.qml
+		src/qml/News.qml
 	/usr/lib/qt/bin/rcc -name qml qml.qrc -o qrc_qml.cpp
 
 compiler_moc_header_make_all: moc_pig.cpp moc_password.cpp moc_update.cpp moc_tcpSocket.cpp moc_torrent.cpp moc_videoplayer.cpp
@@ -521,7 +521,8 @@ moc_pig.cpp: src/password.h \
 moc_password.cpp: src/password.h
 	/usr/lib/qt/bin/moc $(DEFINES) -I/usr/lib/qt/mkspecs/linux-g++ -I/home/ok200/pig -I/usr/include/libtorrent -I/usr/include/qt -I/usr/include/qt/QtMultimediaWidgets -I/usr/include/qt/QtQuick -I/usr/include/qt/QtMultimedia -I/usr/include/qt/QtQml -I/usr/include/qt/QtWidgets -I/usr/include/qt/QtSql -I/usr/include/qt/QtNetwork -I/usr/include/qt/QtGui -I/usr/include/qt/QtCore -I/usr/include/c++/4.9.0 -I/usr/include/c++/4.9.0/x86_64-unknown-linux-gnu -I/usr/include/c++/4.9.0/backward -I/usr/lib/gcc/x86_64-unknown-linux-gnu/4.9.0/include -I/usr/local/include -I/usr/lib/gcc/x86_64-unknown-linux-gnu/4.9.0/include-fixed -I/usr/include src/password.h -o moc_password.cpp
 
-moc_update.cpp: src/update.h
+moc_update.cpp: src/tcpSocket.h \
+		src/update.h
 	/usr/lib/qt/bin/moc $(DEFINES) -I/usr/lib/qt/mkspecs/linux-g++ -I/home/ok200/pig -I/usr/include/libtorrent -I/usr/include/qt -I/usr/include/qt/QtMultimediaWidgets -I/usr/include/qt/QtQuick -I/usr/include/qt/QtMultimedia -I/usr/include/qt/QtQml -I/usr/include/qt/QtWidgets -I/usr/include/qt/QtSql -I/usr/include/qt/QtNetwork -I/usr/include/qt/QtGui -I/usr/include/qt/QtCore -I/usr/include/c++/4.9.0 -I/usr/include/c++/4.9.0/x86_64-unknown-linux-gnu -I/usr/include/c++/4.9.0/backward -I/usr/lib/gcc/x86_64-unknown-linux-gnu/4.9.0/include -I/usr/local/include -I/usr/lib/gcc/x86_64-unknown-linux-gnu/4.9.0/include-fixed -I/usr/include src/update.h -o moc_update.cpp
 
 moc_tcpSocket.cpp: src/tcpSocket.h
@@ -566,7 +567,8 @@ pig.o: src/pig.cpp src/pig.h \
 password.o: src/password.cpp src/password.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o password.o src/password.cpp
 
-update.o: src/update.cpp src/update.h
+update.o: src/update.cpp src/update.h \
+		src/tcpSocket.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o update.o src/update.cpp
 
 tcpSocket.o: src/tcpSocket.cpp src/tcpSocket.h

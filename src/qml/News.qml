@@ -11,7 +11,7 @@ Item {
         anchors.rightMargin: 100
         Text {
             id: binaryNews
-            text: "NEWS FOR PIG "+binaryVersion+"."+binaryRelease
+            text: "NEWS FOR PIG "+binaryVersion+"."+release
             color: "black"
             font.family: pigLightFont.name
             font.bold: true
@@ -35,7 +35,7 @@ Item {
        }
        Text {
            id: dataBaseNews
-           text: "\nNEWS FOR DATABASE "+dataBaseVersion
+           text: "\nNEWS FOR DATABASE "+databaseVersion
            color: "black"
            font.family: pigLightFont.name
            font.bold: true

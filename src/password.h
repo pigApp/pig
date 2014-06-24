@@ -1,8 +1,8 @@
 #ifndef PASSWORD_H
 #define PASSWORD_H
 
-#include <QCryptographicHash>
 #include <QObject>
+#include <QCryptographicHash>
 
 class Password : public QObject
 {

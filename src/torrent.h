@@ -25,7 +25,7 @@ public:
     int scenne;
 
 public slots:
-    void run(QString mangnetUrl);
+    void doRun(QString mangnetUrl);
 
 private:
     libtorrent::session client;

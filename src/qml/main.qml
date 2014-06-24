@@ -7,17 +7,17 @@ Item {
     property bool requirePass
     property bool okPass
     property bool failPass
-    property bool showCloseButton: true
+    property bool requireAccept
+    property bool get
+    property bool requireRestart
     property bool showSpinner 
-    property bool showDecisionButton
-    property bool restart
-    property bool authorize
 
     property string status
     property string statusInformation
+    property string os
+    property string databaseVersion
     property string binaryVersion
-    property string binaryRelease
-    property string dataBaseVersion
+    property string release
     property string bitRate
 
     property variant categoryList
@@ -28,16 +28,16 @@ Item {
 
     property int totalFilms
     property int n
-    property real strap:1
+    property real strap: 1
     property int peers: 0
     property int seeds: 0
     property int neededPieces: 0
     property int downloadedPieces: 0
 
     signal passwordHandle(string plain, bool init, bool write)
-    signal updateAccept()
-    signal updateCancel()
-    signal updateRestart()
+    signal getFiles()
+    signal restart()
+    signal updateCancel() // TODO: Si cancela crear funcion en c++ que cierre update y llame a finder.
     signal findDb(string inputText, string category, string pornstar, int offset, bool init)
     signal torrentHandle(string magnetUrl, string scenne)
     signal fixDb()
@@ -142,7 +142,7 @@ Item {
         loaderAskPassword.focus = true
         loaderUpdate.asynchronous = true
     }
-    
+
     Connections {
         target: cppSignals
 
