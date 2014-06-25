@@ -4,13 +4,13 @@ Item {
     id: update
 
     Text {
-        id: statusLabel
-        text: "XXXXX"//root.status
+        id: statusInformationLabel
+        text: "XXXXXXXXXXXXXXXXXXX"
         color: "black"
-        font.family: pigFont.name
-        font.pixelSize: 125
+        font.family: pigLightFont.name
+        font.italic: true
+        font.pixelSize: 151
     }
-    /*
     property string statusReader: root.status
 
     Row {
@@ -97,5 +97,4 @@ Item {
             statusInformationLabel.anchors.bottomMargin = 2.33
         }
     }
-    */
 }

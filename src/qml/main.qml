@@ -30,9 +30,8 @@ Item {
     property int n
     property real strap: 1
     property int peers: 0
-    property int seeds: 0
-    property int neededPieces: 0
-    property int downloadedPieces: 0
+    property int needed: 0
+    property int downloaded: 0
 
     signal passwordHandle(string plain, bool init, bool write)
     signal getFiles()
@@ -98,7 +97,7 @@ Item {
                 if (status == Loader.Ready) 
                     if (loaderOutput.active)
                         loaderOutput.source = "" 
-                }
+            }
         }
         Loader {
             id: loaderOutput

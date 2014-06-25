@@ -62,8 +62,7 @@ void Torrent::minimumPiecesReady()
             neededPices = 6;
         else
             neededPices = 3;
-
-        qDebug() << "NEEDED_PIECES" << neededPices;
+        neededBytes = neededPices*lengthPieces*1024;
 
         libtorrent::file_storage fs = handle.get_torrent_info().orig_files();
         std::string nm = fs.name();
@@ -126,14 +125,15 @@ void Torrent::progress()
 void Torrent::downloadInfo()
 {
     if (toBox) {
-        QMetaObject::invokeMethod(_player, "downloadInfo", Qt::QueuedConnection, Q_ARG(int, handle.status().download_rate/1024), Q_ARG(int, handle.status().num_peers), Q_ARG(int, handle.status().num_peers));
+        QMetaObject::invokeMethod(_player, "downloadInfo", Qt::QueuedConnection, Q_ARG(int, handle.status().download_rate/1024), Q_ARG(int, handle.status().num_peers));
     } else {
-        _root->setProperty("neededPieces", neededPices);
-        _root->setProperty("downloadedPieces", handle.status().num_pieces);
+        int downloaded = handle.status().total_done;
+        _root->setProperty("needed", neededBytes);
+        _root->setProperty("downloaded", downloaded);
         _root->setProperty("bitRate", QString::number(handle.status().download_rate/1024));
         _root->setProperty("peers", handle.status().num_peers);
-        _root->setProperty("seeds", handle.status().num_seeds);
     }
+
     QTimer::singleShot(1000, this, SLOT(downloadInfo()));
 }
 

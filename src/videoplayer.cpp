@@ -35,25 +35,18 @@ VideoPlayer::VideoPlayer(QObject *parent, int screenWidth, int screenHeight) : Q
     currentTimeLabel->hide();
 
     bitRateLabel = new QLabel();
-    bitRateLabel->setGeometry(screenWidth-648, 20, 200, 50);
+    bitRateLabel->setGeometry(screenWidth-430, 20, 200, 50);
     bitRateLabel->setStyleSheet("background-color: transparent; border: none; color: white");
     bitRateLabel->setFont(font);
     bitRateLabel->setParent(videoWidget);
     bitRateLabel->hide();
 
     peersLabel = new QLabel();
-    peersLabel->setGeometry(screenWidth-460, 20, 230, 50);
+    peersLabel->setGeometry(screenWidth-240, 20, 230, 50); //460
     peersLabel->setStyleSheet("background-color: transparent; border: none; color: white");
     peersLabel->setFont(font);
     peersLabel->setParent(videoWidget);
     peersLabel->hide();
-
-    seedsLabel = new QLabel();
-    seedsLabel->setGeometry(screenWidth-230, 20, 230, 50);
-    seedsLabel->setStyleSheet("background-color: transparent; border: none; color: white");
-    seedsLabel->setFont(font);
-    seedsLabel->setParent(videoWidget);
-    seedsLabel->hide();
 
     bar = new QProgressBar();
     bar->setGeometry(4, screenHeight-25, screenWidth-8, 3);
@@ -151,11 +144,10 @@ void VideoPlayer::progress(int totalPieces=0, int availablePiece=0)
     qDebug() << "CURRENT_Msec: " << player->position();
 }
 
-void VideoPlayer::downloadInfo(int bitRate, int peers, int seeds)
+void VideoPlayer::downloadInfo(int bitRate, int peers)
 {
     bitRateLabel->setText(QString::number(bitRate)+"Kb/s");
     peersLabel->setText("PEERS "+QString::number(peers));
-    seedsLabel->setText("SEEDS "+QString::number(seeds));
 }
 
 void VideoPlayer::update()
@@ -180,7 +172,6 @@ void VideoPlayer::statusChange(QMediaPlayer::MediaStatus status)
             currentTimeLabel->show();
             bitRateLabel->show();
             peersLabel->show();
-            seedsLabel->show();
             bar->show();
             slider->setEnabled(true);
             slider->show();

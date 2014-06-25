@@ -7,6 +7,7 @@
 TcpSocket::TcpSocket(QObject *parent) : QObject(parent)
 {
     socket = new QTcpSocket(this);
+    //socket->setSocketOption(QAbstractSocket::KeepAliveOption, QVariant(0)); TODO: Setear no keepAlive.
     connect(socket, SIGNAL(connected()),this, SLOT(connected()));
     connect(socket, SIGNAL(disconnected()),this, SLOT(disconnected()));
     connect(socket, SIGNAL(bytesWritten(qint64)),this, SLOT(bytesWritten(qint64)));
@@ -30,7 +31,7 @@ void TcpSocket::connected()
 
 void TcpSocket::disconnected()
 {
-    write();
+    //write();
 }
 
 void TcpSocket::bytesWritten(qint64 bytes)
@@ -42,6 +43,7 @@ void TcpSocket::readyRead()
 {
     while (!socket->atEnd())
         data.append(socket->read(100));
+    write();// TODO: Al setear no KeepAlive, write() se llama desde disconnected().
 }
 
 void TcpSocket::write()
@@ -53,7 +55,20 @@ void TcpSocket::write()
 #endif
 
     if (order == "getUpdateVersion") {
-        QString version(data);
+        QString version;
+        QString raw(data);
+        bool append = false;
+        QStringList lines = raw.split("\n");
+        foreach(QString line, lines) {
+            if (append) {
+                //version = line;
+                version = "https://dl.shared.com,/g8cj8cnsxk?s=ld,c19e7dbafca6f26c5bafec07907df361,1,/g8cj8cnsxk?s=ld,c19e7dbafca6f26c5bafec07907df361,1,/m9bspu79nd?s=ld,e2462c1f38063a8b14ce102b9a6722e6,1,";
+                //break;
+                append = false;
+            }
+            if (line == "\r")
+                append = true;
+        }
         emit versionReady(version);
     } else if (order == "getPreview") {
         //...

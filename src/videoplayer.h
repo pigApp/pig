@@ -18,7 +18,7 @@ public:
     ~VideoPlayer();
 
     Q_INVOKABLE void progress(int totalPieces, int availablePiece);
-    Q_INVOKABLE void downloadInfo(int bitRate, int peers, int seeds);
+    Q_INVOKABLE void downloadInfo(int bitRate, int peers);
     Q_INVOKABLE void update();
 
     QObject *_torrent;

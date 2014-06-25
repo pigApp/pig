@@ -39,6 +39,7 @@ private:
     int neededPices;
     int availablePiece;
     int downloadOffsetPieces;
+    int neededBytes;
 
 private slots:
     void metadataReady();

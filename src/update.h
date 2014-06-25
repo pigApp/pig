@@ -43,8 +43,8 @@ private:
     bool newsAvailable, newDatabaseAvailable, newBinaryAvailable, databaseUpdated;
 
 private slots:
-    void getLastVersion(QString host, QString url);
-    void evaluate(QString lastVersion);
+    void getVersion(QString host, QString url);
+    void evaluate(QString version);
     void getFiles();
     void integrityFile(QString path, QString file);
     void replace(QString path, QString file);

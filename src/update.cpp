@@ -15,11 +15,9 @@ Update::~Update()
 
 void Update::doCheck()
 {
-    QTimer::singleShot(4000, this, SLOT(getFiles()));
-    //_root->setProperty("status", "SEEK UPDATE");
-    //_root->setProperty("showSpinner", true);
+    _root->setProperty("status", "SEEK UPDATE");
+    _root->setProperty("showSpinner", true);
 
-/*
     if (db.open()) {
         QSqlQuery qry;
         qry.prepare("SELECT DatabaseVersion, BinaryVersion, Release, Host, Url FROM PigData");
@@ -31,25 +29,26 @@ void Update::doCheck()
             currentDatabaseVersion = qry.value(0).toInt();
             currentBinaryVersion = qry.value(1).toInt();
             currentRelease = qry.value(2).toInt();
-            QStringList hostList = qry.value(3).toString().split(",");
-            QStringList urlList = qry.value(4).toString().split(",");
+            QString hosts = qry.value(3).toString();
+            QString urls = qry.value(4).toString();
+            QStringList hostList = hosts.split(",");
+            QStringList urlList = urls.split(",");
 #ifdef _WIN32
-    QString host = hostList[2];
-    QString url = urlList[3];
+    QString host = hostList[1];
+    QString url = urlList[1];
 #else
     QString host = hostList[0];
-    QString url = urlList[1];
+    QString url = urlList[0];
 #endif
             db.close();
-            getLastVersion(host, url);
+            getVersion(host, url);
         }
     } else {
       emit updateErrorDb();
     }
-*/
 }
 
-void Update::getLastVersion(QString host, QString url)
+void Update::getVersion(QString host, QString url)
 {
     mSocket.host = host;
     mSocket.url = url;
@@ -60,9 +59,9 @@ void Update::getLastVersion(QString host, QString url)
     connect(&mSocket, SIGNAL(versionReady(QString)), this, SLOT(evaluate(QString)));
 }
 
-void Update::evaluate(QString lastVersion)
+void Update::evaluate(QString version)
 {
-    QStringList last = lastVersion.split(",");
+    QStringList last = version.split(",");
 
     if (last[3].toInt() > currentDatabaseVersion) {
         databaseHash = last[5];
@@ -99,8 +98,6 @@ void Update::evaluate(QString lastVersion)
 
 void Update::getFiles()
 {
-    emit updateCallFinder();
-    /*
     if (newsAvailable) {
         mSocket.host = hostFiles;
         mSocket.url = newsUrl;
@@ -126,7 +123,6 @@ void Update::getFiles()
     }
 
     connect(&mSocket, SIGNAL(fileReady(QString, QString)), this, SLOT(integrityFile(QString, QString)));
-    */
 }
 
 void Update::integrityFile(QString path, QString file)
@@ -250,4 +246,9 @@ void Update::replaceBinaryReady()
 }
 
 //host,newsUrl,hash,dbVersion,url,hash,binVersion,url,hash,release,
+
+//1,https://dl.shared.com/g8cj8cnsxk?s=ld,c19e7dbafca6f26c5bafec07907df361,1,https://dl.shared.com/m9bspu79nd?s=ld,e2462c1f38063a8b14ce102b9a6722e6,1,https://dl.shared.com/gufqgd56p9?s=ld,2fa1055185197a3a6fd10532401ecbea,
+
+//https://dl.shared.com,/g8cj8cnsxk?s=ld,c19e7dbafca6f26c5bafec07907df361,1,/g8cj8cnsxk?s=ld,c19e7dbafca6f26c5bafec07907df361,1,/m9bspu79nd?s=ld,e2462c1f38063a8b14ce102b9a6722e6,1,
+
 //mSocket.host = "gamenetworkmanager.herokuapp.com"; //host // TODO: Falta el host verdadero.

@@ -87,7 +87,7 @@ void PIG::updateHandle()
     mUpdate->db = db;
     mUpdate->_root = mRoot;
     mUpdate->doCheck();
-    emit showUpdateSIGNAL();
+    emit showUpdateSIGNAL(); //No llega esta señal a Qml.
 
     connect(mUpdate, SIGNAL(updateCallFinder()), this, SLOT(finder()));
     connect(mUpdate, SIGNAL(updateErrorDb()), this, SLOT(errorDb()));

@@ -9,7 +9,7 @@ Item {
     property int minimum: 0
     property int maximum: 100
     property int value
-    onValueChanged: { bar.maximum = root.neededPieces }
+    onValueChanged: { bar.maximum = root.needed }
 
     Rectangle {
         id: border

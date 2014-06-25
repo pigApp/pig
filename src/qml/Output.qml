@@ -252,8 +252,8 @@ Item {
                     name: "hidePlayerLayer"
                     PropertyChanges { target: root; peers: 0 }
                     PropertyChanges { target: root; seeds: 0 }
-                    PropertyChanges { target: root; neededPieces: 0 }
-                    PropertyChanges { target: root; downloadedPieces: 0 }
+                    PropertyChanges { target: root; needed: 0 }
+                    PropertyChanges { target: root; downloaded: 0 }
                 },
                 State {
                     name: "showAll"
@@ -406,7 +406,7 @@ Item {
 
         ProgressBar {
             id: progressBar
-            value: { if (root.downloadedPieces == 0 && root.bitRate != 0) 1; else root.downloadedPieces }
+            value: { root.downloaded }
             visible: { if (playerLayer.height > 24) true; else false }
             anchors.centerIn: parent
         }
@@ -437,19 +437,6 @@ Item {
                 text: {
                     if (root.peers != 0 && playerLayer.height == screen.height)
                         "PEERS "+root.peers
-                    else
-                        ""
-                }
-                color: "white"
-                font.family: pigFont.name
-                font.bold: true
-                font.pixelSize: 30
-            }
-            Text {
-                id: seedsLabel
-                text: {
-                    if (root.seeds != 0 && playerLayer.height == screen.height)
-                        "SEEDS "+root.seeds
                     else
                         ""
                 }
