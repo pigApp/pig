@@ -47,19 +47,7 @@ PIG::~PIG()
 // Password
 void PIG::passwordHandle(QString plain, bool init, bool write)
 {
-    if (init) {
-        if (mPassword->requirePassword()) {
-            mRoot->setProperty("requirePass", true);
-            init = false;
-        } else {
-            QStringList args = qApp->arguments();
-            if (args.last() == "WITHOUT_UPDATE")
-                finder();
-            else
-                updateHandle();
-            init = false;
-        }
-    } else if (!init && !write) {
+    if (!init && !write) {
         if (mPassword->rightPassword(plain)) {
             QStringList args = qApp->arguments();
             if (args.last() == "WITHOUT_UPDATE") {
@@ -70,6 +58,18 @@ void PIG::passwordHandle(QString plain, bool init, bool write)
             }
         } else {
             mRoot->setProperty("failPass", true);
+        }
+    } else if (init) {
+        if (mPassword->requirePassword()) {
+            mRoot->setProperty("requirePass", true);
+            init = false;
+        } else {
+            QStringList args = qApp->arguments();
+            if (args.last() == "WITHOUT_UPDATE")
+                finder();
+            else
+               QTimer::singleShot(10, this, SLOT(updateHandle()));
+            init = false;
         }
     } else if (write) {
         if (mPassword->writePassword(plain)) {
@@ -87,18 +87,22 @@ void PIG::updateHandle()
     mUpdate->db = db;
     mUpdate->_root = mRoot;
     mUpdate->doCheck();
-    emit showUpdateSIGNAL(); //No llega esta señal a Qml.
+
+    emit showUpdateSIGNAL();
 
     connect(mUpdate, SIGNAL(updateCallFinder()), this, SLOT(finder()));
     connect(mUpdate, SIGNAL(updateErrorDb()), this, SLOT(errorDb()));
-    if(mRoot) connect(mRoot, SIGNAL(getFiles()), mUpdate, SLOT(getFiles()));
-    if(mRoot) connect(mRoot, SIGNAL(restart()), mUpdate, SLOT(replaceBinaryAndRestart()));
+    connect(mRoot, SIGNAL(getFiles()), mUpdate, SLOT(getFiles()));
+    connect(mRoot, SIGNAL(restart()), mUpdate, SLOT(replaceBinaryAndRestart()));
 }
 
 // Finder
 void PIG::finder()
 {
-    delete mUpdate;
+    if (mUpdate != 0) {
+        mUpdate = 0;
+        delete mUpdate;
+    }
 
     if (db.open()) {
         QSqlQuery qry;

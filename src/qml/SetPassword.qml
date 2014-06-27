@@ -40,7 +40,7 @@ Item {
             color: "white"
             font.family: pigFont.name
             font.bold: true
-            font.pixelSize: 25
+            font.pixelSize: 30
             anchors.centerIn: parent
         }
     }
@@ -49,7 +49,7 @@ Item {
         text: { if (root.okPass) "DONE. ESC TO BACK"; else "FAIL. TRY LATER. ESC TO BACK" }
         color: "white"
         font.family: pigFont.name
-        font.pixelSize: 25
+        font.pixelSize: 30
         visible: root.okPass || root.failPass 
         anchors.centerIn: parent
     }

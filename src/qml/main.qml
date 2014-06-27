@@ -83,6 +83,7 @@ Item {
             id: loaderUpdate
             source: "qrc:/src/qml/Update.qml"
             active: false
+            asynchronous: true
             visible: status == Loader.Ready
             anchors.fill: parent
         }
@@ -139,7 +140,7 @@ Item {
     onRequirePassChanged: {
         loaderAskPassword.active = true
         loaderAskPassword.focus = true
-        loaderUpdate.asynchronous = true
+        //loaderUpdate.asynchronous = true
     }
 
     Connections {

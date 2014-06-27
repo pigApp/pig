@@ -1,5 +1,7 @@
 #include "torrent.h"
+
 #include <libtorrent/file_storage.hpp>
+#include <libtorrent/extensions/ut_pex.hpp>
 
 #include <QDir>
 #include <QFileInfo>
@@ -14,6 +16,9 @@ Torrent::Torrent(QObject *parent) : QObject(parent)
     downloadOffsetPieces = 0;
 
     client.listen_on(std::make_pair(6881, 6889), ec);
+    client.start_dht();
+    client.start_upnp();
+    client.add_extension(&libtorrent::create_ut_pex_plugin);
 }
 
 void Torrent::doRun(QString mangnetUrl)
@@ -109,16 +114,16 @@ void Torrent::minimumPiecesReady()
 void Torrent::progress()
 {
     //if (isAvailable(0, 0, availablePiece+1)) {
-    if (isAvailable(0, 0, handle.status().num_pieces-1)) {
+    //if (isAvailable(0, 0, handle.status().num_pieces-1)) {
         //++availablePiece;
-        availablePiece = handle.status().num_pieces-1;
+        availablePiece = handle.status().num_pieces;
         qDebug() << "TRUE AP: " << availablePiece;
         QMetaObject::invokeMethod(_player, "progress", Qt::QueuedConnection, Q_ARG(int, handle.get_torrent_info().num_pieces()), Q_ARG(int, availablePiece));
-    } else {
-        availablePiece = handle.status().num_pieces-1;
-        qDebug() << "FALSE AP: " << availablePiece;
-        QMetaObject::invokeMethod(_player, "progress", Qt::QueuedConnection, Q_ARG(int, handle.get_torrent_info().num_pieces()), Q_ARG(int, availablePiece));
-    }
+    //} else {
+        //availablePiece = handle.status().num_pieces-1;
+        //qDebug() << "FALSE AP: " << availablePiece;
+        //QMetaObject::invokeMethod(_player, "progress", Qt::QueuedConnection, Q_ARG(int, handle.get_torrent_info().num_pieces()), Q_ARG(int, availablePiece));
+    //}
     QTimer::singleShot(1000, this, SLOT(progress()));
 }
 

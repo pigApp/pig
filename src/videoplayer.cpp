@@ -20,6 +20,22 @@ VideoPlayer::VideoPlayer(QObject *parent, int screenWidth, int screenHeight) : Q
     box->setParent(videoWidget);
     box->hide();
 
+    volumeIcon = new QLabel();
+    icon.load((":/images/volume.png"));
+    volumeIcon->setPixmap(icon);
+    volumeIcon->setGeometry(30, 30, 30, 30);
+    volumeIcon->setStyleSheet("background-color: transparent; border: none");
+    volumeIcon->setParent(videoWidget);
+    volumeIcon->hide();
+
+    volumeLabel = new QLabel();
+    volumeLabel->setGeometry(70, 20, 100, 50);
+    volumeLabel->setStyleSheet("background-color: transparent; border: none; color: white");
+    volumeLabel->setFont(font);
+    volumeLabel->setParent(videoWidget);
+    volumeLabel->hide();
+    volumeLabel->setText(QString::number(volume));
+
     totalTimeLabel = new QLabel();
     totalTimeLabel->setGeometry((screenWidth/2)+10, 20, 160, 50);
     totalTimeLabel->setStyleSheet("background-color: transparent; border: none; color: white");
@@ -93,17 +109,6 @@ void VideoPlayer::doRun(QString absoluteFilePath)
     player->play();
 }
 
-void VideoPlayer::playPauseForUser()
-{
-    if (player->state() == QMediaPlayer::PlayingState) {
-        player->pause();
-        pausedForUser = true;
-    } else if (player->state() == QMediaPlayer::PausedState) {
-        player->play();
-        pausedForUser = false;
-    }
-}
-
 void VideoPlayer::playPause()
 {
     if (player->state() == QMediaPlayer::PlayingState) {
@@ -116,16 +121,34 @@ void VideoPlayer::playPause()
     }
 }
 
+void VideoPlayer::playPauseForUser()
+{
+    if (player->state() == QMediaPlayer::PlayingState) {
+        player->pause();
+        pausedForUser = true;
+    } else if (player->state() == QMediaPlayer::PausedState) {
+        player->play();
+        pausedForUser = false;
+    }
+}
+
+void VideoPlayer::downloadInfo(int bitRate, int peers)
+{
+    bitRateLabel->setText(QString::number(bitRate)+"Kb/s");
+    peersLabel->setText("PEERS "+QString::number(peers));
+}
+
 void VideoPlayer::progress(int totalPieces=0, int availablePiece=0)
 {
-    int pieceMsec = player->duration()/totalPieces;
+    //int pieceMsec = player->duration()/totalPieces;
     //qDebug() << "PIECE_Msec: " << pieceMsec;
 
-    int downloadedMsec = ((availablePiece*player->duration())/totalPieces)+(pieceMsec*5);
-    int availableMsec = ((availablePiece*player->duration())/totalPieces)-(pieceMsec*5); 
+    int downloadedMsec = ((availablePiece*player->duration())/totalPieces);//+(pieceMsec*5);
+    int availableMsec = ((availablePiece*player->duration())/totalPieces);//-(pieceMsec*5);
 
     bar->setValue(downloadedMsec);
 
+    /*
     if (control && !pausedForUser) {
         if (slider->value() < availableMsec) {
             if(player->state() == QMediaPlayer::PausedState) {
@@ -139,26 +162,15 @@ void VideoPlayer::progress(int totalPieces=0, int availablePiece=0)
             }
         }
     }
-
+    */
     qDebug() << "AVAILABLE_Msec: " << availableMsec;
     qDebug() << "CURRENT_Msec: " << player->position();
-}
-
-void VideoPlayer::downloadInfo(int bitRate, int peers)
-{
-    bitRateLabel->setText(QString::number(bitRate)+"Kb/s");
-    peersLabel->setText("PEERS "+QString::number(peers));
 }
 
 void VideoPlayer::update()
 {
     player->setPosition(qint64(slider->value()+1000));
     QTimer::singleShot(2000, this, SLOT(playPause()));
-}
-
-void VideoPlayer::error(QMediaPlayer::Error)
-{
-    qDebug() << "--ERROR: " << player->QMediaPlayer::error();
 }
 
 void VideoPlayer::statusChange(QMediaPlayer::MediaStatus status)
@@ -168,6 +180,8 @@ void VideoPlayer::statusChange(QMediaPlayer::MediaStatus status)
     if (status == QMediaPlayer::BufferedMedia) {
         if (!slider->isEnabled()) {
             box->show();
+            volumeIcon->show();
+            volumeLabel->show();
             totalTimeLabel->show();
             currentTimeLabel->show();
             bitRateLabel->show();
@@ -182,6 +196,35 @@ void VideoPlayer::statusChange(QMediaPlayer::MediaStatus status)
     } else if (status == QMediaPlayer::InvalidMedia || status == QMediaPlayer::EndOfMedia) {
         control = false;
         QTimer::singleShot(40000, this, SLOT(playPause()));
+    }
+}
+
+void VideoPlayer::error(QMediaPlayer::Error)
+{
+    qDebug() << "--ERROR: " << player->QMediaPlayer::error();
+}
+
+void VideoPlayer::setPositiveVolume()
+{
+    if (volume < 100)
+        volume = volume+5;
+    player->setVolume(volume);
+    volumeLabel->setText(QString::number(volume));
+    if (volume > 0) {
+        icon.load(":/images/volume.png");
+        volumeIcon->setPixmap(icon);
+    }
+}
+
+void VideoPlayer::setNegativeVolume()
+{
+    if (volume > 0)
+        volume = volume-5;
+    player->setVolume(volume);
+    volumeLabel->setText(QString::number(volume));
+    if (volume == 0) {
+        icon.load(":/images/volumeOff.png");
+        volumeIcon->setPixmap(icon);
     }
 }
 
@@ -245,53 +288,3 @@ void VideoPlayer::sliderReleased()
         playPause();
     }
 }
-
-void VideoPlayer::setPositiveVolume()
-{
-    if (volume < 100)
-        volume = volume+5;
-    player->setVolume(volume);
-}
-
-void VideoPlayer::setNegativeVolume()
-{
-    if (volume > 0)
-        volume = volume-5;
-    player->setVolume(volume);
-}
-
-
-
-
-
-
-
-/*
-int downloadedMsec = (currentPiece*player->duration())/totalPieces;
-int msecForPiece = player->duration()/totalPieces;
-int safePlay = downloadedMsec-((player->duration()/totalPieces)*7);
-
-//qDebug() << "TOTAL_PIECES: " << totalPieces;
-//qDebug() << "CURRENT_PIECE: " << currentPiece;
-//qDebug() << "MSec x PIECE: " << msecForPiece;
-//qDebug() << "SAFE_PLAY_Msec: " << safePlay;
-
-test = test+3000;
-if (control && player->state() != QMediaPlayer::PausedState) { //&& safePlay !=0 && safePlay >= 0-(msecForPiece*2)) {
-
-    //if (slider->value() < safePlay) {
-    if (slider->value() < test) {
-        if(player->state() == QMediaPlayer::PausedState) {
-            qDebug() << "++++PLAY FROM PROGRESS";
-            player->play();
-        }
-    } else {
-        if(player->state() == QMediaPlayer::PlayingState) {
-            qDebug() << "----PAUSED_FROM_PROGRESS";
-            player->pause();
-        }
-    }
-}
-qDebug() << "TEST   Msec: " << test;//
-qDebug() << "SLIDER Msec: " << slider->value();
-*/

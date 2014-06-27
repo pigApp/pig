@@ -7,10 +7,8 @@
 TcpSocket::TcpSocket(QObject *parent) : QObject(parent)
 {
     socket = new QTcpSocket(this);
-    //socket->setSocketOption(QAbstractSocket::KeepAliveOption, QVariant(0)); TODO: Setear no keepAlive.
     connect(socket, SIGNAL(connected()),this, SLOT(connected()));
     connect(socket, SIGNAL(disconnected()),this, SLOT(disconnected()));
-    connect(socket, SIGNAL(bytesWritten(qint64)),this, SLOT(bytesWritten(qint64)));
     connect(socket, SIGNAL(readyRead()),this, SLOT(readyRead()));
 }
 
@@ -23,7 +21,7 @@ void TcpSocket::doConnect()
 
 void TcpSocket::connected()
 {
-    QString get = "GET "+url+" HTTP/1.1\r\nHost: "+host+"\r\n\r\n\r\n";
+    QString get = "GET "+url+" HTTP/1.1\r\nConnection: Close\r\nHost: "+host+"\r\n\r\n\r\n";
     const QByteArray ba = get.toUtf8();
     const char *request = ba.constData();
     socket->write(request);
@@ -31,19 +29,13 @@ void TcpSocket::connected()
 
 void TcpSocket::disconnected()
 {
-    //write();
-}
-
-void TcpSocket::bytesWritten(qint64 bytes)
-{
-    qDebug() << bytes;
+     write();
 }
 
 void TcpSocket::readyRead()
 {
     while (!socket->atEnd())
         data.append(socket->read(100));
-    write();// TODO: Al setear no KeepAlive, write() se llama desde disconnected().
 }
 
 void TcpSocket::write()
@@ -55,9 +47,9 @@ void TcpSocket::write()
 #endif
 
     if (order == "getUpdateVersion") {
+        bool append = false;
         QString version;
         QString raw(data);
-        bool append = false;
         QStringList lines = raw.split("\n");
         foreach(QString line, lines) {
             if (append) {
@@ -73,7 +65,7 @@ void TcpSocket::write()
     } else if (order == "getPreview") {
         //...
     } else if (order == "getUpdateFiles") {
-        QByteArray initData("d8");
+        QByteArray initData("d8"); //"\r"
         int index = data.indexOf(initData);
         QFile newFile(path+file);
         newFile.open(QIODevice::WriteOnly);

@@ -32,5 +32,7 @@
         <file>images/fonts/pigLight.ttf</file>
         <file>images/playPreview.png</file>
         <file>src/qml/ProgressBar.qml</file>
+        <file>images/volume.png</file>
+        <file>images/volumeOff.png</file>
     </qresource>
 </RCC>

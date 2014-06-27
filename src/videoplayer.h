@@ -3,6 +3,7 @@
 
 #include <QVideoWidget>
 #include <QMediaPlayer>
+#include <QPixmap>
 #include <QLabel>
 #include <QProgressBar>
 #include <QSlider>
@@ -17,8 +18,8 @@ public:
     explicit VideoPlayer(QObject *parent, int screenWidth, int screenHeight);
     ~VideoPlayer();
 
-    Q_INVOKABLE void progress(int totalPieces, int availablePiece);
     Q_INVOKABLE void downloadInfo(int bitRate, int peers);
+    Q_INVOKABLE void progress(int totalPieces, int availablePiece);
     Q_INVOKABLE void update();
 
     QObject *_torrent;
@@ -31,33 +32,33 @@ private:
     QVideoWidget *videoWidget;
     QMediaPlayer *player;
     QWidget *box;
+    QPixmap icon;
+    QLabel *volumeIcon;
+    QLabel *volumeLabel;
     QLabel *totalTimeLabel;
     QLabel *currentTimeLabel;
     QLabel *bitRateLabel;
     QLabel *peersLabel;
-    QLabel *seedsLabel;
     QProgressBar *bar;
     QSlider *slider;
 
     bool init;
     bool control;
-    int volume;
-
     bool pausedForUser;
+    int volume;
 
 private slots:
     void playPause();
-    void error(QMediaPlayer::Error);
+    void playPauseForUser();
     void statusChange(QMediaPlayer::MediaStatus status);
+    void error(QMediaPlayer::Error);
+    void setPositiveVolume();
+    void setNegativeVolume();
     void setCurrentTime(qint64 msecs);
     void setTotalTime(qint64 msecs);
     void setSliderPosition(qint64 position);
     void sliderPressed();
     void sliderMoved(int position);
     void sliderReleased();
-    void setPositiveVolume();
-    void setNegativeVolume();
-
-    void playPauseForUser();
 };
 #endif

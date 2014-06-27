@@ -31,7 +31,7 @@ Rectangle {
     Text {
         id: label
         color: "white"
-        font.family: pigLightFont.name
+        font.family: pigFont.name
         font.capitalization: Font.AllUppercase
         font.pixelSize: 50
         anchors.centerIn: parent
@@ -39,7 +39,7 @@ Rectangle {
     Text {
         id: nLabel
         color: "white"
-        font.family: pigLightFont.name
+        font.family: pigFont.name
         font.pixelSize: 50
         anchors.centerIn: parent
         anchors.verticalCenterOffset: 57

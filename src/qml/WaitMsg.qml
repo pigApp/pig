@@ -12,7 +12,7 @@ Item {
             text: "PLEASE WAIT"
             color: Qt.rgba(0.1, 0.1, 0.1, 0.13)
             font.family: pigFont.name
-            font.pixelSize: 25
+            font.pixelSize: 30
         }
         Image {
             id: spinner
@@ -25,7 +25,6 @@ Item {
             property bool on: showSpinner
             NumberAnimation on rotation { running: spinner.on; from: 0; to: 360; loops: Animation.Infinite; duration: 1200 }
             anchors.verticalCenter: parent.verticalCenter
-            anchors.verticalCenterOffset: 1
         }
     }
 }

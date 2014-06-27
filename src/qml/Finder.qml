@@ -19,12 +19,11 @@ Item {
         anchors.centerIn: parent
         TextInput {
             id: input
-            color: Qt.rgba(0.1, 0.1, 0.1, 0.2)
+            color: Qt.rgba(0.1, 0.1, 0.1, 0.3)
             font.family: pigFont.name
-            font.bold: true
             font.capitalization: Font.AllUppercase
-            font.pixelSize: 25
-            maximumLength: 29
+            font.pixelSize: 30
+            maximumLength: 25
             onAccepted: { 
                 if (!loaderFilters.active && !loaderSetPassword.active) {
                     if (noResultLabel.visible) { noResultLabel.visible = false }
@@ -53,7 +52,7 @@ Item {
             text: " NO RESULT"
             color: Qt.rgba(0.1, 0.1, 0.1, 0.13)
             font.family: pigLightFont.name
-            font.pixelSize: 25/strap
+            font.pixelSize: 30/strap
             visible: false
         }
     }

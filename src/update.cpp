@@ -11,11 +11,12 @@ Update::Update(QObject *parent) : QObject(parent)
 
 Update::~Update()
 {
+    delete _root;
 }
 
 void Update::doCheck()
 {
-    _root->setProperty("status", "SEEK UPDATE");
+    _root->setProperty("status", "SEEKING UPDATE");
     _root->setProperty("showSpinner", true);
 
     if (db.open()) {
@@ -74,8 +75,12 @@ void Update::evaluate(QString version)
         currentRelease = last[9].toInt();
     }
 
+    //newDatabaseAvailable = true;//tmp
+
     if (newDatabaseAvailable || newBinaryAvailable) {
         newsAvailable = true;
+        _root->setProperty("status", "UPDATE AVAILABLE");
+        _root->setProperty("showSpinner", false);
         _root->setProperty("requireAccept", true);
 #ifdef _WIN32
     hostFiles = last[0];
@@ -84,13 +89,15 @@ void Update::evaluate(QString version)
     newsUrl = last[1];
     newsHash = last [2];
 #else
-    hostFiles = last[0];
+    //hostFiles = last[0];
+    hostFiles = "dl.shared.com";//tmp
     databaseUrl = last[3];
     binaryUrl = last[6];
     newsUrl = last[1];
     newsHash = last[2];
 #endif
     } else {
+        _root->setProperty("status", "");
         _root->setProperty("showSpinner", false);
         emit updateCallFinder();
     }
@@ -98,6 +105,11 @@ void Update::evaluate(QString version)
 
 void Update::getFiles()
 {
+    qDebug() << "UPDATE AVAILABLE";
+    _root->setProperty("status", "GETTING UPDATE");
+    _root->setProperty("showSpinner", true);
+    _root->setProperty("requireAccept", false);
+
     if (newsAvailable) {
         mSocket.host = hostFiles;
         mSocket.url = newsUrl;
@@ -152,7 +164,31 @@ void Update::integrityFile(QString path, QString file)
 
 void Update::replace(QString path, QString file)
 {
-    if (newsAvailable) {
+    if (newBinaryAvailable && !newDatabaseAvailable && !newsAvailable) {
+        binaryAbsolutePath = path+file;
+#ifdef _WIN32
+    _root->setProperty("os", "windows");
+#else
+    _root->setProperty("os", "unix");
+#endif
+        _root->setProperty("requireRestart", true);
+    } else if (newDatabaseAvailable && !newsAvailable) { //Hecho hasta aca. falta la parte de reemplazar el binario.
+#ifdef _WIN32
+    QString target = "C:/PIG/.pig/db.sqlite";
+#else
+    QString target = QDir::homePath()+"/.pig/db.sqliteX"; //X tmp
+#endif
+           QFile::copy(path+file, target);
+           newDatabaseAvailable = false;
+           databaseUpdated = true;
+           if (newBinaryAvailable) {
+               getFiles();
+           } else {
+               _root->setProperty("status", "");
+               _root->setProperty("showSpinner", false);
+               emit updateCallFinder();
+           }
+    } else if (newsAvailable) {
 #ifdef _WIN32
     QString target = "C:/PIG/.pig/news.txt";
 #else
@@ -161,28 +197,6 @@ void Update::replace(QString path, QString file)
         QFile::copy(path+file, target);
         newsAvailable = false;
         getFiles();
-    } else if (newDatabaseAvailable) {
-#ifdef _WIN32
-    QString target = "C:/PIG/.pig/db.sqlite";
-#else
-    QString target = QDir::homePath()+"/.pig/db.sqlite";
-#endif
-        QFile::copy(path+file, target);
-        newDatabaseAvailable = false;
-        databaseUpdated = true;
-        if (newBinaryAvailable) {
-            getFiles();
-        } else {
-            emit updateCallFinder();
-        }
-    } else if (newBinaryAvailable) {
-        binaryAbsolutePath = path+file;
-#ifdef _WIN32
-    _root->setProperty("os", "windows");
-#else
-    _root->setProperty("os", "unix");
-#endif
-        _root->setProperty("requireRestart", true);
     }
 }
 

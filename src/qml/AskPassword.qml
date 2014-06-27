@@ -45,7 +45,7 @@ Item {
             color: "white"
             font.family: pigFont.name
             font.bold: true
-            font.pixelSize: 25
+            font.pixelSize: 30
             anchors.centerIn: parent
         }
     }
