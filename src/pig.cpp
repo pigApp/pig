@@ -3,41 +3,28 @@
 
 #include <stdlib.h>
 #include <QDir>
-
+#include <QFile>
 
 PIG::PIG(QObject *parent) : QObject(parent), mRoot(0)
 {
-    window = new QWidget;
-    window->setMouseTracking(true);
     layout = new QVBoxLayout;
     layout->setContentsMargins(0, 0, 0, 0);
     layout->setMargin(0);
     layout->setSpacing(0);
+
+    window = new QWidget;
+    window->setMouseTracking(true);
     window->setLayout(layout);
 
     Esc = new QShortcut(window);
     Esc->setKey(Qt::Key_Escape);
     Esc->setEnabled(false);
-    connect(Esc, SIGNAL(activated()), this, SLOT(closePlayer()));
 
     Quit = new QShortcut(window);
     Quit->setKey(Qt::Key_Escape && Qt::ShiftModifier);
+
+    connect(Esc, SIGNAL(activated()), this, SLOT(closePlayer()));
     connect(Quit, SIGNAL(activated()), this, SLOT(quit()));
-
-    #ifdef _WIN32
-        QString dbPath = "C:/pig/.pig/db.sqlite";
-        QString tmpPath = "C:/tmp/pig/";
-    #else
-        QString dbPath = QDir::homePath()+"/.pig/db.sqlite";
-        QString tmpPath = "/tmp/pig/";
-    #endif
-
-    db = QSqlDatabase::addDatabase("QSQLITE");
-    db.setDatabaseName(dbPath);
-
-    QDir tmpDir(tmpPath);
-    if (!tmpDir.exists())
-        tmpDir.mkdir(tmpPath);
 }
 
 PIG::~PIG()
@@ -265,7 +252,25 @@ void PIG::setRootObject(QObject *root)
     if(mRoot) connect(mRoot, SIGNAL(torrentHandle(QString, QString)), this, SLOT(torrentHandle(QString, QString)));
     if(mRoot) connect(mRoot, SIGNAL(quit()), this, SLOT(quit()));
 
-    passwordHandle("", true, false);
+#ifdef _WIN32
+    QString dbPath = "C:/pig/.pig/db.sqlite";
+    QString tmpPath = "C:/tmp/pig/";
+#else
+    QString dbPath = QDir::homePath()+"/.pig/db.sqlite";
+    QString tmpPath = "/tmp/pig/";
+#endif
+    QFile dbCheck(dbPath);
+    if (dbCheck.exists()) {
+        db = QSqlDatabase::addDatabase("QSQLITE");
+        db.setDatabaseName(dbPath);
+        QDir tmpDir(tmpPath);
+        if (!tmpDir.exists())
+            tmpDir.mkdir(tmpPath);
+
+        passwordHandle("", true, false);
+    } else {
+        QTimer::singleShot(10, this, SLOT(errorDb()));
+    }
 }
 
 void PIG::quit()

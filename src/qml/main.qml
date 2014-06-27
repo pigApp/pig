@@ -140,7 +140,6 @@ Item {
     onRequirePassChanged: {
         loaderAskPassword.active = true
         loaderAskPassword.focus = true
-        //loaderUpdate.asynchronous = true
     }
 
     Connections {

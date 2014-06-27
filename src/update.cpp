@@ -45,7 +45,7 @@ void Update::doCheck()
             getVersion(host, url);
         }
     } else {
-      emit updateErrorDb();
+        emit updateErrorDb();
     }
 }
 
