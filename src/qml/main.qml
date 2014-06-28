@@ -58,7 +58,6 @@ Item {
             anchors.left: parent.left
             anchors.leftMargin: -270
             anchors.verticalCenter: parent.verticalCenter
-            anchors.verticalCenterOffset: 70
             opacity: 0
         }
         GaussianBlur {

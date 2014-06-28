@@ -7,12 +7,11 @@ Item {
         id: statusRow
         spacing: 17
         anchors.centerIn: parent
-        anchors.verticalCenterOffset: 20
 
         Text {
             id: statusLabel
             text: root.status
-            color: Qt.rgba(0.1, 0.1, 0.1, 0.13)
+            color: Qt.rgba(0.1, 0.1, 0.1, 0.2)
             font.family: pigFont.name
             font.pixelSize: 30
         }
@@ -32,30 +31,30 @@ Item {
     Text {
         id: statusInformationLabel
         text: root.statusInformation
-        color: "black"
+        color: Qt.rgba(0.1, 0.1, 0.1, 0.2)
         font.family: pigFont.name
         font.italic: true
         font.pixelSize: 30
         anchors.centerIn: parent
-        anchors.verticalCenterOffset: 50
+        anchors.verticalCenterOffset: 30
     }
 
     Row {
         id: buttonsRow
         spacing: 15
         anchors.centerIn: parent
-        anchors.horizontalCenterOffset: -3.1
-        anchors.verticalCenterOffset: 70
+        anchors.horizontalCenterOffset: -3
+        anchors.verticalCenterOffset: { if(statusInformationLabel.text == '') 30; else 50 }
         Button {
             id: acceptUpdate
             width: 50
             height: 23
             label: "GET"
-            labelColor: Qt.rgba(0.1, 0.1, 0.1, 0.13)
+            labelColor: Qt.rgba(0.1, 0.1, 0.1, 0.2)
             labelBold: true
             labelSize: 30
             labelInColor: Qt.rgba(0.1, 0.1, 0.1, 0.3)
-            labelOutColor: Qt.rgba(0.1, 0.1, 0.1, 0.13)
+            labelOutColor: Qt.rgba(0.1, 0.1, 0.1, 0.2)
             visible: root.requireAccept
             enabled: root.requireAccept
             onClicked: {
@@ -69,11 +68,11 @@ Item {
             width: 55
             height: 23
             label: "SKIP"
-            labelColor: Qt.rgba(0.1, 0.1, 0.1, 0.13)
+            labelColor: Qt.rgba(0.1, 0.1, 0.1, 0.2)
             labelBold: true
             labelSize: 30
             labelInColor: Qt.rgba(0.1, 0.1, 0.1, 0.3)
-            labelOutColor: Qt.rgba(0.1, 0.1, 0.1, 0.13)
+            labelOutColor: Qt.rgba(0.1, 0.1, 0.1, 0.2)
             visible: root.requireAccept
             enabled: root.requireAccept
             onClicked: { root.updateCancel() }
@@ -83,11 +82,11 @@ Item {
             width: 100
             height: 25
             label: "RESTART"
-            labelColor: Qt.rgba(0.1, 0.1, 0.1, 0.13)
+            labelColor: Qt.rgba(0.1, 0.1, 0.1, 0.2)
             labelBold: true
             labelSize: 30
             labelInColor: Qt.rgba(0.1, 0.1, 0.1, 0.3)
-            labelOutColor: Qt.rgba(0.1, 0.1, 0.1, 0.13)
+            labelOutColor: Qt.rgba(0.1, 0.1, 0.1, 0.2)
             visible: root.requireRestart
             enabled: root.requireRestart
             onClicked: { root.restart() } // TODO: Si os unix, mostrar mensaje que requiere autorizacion.

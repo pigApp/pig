@@ -6,11 +6,10 @@ Item {
         id: row
         spacing: 17
         anchors.centerIn: parent
-        anchors.verticalCenterOffset: 20
         Text {
             id: msg
             text: "PLEASE WAIT"
-            color: Qt.rgba(0.1, 0.1, 0.1, 0.13)
+            color: Qt.rgba(0.1, 0.1, 0.1, 0.2)
             font.family: pigFont.name
             font.pixelSize: 30
         }

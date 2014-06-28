@@ -11,50 +11,66 @@ Item {
     signal showF(variant filter)
     signal hideF()
 
-    Row {
-        id: inputFindRow
-        height: 10
-        spacing: 7
+    Rectangle {
+        id: inputLayer
+        width: 500
+        height: 30
+        color: "black"
+        radius: 2
+        opacity: 0
+        anchors.left: parent.horizontalCenter
+        anchors.leftMargin: -200
+        anchors.verticalCenter: parent.verticalCenter
+    }
+    TextInput {
+        id: input
+        color: "white"
+        font.family: pigFont.name
+        font.bold: true
+        font.capitalization: Font.AllUppercase
+        font.pixelSize: 30
+        maximumLength: 50
         visible: { buttonsFindColumn.visible && buttonsFindColumn.opacity == 1 }
-        anchors.centerIn: parent
-        TextInput {
-            id: input
-            color: Qt.rgba(0.1, 0.1, 0.1, 0.3)
-            font.family: pigFont.name
-            font.capitalization: Font.AllUppercase
-            font.pixelSize: 30
-            maximumLength: 25
-            onAccepted: { 
-                if (!loaderFilters.active && !loaderSetPassword.active) {
-                    if (noResultLabel.visible) { noResultLabel.visible = false }
-                        root.findDb(input.text, category, pornstar, 0, true)
-                }
-            }
-            onCursorPositionChanged: { if (noResultLabel.visible) noResultLabel.visible = false }
-            Keys.onPressed: {
-                if (event.key === Qt.Key_P && (event.modifiers & Qt.ControlModifier) && (event.modifiers & Qt.ShiftModifier)
-                    && !root.okPass && !root.failPass) {  
-                    if (finder.state == 'showFinder' || finder.state == 'hideFilter') {
-                        buttonsFindColumn.visible = false
-                        inputFindRow.visible = false
-                        loaderSetPassword.active = true
-                    }
-                    event.accepted = true;
-                }
-                if (event.key === Qt.Key_Escape && (event.modifiers & Qt.ShiftModifier)) {  
-                    root.quit()
-                    event.accepted = true;
-                }
+        anchors.left: inputLayer.left
+        anchors.leftMargin: 4
+        anchors.verticalCenter: parent.verticalCenter
+        anchors.verticalCenterOffset: 1
+        onAccepted: {
+            if (!loaderFilters.active && !loaderSetPassword.active) {
+                if (noResultLabel.visible) { noResultLabel.visible = false }
+                root.findDb(input.text, category, pornstar, 0, true)
             }
         }
-        Text {
-            id: noResultLabel
-            text: " NO RESULT"
-            color: Qt.rgba(0.1, 0.1, 0.1, 0.13)
-            font.family: pigLightFont.name
-            font.pixelSize: 30/strap
-            visible: false
+        onCursorPositionChanged: { if (noResultLabel.visible) noResultLabel.visible = false; input.visible = true }
+        Keys.onPressed: {
+            if (event.key === Qt.Key_P && (event.modifiers & Qt.ControlModifier) && (event.modifiers & Qt.ShiftModifier)
+                && !root.okPass && !root.failPass) {
+                if (finder.state == 'showFinder' || finder.state == 'hideFilter') {
+                    buttonsFindColumn.visible = false
+                    inputLayer.visible = false
+                    input.visible = false
+                    noResultLabel.visible = false
+                    loaderSetPassword.active = true
+                }
+                event.accepted = true;
+            }
+            if (event.key === Qt.Key_Escape && (event.modifiers & Qt.ShiftModifier)) {
+                root.quit()
+                event.accepted = true;
+            }
         }
+    }
+    Text {
+        id: noResultLabel
+        text: "NO RESULT"
+        color: Qt.rgba(0.1, 0.1, 0.1, 0.5)
+        font.family: pigFont.name
+        font.bold: true
+        font.pixelSize: 30
+        visible: false
+        anchors.horizontalCenter: inputLayer.horizontalCenter
+        anchors.verticalCenter: parent.verticalCenter
+        anchors.verticalCenterOffset: 1
     }
 
     Column {
@@ -64,6 +80,7 @@ Item {
         anchors.left: parent.left
         anchors.leftMargin: 40
         anchors.verticalCenter: parent.verticalCenter
+        anchors.verticalCenterOffset: -70
         z: 2
         Button {
             id: categoryFind
@@ -123,7 +140,8 @@ Item {
             pornstar = label.toUpperCase()
 
         finder.state = "hideFilter_hideFinder"
-        root.findDb(input.text, category, pornstar, 0, true)
+        root.findDb('', category, pornstar, 0, true)
+        noResultLabel.visible = false
     }
 
     Loader {
@@ -140,7 +158,9 @@ Item {
             } else {
                 loaderSetPassword.active = false
                 buttonsFindColumn.visible = true
-                inputFindRow.visible = true
+                inputLayer.visible = false
+                input.visible = false
+                noResultLabel.visible = false
                 input.forceActiveFocus()
             }
             event.accepted = true;
@@ -148,6 +168,15 @@ Item {
             root.quit()
             event.accepted = true;
         }
+    }
+
+    Loader {
+        id: loaderNews
+        source: "qrc:/src/qml/News.qml"
+        active: false
+        asynchronous: true
+        visible: status == Loader.Ready
+        anchors.fill: parent
     }
 
     states: [
@@ -176,13 +205,21 @@ Item {
                     NumberAnimation { target: blur; properties: "opacity"; to: 1; duration: 1700; easing.type: Easing.InOutQuart }
                     NumberAnimation { target: blur; properties: "radius"; to: 40; duration: 1700; easing.type: Easing.InOutQuart }
                 }
-                NumberAnimation { target: buttonsFindColumn; properties: "opacity"; to: 1.0; duration: 400; easing.type: Easing.InOutQuart }
+                ParallelAnimation {
+                    NumberAnimation { target: buttonsFindColumn; properties: "opacity"; to: 1.0; duration: 400; easing.type: Easing.InOutQuart }
+                    NumberAnimation { target: inputLayer; properties: "opacity"; to: 1.0; duration: 400; easing.type: Easing.InOutQuart }
+                }
             }
         },
         Transition {
             to: "hideFinder"
             SequentialAnimation {
-                NumberAnimation { target: buttonsFindColumn; properties: "opacity"; to: 0; duration: 300; easing.type: Easing.InOutQuart }
+                ParallelAnimation {
+                    NumberAnimation { target: buttonsFindColumn; properties: "opacity"; to: 0; duration: 300; easing.type: Easing.InOutQuart }
+                    NumberAnimation { target: inputLayer; properties: "opacity"; to: 0; duration: 300; easing.type: Easing.InOutQuart }
+                    NumberAnimation { target: noResultLabel; properties: "opacity"; to: 0; duration: 300; easing.type: Easing.InOutQuart }
+
+                }
                 ParallelAnimation {
                     NumberAnimation { target: blur; easing.amplitude: 1.65; properties: "opacity"; to: 0; duration: 800; easing.type: Easing.OutInElastic }
                     NumberAnimation { target: pigLogo; easing.amplitude: 1.65; properties: "opacity"; to: 0; duration: 800; easing.type: Easing.OutInElastic }
@@ -195,7 +232,9 @@ Item {
         Transition {
             to: "showFilter"
             SequentialAnimation {
-                PropertyAction { target: inputFindRow; property: "visible"; value: false }
+                PropertyAction { target: inputLayer; property: "visible"; value: false }
+                PropertyAction { target: input; property: "visible"; value: false }
+                PropertyAction { target: noResultLabel; property: "visible"; value: false }
                 PropertyAction { target: input; property: "focus"; value: true }
                 NumberAnimation { target: buttonsFindColumn; properties: "opacity"; to: 0; duration: 50; easing.type: Easing.InOutQuart }
                 PropertyAction { target: buttonsFindColumn; property: "visible"; value: false }
@@ -208,7 +247,8 @@ Item {
                 NumberAnimation { target: filterLayer; easing.amplitude: 1.7; properties: "anchors.leftMargin"; to: 0; duration: 700; easing.type: Easing.OutQuart }
                 PropertyAction { target: buttonsFindColumn; property: "visible"; value: true }
                 NumberAnimation { target: buttonsFindColumn; properties: "opacity"; to: 1; duration: 50; easing.type: Easing.InOutQuart }
-                PropertyAction { target: inputFindRow; property: "visible"; value: true }
+                PropertyAction { target: inputLayer; property: "visible"; value: true }
+                PropertyAction { target: input; property: "visible"; value: true }
             }
         },
         Transition {
@@ -218,7 +258,10 @@ Item {
                 PropertyAction { target: loaderFilters; property: "source"; value: "" }
                 NumberAnimation { target: filterLayer; easing.amplitude: 1.7; properties: "anchors.leftMargin"; to: 0; duration: 1000; easing.type: Easing.OutQuart }
                 PropertyAction { target: buttonsFindColumn; property: "visible"; value: true }
-                NumberAnimation { target: buttonsFindColumn; properties: "opacity"; to: 0; duration: 50; easing.type: Easing.InOutQuart }
+                ParallelAnimation {
+                    NumberAnimation { target: buttonsFindColumn; properties: "opacity"; to: 0; duration: 50; easing.type: Easing.InOutQuart }
+                    NumberAnimation { target: inputLayer; properties: "opacity"; to: 0; duration: 50; easing.type: Easing.InOutQuart }
+                }
                 ParallelAnimation {
                     NumberAnimation { target: blur; easing.amplitude: 1.65; properties: "opacity"; to: 0; duration: 800; easing.type: Easing.OutInElastic }
                     NumberAnimation { target: pigLogo; easing.amplitude: 1.65; properties: "opacity"; to: 0; duration: 800; easing.type: Easing.OutInElastic }
@@ -240,6 +283,7 @@ Item {
                 finder.state = "hideFinder"
         }
         onNoResultSIGNAL: {
+            input.visible = false
             noResultLabel.visible = true
         }
     }

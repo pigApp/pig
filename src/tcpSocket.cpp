@@ -14,6 +14,8 @@ TcpSocket::TcpSocket(QObject *parent) : QObject(parent)
 
 void TcpSocket::doConnect()
 {
+    data.clear();
+
     socket->connectToHost(host, 80);
     if(!socket->waitForConnected(10000))
         qDebug() << "Error: " << socket->errorString();
@@ -65,11 +67,11 @@ void TcpSocket::write()
     } else if (order == "getPreview") {
         //...
     } else if (order == "getUpdateFiles") {
-        QByteArray initData("d8"); //"\r"
-        int index = data.indexOf(initData);
+        //QByteArray initData("d8"); //"\r"
+        //int index = data.indexOf(initData);
         QFile newFile(path+file);
         newFile.open(QIODevice::WriteOnly);
-        data.remove(0, index);
+        //data.remove(0, index);
         newFile.write(data);
         newFile.close();
         emit fileReady(path, file);

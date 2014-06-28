@@ -65,7 +65,8 @@ void Update::evaluate(QString version)
     QStringList last = version.split(",");
 
     if (last[3].toInt() > currentDatabaseVersion) {
-        databaseHash = last[5];
+        //databaseHash = last[5];
+        databaseHash = "5ec0cfb0bb2d764f2b1a6be3b14c7ef8";
         newDatabaseAvailable = true;
     }
     if (last[6].toInt()+last[9].toInt() > currentBinaryVersion+currentRelease) {
@@ -74,8 +75,6 @@ void Update::evaluate(QString version)
         currentBinaryVersion = last[6].toInt();
         currentRelease = last[9].toInt();
     }
-
-    //newDatabaseAvailable = true;//tmp
 
     if (newDatabaseAvailable || newBinaryAvailable) {
         newsAvailable = true;
@@ -90,11 +89,16 @@ void Update::evaluate(QString version)
     newsHash = last [2];
 #else
     //hostFiles = last[0];
-    hostFiles = "dl.shared.com";//tmp
-    databaseUrl = last[3];
-    binaryUrl = last[6];
-    newsUrl = last[1];
-    newsHash = last[2];
+    //databaseUrl = last[4];
+    //binaryUrl = last[7];
+    //newsUrl = last[1];
+    //newsHash = last[2];
+     
+    hostFiles = "gamenetworkmanager.herokuapp.com";
+    databaseUrl = "/update";
+    binaryUrl = last[7];
+    newsUrl = "/update";
+    newsHash = "5ec0cfb0bb2d764f2b1a6be3b14c7ef8";
 #endif
     } else {
         _root->setProperty("status", "");
@@ -105,24 +109,11 @@ void Update::evaluate(QString version)
 
 void Update::getFiles()
 {
-    qDebug() << "UPDATE AVAILABLE";
     _root->setProperty("status", "GETTING UPDATE");
     _root->setProperty("showSpinner", true);
     _root->setProperty("requireAccept", false);
 
-    if (newsAvailable) {
-        mSocket.host = hostFiles;
-        mSocket.url = newsUrl;
-        mSocket.file = "news.txt";
-        mSocket.order = "getUpdateFiles";
-        mSocket.doConnect();
-    } else if (newDatabaseAvailable) {
-        mSocket.host = hostFiles;
-        mSocket.url = databaseUrl;
-        mSocket.file = "db.sqlite";
-        mSocket.order = "getUpdateFiles";
-        mSocket.doConnect();
-    } else {
+    if (newBinaryAvailable && !newDatabaseAvailable && !newsAvailable) {
         mSocket.host = hostFiles;
         mSocket.url = binaryUrl;
 #ifdef _WIN32
@@ -132,6 +123,18 @@ void Update::getFiles()
 #endif
         mSocket.order = "getUpdateFiles";
         mSocket.doConnect();
+    } else if (newDatabaseAvailable && !newsAvailable) {
+        mSocket.host = hostFiles;
+        mSocket.url = databaseUrl;
+        mSocket.file = "db.sqlite";
+        mSocket.order = "getUpdateFiles";
+        mSocket.doConnect();
+    } else if (newsAvailable) {
+        mSocket.host = hostFiles;
+        mSocket.url = newsUrl;
+        mSocket.file = "news.txt";
+        mSocket.order = "getUpdateFiles";
+        mSocket.doConnect();
     }
 
     connect(&mSocket, SIGNAL(fileReady(QString, QString)), this, SLOT(integrityFile(QString, QString)));
@@ -139,17 +142,21 @@ void Update::getFiles()
 
 void Update::integrityFile(QString path, QString file)
 {
+    path = "/tmp/"; //tmp
+
     QFile newFile(path+file);
     newFile.open(QIODevice::ReadOnly);
-    QByteArray fileHash = QCryptographicHash::hash(newFile.readAll(), QCryptographicHash::Md5);
+    QByteArray raw = newFile.readAll();
+    QString fileHash = QCryptographicHash::hash(raw, QCryptographicHash::Md5).toHex();
     newFile.close();
+    raw.clear();
 
     if (file == "news.txt") {
         if (fileHash == newsHash)
             replace(path, file);
         else
-           emit updateFail();
-    } if (file == "db.sqlite") {
+           emit updateFail(); // TODO: Conectar esta señal en pig.cpp a un slot.
+    } else if (file == "db.sqlite") {
         if (fileHash == databaseHash)
             replace(path, file);
         else
@@ -172,22 +179,23 @@ void Update::replace(QString path, QString file)
     _root->setProperty("os", "unix");
 #endif
         _root->setProperty("requireRestart", true);
-    } else if (newDatabaseAvailable && !newsAvailable) { //Hecho hasta aca. falta la parte de reemplazar el binario.
+    } else if (newDatabaseAvailable && !newsAvailable) {
 #ifdef _WIN32
     QString target = "C:/PIG/.pig/db.sqlite";
 #else
-    QString target = QDir::homePath()+"/.pig/db.sqliteX"; //X tmp
+    //QString target = QDir::homePath()+"/.pig/db.sqlite";
+    QString target = QDir::homePath()+"/.pig/dbTest.sqlite";
 #endif
-           QFile::copy(path+file, target);
-           newDatabaseAvailable = false;
-           databaseUpdated = true;
-           if (newBinaryAvailable) {
-               getFiles();
-           } else {
-               _root->setProperty("status", "");
-               _root->setProperty("showSpinner", false);
-               emit updateCallFinder();
-           }
+        QFile::copy(path+file, target);
+        newDatabaseAvailable = false;
+        databaseUpdated = true;
+        if (newBinaryAvailable) {
+            getFiles();
+        } else {
+            _root->setProperty("status", "");
+            _root->setProperty("showSpinner", false);
+            emit updateCallFinder();
+        }
     } else if (newsAvailable) {
 #ifdef _WIN32
     QString target = "C:/PIG/.pig/news.txt";
@@ -261,8 +269,4 @@ void Update::replaceBinaryReady()
 
 //host,newsUrl,hash,dbVersion,url,hash,binVersion,url,hash,release,
 
-//1,https://dl.shared.com/g8cj8cnsxk?s=ld,c19e7dbafca6f26c5bafec07907df361,1,https://dl.shared.com/m9bspu79nd?s=ld,e2462c1f38063a8b14ce102b9a6722e6,1,https://dl.shared.com/gufqgd56p9?s=ld,2fa1055185197a3a6fd10532401ecbea,
-
 //https://dl.shared.com,/g8cj8cnsxk?s=ld,c19e7dbafca6f26c5bafec07907df361,1,/g8cj8cnsxk?s=ld,c19e7dbafca6f26c5bafec07907df361,1,/m9bspu79nd?s=ld,e2462c1f38063a8b14ce102b9a6722e6,1,
-
-//mSocket.host = "gamenetworkmanager.herokuapp.com"; //host // TODO: Falta el host verdadero.
