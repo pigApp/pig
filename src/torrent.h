@@ -34,7 +34,7 @@ private:
     libtorrent::error_code ec;
 
     bool remap;
-    bool toBox;
+    bool widget;
     int offset;
     int neededPices;
     int availablePiece;

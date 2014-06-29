@@ -9,7 +9,7 @@ Item {
         Text {
             id: msg
             text: "PLEASE WAIT"
-            color: Qt.rgba(0.1, 0.1, 0.1, 0.2)
+            color: Qt.rgba(0.1, 0.1, 0.1, 0.1)
             font.family: pigFont.name
             font.pixelSize: 30
         }

@@ -11,30 +11,18 @@ Item {
     signal showF(variant filter)
     signal hideF()
 
-    Rectangle {
-        id: inputLayer
-        width: 500
-        height: 30
-        color: "black"
-        radius: 2
-        opacity: 0
-        anchors.left: parent.horizontalCenter
-        anchors.leftMargin: -200
-        anchors.verticalCenter: parent.verticalCenter
-    }
     TextInput {
         id: input
-        color: "white"
+        color: Qt.rgba(0.1, 0.1, 0.1, 0.2)
         font.family: pigFont.name
         font.bold: true
         font.capitalization: Font.AllUppercase
-        font.pixelSize: 30
-        maximumLength: 50
+        font.pixelSize: 55
+        maximumLength: 25
         visible: { buttonsFindColumn.visible && buttonsFindColumn.opacity == 1 }
-        anchors.left: inputLayer.left
-        anchors.leftMargin: 4
+        anchors.left: parent.horizontalCenter
+        anchors.leftMargin: -150
         anchors.verticalCenter: parent.verticalCenter
-        anchors.verticalCenterOffset: 1
         onAccepted: {
             if (!loaderFilters.active && !loaderSetPassword.active) {
                 if (noResultLabel.visible) { noResultLabel.visible = false }
@@ -47,7 +35,6 @@ Item {
                 && !root.okPass && !root.failPass) {
                 if (finder.state == 'showFinder' || finder.state == 'hideFilter') {
                     buttonsFindColumn.visible = false
-                    inputLayer.visible = false
                     input.visible = false
                     noResultLabel.visible = false
                     loaderSetPassword.active = true
@@ -63,14 +50,13 @@ Item {
     Text {
         id: noResultLabel
         text: "NO RESULT"
-        color: Qt.rgba(0.1, 0.1, 0.1, 0.5)
+        color: Qt.rgba(0.1, 0.1, 0.1, 0.1)
         font.family: pigFont.name
         font.bold: true
-        font.pixelSize: 30
+        font.pixelSize: 55
         visible: false
-        anchors.horizontalCenter: inputLayer.horizontalCenter
+        anchors.horizontalCenter: parent.horizontalCenter
         anchors.verticalCenter: parent.verticalCenter
-        anchors.verticalCenterOffset: 1
     }
 
     Column {
@@ -158,7 +144,6 @@ Item {
             } else {
                 loaderSetPassword.active = false
                 buttonsFindColumn.visible = true
-                inputLayer.visible = false
                 input.visible = false
                 noResultLabel.visible = false
                 input.forceActiveFocus()
@@ -173,7 +158,7 @@ Item {
     Loader {
         id: loaderNews
         source: "qrc:/src/qml/News.qml"
-        active: false
+        active: root.news
         asynchronous: true
         visible: status == Loader.Ready
         anchors.fill: parent
@@ -205,10 +190,7 @@ Item {
                     NumberAnimation { target: blur; properties: "opacity"; to: 1; duration: 1700; easing.type: Easing.InOutQuart }
                     NumberAnimation { target: blur; properties: "radius"; to: 40; duration: 1700; easing.type: Easing.InOutQuart }
                 }
-                ParallelAnimation {
-                    NumberAnimation { target: buttonsFindColumn; properties: "opacity"; to: 1.0; duration: 400; easing.type: Easing.InOutQuart }
-                    NumberAnimation { target: inputLayer; properties: "opacity"; to: 1.0; duration: 400; easing.type: Easing.InOutQuart }
-                }
+                NumberAnimation { target: buttonsFindColumn; properties: "opacity"; to: 1.0; duration: 400; easing.type: Easing.InOutQuart }
             }
         },
         Transition {
@@ -216,9 +198,8 @@ Item {
             SequentialAnimation {
                 ParallelAnimation {
                     NumberAnimation { target: buttonsFindColumn; properties: "opacity"; to: 0; duration: 300; easing.type: Easing.InOutQuart }
-                    NumberAnimation { target: inputLayer; properties: "opacity"; to: 0; duration: 300; easing.type: Easing.InOutQuart }
                     NumberAnimation { target: noResultLabel; properties: "opacity"; to: 0; duration: 300; easing.type: Easing.InOutQuart }
-
+                    NumberAnimation { target: loaderNews; properties: "opacity"; to: 0; duration: 300; easing.type: Easing.InOutQuart }
                 }
                 ParallelAnimation {
                     NumberAnimation { target: blur; easing.amplitude: 1.65; properties: "opacity"; to: 0; duration: 800; easing.type: Easing.OutInElastic }
@@ -232,9 +213,9 @@ Item {
         Transition {
             to: "showFilter"
             SequentialAnimation {
-                PropertyAction { target: inputLayer; property: "visible"; value: false }
                 PropertyAction { target: input; property: "visible"; value: false }
                 PropertyAction { target: noResultLabel; property: "visible"; value: false }
+                PropertyAction { target: loaderNews; property: "visible"; value: false }
                 PropertyAction { target: input; property: "focus"; value: true }
                 NumberAnimation { target: buttonsFindColumn; properties: "opacity"; to: 0; duration: 50; easing.type: Easing.InOutQuart }
                 PropertyAction { target: buttonsFindColumn; property: "visible"; value: false }
@@ -247,8 +228,8 @@ Item {
                 NumberAnimation { target: filterLayer; easing.amplitude: 1.7; properties: "anchors.leftMargin"; to: 0; duration: 700; easing.type: Easing.OutQuart }
                 PropertyAction { target: buttonsFindColumn; property: "visible"; value: true }
                 NumberAnimation { target: buttonsFindColumn; properties: "opacity"; to: 1; duration: 50; easing.type: Easing.InOutQuart }
-                PropertyAction { target: inputLayer; property: "visible"; value: true }
                 PropertyAction { target: input; property: "visible"; value: true }
+                PropertyAction { target: loaderNews; property: "visible"; value: true }
             }
         },
         Transition {
@@ -260,7 +241,7 @@ Item {
                 PropertyAction { target: buttonsFindColumn; property: "visible"; value: true }
                 ParallelAnimation {
                     NumberAnimation { target: buttonsFindColumn; properties: "opacity"; to: 0; duration: 50; easing.type: Easing.InOutQuart }
-                    NumberAnimation { target: inputLayer; properties: "opacity"; to: 0; duration: 50; easing.type: Easing.InOutQuart }
+                    NumberAnimation { target: loaderNews; properties: "opacity"; to: 0; duration: 50; easing.type: Easing.InOutQuart }
                 }
                 ParallelAnimation {
                     NumberAnimation { target: blur; easing.amplitude: 1.65; properties: "opacity"; to: 0; duration: 800; easing.type: Easing.OutInElastic }

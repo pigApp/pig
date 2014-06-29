@@ -48,7 +48,7 @@ void TcpSocket::write()
         static QString path = "/tmp/pig/";
 #endif
 
-    if (order == "getUpdateVersion") {
+    if (order == "getVersion") {
         bool append = false;
         QString version;
         QString raw(data);
@@ -64,16 +64,14 @@ void TcpSocket::write()
                 append = true;
         }
         emit versionReady(version);
-    } else if (order == "getPreview") {
-        //...
-    } else if (order == "getUpdateFiles") {
+    } else if (order == "getFile") {
         //QByteArray initData("d8"); //"\r"
         //int index = data.indexOf(initData);
-        QFile newFile(path+file);
-        newFile.open(QIODevice::WriteOnly);
+        QFile target(path+file);
+        target.open(QIODevice::WriteOnly);
         //data.remove(0, index);
-        newFile.write(data);
-        newFile.close();
+        target.write(data);
+        target.close();
         emit fileReady(path, file);
     }
 }

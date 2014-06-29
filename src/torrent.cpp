@@ -11,7 +11,7 @@
 Torrent::Torrent(QObject *parent) : QObject(parent)
 {
     remap = true;
-    toBox = false;
+    widget = false;
     offset = 0;
     downloadOffsetPieces = 0;
 
@@ -100,7 +100,7 @@ void Torrent::minimumPiecesReady()
             foreach(const QFileInfo & fi, filesList )
                 scennesAbsolutePath << fi.absoluteFilePath();
 
-            toBox = true;
+            widget = true;
             availablePiece = offset+handle.status().num_pieces;
             QMetaObject::invokeMethod(_pig, "playerHandle", Qt::QueuedConnection, Q_ARG(QString, scennesAbsolutePath[scenne-1]));
 
@@ -129,7 +129,7 @@ void Torrent::progress()
 
 void Torrent::downloadInfo()
 {
-    if (toBox) {
+    if (widget) {
         QMetaObject::invokeMethod(_player, "downloadInfo", Qt::QueuedConnection, Q_ARG(int, handle.status().download_rate/1024), Q_ARG(int, handle.status().num_peers));
     } else {
         int downloaded = handle.status().total_done;

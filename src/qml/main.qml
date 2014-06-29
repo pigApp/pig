@@ -7,24 +7,21 @@ Item {
     property bool requirePass
     property bool okPass
     property bool failPass
-    property bool requireAccept
+    property bool requireConfirmation
     property bool get
     property bool requireRestart
+    property bool news
     property bool showSpinner 
 
     property string status
-    property string statusInformation
+    property string information
     property string os
-    property string databaseVersion
+    property string binaryNews: ""
+    property string databaseNews: ""
     property string binaryVersion
+    property string databaseVersion
     property string release
     property string bitRate
-
-    property variant categoryList
-    property variant nCategoryList
-    property variant pornstarList
-    property variant nPornstarList
-    property variant list
 
     property int totalFilms
     property int n
@@ -33,17 +30,21 @@ Item {
     property int needed: 0
     property int downloaded: 0
 
+    property variant categoryList
+    property variant nCategoryList
+    property variant pornstarList
+    property variant nPornstarList
+    property variant list
+
     signal passwordHandle(string plain, bool init, bool write)
+    signal skip()
     signal getFiles()
     signal restart()
-    signal updateCancel() // TODO: Si cancela crear funcion en c++ que cierre update y llame a finder.
     signal findDb(string inputText, string category, string pornstar, int offset, bool init)
     signal torrentHandle(string magnetUrl, string scenne)
-    signal fixDb()
     signal quit()
 
-    FontLoader { id: pigFont; source: "qrc:/images/fonts/pig.ttf" }
-    FontLoader { id: pigLightFont; source: "qrc:/images/fonts/pigLight.ttf" }
+    FontLoader { id: pigFont; source: "qrc:/images/font/pig.ttf" }
     
     Rectangle {
         id: screen
@@ -106,7 +107,7 @@ Item {
             asynchronous: true
             visible: status == Loader.Ready
             anchors.fill: parent
-            onStatusChanged: { if (status == Loader.Ready) loaderFinder.source = "" }
+            onStatusChanged: { if (status == Loader.Ready) loaderFinder.source = ""; news = false }
             onActiveChanged: { if (loaderOutput.active) showSpinner = true }
         }
 

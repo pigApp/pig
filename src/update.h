@@ -22,9 +22,8 @@ public slots:
     void doCheck();
 
 signals:
-    void updateCallFinder();
-    void updateFail();
-    void updateErrorDb();
+    void forward();
+    void errorDb();
 
 private:
     TcpSocket mSocket;

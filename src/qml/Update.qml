@@ -11,7 +11,7 @@ Item {
         Text {
             id: statusLabel
             text: root.status
-            color: Qt.rgba(0.1, 0.1, 0.1, 0.2)
+            color: { if(root.status == "GETTING UPDATE") Qt.rgba(0.1, 0.1, 0.1, 0.1); else Qt.rgba(0.1, 0.1, 0.1, 0.2) }
             font.family: pigFont.name
             font.pixelSize: 30
         }
@@ -29,8 +29,8 @@ Item {
         }
     }
     Text {
-        id: statusInformationLabel
-        text: root.statusInformation
+        id: informationLabel
+        text: root.information
         color: Qt.rgba(0.1, 0.1, 0.1, 0.2)
         font.family: pigFont.name
         font.italic: true
@@ -44,9 +44,9 @@ Item {
         spacing: 15
         anchors.centerIn: parent
         anchors.horizontalCenterOffset: -3
-        anchors.verticalCenterOffset: { if(statusInformationLabel.text == '') 30; else 50 }
+        anchors.verticalCenterOffset: { if (informationLabel.text == '') 30; else 50 }
         Button {
-            id: acceptUpdate
+            id: accept
             width: 50
             height: 23
             label: "GET"
@@ -55,16 +55,16 @@ Item {
             labelSize: 30
             labelInColor: Qt.rgba(0.1, 0.1, 0.1, 0.3)
             labelOutColor: Qt.rgba(0.1, 0.1, 0.1, 0.2)
-            visible: root.requireAccept
-            enabled: root.requireAccept
+            visible: root.requireConfirmation
+            enabled: root.requireConfirmation
             onClicked: {
                 root.status = ''
-                root.statusInformation  = ''
+                root.information = ''
                 root.getFiles()
             }
         }
         Button {
-            id: cancelUpdate
+            id: skip
             width: 55
             height: 23
             label: "SKIP"
@@ -73,12 +73,12 @@ Item {
             labelSize: 30
             labelInColor: Qt.rgba(0.1, 0.1, 0.1, 0.3)
             labelOutColor: Qt.rgba(0.1, 0.1, 0.1, 0.2)
-            visible: root.requireAccept
-            enabled: root.requireAccept
-            onClicked: { root.updateCancel() }
+            visible: root.requireConfirmation
+            enabled: root.requireConfirmation
+            onClicked: { root.skip() }
         }
         Button {
-            id: restartUpdate
+            id: restart
             width: 100
             height: 25
             label: "RESTART"

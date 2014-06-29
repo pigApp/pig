@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include <QDir>
 #include <QFile>
+#include <QTextStream>
 
 PIG::PIG(QObject *parent) : QObject(parent), mRoot(0)
 {
@@ -77,8 +78,9 @@ void PIG::updateHandle()
 
     emit showUpdateSIGNAL();
 
-    connect(mUpdate, SIGNAL(updateCallFinder()), this, SLOT(finder()));
-    connect(mUpdate, SIGNAL(updateErrorDb()), this, SLOT(errorDb()));
+    connect(mUpdate, SIGNAL(forward()), this, SLOT(finder()));
+    connect(mUpdate, SIGNAL(errorDb()), this, SLOT(errorDb()));
+    connect(mRoot, SIGNAL(skip()), this, SLOT(finder()));
     connect(mRoot, SIGNAL(getFiles()), mUpdate, SLOT(getFiles()));
     connect(mRoot, SIGNAL(restart()), mUpdate, SLOT(replaceBinaryAndRestart()));
 }
@@ -89,6 +91,35 @@ void PIG::finder()
     if (mUpdate != 0) {
         mUpdate = 0;
         delete mUpdate;
+    }
+
+#ifdef _WIN32
+    QString target = "C:/pig/.pig/news.txt";
+#else
+    QString target = QDir::homePath()+"/.pig/news";
+#endif
+    QFile file(target);
+    if (file.exists()) {
+        file.open(QIODevice::ReadOnly | QIODevice::Text);
+        bool head = true;
+        QString bn;
+        QString dbn;
+        QTextStream in(&file);
+        while (!in.atEnd()) {
+            QString line = in.readLine();
+            if (line.isEmpty()) head = false;
+            if (head) {
+                bn.append(line+"\n");
+            } else {
+                if(!line.isEmpty())
+                    dbn.append(line+"\n");
+            }
+        }
+        file.close();
+        file.remove();
+        mRoot->setProperty("binaryNews", bn);
+        mRoot->setProperty("databaseNews", dbn);
+        mRoot->setProperty("news", true);
     }
 
     if (db.open()) {
@@ -247,25 +278,25 @@ void PIG::setRootObject(QObject *root)
     if(mRoot!=0) mRoot->disconnect(this); mRoot = root;
 
     if(mRoot) connect(mRoot, SIGNAL(passwordHandle(QString, bool, bool)), this, SLOT(passwordHandle(QString, bool, bool)));
-    if(mRoot) connect(mRoot, SIGNAL(updateCancel()), this, SLOT(finder()));
+
     if(mRoot) connect(mRoot, SIGNAL(findDb(QString, QString, QString, int, bool)), this, SLOT(findDb(QString, QString, QString, int, bool)));
     if(mRoot) connect(mRoot, SIGNAL(torrentHandle(QString, QString)), this, SLOT(torrentHandle(QString, QString)));
     if(mRoot) connect(mRoot, SIGNAL(quit()), this, SLOT(quit()));
 
 #ifdef _WIN32
-    QString dbPath = "C:/pig/.pig/db.sqlite";
-    QString tmpPath = "C:/tmp/pig/";
+    QString target = "C:/pig/.pig/db.sqlite";
+    QString tmp = "C:/tmp/pig/";
 #else
-    QString dbPath = QDir::homePath()+"/.pig/db.sqlite";
-    QString tmpPath = "/tmp/pig/";
+    QString target = QDir::homePath()+"/.pig/db.sqlite";
+    QString tmp = "/tmp/pig/";
 #endif
-    QFile dbCheck(dbPath);
-    if (dbCheck.exists()) {
+    QFile file(target);
+    if (file.exists()) {
         db = QSqlDatabase::addDatabase("QSQLITE");
-        db.setDatabaseName(dbPath);
-        QDir tmpDir(tmpPath);
-        if (!tmpDir.exists())
-            tmpDir.mkdir(tmpPath);
+        db.setDatabaseName(target);
+        QDir dir(tmp);
+        if (!dir.exists())
+            dir.mkdir(tmp);
 
         passwordHandle("", true, false);
     } else {

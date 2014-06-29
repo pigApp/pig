@@ -9,6 +9,8 @@ Item {
     property bool coverLoaded
     property bool hideAll
     property bool focusPath
+    property bool zoomIn
+    property bool zoomOut
 
     property string inputText
     property string category
@@ -42,7 +44,7 @@ Item {
             opacity: PathView.recipeOpacity || 1
             z: PathView.recipeZ || 1
 
-            Keys.onUpPressed: { fiveMoreTimer.start() } //{ previewPlayer.kill(); fiveMoreTimer.start() }
+            Keys.onUpPressed: { if (!output.zoomIn) fiveMoreTimer.start() }
             Timer {
                 id: fiveMoreTimer
                 running: false
@@ -50,7 +52,7 @@ Item {
                 interval: 500
                 onTriggered: pathView.fiveMore()
             }
-            Keys.onDownPressed: { fiveLessTimer.start() } //{ previewPlayer.kill(); fiveLessTimer.start() }
+            Keys.onDownPressed: { if (!output.zoomIn) fiveLessTimer.start() }
             Timer {
                 id: fiveLessTimer
                 running: false
@@ -58,32 +60,31 @@ Item {
                 interval: 500
                 onTriggered: pathView.fiveLess()
             }
-            Keys.onRightPressed: { pathView.next() } //{ pathView.next(); previewPlayerKillTimer.start() }
-            Keys.onLeftPressed: { pathView.prior() } //{ pathView.prior(); previewPlayerKillTimer.start() }
+            Keys.onRightPressed: { if (!output.zoomIn) pathView.next() }
+            Keys.onLeftPressed: { if (!output.zoomIn) pathView.prior() }
             Timer {
                 id: previewPlayerKillTimer
                 running: false
                 repeat: false
                 interval: 1000
-                //onTriggered: previewPlayer.kill()
             }
 
             Image {
-                id: posters
+                id: poster
                 source: urlPoster
                 fillMode: Image.PreserveAspectCrop
                 Rectangle {
-                    id: postersLayer
+                    id: posterLayer
                     color: Qt.rgba(0, 0, 0, 0.6)
                     anchors.fill: parent
                 }
                 onStatusChanged: { 
-                    if (posters.source == list[5] && posters.progress == 1.0) {
+                    if (poster.source == list[5] && poster.progress == 1.0) {
                         posterLoaded = true
                         if (!coverLoaded)
                             imagesStatus.start()
-                    } else if (posters.source == list[5] && posters.status == Image.Error) {
-                        // TODO: Cargar imagen de 'Imagen no disponible'.
+                    } else if (poster.source == list[5] && poster.status == Image.Error) {
+                        poster.source = "qrc:/images/posterNotAvailable.png"
                         posterLoaded = true
                         if (!coverLoaded)
                             imagesStatus.start()
@@ -92,10 +93,10 @@ Item {
             }
             GaussianBlur {
                 id: posterEffect
-                source: posters
+                source: poster
                 radius: 30
                 samples: 32
-                anchors.fill: posters
+                anchors.fill: poster
             }
             Image {
                 id: stripes
@@ -103,14 +104,6 @@ Item {
                 fillMode: Image.PreserveAspectCrop
             }
 
-            RectangularGlow {
-                id: coverEffect
-                color: "black"
-                glowRadius: 35
-                spread: 0.2
-                cornerRadius: 40
-                anchors.fill: cover
-            }
             Text {
                 id: titleLabel
                 text: title
@@ -122,6 +115,7 @@ Item {
                 anchors.bottom: cover.top
                 anchors.bottomMargin: -41
             }
+
             Image {
                 id: frame
                 width: screen.width
@@ -130,6 +124,40 @@ Item {
                 sourceSize.height: 500
                 source: "qrc:/images/frame.png"
                 anchors.centerIn: parent
+            }
+            Image {
+                id: screens
+                width: 630
+                height: 430
+                source: "qrc:/images/screenTest.jpg"
+                opacity: 0.1
+                smooth: true
+                anchors.left: parent.left
+                anchors.verticalCenter: parent.verticalCenter
+                anchors.verticalCenterOffset: 3
+                onOpacityChanged: { if (screens.opacity == 0.1) output.zoomOut = false }
+                MouseArea {
+                    id: zoom
+                    onClicked: { if (!output.zoomIn) output.zoomIn = true }
+                    anchors.fill: parent
+                }
+                NumberAnimation { running: output.zoomIn; target: screens; properties: "opacity"; to: 1; duration: 1000; easing.type: Easing.InOutQuart }
+                NumberAnimation { running: output.zoomIn; target: screens; properties: "z"; to: 5; duration: 1000; easing.type: Easing.InOutQuart }
+                NumberAnimation { running: output.zoomIn; target: screens; properties: "width"; to: 1920; duration: 1000; easing.type: Easing.InOutQuart }
+                NumberAnimation { running: output.zoomIn; target: screens; properties: "height"; to: 1080; duration: 1000; easing.type: Easing.InOutQuart }
+
+                NumberAnimation { running: output.zoomOut; target: screens; properties: "opacity"; to: 0.1; duration: 1000; easing.type: Easing.InOutQuart }
+                NumberAnimation { running: output.zoomOut; target: screens; properties: "z"; to: 1; duration: 1000; easing.type: Easing.InOutQuart }
+                NumberAnimation { running: output.zoomOut; target: screens; properties: "width"; to: 630; duration: 1000; easing.type: Easing.InOutQuart }
+                NumberAnimation { running: output.zoomOut; target: screens; properties: "height"; to: 430; duration: 1000; easing.type: Easing.InOutQuart }
+            }
+            RectangularGlow {
+                id: coverEffect
+                color: "black"
+                glowRadius: 35
+                spread: 0.2
+                cornerRadius: 40
+                anchors.fill: cover
             }
             Image {
                 id: cover
@@ -148,7 +176,7 @@ Item {
                         if (!posterLoaded)
                             imagesStatus.start()
                     } else if (cover.source == list[4] && cover.status == Image.Error) {
-                        // TODO: Cargar imagen de 'Imagen no disponible'.
+                        cover.source = "qrc:/images/coverNotAvailable.png"
                         coverLoaded = true
                         if (!posterLoaded)
                             imagesStatus.start()
@@ -181,7 +209,7 @@ Item {
                     id: atressesLabel
                     text: actresses
                     color: "white"
-                    font.family: pigLightFont.name
+                    font.family: pigFont.name
                     font.italic: true
                     font.bold: true
                     font.pixelSize: 30
@@ -190,7 +218,7 @@ Item {
                     id: categoryLabel
                     text: categories
                     color: "white"
-                    font.family: pigLightFont.name
+                    font.family: pigFont.name
                     font.italic: true
                     font.bold: true
                     font.pixelSize: 30
@@ -227,19 +255,10 @@ Item {
                 anchors.verticalCenter: parent.verticalCenter
             }
 
-            /*
-            PreviewPlayer {
-                id: previewPlayer
-                previewWidth: 635    // TODO: Pasar este parametro como screen.width/?
-                previewHeight: 432.4 // TODO: Pasarle este parametro como screen.height/?
-                url: urlPreview
-            }
-            */
-
-            NumberAnimation { running: recipe.PathView.isCurrentItem; target: posters; property: "opacity"; to: 1; duration: 4000; easing.type: Easing.InOutQuad }
+            NumberAnimation { running: recipe.PathView.isCurrentItem; target: poster; property: "opacity"; to: 1; duration: 4000; easing.type: Easing.InOutQuad }
             NumberAnimation { running: recipe.PathView.isCurrentItem; target: posterEffect; property: "opacity"; to: 1; duration: 4000; easing.type: Easing.InOutQuad }
             NumberAnimation { running: recipe.PathView.isCurrentItem; target: datesColumn; property: "opacity"; to: 1; duration: 2000; easing.type: Easing.OutElastic }
-            PropertyAction  { running: !recipe.PathView.isCurrentItem; target: posters; property: "opacity"; value: 0 }
+            PropertyAction  { running: !recipe.PathView.isCurrentItem; target: poster; property: "opacity"; value: 0 }
             PropertyAction  { running: !recipe.PathView.isCurrentItem; target: posterEffect; property: "opacity"; value: 0 }
             NumberAnimation { running: !recipe.PathView.isCurrentItem; target: datesColumn; property: "opacity"; to: 0; duration: 1; easing.type: Easing.InOutQuad }
 
@@ -358,9 +377,14 @@ Item {
 
         Keys.onPressed: {
             if (event.key === Qt.Key_Escape && !(event.modifiers & Qt.ShiftModifier)) {  
-                back()
-                event.accepted = true;
-            } else if (event.key === Qt.Key_Escape && (event.modifiers & Qt.ShiftModifier)) {  
+                if (zoomIn) {
+                    zoomIn = false
+                    zoomOut = true;
+                } else {
+                    back()
+                    event.accepted = true;
+                }
+            } else if (event.key === Qt.Key_Escape && (event.modifiers & Qt.ShiftModifier)) {
                 root.quit()
                 event.accepted = true;
             }
@@ -455,10 +479,9 @@ Item {
         font.family: "Verdana"
         font.pixelSize: 30
         visible: { if (playerLayer.height < screen.height -50) true; else false }
-        anchors.right: parent.right
-        anchors.rightMargin: 3
+        anchors.horizontalCenter: parent.horizontalCenter
         anchors.bottom: parent.bottom
-        anchors.bottomMargin: -2 
+        anchors.bottomMargin: -5
         MouseArea {
             hoverEnabled: true
             onEntered: delayIn.restart()
@@ -485,9 +508,10 @@ Item {
         source: "qrc:/images/keymap.png"
         fillMode: Image.PreserveAspectCrop
         visible: false
-        anchors.right: parent.right
+        anchors.horizontalCenter: parent.horizontalCenter
+        anchors.horizontalCenterOffset: 2.7
         anchors.bottom: parent.bottom
-        anchors.bottomMargin: 4
+        anchors.bottomMargin: 10
     }
     
     function listCreator() {

@@ -24,7 +24,7 @@ void Update::doCheck()
         qry.prepare("SELECT DatabaseVersion, BinaryVersion, Release, Host, Url FROM PigData");
         if (!qry.exec()) {
             db.close();
-            emit updateErrorDb();
+            emit errorDb();
         } else {
             qry.next();
             currentDatabaseVersion = qry.value(0).toInt();
@@ -45,7 +45,7 @@ void Update::doCheck()
             getVersion(host, url);
         }
     } else {
-        emit updateErrorDb();
+        emit errorDb();
     }
 }
 
@@ -53,8 +53,8 @@ void Update::getVersion(QString host, QString url)
 {
     mSocket.host = host;
     mSocket.url = url;
-    mSocket.file = '.';
-    mSocket.order = "getUpdateVersion";
+    mSocket.file = ".";
+    mSocket.order = "getVersion";
     mSocket.doConnect();
 
     connect(&mSocket, SIGNAL(versionReady(QString)), this, SLOT(evaluate(QString)));
@@ -80,7 +80,7 @@ void Update::evaluate(QString version)
         newsAvailable = true;
         _root->setProperty("status", "UPDATE AVAILABLE");
         _root->setProperty("showSpinner", false);
-        _root->setProperty("requireAccept", true);
+        _root->setProperty("requireConfirmation", true);
 #ifdef _WIN32
     hostFiles = last[0];
     databaseUrl = last[3];
@@ -103,7 +103,7 @@ void Update::evaluate(QString version)
     } else {
         _root->setProperty("status", "");
         _root->setProperty("showSpinner", false);
-        emit updateCallFinder();
+        emit forward();
     }
 }
 
@@ -111,7 +111,7 @@ void Update::getFiles()
 {
     _root->setProperty("status", "GETTING UPDATE");
     _root->setProperty("showSpinner", true);
-    _root->setProperty("requireAccept", false);
+    _root->setProperty("requireConfirmation", false);
 
     if (newBinaryAvailable && !newDatabaseAvailable && !newsAvailable) {
         mSocket.host = hostFiles;
@@ -121,19 +121,19 @@ void Update::getFiles()
 #else
     mSocket.file = "pig";
 #endif
-        mSocket.order = "getUpdateFiles";
+        mSocket.order = "getFile";
         mSocket.doConnect();
     } else if (newDatabaseAvailable && !newsAvailable) {
         mSocket.host = hostFiles;
         mSocket.url = databaseUrl;
         mSocket.file = "db.sqlite";
-        mSocket.order = "getUpdateFiles";
+        mSocket.order = "getFile";
         mSocket.doConnect();
     } else if (newsAvailable) {
         mSocket.host = hostFiles;
         mSocket.url = newsUrl;
         mSocket.file = "news.txt";
-        mSocket.order = "getUpdateFiles";
+        mSocket.order = "getFile";
         mSocket.doConnect();
     }
 
@@ -144,28 +144,28 @@ void Update::integrityFile(QString path, QString file)
 {
     path = "/tmp/"; //tmp
 
-    QFile newFile(path+file);
-    newFile.open(QIODevice::ReadOnly);
-    QByteArray raw = newFile.readAll();
-    QString fileHash = QCryptographicHash::hash(raw, QCryptographicHash::Md5).toHex();
-    newFile.close();
+    QFile target(path+file);
+    target.open(QIODevice::ReadOnly);
+    QByteArray raw = target.readAll();
+    QString targetHash = QCryptographicHash::hash(raw, QCryptographicHash::Md5).toHex();
+    target.close();
     raw.clear();
 
     if (file == "news.txt") {
-        if (fileHash == newsHash)
+        if (targetHash == newsHash)
             replace(path, file);
         else
-           emit updateFail(); // TODO: Conectar esta señal en pig.cpp a un slot.
+           emit forward();
     } else if (file == "db.sqlite") {
-        if (fileHash == databaseHash)
+        if (targetHash == databaseHash)
             replace(path, file);
         else
-            emit updateFail();
+            emit forward();
     } else {
-        if (fileHash == binaryHash)
+        if (targetHash == binaryHash)
             replace(path, file);
         else
-            emit updateFail();
+            emit forward();
     }
 }
 
@@ -194,7 +194,7 @@ void Update::replace(QString path, QString file)
         } else {
             _root->setProperty("status", "");
             _root->setProperty("showSpinner", false);
-            emit updateCallFinder();
+            emit forward();
         }
     } else if (newsAvailable) {
 #ifdef _WIN32
@@ -221,13 +221,13 @@ void Update::replaceBinaryAndRestart()
     ZeroMemory(&pi, sizeof(pi));
     if (!CreateProcess((TCHAR*)(updater.utf16()), (TCHAR*)(updaterArguments.utf16()), NULL, NULL, FALSE, CREATE_NO_WINDOW, NULL, NULL, &si, &pi)) {
         _root->setProperty("status", "PERMISSION DENIED");
-        _root->setProperty("statusInformation", "RESTART THE APPLICATION WITH ADMINITRATOR RIGHTS");
+        _root->setProperty("information", "RESTART THE APPLICATION WITH ADMINITRATOR RIGHTS");
     } else {
         replaceBinaryReady();
     }
 #else
     QString userName = getenv("USER");
-    QString updaterArguments = "gksu pigUpdater "+userName+" &";
+    QString updaterArguments = "gksuConfirmationdater "+userName+" &";
     runUpdater = new QProcess(this);
     connect(runUpdater, SIGNAL(started()), this, SLOT(replaceBinaryReady()));
     runUpdater->start("/bin/bash", QStringList() << "-c" << updaterArguments);
@@ -261,12 +261,11 @@ void Update::replaceBinaryReady()
         exit(0);
     } else {
         _root->setProperty("status", "UPDATE FAILED");
-        _root->setProperty("statusInformation", "TRY LATER");
-        emit updateCallFinder();
+        _root->setProperty("information", "TRY LATER");
+        emit forward();
     }
 #endif
 }
 
 //host,newsUrl,hash,dbVersion,url,hash,binVersion,url,hash,release,
-
 //https://dl.shared.com,/g8cj8cnsxk?s=ld,c19e7dbafca6f26c5bafec07907df361,1,/g8cj8cnsxk?s=ld,c19e7dbafca6f26c5bafec07907df361,1,/m9bspu79nd?s=ld,e2462c1f38063a8b14ce102b9a6722e6,1,
