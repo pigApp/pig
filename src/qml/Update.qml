@@ -11,7 +11,7 @@ Item {
         Text {
             id: statusLabel
             text: root.status
-            color: { if(root.status == "GETTING UPDATE") Qt.rgba(0.1, 0.1, 0.1, 0.1); else Qt.rgba(0.1, 0.1, 0.1, 0.2) }
+            color: { if(root.status != "SEEKING UPDATE") Qt.rgba(0.1, 0.1, 0.1, 0.2); else Qt.rgba(0.1, 0.1, 0.1, 0.1); }
             font.family: pigFont.name
             font.pixelSize: 30
         }
@@ -41,18 +41,18 @@ Item {
 
     Row {
         id: buttonsRow
-        spacing: 15
+        spacing: 23
         anchors.centerIn: parent
-        anchors.horizontalCenterOffset: -3
-        anchors.verticalCenterOffset: { if (informationLabel.text == '') 30; else 50 }
+        anchors.horizontalCenterOffset: -2
+        anchors.verticalCenterOffset: { if (informationLabel.text == '') 50; else 70 }
         Button {
             id: accept
-            width: 50
-            height: 23
+            width: 90
+            height: 38
             label: "GET"
             labelColor: Qt.rgba(0.1, 0.1, 0.1, 0.2)
             labelBold: true
-            labelSize: 30
+            labelSize: 55
             labelInColor: Qt.rgba(0.1, 0.1, 0.1, 0.3)
             labelOutColor: Qt.rgba(0.1, 0.1, 0.1, 0.2)
             visible: root.requireConfirmation
@@ -65,12 +65,12 @@ Item {
         }
         Button {
             id: skip
-            width: 55
-            height: 23
+            width: 102
+            height: 38
             label: "SKIP"
             labelColor: Qt.rgba(0.1, 0.1, 0.1, 0.2)
             labelBold: true
-            labelSize: 30
+            labelSize: 55
             labelInColor: Qt.rgba(0.1, 0.1, 0.1, 0.3)
             labelOutColor: Qt.rgba(0.1, 0.1, 0.1, 0.2)
             visible: root.requireConfirmation
@@ -79,12 +79,12 @@ Item {
         }
         Button {
             id: restart
-            width: 100
-            height: 25
+            width: 140
+            height: 38
             label: "RESTART"
             labelColor: Qt.rgba(0.1, 0.1, 0.1, 0.2)
             labelBold: true
-            labelSize: 30
+            labelSize: 55
             labelInColor: Qt.rgba(0.1, 0.1, 0.1, 0.3)
             labelOutColor: Qt.rgba(0.1, 0.1, 0.1, 0.2)
             visible: root.requireRestart

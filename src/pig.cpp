@@ -71,12 +71,12 @@ void PIG::passwordHandle(QString plain, bool init, bool write)
 // Update
 void PIG::updateHandle()
 {
+    emit showUpdateSIGNAL();
+
     mUpdate = new Update();
     mUpdate->db = db;
     mUpdate->_root = mRoot;
     mUpdate->doCheck();
-
-    emit showUpdateSIGNAL();
 
     connect(mUpdate, SIGNAL(forward()), this, SLOT(finder()));
     connect(mUpdate, SIGNAL(errorDb()), this, SLOT(errorDb()));
@@ -306,6 +306,7 @@ void PIG::setRootObject(QObject *root)
 
 void PIG::quit()
 {
+    mRoot->disconnect(this);
     qApp->exit();
     exit(0);
 }

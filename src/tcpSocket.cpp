@@ -17,8 +17,6 @@ void TcpSocket::doConnect()
     data.clear();
 
     socket->connectToHost(host, 80);
-    if(!socket->waitForConnected(10000))
-        qDebug() << "Error: " << socket->errorString();
 }
 
 void TcpSocket::connected()

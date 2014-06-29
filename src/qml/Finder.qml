@@ -23,6 +23,7 @@ Item {
         anchors.left: parent.horizontalCenter
         anchors.leftMargin: -150
         anchors.verticalCenter: parent.verticalCenter
+        anchors.verticalCenterOffset: -4
         onAccepted: {
             if (!loaderFilters.active && !loaderSetPassword.active) {
                 if (noResultLabel.visible) { noResultLabel.visible = false }
@@ -57,6 +58,7 @@ Item {
         visible: false
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.verticalCenter: parent.verticalCenter
+        anchors.verticalCenterOffset: -4
     }
 
     Column {
@@ -197,8 +199,9 @@ Item {
             to: "hideFinder"
             SequentialAnimation {
                 ParallelAnimation {
-                    NumberAnimation { target: buttonsFindColumn; properties: "opacity"; to: 0; duration: 300; easing.type: Easing.InOutQuart }
+                    NumberAnimation { target: input; properties: "opacity"; to: 0; duration: 300; easing.type: Easing.InOutQuart }
                     NumberAnimation { target: noResultLabel; properties: "opacity"; to: 0; duration: 300; easing.type: Easing.InOutQuart }
+                    NumberAnimation { target: buttonsFindColumn; properties: "opacity"; to: 0; duration: 300; easing.type: Easing.InOutQuart }
                     NumberAnimation { target: loaderNews; properties: "opacity"; to: 0; duration: 300; easing.type: Easing.InOutQuart }
                 }
                 ParallelAnimation {

@@ -7,6 +7,10 @@
 
 Update::Update(QObject *parent) : QObject(parent)
 {
+    newsAvailable = false;
+    newBinaryAvailable = false;
+    newDatabaseAvailable = false;
+    databaseUpdated = false;
 }
 
 Update::~Update()
