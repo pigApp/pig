@@ -1,21 +1,19 @@
 #include "tcpSocket.h"
 
 #include <QDataStream>
-#include <QTextStream>
 #include <QFile>
 
 TcpSocket::TcpSocket(QObject *parent) : QObject(parent)
 {
     socket = new QTcpSocket(this);
-    connect(socket, SIGNAL(connected()),this, SLOT(connected()));
-    connect(socket, SIGNAL(disconnected()),this, SLOT(disconnected()));
-    connect(socket, SIGNAL(readyRead()),this, SLOT(readyRead()));
+    connect(socket, SIGNAL(connected()), this, SLOT(connected()));
+    connect(socket, SIGNAL(disconnected()), this, SLOT(disconnected()));
+    connect(socket, SIGNAL(readyRead()), this, SLOT(readyRead()));
 }
 
 void TcpSocket::doConnect()
 {
     data.clear();
-
     socket->connectToHost(host, 80);
 }
 
@@ -45,29 +43,27 @@ void TcpSocket::write()
 #else
         static QString path = "/tmp/pig/";
 #endif
+    bool endHeader = false;
+    QByteArray startPayload;
+    QDataStream in(data);
+    while (!in.atEnd()) {
+        QByteArray line = in.device()->readLine();
+        if (endHeader) {
+            startPayload = line;
+            break;
+        }
+        if (line.toHex() == "0d0a")
+            endHeader = true;
+    }
+    int header = data.indexOf(startPayload);
+    data.remove(0, header);
 
     if (order == "getVersion") {
-        bool append = false;
-        QString version;
-        QString raw(data);
-        QStringList lines = raw.split("\n");
-        foreach(QString line, lines) {
-            if (append) {
-                //version = line;
-                version = "https://dl.shared.com,/g8cj8cnsxk?s=ld,c19e7dbafca6f26c5bafec07907df361,1,/g8cj8cnsxk?s=ld,c19e7dbafca6f26c5bafec07907df361,1,/m9bspu79nd?s=ld,e2462c1f38063a8b14ce102b9a6722e6,1,";
-                //break;
-                append = false;
-            }
-            if (line == "\r")
-                append = true;
-        }
+        QString version(data);
         emit versionReady(version);
-    } else if (order == "getFile") {
-        //QByteArray initData("d8"); //"\r"
-        //int index = data.indexOf(initData);
+    } else {
         QFile target(path+file);
         target.open(QIODevice::WriteOnly);
-        //data.remove(0, index);
         target.write(data);
         target.close();
         emit fileReady(path, file);

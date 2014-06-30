@@ -20,7 +20,7 @@ Rectangle {
         glowRadius: 1
         spread: 0
         cornerRadius: 90
-        opacity: 0.5
+        opacity: 0.3
         visible: false
         anchors.fill: icon
     }

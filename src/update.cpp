@@ -25,14 +25,14 @@ void Update::doCheck()
 
     if (db.open()) {
         QSqlQuery qry;
-        qry.prepare("SELECT DatabaseVersion, BinaryVersion, Release, Host, Url FROM PigData");
+        qry.prepare("SELECT BinaryVersion, DatabaseVersion, Release, Host, Url FROM PigData");
         if (!qry.exec()) {
             db.close();
             emit errorDb();
         } else {
             qry.next();
-            currentDatabaseVersion = qry.value(0).toInt();
-            currentBinaryVersion = qry.value(1).toInt();
+            currentBinaryVersion = qry.value(0).toInt();
+            currentDatabaseVersion = qry.value(1).toInt();
             currentRelease = qry.value(2).toInt();
             QString hosts = qry.value(3).toString();
             QString urls = qry.value(4).toString();
@@ -68,41 +68,34 @@ void Update::evaluate(QString version)
 {
     QStringList last = version.split(",");
 
-    if (last[3].toInt() > currentDatabaseVersion) {
-        //databaseHash = last[5];
-        databaseHash = "5ec0cfb0bb2d764f2b1a6be3b14c7ef8";
-        newDatabaseAvailable = true;
-    }
-    if (last[6].toInt()+last[9].toInt() > currentBinaryVersion+currentRelease) {
-        binaryHash = last[8];
+    if (last[3].toInt()+last[9].toInt() > currentBinaryVersion+currentRelease) {
+        binaryHash = last[5];
         newBinaryAvailable = true;
-        currentBinaryVersion = last[6].toInt();
+        currentBinaryVersion = last[3].toInt();
         currentRelease = last[9].toInt();
     }
+    if (last[6].toInt() > currentDatabaseVersion) {
+        databaseHash = last[8];
+        newDatabaseAvailable = true;
+    }
 
-    if (newDatabaseAvailable || newBinaryAvailable) {
+    if (newBinaryAvailable || newDatabaseAvailable) {
         newsAvailable = true;
         _root->setProperty("status", "UPDATE AVAILABLE");
         _root->setProperty("showSpinner", false);
         _root->setProperty("requireConfirmation", true);
 #ifdef _WIN32
     hostFiles = last[0];
-    databaseUrl = last[3];
-    binaryUrl = last[6];
     newsUrl = last[1];
     newsHash = last [2];
+    binaryUrl = last[4];
+    databaseUrl = last[7];
 #else
-    //hostFiles = last[0];
-    //databaseUrl = last[4];
-    //binaryUrl = last[7];
-    //newsUrl = last[1];
-    //newsHash = last[2];
-     
-    hostFiles = "gamenetworkmanager.herokuapp.com";
-    databaseUrl = "/update";
-    binaryUrl = last[7];
-    newsUrl = "/update";
-    newsHash = "5ec0cfb0bb2d764f2b1a6be3b14c7ef8";
+    hostFiles = last[0];
+    newsUrl = last[1];
+    newsHash = last[2];
+    binaryUrl = last[4];
+    databaseUrl = last[7];
 #endif
     } else {
         _root->setProperty("status", "");
@@ -146,8 +139,6 @@ void Update::getFiles()
 
 void Update::integrityFile(QString path, QString file)
 {
-    path = "/tmp/"; //tmp
-
     QFile target(path+file);
     target.open(QIODevice::ReadOnly);
     QByteArray raw = target.readAll();
@@ -160,13 +151,13 @@ void Update::integrityFile(QString path, QString file)
             replace(path, file);
         else
            emit forward();
-    } else if (file == "db.sqlite") {
-        if (targetHash == databaseHash)
+    } else if (file == "pig" || file == "pig.exe") {
+        if (targetHash == binaryHash)
             replace(path, file);
         else
             emit forward();
     } else {
-        if (targetHash == binaryHash)
+        if (targetHash == databaseHash)
             replace(path, file);
         else
             emit forward();
@@ -187,9 +178,11 @@ void Update::replace(QString path, QString file)
 #ifdef _WIN32
     QString target = "C:/PIG/.pig/db.sqlite";
 #else
-    //QString target = QDir::homePath()+"/.pig/db.sqlite";
-    QString target = QDir::homePath()+"/.pig/dbTest.sqlite";
+    QString target = QDir::homePath()+"/.pig/db.sqlite";
 #endif
+        QFile f(target);
+        if (f.exists())
+            f.remove();
         QFile::copy(path+file, target);
         newDatabaseAvailable = false;
         databaseUpdated = true;
@@ -271,5 +264,5 @@ void Update::replaceBinaryReady()
 #endif
 }
 
-//host,newsUrl,hash,dbVersion,url,hash,binVersion,url,hash,release,
+//host,newsUrl,hash,binVersion,url,hash,dbVersion,url,hash,release,
 //https://dl.shared.com,/g8cj8cnsxk?s=ld,c19e7dbafca6f26c5bafec07907df361,1,/g8cj8cnsxk?s=ld,c19e7dbafca6f26c5bafec07907df361,1,/m9bspu79nd?s=ld,e2462c1f38063a8b14ce102b9a6722e6,1,

@@ -134,15 +134,17 @@ Item {
                 smooth: true
                 anchors.left: parent.left
                 anchors.verticalCenter: parent.verticalCenter
-                anchors.verticalCenterOffset: 3
+                anchors.verticalCenterOffset: 2
                 onOpacityChanged: { if (screens.opacity == 0.1) output.zoomOut = false }
                 MouseArea {
                     id: zoom
+                    hoverEnabled: true
+                    onEntered: NumberAnimation { running: !output.zoomIn && !output.zoomOut; target: screens; properties: "opacity"; to: 1; duration: 200; easing.type: Easing.InOutQuart }
+                    onHoveredChanged: NumberAnimation { running: !output.zoomIn && !output.zoomOut; target: screens; properties: "opacity"; to: 0.1; duration: 200; easing.type: Easing.InOutQuart }
                     onClicked: { if (!output.zoomIn) output.zoomIn = true }
                     anchors.fill: parent
                 }
-                NumberAnimation { running: output.zoomIn; target: screens; properties: "opacity"; to: 1; duration: 1000; easing.type: Easing.InOutQuart }
-                NumberAnimation { running: output.zoomIn; target: screens; properties: "z"; to: 5; duration: 1000; easing.type: Easing.InOutQuart }
+                NumberAnimation { running: output.zoomIn; target: screens; properties: "z"; to: 5; duration: 500; easing.type: Easing.InOutQuart }
                 NumberAnimation { running: output.zoomIn; target: screens; properties: "width"; to: 1920; duration: 1000; easing.type: Easing.InOutQuart }
                 NumberAnimation { running: output.zoomIn; target: screens; properties: "height"; to: 1080; duration: 1000; easing.type: Easing.InOutQuart }
 
@@ -206,8 +208,8 @@ Item {
                 anchors.verticalCenter: parent.verticalCenter
                 anchors.verticalCenterOffset: -68
                 Text {
-                    id: atressesLabel
-                    text: actresses
+                    id: castLabel
+                    text: cast
                     color: "white"
                     font.family: pigFont.name
                     font.italic: true
@@ -227,8 +229,7 @@ Item {
             Row {
                 id: openScenneRow
                 spacing: 1
-                anchors.horizontalCenter: parent.horizontalCenter
-                anchors.horizontalCenterOffset: { if (scennes <= 2) 100+(59*scennes); else 100+(52.5*scennes) }
+                anchors.left: datesColumn.left
                 anchors.verticalCenter: parent.verticalCenter
                 anchors.verticalCenterOffset: 31
                 Component.onCompleted: {
@@ -240,6 +241,20 @@ Item {
                         object.scenne = i
                     }
                 }
+            }
+            Text {
+                id: noSplitLabel
+                text: "NO SPLIT"
+                color: "white"
+                font.family: pigFont.name
+                font.bold: true
+                font.pixelSize: 30
+                opacity: 0.1
+                visible: { if (scennes == 1) true; else false }
+                anchors.left: openScenneRow.right
+                anchors.leftMargin: 5
+                anchors.verticalCenter: parent.verticalCenter
+                anchors.verticalCenterOffset: 40
             }
 
             Text {
@@ -523,7 +538,7 @@ Item {
         for(var i=0; i<n; i++) {
            torrent = list[row+7].split(",")
            var nScennes = Number(torrent[1])
-           model.append({ "title": list[row], "actresses": list[row+1], "quality": list[row+2], "categories": list[row+3],
+           model.append({ "title": list[row], "cast": list[row+1], "quality": list[row+2], "categories": list[row+3],
                           "urlCover": list[row+4], "urlPoster": list[row+5], "urlPreview": list[row+6], "magnetUrl": torrent[0],
                           "scennes": nScennes })
            row +=11

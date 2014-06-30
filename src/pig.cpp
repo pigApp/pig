@@ -172,7 +172,7 @@ void PIG::findDb(const QString inputText, QString category, QString pornstar, in
         QString strOffset = QString::number(offset);
         QSqlQuery qry;
             qry.prepare( "SELECT Title, Pornstar, Quality, Category, UrlCover, UrlPoster, UrlPreview, Torrent FROM Films WHERE Title LIKE '%"+inputText+"%' AND Category LIKE '%"+category+"%' AND Pornstar LIKE '%"+pornstar+"%' ORDER BY Title ASC LIMIT 1000 OFFSET '"+strOffset+"'" );
-        if (!qry.exec()) {
+        if (!qry.exec()) { // TODO: Cambiar Ponstar por Cast. Tambien en la db.
             db.close();
             errorDb();
         } else {
