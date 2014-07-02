@@ -163,7 +163,6 @@ Item {
         active: root.news
         asynchronous: true
         visible: status == Loader.Ready
-        anchors.fill: parent
     }
 
     states: [

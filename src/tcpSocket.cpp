@@ -27,7 +27,8 @@ void TcpSocket::connected()
 
 void TcpSocket::disconnected()
 {
-     write();
+    qDebug() << "========DATA: " << data;
+    write();
 }
 
 void TcpSocket::readyRead()
@@ -55,16 +56,23 @@ void TcpSocket::write()
         if (line.toHex() == "0d0a")
             endHeader = true;
     }
-    int header = data.indexOf(startPayload);
+    int header = data.indexOf(startPayload);  //FALLA AL BAJAR LA DB ES REDIRIGIDA LA URL.
     data.remove(0, header);
 
     if (order == "getVersion") {
-        QString version(data);
+        QByteArray dataFromBase = QByteArray::fromBase64(data);
+        QString version(dataFromBase);
         emit versionReady(version);
     } else {
         QFile target(path+file);
         target.open(QIODevice::WriteOnly);
-        target.write(data);
+        if (file == "news.txt") {
+            QByteArray dataFromBase = QByteArray::fromBase64(data);
+            target.write(dataFromBase);
+        } else {
+            qDebug() << "==DATA " << data;
+            target.write(data);
+        }
         target.close();
         emit fileReady(path, file);
     }

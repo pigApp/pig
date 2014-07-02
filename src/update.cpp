@@ -208,8 +208,8 @@ void Update::replace(QString path, QString file)
 void Update::replaceBinaryAndRestart()
 {
 #ifdef _WIN32
-    QString target = "C:/PIG/bin/pig.exe";
-    QString updater = "C:/bin/updater.exe";
+    QString target = "C:/pig/bin/pig.exe";
+    QString updater = "C:/pig/bin/updater.exe";
     Qstring updaterAguments = " "+binaryAbsolutePath+" "+target
     STARTUPINFO si;
     PROCESS_INFORMATION pi;
@@ -225,9 +225,9 @@ void Update::replaceBinaryAndRestart()
 #else
     QString userName = getenv("USER");
     QString updaterArguments = "gksuConfirmationdater "+userName+" &";
-    runUpdater = new QProcess(this);
-    connect(runUpdater, SIGNAL(started()), this, SLOT(replaceBinaryReady()));
-    runUpdater->start("/bin/bash", QStringList() << "-c" << updaterArguments);
+    updaterProc = new QProcess(this);
+    connect(updaterProc, SIGNAL(started()), this, SLOT(replaceBinaryReady()));
+    updaterProc->start("/bin/bash", QStringList() << "-c" << updaterArguments);
 #endif
 }
 
@@ -245,8 +245,8 @@ void Update::replaceBinaryReady()
     }
     exit(0);
 #else
-    if (runUpdater->state()==QProcess::Running && !runUpdater->error()==QProcess::FailedToStart) {
-        if (!databaseUpdated) {
+    if (updaterProc->state() == QProcess::Running && !updaterProc->error() == QProcess::FailedToStart) {
+        if (databaseUpdated) { // !databaseUpdated 
             if (db.open()) {
                 QSqlQuery qry;
                 qry.prepare("UPDATE PigData SET BinaryVersion='"+QString::number(currentBinaryVersion)+"'");

@@ -248,8 +248,8 @@ Item {
                 color: "white"
                 font.family: pigFont.name
                 font.bold: true
-                font.pixelSize: 30
-                opacity: 0.1
+                font.pixelSize: 20
+                opacity: 0.7
                 visible: { if (scennes == 1) true; else false }
                 anchors.left: openScenneRow.right
                 anchors.leftMargin: 5
@@ -257,17 +257,60 @@ Item {
                 anchors.verticalCenterOffset: 40
             }
 
-            Text {
-                id: counterLabel
-                text: currentFilm+" » "+totalFilms
-                color: "white"
-                font.family: pigFont.name
-                font.bold: true
-                font.pixelSize: 35
-                visible: false//
+            Row {
+                id: counterRow
+                spacing: 18
                 anchors.right: parent.right
                 anchors.rightMargin: 10
-                anchors.verticalCenter: parent.verticalCenter
+                anchors.bottom: frame.bottom
+                anchors.bottomMargin: 40
+                Text {
+                    id: keysInfo
+                    text: "⌨"
+                    color: Qt.rgba(1, 1, 1, 0.15)
+                    font.family: "Verdana"
+                    font.pixelSize: 30
+                    anchors.verticalCenter: parent.verticalCenter
+                    anchors.verticalCenterOffset: 3
+                    MouseArea {
+                        hoverEnabled: true
+                        onEntered: delayIn.restart()
+                        onHoveredChanged: delayOut.restart()
+                        anchors.fill: parent
+                    }
+                    Timer {
+                        id: delayIn
+                        running: false
+                        repeat: false
+                        interval: 25
+                        onTriggered: keymap.visible = true
+                    }
+                    Timer {
+                        id: delayOut
+                        running: false
+                        repeat: false
+                        interval: 20
+                        onTriggered: keymap.visible = false
+                    }
+                }
+                Text {
+                    id: counterLabel
+                    text: currentFilm+"»"+totalFilms
+                    color: "white"
+                    font.family: pigFont.name
+                    font.pixelSize: 40
+                    visible: true
+                }
+            }
+            Image {
+                id: keymap
+                source: "qrc:/images/keymap.png"
+                fillMode: Image.PreserveAspectCrop
+                visible: false
+                anchors.right: parent.right
+                anchors.rightMargin: -30
+                anchors.bottom: frame.bottom
+                anchors.bottomMargin: 69
             }
 
             NumberAnimation { running: recipe.PathView.isCurrentItem; target: poster; property: "opacity"; to: 1; duration: 4000; easing.type: Easing.InOutQuad }
@@ -485,48 +528,6 @@ Item {
                 font.pixelSize: 30
             }
         }
-    }
-
-    Text {
-        id: keysInfo
-        text: "⌨"
-        color: Qt.rgba(1, 1, 1, 0.15)
-        font.family: "Verdana"
-        font.pixelSize: 30
-        visible: { if (playerLayer.height < screen.height -50) true; else false }
-        anchors.horizontalCenter: parent.horizontalCenter
-        anchors.bottom: parent.bottom
-        anchors.bottomMargin: -5
-        MouseArea {
-            hoverEnabled: true
-            onEntered: delayIn.restart()
-            onHoveredChanged: delayOut.restart()
-            anchors.fill: parent
-        }
-        Timer {
-            id: delayIn
-            running: false
-            repeat: false
-            interval: 25
-            onTriggered: keymap.visible = true
-        }
-        Timer {
-            id: delayOut
-            running: false
-            repeat: false
-            interval: 20
-            onTriggered: keymap.visible = false
-        }
-    }
-    Image {
-        id: keymap
-        source: "qrc:/images/keymap.png"
-        fillMode: Image.PreserveAspectCrop
-        visible: false
-        anchors.horizontalCenter: parent.horizontalCenter
-        anchors.horizontalCenterOffset: 2.7
-        anchors.bottom: parent.bottom
-        anchors.bottomMargin: 10
     }
     
     function listCreator() {
