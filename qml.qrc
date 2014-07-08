@@ -1,16 +1,21 @@
 <RCC>
     <qresource prefix="/">
-        <file>images/frame.png</file>
-        <file>images/stripes.png</file>
-        <file>images/keymap.png</file>
-        <file>images/720.png</file>
-        <file>images/1080.png</file>
-        <file>images/spinner.png</file>
-        <file>images/icon.ico</file>
-        <file>images/icon.png</file>
-        <file>images/icon.rc</file>
-        <file>images/Asa Akira.png</file>
-        <file>images/Holly Halston.png</file>
+        <file>images/pig/icon.ico</file>
+        <file>images/pig/icon.png</file>
+        <file>images/pig/icon.rc</file>
+        <file>images/pig/spinner.png</file>
+        <file>images/available/pornstarNotAvailable.png</file>
+        <file>images/available/coverNotAvailable.png</file>
+        <file>images/available/posterNotAvailable.png</file>
+        <file>images/pornstars/Belladonna.jpg</file>
+        <file>images/output/frame.png</file>
+        <file>images/output/stripes.png</file>
+        <file>images/output/screenTest.jpg</file>
+        <file>images/output/720.png</file>
+        <file>images/output/1080.png</file>
+        <file>images/player/volume.png</file>
+        <file>images/player/volumeOff.png</file>
+        <file>images/font/pig.ttf</file>
         <file>src/qml/main.qml</file>
         <file>src/qml/AskPassword.qml</file>
         <file>src/qml/Update.qml</file>
@@ -18,20 +23,14 @@
         <file>src/qml/Output.qml</file>
         <file>src/qml/SetPassword.qml</file>
         <file>src/qml/Filters.qml</file>
-        <file>src/qml/WaitMsg.qml</file>
         <file>src/qml/Button.qml</file>
         <file>src/qml/ButtonFilter.qml</file>
         <file>src/qml/ButtonScenne.qml</file>
         <file>src/qml/Help.qml</file>
-        <file>src/qml/ErrorDbMsg.qml</file>
-        <file>images/pig.png</file>
         <file>src/qml/News.qml</file>
         <file>src/qml/ProgressBar.qml</file>
-        <file>images/volume.png</file>
-        <file>images/volumeOff.png</file>
-        <file>images/font/pig.ttf</file>
-        <file>images/screenTest.jpg</file>
-        <file>images/coverNotAvailable.png</file>
-        <file>images/posterNotAvailable.png</file>
+        <file>src/qml/ErrorDb.qml</file>
+        <file>src/qml/Wait.qml</file>
+        <file>images/pig/logo.png</file>
     </qresource>
 </RCC>

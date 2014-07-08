@@ -2,51 +2,51 @@ import QtQuick 2.2
 
 Item {
     id: askPassword
-    z: 1
 
     Rectangle {
-        id: inputLayer
-        width: screen.width/5.48
+        id: layer
+        width: screen.width
         height: 35
-        color: "black"
+        color: Qt.rgba(0, 0, 0, 0.5)
         radius: 2
         anchors.centerIn: parent
+        Text {
+            id: label
+            text: "YOUR PASSWORD"
+            color: "white"
+            font.family: pigFont.name
+            font.bold: true
+            font.pixelSize: 30
+            horizontalAlignment: Text.AlignHCenter
+            anchors.centerIn: parent
+        }
         TextInput {
             id: input
-            width: screen.width/4.5
             color: "white"
             font.family: pigFont.name
             font.pixelSize: 25
             focus: true
             maximumLength: 16
             echoMode: TextInput.Password
-            onCursorPositionChanged: { labelLayer.visible = false }
+            horizontalAlignment: Text.AlignHCenter
+            anchors.centerIn: parent
+            anchors.verticalCenterOffset: -1.5
+            onCursorPositionChanged: { label.text = ""; input.visible = true }
             onAccepted: {
                 if (input.text !== '') {
                     root.passwordHandle(input.text, false, false)
-                    if (root.failPass) {
+                    if (root.fail_password) {
+                        input.visible = false
                         label.text = "WRONG PASSWORD"
-                        labelLayer.visible = true
                     }
                 }
             }
-        }
-    }
-    Rectangle {
-        id: labelLayer
-        width: screen.width/5.48
-        height: 35
-        color: "black"
-        radius: 2
-        anchors.centerIn: parent
-        Text {
-            id: label
-            text: "INTRO YOUR PASSWORD"
-            color: "white"
-            font.family: pigFont.name
-            font.bold: true
-            font.pixelSize: 30
-            anchors.centerIn: parent
+            Keys.onPressed: {
+                if (event.key === Qt.Key_Escape && (event.modifiers & Qt.ControlModifier)) {
+                    root.quit()
+                    event.accepted = true;
+                }
+            }
         }
     }
 }

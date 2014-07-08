@@ -1,9 +1,10 @@
 #ifndef TCPSOCKET_H
 #define TCPSOCKET_H
 
-#include <QTcpSocket>
-#include <QAbstractSocket>
 #include <QObject>
+#include <QAbstractSocket>
+#include <QTcpSocket>
+#include <QTimer>
 
 class TcpSocket : public QObject
 {
@@ -23,16 +24,19 @@ public slots:
 signals:
     void versionReady(QString version);
     void fileReady(QString path, QString file);
+    void errorSocket();
 
 private:
     QTcpSocket *socket;
     QByteArray data;
+    QTimer *timeOut;
 
 private slots:
     void connected();
     void disconnected();
     void readyRead();
     void write();
+    void error();
 };
 
 #endif

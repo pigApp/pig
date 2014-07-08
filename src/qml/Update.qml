@@ -7,7 +7,6 @@ Item {
         id: statusRow
         spacing: 17
         anchors.centerIn: parent
-
         Text {
             id: statusLabel
             text: root.status
@@ -19,7 +18,7 @@ Item {
             id: spinner
             width: 25
             height: 25
-            source: "qrc:/images/spinner.png"
+            source: "qrc:/images/pig/spinner.png"
             fillMode: Image.PreserveAspectCrop
             clip: true
             visible: showSpinner
@@ -34,7 +33,7 @@ Item {
         color: Qt.rgba(0.1, 0.1, 0.1, 0.2)
         font.family: pigFont.name
         font.italic: true
-        font.pixelSize: 30
+        font.pixelSize: 20
         anchors.centerIn: parent
         anchors.verticalCenterOffset: 30
     }
@@ -47,49 +46,44 @@ Item {
         anchors.verticalCenterOffset: { if (informationLabel.text == '') 50; else 70 }
         Button {
             id: accept
-            width: 90
+            width: 83
             height: 38
             label: "GET"
             labelColor: Qt.rgba(0.1, 0.1, 0.1, 0.2)
             labelBold: true
-            labelSize: 55
+            labelSize: 50
             labelInColor: Qt.rgba(0.1, 0.1, 0.1, 0.3)
             labelOutColor: Qt.rgba(0.1, 0.1, 0.1, 0.2)
-            visible: root.requireConfirmation
-            enabled: root.requireConfirmation
+            visible: { root.requireConfirmation }
+            enabled: { root.requireConfirmation }
             onClicked: {
-                root.status = ''
-                root.information = ''
+                root.status = ""
+                root.information = ""
                 root.getFiles()
             }
         }
         Button {
             id: skip
-            width: 102
+            width: 93
             height: 38
             label: "SKIP"
             labelColor: Qt.rgba(0.1, 0.1, 0.1, 0.2)
             labelBold: true
-            labelSize: 55
+            labelSize: 50
             labelInColor: Qt.rgba(0.1, 0.1, 0.1, 0.3)
             labelOutColor: Qt.rgba(0.1, 0.1, 0.1, 0.2)
-            visible: root.requireConfirmation
-            enabled: root.requireConfirmation
+            visible: { root.requireConfirmation }
+            enabled: { root.requireConfirmation }
             onClicked: { root.skip() }
         }
-        Button {
-            id: restart
-            width: 140
-            height: 38
-            label: "RESTART"
-            labelColor: Qt.rgba(0.1, 0.1, 0.1, 0.2)
-            labelBold: true
-            labelSize: 55
-            labelInColor: Qt.rgba(0.1, 0.1, 0.1, 0.3)
-            labelOutColor: Qt.rgba(0.1, 0.1, 0.1, 0.2)
-            visible: root.requireRestart
-            enabled: root.requireRestart
-            onClicked: { root.restart() } // TODO: Si os unix, mostrar mensaje que requiere autorizacion.
+    }
+
+    Keys.onPressed: {
+        if (event.key === Qt.Key_Escape && (event.modifiers & Qt.ControlModifier)) {
+            root.quit()
+            event.accepted = true;
         }
     }
+
+    Component.onCompleted: { update.forceActiveFocus() }
 }

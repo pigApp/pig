@@ -475,37 +475,38 @@ compiler_rcc_make_all: qrc_qml.cpp
 compiler_rcc_clean:
 	-$(DEL_FILE) qrc_qml.cpp
 qrc_qml.cpp: qml.qrc \
-		images/keymap.png \
-		images/spinner.png \
-		images/icon.png \
-		images/frame.png \
-		images/icon.rc \
-		images/volumeOff.png \
-		images/coverNotAvailable.png \
-		images/pig.png \
-		images/stripes.png \
-		images/icon.ico \
-		images/720.png \
-		images/1080.png \
-		images/posterNotAvailable.png \
-		images/volume.png \
-		images/screenTest.jpg \
+		images/output/stripes.png \
+		images/output/720.png \
+		images/output/frame.png \
+		images/output/screenTest.jpg \
+		images/output/1080.png \
+		images/pig/icon.png \
+		images/pig/logo.png \
+		images/pig/icon.ico \
+		images/pig/spinner.png \
+		images/pig/icon.rc \
+		images/player/volume.png \
+		images/player/volumeOff.png \
+		images/available/coverNotAvailable.png \
+		images/available/posterNotAvailable.png \
+		images/available/pornstarNotAvailable.png \
+		images/pornstars/Belladonna.jpg \
 		images/font/pig.ttf \
+		src/qml/Wait.qml \
+		src/qml/ButtonScenne.qml \
+		src/qml/Filters.qml \
+		src/qml/ErrorDb.qml \
+		src/qml/Button.qml \
+		src/qml/AskPassword.qml \
+		src/qml/ButtonFilter.qml \
 		src/qml/Output.qml \
 		src/qml/SetPassword.qml \
-		src/qml/WaitMsg.qml \
+		src/qml/News.qml \
 		src/qml/ProgressBar.qml \
-		src/qml/Filters.qml \
+		src/qml/main.qml \
 		src/qml/Update.qml \
 		src/qml/Finder.qml \
-		src/qml/ButtonFilter.qml \
-		src/qml/News.qml \
-		src/qml/main.qml \
-		src/qml/Help.qml \
-		src/qml/ErrorDbMsg.qml \
-		src/qml/ButtonScenne.qml \
-		src/qml/AskPassword.qml \
-		src/qml/Button.qml
+		src/qml/Help.qml
 	/usr/lib/qt/bin/rcc -name qml qml.qrc -o qrc_qml.cpp
 
 compiler_moc_header_make_all: moc_pig.cpp moc_password.cpp moc_update.cpp moc_tcpSocket.cpp moc_torrent.cpp moc_videoplayer.cpp

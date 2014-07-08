@@ -5,6 +5,7 @@ Rectangle {
     color: "transparent"
     z: 1
     anchors.fill: parent
+
     Flickable {
         id: flickAreaFilters
         contentWidth: filtersGrid.width
@@ -27,7 +28,7 @@ Rectangle {
                     enabled: { if (enableFilter == 'CATEGORY' ) true; else false }
                     onClicked: { 
                         if (nCategoryList[index] != '0') 
-                            filtersManager('categoryFind', labelText)
+                            filtersManager('categoryFilter', labelText)
                     }
                 }
             }
@@ -36,15 +37,20 @@ Rectangle {
                 model: pornstarList[0]
                 delegate: ButtonFilter {
                     width: filters.width/4
-                    sourceImage: { if (pornstarList[index+1] === "Asa Akira") "qrc:/images/Asa Akira.png"; else "qrc:/images/Holly Halston.png" }
+                    sourceImage: {
+                        if (nPornstarList[index] != '0')
+                            "qrc:/images/pornstars/"+pornstarList[index+1]+".jpg"
+                        else
+                            "qrc:/images/available/pornstarNotAvailable.png"
+                    }
                     labelText: pornstarList[index+1]
-                    nLabelText: { if (nPornstarList[index] != '0') nPornstarList[index]; else '' }
+                    nLabelText: ''
                     pornStarsVisible: true
                     visible: { if (enableFilter == 'PORNSTAR') true; else false }
                     enabled: { if (enableFilter == 'PORNSTAR') true; else false }
                     onClicked: { 
                         if (nPornstarList[index] != '0') 
-                        filtersManager('pornstarFind', labelText)
+                        filtersManager('pornstarFilter', labelText)
                     }
                 }
             }

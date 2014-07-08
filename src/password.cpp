@@ -14,7 +14,7 @@ Password::~Password()
 {
 }
 
-bool Password::requirePassword()
+bool Password::require()
 {
     #ifdef _WIN32
         QFile file("C:/PIG/.pig/pd.txt");
@@ -26,7 +26,7 @@ bool Password::requirePassword()
             QByteArray line = file.readLine();
             QString pd = QString(line).toUtf8();
             if(pd != "") {
-                file.close(); // TODO: Guardar el valor de pd (hash guardado en el disco) para poder usarlo en rightPassword.
+                file.close(); // TODO: Guardar el valor de pd (hash guardado en el disco) para poder usarlo en right.
                 return true;
                 break;
             }
@@ -35,9 +35,9 @@ bool Password::requirePassword()
     return false;
 }
 
-bool Password::writePassword(QString plain)
+bool Password::write(QString plain)
 {
-    const QString hash = hashCalculation(plain);
+    const QString digest = calculate(plain);
 
     #ifdef _WIN32
         QFile file("C:/PIG/.pig/pd.txt");
@@ -46,26 +46,26 @@ bool Password::writePassword(QString plain)
     #endif
     if (file.open(QIODevice::WriteOnly)) {
         QTextStream write(&file);
-        write << hash+"\n";
+        write << digest+"\n";
         file.close();
         return true;
     }
     return false;
 }
 
-bool Password::rightPassword(QString plain)
+bool Password::right(QString plain)
 {
-    const QString hash = hashCalculation(plain);
-    QString diskHash = "202cb962ac59075b964b07152d234b70"; // Usar pd leido en requirePassword().
-    if (hash == diskHash)
+    const QString digest = calculate(plain);
+    QString digestLocal = "202cb962ac59075b964b07152d234b70"; // Usar pd leido en requirePassword().
+    if (digest == digestLocal)
         return true;
     else
         return false;
 }
 
-QString Password::hashCalculation(QString plain)
+QString Password::calculate(QString plain)
 {
-    QByteArray plainB = QString(plain).toUtf8();
-    QString hash = QString(QCryptographicHash::hash(plainB,QCryptographicHash::Md5).toHex());
-    return hash;
+    QByteArray _plain = QString(plain).toUtf8();
+    QString digest = QString(QCryptographicHash::hash(_plain,QCryptographicHash::Md5).toHex());
+    return digest;
 }

@@ -6,22 +6,21 @@
 #include <QFile>
 #include <QTextStream>
 
-PIG::PIG(QObject *parent) : QObject(parent), mRoot(0)
+PIG::PIG(QWidget *parent) : QWidget(parent), mRoot(0)
 {
     layout = new QVBoxLayout;
     layout->setContentsMargins(0, 0, 0, 0);
     layout->setMargin(0);
     layout->setSpacing(0);
 
-    window = new QWidget;
-    window->setMouseTracking(true);
-    window->setLayout(layout);
+    setMouseTracking(true);
+    setLayout(layout);
 
-    Esc = new QShortcut(window);
+    Esc = new QShortcut(this);
     Esc->setKey(Qt::Key_Escape);
     Esc->setEnabled(false);
 
-    Quit = new QShortcut(window);
+    Quit = new QShortcut(this);
     Quit->setKey(Qt::Key_Escape && Qt::ShiftModifier);
 
     connect(Esc, SIGNAL(activated()), this, SLOT(closePlayer()));
@@ -32,38 +31,59 @@ PIG::~PIG()
 {
 }
 
+void PIG::setRootObject(QObject *root)
+{
+    if(mRoot!=0) mRoot->disconnect(this); mRoot = root;
+
+    if(mRoot) connect(mRoot, SIGNAL(passwordHandle(QString, bool, bool)), this, SLOT(passwordHandle(QString, bool, bool)));
+    if(mRoot) connect(mRoot, SIGNAL(find(QString, QString, QString, int, bool)), this, SLOT(find(QString, QString, QString, int, bool)));
+    if(mRoot) connect(mRoot, SIGNAL(torrentHandle(QString, QString)), this, SLOT(torrentHandle(QString, QString)));
+    if(mRoot) connect(mRoot, SIGNAL(quit()), this, SLOT(quit()));
+
+#ifdef _WIN32
+    QString target = "C:/pig/.pig/db.sqlite";
+    QString tmp = "C:/tmp/pig/";
+#else
+    QString target = QDir::homePath()+"/.pig/db.sqlite";
+    QString tmp = "/tmp/pig/";
+#endif
+    QFile file(target);
+    if (file.exists()) {
+        db = QSqlDatabase::addDatabase("QSQLITE");
+        db.setDatabaseName(target);
+        QDir dir(tmp);
+        if (!dir.exists())
+            dir.mkdir(tmp);
+
+        passwordHandle("", true, false);
+    } else {
+        QTimer::singleShot(10, this, SLOT(errorDb()));
+    }
+}
+
 // Password
 void PIG::passwordHandle(QString plain, bool init, bool write)
 {
     if (!init && !write) {
-        if (mPassword->rightPassword(plain)) {
-            QStringList args = qApp->arguments();
-            if (args.last() == "WITHOUT_UPDATE") {
-                finder();
-            } else {
-                mRoot->setProperty("showAskPass", false);
-                updateHandle();
-            }
+        if (mPassword->right(plain)) {
+            mRoot->setProperty("require_password", false);
+            updateHandle();
         } else {
-            mRoot->setProperty("failPass", true);
+            mRoot->setProperty("fail_password", true);
         }
     } else if (init) {
-        if (mPassword->requirePassword()) {
-            mRoot->setProperty("requirePass", true);
+        if (mPassword->require()) {
+            mRoot->setProperty("require_password", true);
             init = false;
         } else {
-            QStringList args = qApp->arguments();
-            if (args.last() == "WITHOUT_UPDATE")
-                finder();
-            else
-               QTimer::singleShot(10, this, SLOT(updateHandle()));
+            QTimer::singleShot(10, this, SLOT(updateHandle()));
             init = false;
         }
     } else if (write) {
-        if (mPassword->writePassword(plain)) {
-            mRoot->setProperty("okPass", true);
+        if (mPassword->write(plain)) {
+            mRoot->setProperty("ok_password", true);
         } else {
-            mRoot->setProperty("failPass", true);
+            mRoot->setProperty("fail_password", true);
         }
     }
 }
@@ -78,49 +98,19 @@ void PIG::updateHandle()
     mUpdate->_root = mRoot;
     mUpdate->doCheck();
 
-    connect(mUpdate, SIGNAL(forward()), this, SLOT(finder()));
+    connect(mUpdate, SIGNAL(forward()), this, SLOT(start()));
     connect(mUpdate, SIGNAL(errorDb()), this, SLOT(errorDb()));
-    connect(mRoot, SIGNAL(skip()), this, SLOT(finder()));
+    connect(mRoot, SIGNAL(skip()), this, SLOT(start()));
     connect(mRoot, SIGNAL(getFiles()), mUpdate, SLOT(getFiles()));
-    connect(mRoot, SIGNAL(restart()), mUpdate, SLOT(replaceBinaryAndRestart()));
 }
 
-// Finder
-void PIG::finder()
+// Start
+void PIG::start()
 {
-    if (mUpdate != 0) {
-        mUpdate = 0;
-        delete mUpdate;
-    }
-
-#ifdef _WIN32
-    QString target = "C:/pig/.pig/news.txt";
-#else
-    QString target = QDir::homePath()+"/.pig/news";
-#endif
-    QFile file(target);
-    if (file.exists()) {
-        file.open(QIODevice::ReadOnly | QIODevice::Text);
-        bool head = true;
-        QString bn;
-        QString dbn;
-        QTextStream in(&file);
-        while (!in.atEnd()) {
-            QString line = in.readLine();
-            if (line.isEmpty()) head = false;
-            if (head) {
-                bn.append(line+"\n");
-            } else {
-                if(!line.isEmpty())
-                    dbn.append(line+"\n");
-            }
-        }
-        file.close();
-        file.remove();
-        mRoot->setProperty("binaryNews", bn);
-        mRoot->setProperty("databaseNews", dbn);
-        mRoot->setProperty("news", true);
-    }
+    //if (mUpdate != 0) {
+    mUpdate = 0;
+    delete mUpdate;
+    //}
 
     if (db.open()) {
         QSqlQuery qry;
@@ -157,10 +147,40 @@ void PIG::finder()
     } else {
         errorDb();
     }
-    emit showFinderSIGNAL();
+
+#ifdef _WIN32
+    QString target = "C:/pig/.pig/news.txt";
+#else
+    QString target = QDir::homePath()+"/.pig/news";
+#endif
+    QFile file(target);
+    if (file.exists()) {
+        file.open(QIODevice::ReadOnly | QIODevice::Text);
+        bool head = true;
+        QString bn;
+        QString dbn;
+        QTextStream in(&file);
+        while (!in.atEnd()) {
+            QString line = in.readLine();
+            if (line.isEmpty()) head = false;
+            if (head) {
+                bn.append(line+"\n");
+            } else {
+                if(!line.isEmpty())
+                    dbn.append(line+"\n");
+            }
+        }
+        file.close();
+        //file.remove();
+        mRoot->setProperty("binaryNews", bn);
+        mRoot->setProperty("databaseNews", dbn);
+        mRoot->setProperty("news", true);
+    }
+
+    emit startSIGNAL();
 }
 
-void PIG::findDb(const QString inputText, QString category, QString pornstar, int offset, bool init)
+void PIG::find(const QString inputText, QString category, QString pornstar, int offset, bool init)
 {
     static QStringList _list;
     int row = 0;
@@ -226,7 +246,7 @@ void PIG::torrentHandle(QString magnetUrl, QString scenne)
 // Player
 void PIG::playerHandle(const QString absoluteFilePath)
 {
-    mPlayer = new VideoPlayer(this, window->geometry().width(), window->geometry().height());
+    mPlayer = new VideoPlayer(this, this->geometry().width(), this->geometry().height());
     mPlayer->_torrent = mTorrent;
     mTorrent->_player = mPlayer; // TODO: Asegurarse en torrent.cpp que sea un puntero valido antes de llamar a progress().
     mPlayer->doRun(absoluteFilePath);
@@ -234,13 +254,13 @@ void PIG::playerHandle(const QString absoluteFilePath)
     container->hide();
     layout->addLayout(mPlayer->layout);
 
-    SpaceBar = new QShortcut(window);
+    SpaceBar = new QShortcut(this);
     SpaceBar->setEnabled(true);
     SpaceBar->setKey(Qt::Key_Space);
-    UpArrow = new QShortcut(window);
+    UpArrow = new QShortcut(this);
     UpArrow->setEnabled(true);
     UpArrow->setKey(Qt::Key_Up);
-    DownArrow = new QShortcut(window);
+    DownArrow = new QShortcut(this);
     DownArrow->setEnabled(true);
     DownArrow->setKey(Qt::Key_Down);
     connect(SpaceBar, SIGNAL(activated()), mPlayer, SLOT(playPauseForUser()));
@@ -270,43 +290,12 @@ void PIG::closePlayer()
 // ErrorDb
 void PIG::errorDb()
 {
-    emit showErrorDbMsgSIGNAL();
-}
-
-void PIG::setRootObject(QObject *root)
-{
-    if(mRoot!=0) mRoot->disconnect(this); mRoot = root;
-
-    if(mRoot) connect(mRoot, SIGNAL(passwordHandle(QString, bool, bool)), this, SLOT(passwordHandle(QString, bool, bool)));
-
-    if(mRoot) connect(mRoot, SIGNAL(findDb(QString, QString, QString, int, bool)), this, SLOT(findDb(QString, QString, QString, int, bool)));
-    if(mRoot) connect(mRoot, SIGNAL(torrentHandle(QString, QString)), this, SLOT(torrentHandle(QString, QString)));
-    if(mRoot) connect(mRoot, SIGNAL(quit()), this, SLOT(quit()));
-
-#ifdef _WIN32
-    QString target = "C:/pig/.pig/db.sqlite";
-    QString tmp = "C:/tmp/pig/";
-#else
-    QString target = QDir::homePath()+"/.pig/db.sqlite";
-    QString tmp = "/tmp/pig/";
-#endif
-    QFile file(target);
-    if (file.exists()) {
-        db = QSqlDatabase::addDatabase("QSQLITE");
-        db.setDatabaseName(target);
-        QDir dir(tmp);
-        if (!dir.exists())
-            dir.mkdir(tmp);
-
-        passwordHandle("", true, false);
-    } else {
-        QTimer::singleShot(10, this, SLOT(errorDb()));
-    }
+    emit showErrorDbSIGNAL();
 }
 
 void PIG::quit()
 {
-    mRoot->disconnect(this);
-    qApp->exit();
-    exit(0);
+    this->destroy(); // TODO: Salir bien.
+    //qApp->quit();
+    //exit(0);
 }

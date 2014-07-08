@@ -4,9 +4,9 @@ import QtGraphicalEffects 1.0
 Item {
     id: root
 
-    property bool requirePass
-    property bool okPass
-    property bool failPass
+    property bool require_password
+    property bool ok_password
+    property bool fail_password
     property bool requireConfirmation
     property bool get
     property bool requireRestart
@@ -15,7 +15,6 @@ Item {
 
     property string status
     property string information
-    property string os
     property string binaryNews: ""
     property string databaseNews: ""
     property string binaryVersion
@@ -39,8 +38,7 @@ Item {
     signal passwordHandle(string plain, bool init, bool write)
     signal skip()
     signal getFiles()
-    signal restart()
-    signal findDb(string inputText, string category, string pornstar, int offset, bool init)
+    signal find(string inputText, string category, string pornstar, int offset, bool init)
     signal torrentHandle(string magnetUrl, string scenne)
     signal quit()
 
@@ -52,8 +50,8 @@ Item {
         anchors.fill: parent
 
         Image {
-            id: pigLogo
-            source: "qrc:/images/pig.png"
+            id: logo
+            source: "qrc:/images/pig/logo.png"
             cache: false
             fillMode: Image.PreserveAspectCrop
             anchors.left: parent.left
@@ -63,106 +61,62 @@ Item {
         }
         GaussianBlur {
             id: blur
-            source: pigLogo
+            source: logo
             radius: 0
             samples: 32
             cached: true
             opacity: 0
-            anchors.fill: pigLogo
+            anchors.fill: logo
         }
         
         Loader {
-            id: loaderAskPassword
-            source: "qrc:/src/qml/AskPassword.qml"
-            active: false
+            id: loader
             asynchronous: true
-            visible: status == Loader.Ready
-            anchors.fill: parent
-        }
-        Loader {
-            id: loaderUpdate
-            source: "qrc:/src/qml/Update.qml"
-            active: false
-            asynchronous: true
-            visible: status == Loader.Ready
-            anchors.fill: parent
-        }
-        Loader {
-            id: loaderFinder
-            source: "qrc:/src/qml/Finder.qml"
-            active: false
-            asynchronous: true
-            visible: status == Loader.Ready
-            anchors.fill: parent
-            onStatusChanged: { 
-                if (status == Loader.Ready) 
-                    if (loaderOutput.active)
-                        loaderOutput.source = "" 
-            }
-        }
-        Loader {
-            id: loaderOutput
-            source: "qrc:/src/qml/Output.qml"
-            active: false
-            asynchronous: true
-            visible: status == Loader.Ready
-            anchors.fill: parent
-            onStatusChanged: { if (status == Loader.Ready) loaderFinder.source = ""; news = false }
-            onActiveChanged: { if (loaderOutput.active) showSpinner = true }
-        }
-
-        Loader {
-            id: loaderWaitMsg
-            source: "qrc:/src/qml/WaitMsg.qml"
-            active: false
-            asynchronous: true
-            visible: status == Loader.Ready
+            focus: true
+            visible: { status == Loader.Ready }
             anchors.fill: parent
         }
 
         Loader {
-            id: loaderErrorDbMsg
-            source: "qrc:/src/qml/ErrorDbMsg.qml"
-            active: false
+            id: loader_finder_output
             asynchronous: true
-            visible: status == Loader.Ready
+            visible: { status == Loader.Ready }
             anchors.fill: parent
-            onActiveChanged: {
-                loaderAskPassword.source = ""
-                loaderUpdate.source = ""
-                loaderFinder.source = ""
-                loaderOutput.source = ""
-                loaderWaitMsg.source = ""
-            }
+            onVisibleChanged: { if (visible) loader_finder_output.forceActiveFocus() }
         }
+
+        states: [
+            State {
+                name: "showSetPassword"
+                PropertyChanges { target: loader; source: "SetPassword.qml" }
+                PropertyChanges { target: logo; visible: false }
+                PropertyChanges { target: blur; visible: false }
+                PropertyChanges { target: loader_finder_output; visible: false }
+            },
+            State {
+                name: "showHelp"
+                PropertyChanges { target: loader; source: "Help.qml" }
+                PropertyChanges { target: logo; visible: false }
+                PropertyChanges { target: blur; visible: false }
+                PropertyChanges { target: loader_finder_output; visible: false }
+            },
+            State {
+                name: "cleanUp"
+                PropertyChanges { target: loader; source: "" } 
+                PropertyChanges { target: logo; visible: true }
+                PropertyChanges { target: blur; visible: true }
+                PropertyChanges { target: loader_finder_output; visible: true }
+            }
+        ]
     }
 
-    onRequirePassChanged: {
-        loaderAskPassword.active = true
-        loaderAskPassword.focus = true
-    }
+    onRequire_passwordChanged: { loader.source = "AskPassword.qml" }
 
     Connections {
         target: cppSignals
-
-        onShowUpdateSIGNAL: {
-            loaderAskPassword.source = ""
-            loaderAskPassword.active = false
-            loaderAskPassword.focus = false
-            loaderUpdate.active = true
-        }
-        onShowFinderSIGNAL: {
-            loaderAskPassword.source = ""
-            loaderAskPassword.active = false
-            loaderAskPassword.focus = false
-            loaderUpdate.source = ""
-            loaderUpdate.active = false
-            loaderFinder.active = true
-            loaderFinder.focus = true
-        }
-        onShowErrorDbMsgSIGNAL: {
-            loaderErrorDbMsg.active = true
-        }    
+        onShowUpdateSIGNAL: { loader.source = "Update.qml" }
+        onStartSIGNAL: { loader.source = ""; loader_finder_output.source = "Finder.qml" }
+        onShowErrorDbSIGNAL: { loader.source = "ErrorDb.qml"; loaderFinder.source = "" }
     }
 
     Component.onCompleted: {
@@ -176,7 +130,4 @@ Item {
             strap = 1
     }
 }
-
 // TODO: TimeOut's.
-// TODO: Enviar updateErrorDbSIGNAL desde update.
-// TODO: quit en waitMsg AskPassword y en c++.

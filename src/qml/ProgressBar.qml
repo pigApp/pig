@@ -1,7 +1,7 @@
 import QtQuick 2.2
 
 Item {
-    id: bar
+    id: progressBar
     width: 250
     height: 10
     clip: true
@@ -9,7 +9,7 @@ Item {
     property int minimum: 0
     property int maximum: 100
     property int value
-    onValueChanged: { bar.maximum = root.needed }
+    onValueChanged: { progressBar.maximum = root.needed }
 
     Rectangle {
         id: border
@@ -26,7 +26,7 @@ Item {
         id: highlight
         height: 4
         color: "white"
-        property int widthDest: ((bar.width * (value-minimum))/(maximum-minimum)-4)
+        property int widthDest: ((progressBar.width * (value-minimum))/(maximum-minimum)-4)
         width: highlight.widthDest
         Behavior on width { SmoothedAnimation { velocity: 1200 } }
         anchors.left: parent.left

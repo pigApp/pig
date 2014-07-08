@@ -8,23 +8,23 @@
 #include "videoplayer.h"
 
 #include <QObject>
+#include <QWidget>
 #include <QApplication>
 #include <QtSql>
 #include <QShortcut>
 #include <QMouseEvent>
 #include <QVBoxLayout>
 
-class PIG : public QObject
+class PIG : public QWidget
 {
     Q_OBJECT
 
 public:
-    PIG(QObject *parent = 0);
+    PIG(QWidget *parent = 0);
     ~PIG();
 
     Q_INVOKABLE void playerHandle(const QString absoluteFilePath);
 
-    QWidget *window;
     QWidget *container;
     QVBoxLayout *layout;
 
@@ -33,12 +33,12 @@ public slots:
 
 signals:
     void showUpdateSIGNAL();
-    void showFinderSIGNAL();
+    void startSIGNAL();
     void showOutputSIGNAL();
     void listUpdatedSIGNAL();
     void noResultSIGNAL();
     void hidePlayerLayerSIGNAL();
-    void showErrorDbMsgSIGNAL();
+    void showErrorDbSIGNAL();
 
 protected:
     void mouseMoveEvent(QMouseEvent *event);
@@ -60,8 +60,8 @@ private:
 private slots:
     void passwordHandle(QString pass, bool init, bool write);
     void updateHandle();
-    void finder();
-    void findDb(const QString inputText, QString category, QString pornstar, int offset, bool init);
+    void start();
+    void find(const QString inputText, QString category, QString pornstar, int offset, bool init);
     void torrentHandle(QString magnetUrl, QString scenne);
     void closePlayer();
     void errorDb();

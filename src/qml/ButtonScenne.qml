@@ -7,6 +7,7 @@ Rectangle {
     height: 80
     color: "transparent"
 
+    property bool enter
     property string quality
     property string magnetUrl
     property string scenne
@@ -20,37 +21,32 @@ Rectangle {
         glowRadius: 1
         spread: 0
         cornerRadius: 90
-        opacity: 0.3
-        visible: false
+        opacity: 0
         anchors.fill: icon
     }
     Image {
         id: icon
-        source: { if (quality == '1080p') "qrc:/images/1080.png"; else "qrc:/images/720.png" }
+        source: { if (quality == '1080p') "qrc:/images/output/1080.png"; else "qrc:/images/output/720.png" }
         fillMode: Image.PreserveAspectCrop
         anchors.centerIn: parent
     }
     MouseArea {
         id: mousearea
         hoverEnabled: true
-        onEntered: delayIn.restart()
-        onHoveredChanged: delayOut.restart()
-        onClicked: buttonScenne.clicked()
+        onEntered: { enter = true }
+        onHoveredChanged: { enter = false }
+        onClicked: { buttonScenne.clicked() }
         anchors.fill: parent
     }
-    Timer {
-        id: delayIn
-        running: false
-        repeat: false
-        interval: 25
-        onTriggered: { effect.visible = true }
+    onEnterChanged: {
+        if (enter) {
+            inEffect.start()
+        } else {
+            inEffect.stop()
+            outEffect.start()
+        }
     }
-    Timer {
-        id: delayOut
-        running: false
-        repeat: false
-        interval: 20
-        onTriggered: { effect.visible = false }
-    }
+    NumberAnimation { id: inEffect; target: effect; properties: "opacity"; to: 0.3; duration: 200; easing.type: Easing.InOutQuart }
+    NumberAnimation { id: outEffect; target: effect; properties: "opacity"; to: 0; duration: 300; easing.type: Easing.InOutQuart }
 }
 // Espacios hechos.

@@ -11,6 +11,8 @@ Update::Update(QObject *parent) : QObject(parent)
     newBinaryAvailable = false;
     newDatabaseAvailable = false;
     databaseUpdated = false;
+
+    unaVez = false;//
 }
 
 Update::~Update()
@@ -20,8 +22,8 @@ Update::~Update()
 
 void Update::doCheck()
 {
-    _root->setProperty("status", "SEEKING UPDATE");
     _root->setProperty("showSpinner", true);
+    _root->setProperty("status", "SEEKING UPDATE");
 
     if (db.open()) {
         QSqlQuery qry;
@@ -62,6 +64,7 @@ void Update::getVersion(QString host, QString url)
     mSocket.doConnect();
 
     connect(&mSocket, SIGNAL(versionReady(QString)), this, SLOT(evaluate(QString)));
+    connect(&mSocket, SIGNAL(errorSocket()), this, SLOT(error()));
 }
 
 void Update::evaluate(QString version)
@@ -81,8 +84,8 @@ void Update::evaluate(QString version)
 
     if (newBinaryAvailable || newDatabaseAvailable) {
         newsAvailable = true;
-        _root->setProperty("status", "UPDATE AVAILABLE");
         _root->setProperty("showSpinner", false);
+        _root->setProperty("status", "UPDATE AVAILABLE");
         _root->setProperty("requireConfirmation", true);
 #ifdef _WIN32
     hostFiles = last[0];
@@ -98,16 +101,16 @@ void Update::evaluate(QString version)
     databaseUrl = last[7];
 #endif
     } else {
-        _root->setProperty("status", "");
         _root->setProperty("showSpinner", false);
-        emit forward();
+        _root->setProperty("status", "");
+        error();
     }
 }
 
 void Update::getFiles()
 {
-    _root->setProperty("status", "GETTING UPDATE");
     _root->setProperty("showSpinner", true);
+    _root->setProperty("status", "GETTING UPDATE");
     _root->setProperty("requireConfirmation", false);
 
     if (newBinaryAvailable && !newDatabaseAvailable && !newsAvailable) {
@@ -150,30 +153,48 @@ void Update::integrityFile(QString path, QString file)
         if (targetHash == newsHash)
             replace(path, file);
         else
-           emit forward();
+           error();
     } else if (file == "pig" || file == "pig.exe") {
         if (targetHash == binaryHash)
             replace(path, file);
         else
-            emit forward();
+            error();
     } else {
         if (targetHash == databaseHash)
             replace(path, file);
         else
-            emit forward();
+            error();
     }
 }
 
 void Update::replace(QString path, QString file)
 {
     if (newBinaryAvailable && !newDatabaseAvailable && !newsAvailable) {
-        binaryAbsolutePath = path+file;
+        _root->setProperty("status", "UPDATING");
 #ifdef _WIN32
-    _root->setProperty("os", "windows");
+    QString target = "C:/pig/bin/pig.exe";
+    QString updater = "C:/pig/bin/updater.exe";
+    Qstring updaterAguments = " "+path+file+" "+target
+    STARTUPINFO si;
+    PROCESS_INFORMATION pi;
+    ZeroMemory(&si, sizeof(si));
+    si.cb = sizeof(si);
+    ZeroMemory(&pi, sizeof(pi));
+    if (!CreateProcess((TCHAR*)(updater.utf16()), (TCHAR*)(updaterArguments.utf16()), NULL, NULL, FALSE, CREATE_NO_WINDOW, NULL, NULL, &si, &pi)) {
+        _root->setProperty("showSpinner", false);
+        _root->setProperty("status", "PERMISSION DENIED");
+        _root->setProperty("information", "RESTART THE APPLICATION WITH ADMINITRATOR RIGHTS");
+    } else {
+        replaceBinaryReady(0);
+    }
 #else
-    _root->setProperty("os", "unix");
+    if (!unaVez) { // TODO: Llama dos veces.
+        unaVez = true;
+        updaterProc = new QProcess(this); // TODO: Si se cancela gksu borrar news.
+        updaterProc->start("/bin/bash", QStringList() << "-c" << "gksu -u root -m 'PIG authorization to install update' 'mv /tmp/pig/pig /usr/bin/ ; chmod +x /usr/bin/pig'");
+        connect(updaterProc, SIGNAL(finished(int)), this, SLOT(replaceBinaryReady(int)));
+    }
 #endif
-        _root->setProperty("requireRestart", true);
     } else if (newDatabaseAvailable && !newsAvailable) {
 #ifdef _WIN32
     QString target = "C:/PIG/.pig/db.sqlite";
@@ -191,7 +212,7 @@ void Update::replace(QString path, QString file)
         } else {
             _root->setProperty("status", "");
             _root->setProperty("showSpinner", false);
-            emit forward();
+            error();
         }
     } else if (newsAvailable) {
 #ifdef _WIN32
@@ -205,34 +226,9 @@ void Update::replace(QString path, QString file)
     }
 }
 
-void Update::replaceBinaryAndRestart()
+void Update::replaceBinaryReady(int exitCode)
 {
-#ifdef _WIN32
-    QString target = "C:/pig/bin/pig.exe";
-    QString updater = "C:/pig/bin/updater.exe";
-    Qstring updaterAguments = " "+binaryAbsolutePath+" "+target
-    STARTUPINFO si;
-    PROCESS_INFORMATION pi;
-    ZeroMemory(&si, sizeof(si));
-    si.cb = sizeof(si);
-    ZeroMemory(&pi, sizeof(pi));
-    if (!CreateProcess((TCHAR*)(updater.utf16()), (TCHAR*)(updaterArguments.utf16()), NULL, NULL, FALSE, CREATE_NO_WINDOW, NULL, NULL, &si, &pi)) {
-        _root->setProperty("status", "PERMISSION DENIED");
-        _root->setProperty("information", "RESTART THE APPLICATION WITH ADMINITRATOR RIGHTS");
-    } else {
-        replaceBinaryReady();
-    }
-#else
-    QString userName = getenv("USER");
-    QString updaterArguments = "gksuConfirmationdater "+userName+" &";
-    updaterProc = new QProcess(this);
-    connect(updaterProc, SIGNAL(started()), this, SLOT(replaceBinaryReady()));
-    updaterProc->start("/bin/bash", QStringList() << "-c" << updaterArguments);
-#endif
-}
-
-void Update::replaceBinaryReady()
-{
+    _root->setProperty("showSpinner", false);
 #ifdef _WIN32
     if (!databaseUpdated) {
         if (db.open()) {
@@ -245,24 +241,29 @@ void Update::replaceBinaryReady()
     }
     exit(0);
 #else
-    if (updaterProc->state() == QProcess::Running && !updaterProc->error() == QProcess::FailedToStart) {
-        if (databaseUpdated) { // !databaseUpdated 
+    qDebug() << exitCode;
+    if (exitCode == 0) {
+        if (!databaseUpdated) {
             if (db.open()) {
                 QSqlQuery qry;
-                qry.prepare("UPDATE PigData SET BinaryVersion='"+QString::number(currentBinaryVersion)+"'");
+                qry.prepare("UPDATE PigData SET BinaryVersion='"+QString::number(currentBinaryVersion)+"'"); //TODO: No actualiza la db.
                 qry.prepare("UPDATE PigData SET Release='"+QString::number(currentRelease)+"'");
                 qry.exec();
                 db.close();
             }
         }
-        exit(0);
+        _root->setProperty("status", "UPDATED");
+        _root->setProperty("information", "RESTART PIG TO APPLY CHANGES");
     } else {
+        //TODO: loop timer.
         _root->setProperty("status", "UPDATE FAILED");
         _root->setProperty("information", "TRY LATER");
-        emit forward();
+        error();
     }
 #endif
 }
 
-//host,newsUrl,hash,binVersion,url,hash,dbVersion,url,hash,release,
-//https://dl.shared.com,/g8cj8cnsxk?s=ld,c19e7dbafca6f26c5bafec07907df361,1,/g8cj8cnsxk?s=ld,c19e7dbafca6f26c5bafec07907df361,1,/m9bspu79nd?s=ld,e2462c1f38063a8b14ce102b9a6722e6,1,
+void Update::error()
+{
+    emit forward();
+}

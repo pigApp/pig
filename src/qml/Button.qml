@@ -4,6 +4,7 @@ Rectangle {
     id: button
     color: "transparent"
 
+    property bool enter
     property alias label: label.text
     property alias labelColor: label.color
     property alias labelSize: label.font.pixelSize
@@ -18,18 +19,28 @@ Rectangle {
         color: "white"
         font.family: pigFont.name
         font.bold: false
-        font.pixelSize: 110
+        font.pixelSize: 100
         horizontalAlignment: Text.AlignLeft
         verticalAlignment: Text.AlignVCenter
         anchors.fill: parent
+        ColorAnimation on color { id: inColor; running: false; to: labelInColor; duration: 200 }
+        ColorAnimation on color { id: outColor; running: false; to: labelOutColor; duration: 300 }
     }
     MouseArea {
         id: mousearea
         hoverEnabled: true
-        onEntered: label.color = labelInColor
-        onHoveredChanged: label.color = labelOutColor
-        onClicked: button.clicked()
+        onEntered: { enter = true }
+        onHoveredChanged: { enter = false }
+        onClicked: { button.clicked() }
         anchors.fill: parent
+    }
+    onEnterChanged: {
+        if (enter) {
+            inColor.start()
+        } else {
+            inColor.stop()
+            outColor.start()
+        }
     }
 }
 // Espacios hechos.

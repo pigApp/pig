@@ -3,6 +3,7 @@
 #include <QDataStream>
 #include <QFile>
 
+
 TcpSocket::TcpSocket(QObject *parent) : QObject(parent)
 {
     socket = new QTcpSocket(this);
@@ -15,6 +16,10 @@ void TcpSocket::doConnect()
 {
     data.clear();
     socket->connectToHost(host, 80);
+
+    timeOut = new QTimer(this);
+    connect(timeOut, SIGNAL(timeout()), this, SLOT(error()));
+    timeOut->start(15000);
 }
 
 void TcpSocket::connected()
@@ -27,12 +32,13 @@ void TcpSocket::connected()
 
 void TcpSocket::disconnected()
 {
-    qDebug() << "========DATA: " << data;
     write();
 }
 
 void TcpSocket::readyRead()
 {
+    timeOut->stop();
+    
     while (!socket->atEnd())
         data.append(socket->read(100));
 }
@@ -56,7 +62,7 @@ void TcpSocket::write()
         if (line.toHex() == "0d0a")
             endHeader = true;
     }
-    int header = data.indexOf(startPayload);  //FALLA AL BAJAR LA DB ES REDIRIGIDA LA URL.
+    int header = data.indexOf(startPayload);
     data.remove(0, header);
 
     if (order == "getVersion") {
@@ -70,10 +76,16 @@ void TcpSocket::write()
             QByteArray dataFromBase = QByteArray::fromBase64(data);
             target.write(dataFromBase);
         } else {
-            qDebug() << "==DATA " << data;
             target.write(data);
         }
         target.close();
         emit fileReady(path, file);
     }
+}
+
+void TcpSocket::error()
+{
+    timeOut->stop();
+    socket->abort();
+    emit errorSocket();
 }

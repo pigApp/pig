@@ -1,7 +1,8 @@
 import QtQuick 2.2
 
 Item {
-  id: waitMsg
+  id: wait
+
     Row {
         id: row
         spacing: 17
@@ -17,7 +18,7 @@ Item {
             id: spinner
             width: 25
             height: 25
-            source: "qrc:/images/spinner.png"
+            source: "qrc:/images/pig/spinner.png"
             fillMode: Image.PreserveAspectCrop
             clip: true
             visible: showSpinner

@@ -1,4 +1,6 @@
-- Mover socket a un thread o hacerlo asincrono.
-- Imagenes JPG a SVG.
-- Convertir todas las medidas a porcentaje.
-- Agregar divsor para el tamaño de letras.
+- Control de errores.
+- Destructores.
+- Aspect ratio para las imagenes y video.
+- Convertir medidas a porcentaje.
+- Agregar divisor para el tamaño de letras.
+- Installer, copiarlo desde ID

@@ -10,7 +10,6 @@ Item {
     property bool hideAll
     property bool focusPath
     property bool zoomIn
-    property bool zoomOut
 
     property string inputText
     property string category
@@ -41,8 +40,8 @@ Item {
             id: recipe
             width: listView.width
             height: listView.height
-            opacity: PathView.recipeOpacity || 1
-            z: PathView.recipeZ || 1
+            opacity: { PathView.recipeOpacity || 1 }
+            z: { PathView.recipeZ || 1 }
 
             Keys.onUpPressed: { if (!output.zoomIn) fiveMoreTimer.start() }
             Timer {
@@ -50,7 +49,7 @@ Item {
                 running: false
                 repeat: false
                 interval: 500
-                onTriggered: pathView.fiveMore()
+                onTriggered: { pathView.fiveMore() }
             }
             Keys.onDownPressed: { if (!output.zoomIn) fiveLessTimer.start() }
             Timer {
@@ -58,16 +57,10 @@ Item {
                 running: false
                 repeat: false
                 interval: 500
-                onTriggered: pathView.fiveLess()
+                onTriggered: { pathView.fiveLess() }
             }
             Keys.onRightPressed: { if (!output.zoomIn) pathView.next() }
             Keys.onLeftPressed: { if (!output.zoomIn) pathView.prior() }
-            Timer {
-                id: previewPlayerKillTimer
-                running: false
-                repeat: false
-                interval: 1000
-            }
 
             Image {
                 id: poster
@@ -84,7 +77,7 @@ Item {
                         if (!coverLoaded)
                             imagesStatus.start()
                     } else if (poster.source == list[5] && poster.status == Image.Error) {
-                        poster.source = "qrc:/images/posterNotAvailable.png"
+                        poster.source = "qrc:/images/available/posterNotAvailable.png"
                         posterLoaded = true
                         if (!coverLoaded)
                             imagesStatus.start()
@@ -100,7 +93,7 @@ Item {
             }
             Image {
                 id: stripes
-                source: "qrc:/images/stripes.png"
+                source: "qrc:/images/output/stripes.png"
                 fillMode: Image.PreserveAspectCrop
             }
 
@@ -122,37 +115,74 @@ Item {
                 height: 500
                 sourceSize.width: screen.width
                 sourceSize.height: 500
-                source: "qrc:/images/frame.png"
+                source: "qrc:/images/output/frame.png"
                 anchors.centerIn: parent
             }
+
+            property bool enter
+            
             Image {
                 id: screens
                 width: 630
                 height: 430
-                source: "qrc:/images/screenTest.jpg"
+                source: "qrc:/images/output/screenTest.jpg"
                 opacity: 0.1
-                smooth: true
+                clip: true
                 anchors.left: parent.left
                 anchors.verticalCenter: parent.verticalCenter
                 anchors.verticalCenterOffset: 2
-                onOpacityChanged: { if (screens.opacity == 0.1) output.zoomOut = false }
                 MouseArea {
                     id: zoom
                     hoverEnabled: true
-                    onEntered: NumberAnimation { running: !output.zoomIn && !output.zoomOut; target: screens; properties: "opacity"; to: 1; duration: 200; easing.type: Easing.InOutQuart }
-                    onHoveredChanged: NumberAnimation { running: !output.zoomIn && !output.zoomOut; target: screens; properties: "opacity"; to: 0.1; duration: 200; easing.type: Easing.InOutQuart }
-                    onClicked: { if (!output.zoomIn) output.zoomIn = true }
+                    onEntered: { enter = true }
+                    onHoveredChanged: { enter = false }
                     anchors.fill: parent
                 }
-                NumberAnimation { running: output.zoomIn; target: screens; properties: "z"; to: 5; duration: 500; easing.type: Easing.InOutQuart }
-                NumberAnimation { running: output.zoomIn; target: screens; properties: "width"; to: 1920; duration: 1000; easing.type: Easing.InOutQuart }
-                NumberAnimation { running: output.zoomIn; target: screens; properties: "height"; to: 1080; duration: 1000; easing.type: Easing.InOutQuart }
-
-                NumberAnimation { running: output.zoomOut; target: screens; properties: "opacity"; to: 0.1; duration: 1000; easing.type: Easing.InOutQuart }
-                NumberAnimation { running: output.zoomOut; target: screens; properties: "z"; to: 1; duration: 1000; easing.type: Easing.InOutQuart }
-                NumberAnimation { running: output.zoomOut; target: screens; properties: "width"; to: 630; duration: 1000; easing.type: Easing.InOutQuart }
-                NumberAnimation { running: output.zoomOut; target: screens; properties: "height"; to: 430; duration: 1000; easing.type: Easing.InOutQuart }
+                Keys.onPressed: { if (output.zoomIn && event.key === Qt.Key_Escape && !(event.modifiers & Qt.ControlModifier)) enter = false }
             }
+            onEnterChanged: {
+                if (enter) {
+                    inScreensA.start()
+                    inScreensB.start()
+                    inScreensC.start()
+                    inScreensD.start()
+                    output.zoomIn = true
+                    zoomInDelay.start()
+                } else {
+                    inScreensA.stop()
+                    inScreensB.stop()
+                    inScreensC.stop()
+                    inScreensD.stop()
+                    outScreensA.start()
+                    outScreensB.start()
+                    outScreensC.start()
+                    outScreensD.start()
+                    zoomOutDelay.start()
+                }
+            }
+            Timer {
+                id: zoomInDelay
+                running: false
+                repeat: false
+                interval: 800
+                onTriggered: { screens.forceActiveFocus() }
+            }
+            Timer {
+                id: zoomOutDelay
+                running: false
+                repeat: false
+                interval: 1000
+                onTriggered: { recipe.forceActiveFocus(); output.zoomIn = false }
+            }
+            NumberAnimation { id: inScreensA; target: screens; properties: "z"; to: 5; duration: 500; easing.type: Easing.InOutQuart }
+            NumberAnimation { id: inScreensB; target: screens; properties: "opacity"; to: 1; duration: 1000; easing.type: Easing.InOutQuart }
+            NumberAnimation { id: inScreensC; target: screens; properties: "width"; to: 1920; duration: 1000; easing.type: Easing.InOutQuart }
+            NumberAnimation { id: inScreensD; target: screens; properties: "height"; to: 1080; duration: 1000; easing.type: Easing.InOutQuart }
+            NumberAnimation { id: outScreensA; target: screens; properties: "z"; to: 1; duration: 1000; easing.type: Easing.InOutQuart }
+            NumberAnimation { id: outScreensB; target: screens; properties: "width"; to: 630; duration: 1000; easing.type: Easing.InOutQuart }
+            NumberAnimation { id: outScreensC; target: screens; properties: "height"; to: 430; duration: 1000; easing.type: Easing.InOutQuart }
+            NumberAnimation { id: outScreensD; target: screens; properties: "opacity"; to: 0.1; duration: 1000; easing.type: Easing.InOutQuart }
+            
             RectangularGlow {
                 id: coverEffect
                 color: "black"
@@ -178,7 +208,7 @@ Item {
                         if (!posterLoaded)
                             imagesStatus.start()
                     } else if (cover.source == list[4] && cover.status == Image.Error) {
-                        cover.source = "qrc:/images/coverNotAvailable.png"
+                        cover.source = "qrc:/images/available/coverNotAvailable.png"
                         coverLoaded = true
                         if (!posterLoaded)
                             imagesStatus.start()
@@ -192,7 +222,8 @@ Item {
                 interval: 20
                 onTriggered: {
                     if (posterLoaded && coverLoaded) {
-                        loaderWaitMsg.active = false
+                        root.showSpinner = true
+                        loader.source = ""
                         recipe.state = "showAll"
                         delayFocus.start()
                     }else {
@@ -244,73 +275,27 @@ Item {
             }
             Text {
                 id: noSplitLabel
-                text: "NO SPLIT"
-                color: "white"
+                text: "UNSPLIT"
+                color: "black"
                 font.family: pigFont.name
                 font.bold: true
                 font.pixelSize: 20
-                opacity: 0.7
                 visible: { if (scennes == 1) true; else false }
                 anchors.left: openScenneRow.right
-                anchors.leftMargin: 5
+                anchors.leftMargin: 2
                 anchors.verticalCenter: parent.verticalCenter
                 anchors.verticalCenterOffset: 40
             }
 
-            Row {
-                id: counterRow
-                spacing: 18
+            Text {
+                id: counterLabel
+                text: currentFilm+"»"+totalFilms
+                color: "white"
+                font.family: pigFont.name
+                font.pixelSize: 110
                 anchors.right: parent.right
-                anchors.rightMargin: 10
-                anchors.bottom: frame.bottom
-                anchors.bottomMargin: 40
-                Text {
-                    id: keysInfo
-                    text: "⌨"
-                    color: Qt.rgba(1, 1, 1, 0.15)
-                    font.family: "Verdana"
-                    font.pixelSize: 30
-                    anchors.verticalCenter: parent.verticalCenter
-                    anchors.verticalCenterOffset: 3
-                    MouseArea {
-                        hoverEnabled: true
-                        onEntered: delayIn.restart()
-                        onHoveredChanged: delayOut.restart()
-                        anchors.fill: parent
-                    }
-                    Timer {
-                        id: delayIn
-                        running: false
-                        repeat: false
-                        interval: 25
-                        onTriggered: keymap.visible = true
-                    }
-                    Timer {
-                        id: delayOut
-                        running: false
-                        repeat: false
-                        interval: 20
-                        onTriggered: keymap.visible = false
-                    }
-                }
-                Text {
-                    id: counterLabel
-                    text: currentFilm+"»"+totalFilms
-                    color: "white"
-                    font.family: pigFont.name
-                    font.pixelSize: 40
-                    visible: true
-                }
-            }
-            Image {
-                id: keymap
-                source: "qrc:/images/keymap.png"
-                fillMode: Image.PreserveAspectCrop
-                visible: false
-                anchors.right: parent.right
-                anchors.rightMargin: -30
-                anchors.bottom: frame.bottom
-                anchors.bottomMargin: 69
+                anchors.rightMargin: 30
+                anchors.verticalCenter: parent.verticalCenter
             }
 
             NumberAnimation { running: recipe.PathView.isCurrentItem; target: poster; property: "opacity"; to: 1; duration: 4000; easing.type: Easing.InOutQuad }
@@ -328,7 +313,6 @@ Item {
                 State {
                     name: "hidePlayerLayer"
                     PropertyChanges { target: root; peers: 0 }
-                    PropertyChanges { target: root; seeds: 0 }
                     PropertyChanges { target: root; needed: 0 }
                     PropertyChanges { target: root; downloaded: 0 }
                 },
@@ -430,28 +414,23 @@ Item {
             running: false
             repeat: false
             interval: 200
-            onTriggered: focusPath = true
+            onTriggered: { focusPath = true }
         }
 
         Keys.onPressed: {
-            if (event.key === Qt.Key_Escape && !(event.modifiers & Qt.ShiftModifier)) {  
-                if (zoomIn) {
-                    zoomIn = false
-                    zoomOut = true;
-                } else {
-                    back()
-                    event.accepted = true;
-                }
-            } else if (event.key === Qt.Key_Escape && (event.modifiers & Qt.ShiftModifier)) {
+            if (!zoomIn && event.key === Qt.Key_Escape && !(event.modifiers & Qt.ControlModifier)) {  
+                loader_finder_output.source = "Finder.qml"
+                event.accepted = true;
+            } else if (event.key === Qt.Key_P && (event.modifiers & Qt.ControlModifier)) {
+                screen.state = "showSetPassword"
+                event.accepted = true
+            } else if (event.key === Qt.Key_H && (event.modifiers & Qt.ControlModifier)) {
+                screen.state = "showHelp"
+                event.accepted = true
+            } else if (event.key === Qt.Key_Escape && (event.modifiers & Qt.ControlModifier)) {
                 root.quit()
                 event.accepted = true;
             }
-        }
-        function back() {
-            currentFilm = 1
-            focusPath = false
-            loaderFinder.source = "qrc:/src/qml/Finder.qml"
-            loaderFinder.active = true
         }
 
         path: Path {
@@ -488,7 +467,7 @@ Item {
 
         ProgressBar {
             id: progressBar
-            value: { root.downloaded }
+            value: root.downloaded
             visible: { if (playerLayer.height > 24) true; else false }
             anchors.centerIn: parent
         }
@@ -556,13 +535,13 @@ Item {
         coverLoaded = false
         root.list = ''
         model.clear()
-        loaderWaitMsg.active = true
-        root.findDb(inputText, category, pornstar, offset, false)
+        root.showSpinner = true
+        loader.source = "Wait.qml"
+        root.find(inputText, category, pornstar, offset, false)
     }
     
     Connections {
         target: cppSignals
-
         onListUpdatedSIGNAL: { listCreator() }
     }
 

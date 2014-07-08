@@ -12,12 +12,12 @@ public:
     explicit Password(QObject *parent = 0);
     ~Password();
 
-    bool requirePassword();
-    bool writePassword(QString plain);
-    bool rightPassword(QString plain);
+    bool require();
+    bool write(QString plain);
+    bool right(QString plain);
 
 private slots:
-    QString hashCalculation(QString plain);
+    QString calculate(QString plain);
 };
 
 #endif
