@@ -37,8 +37,6 @@ private:
     QString newsHash;
     QProcess *updaterProc;
 
-    bool unaVez;//
-
     int currentDatabaseVersion, currentBinaryVersion, currentRelease;
     bool newsAvailable, newDatabaseAvailable, newBinaryAvailable, databaseUpdated;
 
@@ -49,7 +47,7 @@ private slots:
     void integrityFile(QString path, QString file);
     void replace(QString path, QString file);
     void replaceBinaryReady(int exitCode);
-    void error();
+    void abort();
 };
 
 #endif

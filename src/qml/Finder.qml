@@ -54,8 +54,8 @@ Item {
     Column {
         id: buttonsFiltersColumn
         spacing: 16
-        visible: { !root.news }
-        enabled: { !root.news }
+        visible: { !root.news && screen.state !== "showSetPassword" && screen.state !== "showHelp" }
+        enabled: { !root.news && screen.state !== "showSetPassword" && screen.state !== "showHelp" }
         opacity: 0      
         anchors.left: parent.left
         anchors.leftMargin: 64

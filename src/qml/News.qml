@@ -4,6 +4,12 @@ Item {
     id: news
 
     Rectangle {
+      id: backgroundLayer
+      color: Qt.rgba(0.5, 0.5, 0.5, 0.7)
+      anchors.fill: parent
+    }
+
+    Rectangle {
         id: layer
         width: screen.width/3.85
         height: screen.height
@@ -53,18 +59,18 @@ Item {
         }
         Button {
             id: ok
-            width: 38
-            height: 25
+            width: 62
+            height: 39
             label: "OK"
             labelColor: "white"
             labelBold: true
-            labelSize: 30
-            labelInColor: Qt.rgba(0.1, 0.1, 0.1, 0.4)
+            labelSize: 50
+            labelInColor: "white"
             labelOutColor: "white"
             anchors.right: parent.right
-            anchors.rightMargin: 10
+            anchors.rightMargin: 23
             anchors.bottom: parent.bottom
-            anchors.bottomMargin: 7
+            anchors.bottomMargin: 13
             onClicked: {
                 root.news = false
                 loader.source = ""

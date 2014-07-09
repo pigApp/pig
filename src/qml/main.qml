@@ -75,6 +75,7 @@ Item {
             focus: true
             visible: { status == Loader.Ready }
             anchors.fill: parent
+            z: 2
         }
 
         Loader {
@@ -82,7 +83,15 @@ Item {
             asynchronous: true
             visible: { status == Loader.Ready }
             anchors.fill: parent
-            onVisibleChanged: { if (visible) loader_finder_output.forceActiveFocus() }
+            onZChanged: {
+                if (z == 0) {
+                    loader_finder_output.forceActiveFocus()
+                    if (loader_finder_output.source == "qrc:/src/qml/Finder.qml") {
+                        logo.visible = true
+                        blur.visible = true
+                    }
+                }
+            }
         }
 
         states: [
@@ -91,21 +100,17 @@ Item {
                 PropertyChanges { target: loader; source: "SetPassword.qml" }
                 PropertyChanges { target: logo; visible: false }
                 PropertyChanges { target: blur; visible: false }
-                PropertyChanges { target: loader_finder_output; visible: false }
+                PropertyChanges { target: loader_finder_output; z: 1 }
             },
             State {
                 name: "showHelp"
                 PropertyChanges { target: loader; source: "Help.qml" }
-                PropertyChanges { target: logo; visible: false }
-                PropertyChanges { target: blur; visible: false }
-                PropertyChanges { target: loader_finder_output; visible: false }
+                PropertyChanges { target: loader_finder_output; z: 1 }
             },
             State {
                 name: "cleanUp"
                 PropertyChanges { target: loader; source: "" } 
-                PropertyChanges { target: logo; visible: true }
-                PropertyChanges { target: blur; visible: true }
-                PropertyChanges { target: loader_finder_output; visible: true }
+                PropertyChanges { target: loader_finder_output; z: 0 }
             }
         ]
     }
@@ -116,7 +121,7 @@ Item {
         target: cppSignals
         onShowUpdateSIGNAL: { loader.source = "Update.qml" }
         onStartSIGNAL: { loader.source = ""; loader_finder_output.source = "Finder.qml" }
-        onShowErrorDbSIGNAL: { loader.source = "ErrorDb.qml"; loaderFinder.source = "" }
+        onShowErrorDbSIGNAL: { loader_finder_output.source = ""; loader.source = "ErrorDb.qml"; logo.visible = false; blur.visible = false }
     }
 
     Component.onCompleted: {

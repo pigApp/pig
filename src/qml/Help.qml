@@ -4,6 +4,12 @@ Item {
     id: help
 
     Rectangle {
+      id: backgroundLayer
+      color: Qt.rgba(0.5, 0.5, 0.5, 0.7)
+      anchors.fill: parent
+    }
+
+    Rectangle {
         id: pigLayer
         width: screen.width/3.85
         color: Qt.rgba(0, 0, 0, 0.5)

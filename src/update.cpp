@@ -1,6 +1,7 @@
 #include "update.h"
 
 #include <QCryptographicHash>
+#include <QTimer>
 #ifdef _WIN32
     #include <windows.h>
 #endif
@@ -11,8 +12,6 @@ Update::Update(QObject *parent) : QObject(parent)
     newBinaryAvailable = false;
     newDatabaseAvailable = false;
     databaseUpdated = false;
-
-    unaVez = false;//
 }
 
 Update::~Update()
@@ -24,7 +23,7 @@ void Update::doCheck()
 {
     _root->setProperty("showSpinner", true);
     _root->setProperty("status", "SEEKING UPDATE");
-
+    
     if (db.open()) {
         QSqlQuery qry;
         qry.prepare("SELECT BinaryVersion, DatabaseVersion, Release, Host, Url FROM PigData");
@@ -36,16 +35,21 @@ void Update::doCheck()
             currentBinaryVersion = qry.value(0).toInt();
             currentDatabaseVersion = qry.value(1).toInt();
             currentRelease = qry.value(2).toInt();
-            QString hosts = qry.value(3).toString();
+            QString host = qry.value(3).toString();
             QString urls = qry.value(4).toString();
-            QStringList hostList = hosts.split(",");
             QStringList urlList = urls.split(",");
+            int arch = sizeof(void*);
+            QString url;
 #ifdef _WIN32
-    QString host = hostList[1];
-    QString url = urlList[1];
+    if (arch != 8) // TODO: Confirmar si distingue arquitectura.
+        url = urlList[2];
+    else
+        url = urlList[3];
 #else
-    QString host = hostList[0];
-    QString url = urlList[0];
+    if (arch != 8)
+        url = urlList[0];
+    else
+        url = urlList[1];
 #endif
             db.close();
             getVersion(host, url);
@@ -64,7 +68,7 @@ void Update::getVersion(QString host, QString url)
     mSocket.doConnect();
 
     connect(&mSocket, SIGNAL(versionReady(QString)), this, SLOT(evaluate(QString)));
-    connect(&mSocket, SIGNAL(errorSocket()), this, SLOT(error()));
+    connect(&mSocket, SIGNAL(errorSocket()), this, SLOT(abort()));
 }
 
 void Update::evaluate(QString version)
@@ -87,23 +91,15 @@ void Update::evaluate(QString version)
         _root->setProperty("showSpinner", false);
         _root->setProperty("status", "UPDATE AVAILABLE");
         _root->setProperty("requireConfirmation", true);
-#ifdef _WIN32
-    hostFiles = last[0];
-    newsUrl = last[1];
-    newsHash = last [2];
-    binaryUrl = last[4];
-    databaseUrl = last[7];
-#else
-    hostFiles = last[0];
-    newsUrl = last[1];
-    newsHash = last[2];
-    binaryUrl = last[4];
-    databaseUrl = last[7];
-#endif
+        hostFiles = last[0];
+        newsUrl = last[1];
+        newsHash = last[2];
+        binaryUrl = last[4];
+        databaseUrl = last[7];
     } else {
         _root->setProperty("showSpinner", false);
         _root->setProperty("status", "");
-        error();
+        emit forward();
     }
 }
 
@@ -138,6 +134,7 @@ void Update::getFiles()
     }
 
     connect(&mSocket, SIGNAL(fileReady(QString, QString)), this, SLOT(integrityFile(QString, QString)));
+    connect(&mSocket, SIGNAL(errorSocket()), this, SLOT(abort()));
 }
 
 void Update::integrityFile(QString path, QString file)
@@ -153,23 +150,24 @@ void Update::integrityFile(QString path, QString file)
         if (targetHash == newsHash)
             replace(path, file);
         else
-           error();
+           abort();
     } else if (file == "pig" || file == "pig.exe") {
         if (targetHash == binaryHash)
             replace(path, file);
         else
-            error();
+            abort();
     } else {
         if (targetHash == databaseHash)
             replace(path, file);
         else
-            error();
+            abort();
     }
 }
 
 void Update::replace(QString path, QString file)
 {
     if (newBinaryAvailable && !newDatabaseAvailable && !newsAvailable) {
+        newBinaryAvailable = false;
         _root->setProperty("status", "UPDATING");
 #ifdef _WIN32
     QString target = "C:/pig/bin/pig.exe";
@@ -188,31 +186,36 @@ void Update::replace(QString path, QString file)
         replaceBinaryReady(0);
     }
 #else
-    if (!unaVez) { // TODO: Llama dos veces.
-        unaVez = true;
-        updaterProc = new QProcess(this); // TODO: Si se cancela gksu borrar news.
-        updaterProc->start("/bin/bash", QStringList() << "-c" << "gksu -u root -m 'PIG authorization to install update' 'mv /tmp/pig/pig /usr/bin/ ; chmod +x /usr/bin/pig'");
-        connect(updaterProc, SIGNAL(finished(int)), this, SLOT(replaceBinaryReady(int)));
-    }
+    updaterProc = new QProcess(this);
+    updaterProc->start("/bin/bash", QStringList() << "-c" << "gksu -u root -m 'PIG authorization to install update' 'mv /tmp/pig/pig /usr/bin/ ; chmod +x /usr/bin/pig'");
+    connect(updaterProc, SIGNAL(finished(int)), this, SLOT(replaceBinaryReady(int)));
 #endif
     } else if (newDatabaseAvailable && !newsAvailable) {
 #ifdef _WIN32
     QString target = "C:/PIG/.pig/db.sqlite";
+    QString target_backup = "C:/PIG/.pig/db.sqlite~";
 #else
     QString target = QDir::homePath()+"/.pig/db.sqlite";
+    QString target_backup = QDir::homePath()+"/.pig/db.sqlite~";
 #endif
+        newDatabaseAvailable = false;
         QFile f(target);
         if (f.exists())
-            f.remove();
-        QFile::copy(path+file, target);
-        newDatabaseAvailable = false;
-        databaseUpdated = true;
-        if (newBinaryAvailable) {
-            getFiles();
+            f.rename(target_backup);
+        if (QFile::copy(path+file, target)) {
+            databaseUpdated = true;
+            if (newBinaryAvailable) {
+                getFiles();
+            } else {
+                QFile f_backup(target_backup);
+                f.remove();
+                emit forward();
+            }
         } else {
-            _root->setProperty("status", "");
+            newBinaryAvailable = false;
             _root->setProperty("showSpinner", false);
-            error();
+            _root->setProperty("status", "");
+            abort();
         }
     } else if (newsAvailable) {
 #ifdef _WIN32
@@ -239,9 +242,11 @@ void Update::replaceBinaryReady(int exitCode)
             db.close();
         }
     }
+    QString target_backup = "C:/PIG/.pig/db.sqlite~";
+    QFile file_backup(target_backup);
+    file_backup.remove();
     exit(0);
 #else
-    qDebug() << exitCode;
     if (exitCode == 0) {
         if (!databaseUpdated) {
             if (db.open()) {
@@ -252,18 +257,46 @@ void Update::replaceBinaryReady(int exitCode)
                 db.close();
             }
         }
+        QString target_backup = QDir::homePath()+"/.pig/db.sqlite~";
+        QFile file_backup(target_backup);
+        file_backup.remove();
         _root->setProperty("status", "UPDATED");
         _root->setProperty("information", "RESTART PIG TO APPLY CHANGES");
     } else {
-        //TODO: loop timer.
         _root->setProperty("status", "UPDATE FAILED");
         _root->setProperty("information", "TRY LATER");
-        error();
+        QTimer::singleShot(3000, this, SLOT(abort())); 
     }
 #endif
 }
 
-void Update::error()
+void Update::abort()
 {
+#ifdef _WIN32
+    QString target_news = "C:/PIG/.pig/news.txt";
+#else
+    QString target_news = QDir::homePath()+"/.pig/news";
+#endif
+    QFile file_news(target_news);
+    if (file_news.exists())
+            file_news.remove();
+    
+#ifdef _WIN32
+    QString target = "C:/PIG/.pig/db.sqlite";
+    QString target_backup = "C:/PIG/.pig/db.sqlite~";
+#else
+    QString target = QDir::homePath()+"/.pig/db.sqlite";
+    QString target_backup = QDir::homePath()+"/.pig/db.sqlite~";
+#endif
+    QFile file_backup(target_backup);
+    if (databaseUpdated) {
+        QFile file(target);
+        file.remove();
+        file_backup.rename(target);
+    } else {
+        if (file_backup.exists())
+            file_backup.rename(target);
+    }
+
     emit forward();
 }

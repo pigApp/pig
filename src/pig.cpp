@@ -107,10 +107,8 @@ void PIG::updateHandle()
 // Start
 void PIG::start()
 {
-    //if (mUpdate != 0) {
     mUpdate = 0;
     delete mUpdate;
-    //}
 
     if (db.open()) {
         QSqlQuery qry;
@@ -171,7 +169,7 @@ void PIG::start()
             }
         }
         file.close();
-        //file.remove();
+        file.remove();
         mRoot->setProperty("binaryNews", bn);
         mRoot->setProperty("databaseNews", dbn);
         mRoot->setProperty("news", true);

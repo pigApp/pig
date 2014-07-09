@@ -421,9 +421,6 @@ Item {
             if (!zoomIn && event.key === Qt.Key_Escape && !(event.modifiers & Qt.ControlModifier)) {  
                 loader_finder_output.source = "Finder.qml"
                 event.accepted = true;
-            } else if (event.key === Qt.Key_P && (event.modifiers & Qt.ControlModifier)) {
-                screen.state = "showSetPassword"
-                event.accepted = true
             } else if (event.key === Qt.Key_H && (event.modifiers & Qt.ControlModifier)) {
                 screen.state = "showHelp"
                 event.accepted = true

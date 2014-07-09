@@ -1,5 +1,6 @@
 - Control de errores.
 - Destructores.
+- Punteros en argumentos &string.
 - Aspect ratio para las imagenes y video.
 - Convertir medidas a porcentaje.
 - Agregar divisor para el tamaño de letras.
