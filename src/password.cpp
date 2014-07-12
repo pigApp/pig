@@ -5,8 +5,7 @@
 
 #include "password.h"
 
-Password::Password(QObject *parent) :
-    QObject(parent)
+Password::Password(QObject *parent) : QObject(parent)
 {
 }
 

@@ -12,7 +12,7 @@ VideoPlayer::VideoPlayer(QObject *parent, int screenWidth, int screenHeight) : Q
     volume = 70;
     player->setVolume(volume);
 
-    QFont font( "helvetica", 30);
+    QFont font(":/images/font/pig.ttf" , 30); // TODO: Instalar msFonts
    
     box = new QWidget();
     box->setGeometry(0, 10, screenWidth, 70);
@@ -21,7 +21,7 @@ VideoPlayer::VideoPlayer(QObject *parent, int screenWidth, int screenHeight) : Q
     box->hide();
 
     volumeIcon = new QLabel();
-    icon.load((":/images/volume.png"));
+    icon.load((":/images/player/volume.png"));
     volumeIcon->setPixmap(icon);
     volumeIcon->setGeometry(30, 30, 30, 30);
     volumeIcon->setStyleSheet("background-color: transparent; border: none");
@@ -36,19 +36,19 @@ VideoPlayer::VideoPlayer(QObject *parent, int screenWidth, int screenHeight) : Q
     volumeLabel->hide();
     volumeLabel->setText(QString::number(volume));
 
-    totalTimeLabel = new QLabel();
-    totalTimeLabel->setGeometry((screenWidth/2)+10, 20, 160, 50);
-    totalTimeLabel->setStyleSheet("background-color: transparent; border: none; color: white");
-    totalTimeLabel->setFont(font);
-    totalTimeLabel->setParent(videoWidget);
-    totalTimeLabel->hide();
-
     currentTimeLabel = new QLabel();
-    currentTimeLabel->setGeometry((screenWidth/2)-160, 20, 160, 50);
+    currentTimeLabel->setGeometry((screenWidth/2)-190, 20, 200, 50);
     currentTimeLabel->setStyleSheet("background-color: transparent; border: none; color: white");
     currentTimeLabel->setFont(font);
     currentTimeLabel->setParent(videoWidget);
     currentTimeLabel->hide();
+
+    totalTimeLabel = new QLabel();
+    totalTimeLabel->setGeometry((screenWidth/2)+15, 20, 200, 50);
+    totalTimeLabel->setStyleSheet("background-color: transparent; border: none; color: white");
+    totalTimeLabel->setFont(font);
+    totalTimeLabel->setParent(videoWidget);
+    totalTimeLabel->hide();
 
     bitRateLabel = new QLabel();
     bitRateLabel->setGeometry(screenWidth-430, 20, 200, 50);
@@ -109,7 +109,7 @@ void VideoPlayer::doRun(QString absoluteFilePath)
     player->play();
 }
 
-void VideoPlayer::playPause()
+void VideoPlayer::standBy()
 {
     if (player->state() == QMediaPlayer::PlayingState) {
         player->pause();
@@ -121,7 +121,7 @@ void VideoPlayer::playPause()
     }
 }
 
-void VideoPlayer::playPauseForUser()
+void VideoPlayer::playPause()
 {
     if (player->state() == QMediaPlayer::PlayingState) {
         player->pause();
@@ -170,7 +170,7 @@ void VideoPlayer::progress(int totalPieces=0, int availablePiece=0)
 void VideoPlayer::update()
 {
     player->setPosition(qint64(slider->value()+1000));
-    QTimer::singleShot(2000, this, SLOT(playPause()));
+    QTimer::singleShot(2000, this, SLOT(standBy()));
 }
 
 void VideoPlayer::statusChange(QMediaPlayer::MediaStatus status)
@@ -182,8 +182,8 @@ void VideoPlayer::statusChange(QMediaPlayer::MediaStatus status)
             box->show();
             volumeIcon->show();
             volumeLabel->show();
-            totalTimeLabel->show();
             currentTimeLabel->show();
+            totalTimeLabel->show();
             bitRateLabel->show();
             peersLabel->show();
             bar->show();
@@ -195,7 +195,7 @@ void VideoPlayer::statusChange(QMediaPlayer::MediaStatus status)
         }
     } else if (status == QMediaPlayer::InvalidMedia || status == QMediaPlayer::EndOfMedia) {
         control = false;
-        QTimer::singleShot(40000, this, SLOT(playPause()));
+        QTimer::singleShot(40000, this, SLOT(standBy()));
     }
 }
 
@@ -211,7 +211,7 @@ void VideoPlayer::setPositiveVolume()
     player->setVolume(volume);
     volumeLabel->setText(QString::number(volume));
     if (volume > 0) {
-        icon.load(":/images/volume.png");
+        icon.load(":/images/player/volume.png");
         volumeIcon->setPixmap(icon);
     }
 }
@@ -223,7 +223,7 @@ void VideoPlayer::setNegativeVolume()
     player->setVolume(volume);
     volumeLabel->setText(QString::number(volume));
     if (volume == 0) {
-        icon.load(":/images/volumeOff.png");
+        icon.load(":/images/player/volumeOff.png");
         volumeIcon->setPixmap(icon);
     }
 }
@@ -285,6 +285,6 @@ void VideoPlayer::sliderReleased()
         QMetaObject::invokeMethod(_torrent, "offsetPiece", Qt::DirectConnection, Q_ARG(int, totalMsec), Q_ARG(int, offsetMsec));
     } else {
         player->setPosition(qint64(slider->value()));
-        playPause();
+        standBy();
     }
 }

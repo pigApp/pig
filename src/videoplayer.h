@@ -35,8 +35,8 @@ private:
     QPixmap icon;
     QLabel *volumeIcon;
     QLabel *volumeLabel;
-    QLabel *totalTimeLabel;
     QLabel *currentTimeLabel;
+    QLabel *totalTimeLabel;
     QLabel *bitRateLabel;
     QLabel *peersLabel;
     QProgressBar *bar;
@@ -48,8 +48,8 @@ private:
     int volume;
 
 private slots:
+    void standBy();
     void playPause();
-    void playPauseForUser();
     void statusChange(QMediaPlayer::MediaStatus status);
     void error(QMediaPlayer::Error);
     void setPositiveVolume();

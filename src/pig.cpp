@@ -261,7 +261,7 @@ void PIG::playerHandle(const QString absoluteFilePath)
     DownArrow = new QShortcut(this);
     DownArrow->setEnabled(true);
     DownArrow->setKey(Qt::Key_Down);
-    connect(SpaceBar, SIGNAL(activated()), mPlayer, SLOT(playPauseForUser()));
+    connect(SpaceBar, SIGNAL(activated()), mPlayer, SLOT(playPause()));
     connect(UpArrow, SIGNAL(activated()), mPlayer, SLOT(setPositiveVolume()));
     connect(DownArrow, SIGNAL(activated()), mPlayer, SLOT(setNegativeVolume()));
 }

@@ -5,3 +5,7 @@
 - Convertir medidas a porcentaje.
 - Agregar divisor para el tamaño de letras.
 - Installer, copiarlo desde ID
+- Paso extra en update. Por si es necesario actulizar tambien las librerias.
+
+
+sudo pacman -S gstreamer0.10-{{base,good}{,-plugins},ffmpeg}
