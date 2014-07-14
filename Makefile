@@ -491,10 +491,10 @@ compiler_rcc_clean:
 	-$(DEL_FILE) qrc_qml.cpp
 qrc_qml.cpp: qml.qrc \
 		images/pig/icon.png \
+		images/pig/wave.gif \
 		images/pig/icon.rc \
 		images/pig/logo.png \
 		images/pig/icon.ico \
-		images/pig/spinner.png \
 		images/player/volume.png \
 		images/player/volumeOff.png \
 		images/available/posterNotAvailable.png \

@@ -1,30 +1,27 @@
 import QtQuick 2.2
 
 Item {
-  id: wait
+    id: wait
 
-    Row {
-        id: row
-        spacing: 17
+    Rectangle {
+        id: waveLayer
+        width: wave.width
+        height: wave.height+8
+        AnimatedImage {
+            id: wave
+            source: "qrc:/images/pig/wave.gif"
+        }
+        anchors.horizontalCenter: msg.horizontalCenter
+        anchors.verticalCenter: msg.verticalCenter
+        anchors.verticalCenterOffset: -30
+    }
+    Text {
+        id: msg
+        text: "PLEASE WAIT"
+        color: { if (waveLayer.visible) "white"; else Qt.rgba(0.1, 0.1, 0.1, 0.2) }
+        font.family: pigFont.name
+        font.bold: true
+        font.pixelSize: 30
         anchors.centerIn: parent
-        Text {
-            id: msg
-            text: "PLEASE WAIT"
-            color: Qt.rgba(0.1, 0.1, 0.1, 0.1)
-            font.family: pigFont.name
-            font.pixelSize: 30
-        }
-        Image {
-            id: spinner
-            width: 25
-            height: 25
-            source: "qrc:/images/pig/spinner.png"
-            fillMode: Image.PreserveAspectCrop
-            clip: true
-            visible: showSpinner
-            property bool on: showSpinner
-            NumberAnimation on rotation { running: spinner.on; from: 0; to: 360; loops: Animation.Infinite; duration: 1200 }
-            anchors.verticalCenter: parent.verticalCenter
-        }
     }
 }

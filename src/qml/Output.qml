@@ -91,6 +91,18 @@ Item {
                 samples: 32
                 anchors.fill: poster
             }
+            Text {
+                id: counterLabel
+                text: currentFilm+" "+totalFilms
+                color: Qt.rgba(1, 1, 1, 0.02)
+                font.family: pigFont.name
+                font.letterSpacing: -13
+                font.pixelSize: 225/strap
+                anchors.right: parent.right
+                anchors.rightMargin: 40
+                anchors.bottom: cover.top
+                anchors.bottomMargin: -41
+            }
             Image {
                 id: stripes
                 source: "qrc:/images/output/stripes.png"
@@ -222,7 +234,6 @@ Item {
                 interval: 20
                 onTriggered: {
                     if (posterLoaded && coverLoaded) {
-                        root.showSpinner = true
                         loader.source = ""
                         recipe.state = "showAll"
                         delayFocus.start()
@@ -285,17 +296,6 @@ Item {
                 anchors.leftMargin: 2
                 anchors.verticalCenter: parent.verticalCenter
                 anchors.verticalCenterOffset: 40
-            }
-
-            Text {
-                id: counterLabel
-                text: currentFilm+"»"+totalFilms
-                color: "white"
-                font.family: pigFont.name
-                font.pixelSize: 110
-                anchors.right: parent.right
-                anchors.rightMargin: 30
-                anchors.verticalCenter: parent.verticalCenter
             }
 
             NumberAnimation { running: recipe.PathView.isCurrentItem; target: poster; property: "opacity"; to: 1; duration: 4000; easing.type: Easing.InOutQuad }
@@ -532,7 +532,6 @@ Item {
         coverLoaded = false
         root.list = ''
         model.clear()
-        root.showSpinner = true
         loader.source = "Wait.qml"
         root.find(inputText, category, pornstar, offset, false)
     }

@@ -11,7 +11,7 @@ Item {
     property bool get
     property bool requireRestart
     property bool news
-    property bool showSpinner 
+    property bool showWave 
 
     property string status
     property string information

@@ -182,7 +182,6 @@ Item {
                     NumberAnimation { target: blur; easing.amplitude: 1.65; properties: "opacity"; to: 0; duration: 800; easing.type: Easing.OutInElastic }
                     NumberAnimation { target: logo; easing.amplitude: 1.65; properties: "opacity"; to: 0; duration: 800; easing.type: Easing.OutInElastic }
                 }
-                PropertyAction { target: root; property: "showSpinner"; value: true }
                 PropertyAction { target: loader; property: "source"; value: "Wait.qml" }
                 PropertyAction { target: loader_finder_output; property: "source"; value: "Output.qml" }
             }
@@ -218,7 +217,6 @@ Item {
                     NumberAnimation { target: blur; easing.amplitude: 1.65; properties: "opacity"; to: 0; duration: 800; easing.type: Easing.OutInElastic }
                     NumberAnimation { target: logo; easing.amplitude: 1.65; properties: "opacity"; to: 0; duration: 800; easing.type: Easing.OutInElastic }
                 }
-                PropertyAction { target: root; property: "showSpinner"; value: true }
                 PropertyAction { target: loader; property: "source"; value: "Wait.qml" }
                 PropertyAction { target: loader_finder_output; property: "source"; value: "Output.qml" }
             }

@@ -15,8 +15,8 @@ class Torrent : public QObject
 public:
     explicit Torrent(QObject *parent=0);
 
-    Q_INVOKABLE bool isAvailable(int totalMsec, int offsetMsec, int availablePiece);
-    Q_INVOKABLE void offsetPiece(int totalMsec, int offsetMsec);
+    Q_INVOKABLE bool isAvailable(int total_msec, int offset_msec, int availablePiece);
+    Q_INVOKABLE void offsetPiece(int total_msec, int offset_msec);
 
     QObject *_pig;
     QObject *_player;
@@ -39,7 +39,9 @@ private:
     int neededPices;
     int availablePiece;
     int downloadOffsetPieces;
-    int neededBytes;
+    int needed_kb;
+
+    bool skip;
 
 private slots:
     void metadataReady();
@@ -47,5 +49,4 @@ private slots:
     void progress();
     void downloadInfo();
 };
-
 #endif

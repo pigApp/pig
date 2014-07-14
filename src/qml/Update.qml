@@ -3,29 +3,27 @@ import QtQuick 2.2
 Item {
     id: update
 
-    Row {
-        id: statusRow
-        spacing: 17
+    Rectangle {
+        id: waveLayer
+        width: wave.width
+        height: wave.height+8
+        visible: root.showWave
+        AnimatedImage {
+            id: wave
+            source: "qrc:/images/pig/wave.gif"
+        }
+        anchors.horizontalCenter: statusLabel.horizontalCenter
+        anchors.verticalCenter: statusLabel.verticalCenter
+        anchors.verticalCenterOffset: -30
+    }
+    Text {
+        id: statusLabel
+        text: root.status
+        color: { if (waveLayer.visible) "white"; else Qt.rgba(0.1, 0.1, 0.1, 0.2) }
+        font.family: pigFont.name
+        font.bold: root.showWave
+        font.pixelSize: 30
         anchors.centerIn: parent
-        Text {
-            id: statusLabel
-            text: root.status
-            color: { if(root.status != "SEEKING UPDATE") Qt.rgba(0.1, 0.1, 0.1, 0.2); else Qt.rgba(0.1, 0.1, 0.1, 0.1); }
-            font.family: pigFont.name
-            font.pixelSize: 30
-        }
-        Image {
-            id: spinner
-            width: 25
-            height: 25
-            source: "qrc:/images/pig/spinner.png"
-            fillMode: Image.PreserveAspectCrop
-            clip: true
-            visible: showSpinner
-            property bool on: showSpinner
-            NumberAnimation on rotation { running: spinner.on; from: 0; to: 360; loops: Animation.Infinite; duration: 1200 }
-            anchors.verticalCenter: parent.verticalCenter
-        }
     }
     Text {
         id: informationLabel

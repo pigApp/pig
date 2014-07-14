@@ -3,7 +3,6 @@
         <file>images/pig/icon.ico</file>
         <file>images/pig/icon.png</file>
         <file>images/pig/icon.rc</file>
-        <file>images/pig/spinner.png</file>
         <file>images/available/pornstarNotAvailable.png</file>
         <file>images/available/coverNotAvailable.png</file>
         <file>images/available/posterNotAvailable.png</file>
@@ -32,5 +31,6 @@
         <file>src/qml/ErrorDb.qml</file>
         <file>src/qml/Wait.qml</file>
         <file>images/pig/logo.png</file>
+        <file>images/pig/wave.gif</file>
     </qresource>
 </RCC>

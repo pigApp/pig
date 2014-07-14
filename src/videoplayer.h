@@ -19,8 +19,8 @@ public:
     ~VideoPlayer();
 
     Q_INVOKABLE void downloadInfo(int bitRate, int peers);
-    Q_INVOKABLE void progress(int totalPieces, int availablePiece);
-    Q_INVOKABLE void update();
+    Q_INVOKABLE void progress(int lengthPiece, int total_kb, int downloaded_kb);
+    Q_INVOKABLE void update(int total_pieces, int currentPiece);
 
     QObject *_torrent;
     QVBoxLayout *layout;
@@ -47,6 +47,10 @@ private:
     bool pausedForUser;
     int volume;
 
+    bool skip;
+
+    int skipTo_msec;
+
 private slots:
     void standBy();
     void playPause();
@@ -61,4 +65,5 @@ private slots:
     void sliderMoved(int position);
     void sliderReleased();
 };
+
 #endif

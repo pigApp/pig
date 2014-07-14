@@ -21,7 +21,7 @@ Update::~Update()
 
 void Update::doCheck()
 {
-    _root->setProperty("showSpinner", true);
+    _root->setProperty("showWave", true);
     _root->setProperty("status", "SEEKING UPDATE");
     
     if (db.open()) {
@@ -88,7 +88,7 @@ void Update::evaluate(QString version)
 
     if (newBinaryAvailable || newDatabaseAvailable) {
         newsAvailable = true;
-        _root->setProperty("showSpinner", false);
+        _root->setProperty("showWave", false);
         _root->setProperty("status", "UPDATE AVAILABLE");
         _root->setProperty("requireConfirmation", true);
         hostFiles = last[0];
@@ -97,7 +97,7 @@ void Update::evaluate(QString version)
         binaryUrl = last[4];
         databaseUrl = last[7];
     } else {
-        _root->setProperty("showSpinner", false);
+        _root->setProperty("showWave", false);
         _root->setProperty("status", "");
         emit forward();
     }
@@ -105,7 +105,7 @@ void Update::evaluate(QString version)
 
 void Update::getFiles()
 {
-    _root->setProperty("showSpinner", true);
+    _root->setProperty("showWave", true);
     _root->setProperty("status", "GETTING UPDATE");
     _root->setProperty("requireConfirmation", false);
 
@@ -179,7 +179,7 @@ void Update::replace(QString path, QString file)
     si.cb = sizeof(si);
     ZeroMemory(&pi, sizeof(pi));
     if (!CreateProcess((TCHAR*)(updater.utf16()), (TCHAR*)(updaterArguments.utf16()), NULL, NULL, FALSE, CREATE_NO_WINDOW, NULL, NULL, &si, &pi)) {
-        _root->setProperty("showSpinner", false);
+        _root->setProperty("showWave", false);
         _root->setProperty("status", "PERMISSION DENIED");
         _root->setProperty("information", "RESTART THE APPLICATION WITH ADMINITRATOR RIGHTS");
     } else {
@@ -213,7 +213,7 @@ void Update::replace(QString path, QString file)
             }
         } else {
             newBinaryAvailable = false;
-            _root->setProperty("showSpinner", false);
+            _root->setProperty("showWave", false);
             _root->setProperty("status", "");
             abort();
         }
@@ -231,7 +231,7 @@ void Update::replace(QString path, QString file)
 
 void Update::replaceBinaryReady(int exitCode)
 {
-    _root->setProperty("showSpinner", false);
+    _root->setProperty("showWave", false);
 #ifdef _WIN32
     if (!databaseUpdated) {
         if (db.open()) {
