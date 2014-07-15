@@ -26,7 +26,7 @@ Item {
     property int n
     property real strap: 1
     property int peers: 0
-    property int needed: 0
+    property int required: 0
     property int downloaded: 0
 
     property variant categoryList

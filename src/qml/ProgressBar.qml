@@ -9,7 +9,7 @@ Item {
     property int minimum: 0
     property int maximum: 100
     property int value
-    onValueChanged: { progressBar.maximum = root.needed }
+    onValueChanged: { progressBar.maximum = root.required }
 
     Rectangle {
         id: border

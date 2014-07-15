@@ -12,19 +12,9 @@ PIG::PIG(QWidget *parent) : QWidget(parent), mRoot(0)
     layout->setContentsMargins(0, 0, 0, 0);
     layout->setMargin(0);
     layout->setSpacing(0);
-
-    setMouseTracking(true);
     setLayout(layout);
 
-    Esc = new QShortcut(this);
-    Esc->setKey(Qt::Key_Escape);
-    Esc->setEnabled(false);
-
-    Quit = new QShortcut(this);
-    Quit->setKey(Qt::Key_Escape && Qt::ShiftModifier);
-
-    connect(Esc, SIGNAL(activated()), this, SLOT(closePlayer()));
-    connect(Quit, SIGNAL(activated()), this, SLOT(quit()));
+    setMouseTracking(true);
 }
 
 PIG::~PIG()
@@ -246,29 +236,37 @@ void PIG::playerHandle(const QString absoluteFilePath)
 {
     mPlayer = new VideoPlayer(this, this->geometry().width(), this->geometry().height());
     mPlayer->_torrent = mTorrent;
-    mTorrent->_player = mPlayer; // TODO: Asegurarse en torrent.cpp que sea un puntero valido antes de llamar a progress().
+    mTorrent->_player = mPlayer;
     mPlayer->doRun(absoluteFilePath);
-                                 // TODO: Desde aca, pasarlo a otro slot, que sea llamado si el video es valido.
+
     container->hide();
     layout->addLayout(mPlayer->layout);
-
-    SpaceBar = new QShortcut(this);
-    SpaceBar->setEnabled(true);
-    SpaceBar->setKey(Qt::Key_Space);
-    UpArrow = new QShortcut(this);
-    UpArrow->setEnabled(true);
-    UpArrow->setKey(Qt::Key_Up);
-    DownArrow = new QShortcut(this);
-    DownArrow->setEnabled(true);
-    DownArrow->setKey(Qt::Key_Down);
-    connect(SpaceBar, SIGNAL(activated()), mPlayer, SLOT(playPause()));
-    connect(UpArrow, SIGNAL(activated()), mPlayer, SLOT(setPositiveVolume()));
-    connect(DownArrow, SIGNAL(activated()), mPlayer, SLOT(setNegativeVolume()));
 }
 
-void PIG::mouseMoveEvent(QMouseEvent *event)
+void PIG::keyPressEvent(QKeyEvent *event)
 {
-    qDebug() << "=======================MOUSE_MOVE";
+    if (event->key() == Qt::Key_Space) {
+        mPlayer->playPause();
+    } else if (event->key() == Qt::Key_Left) {
+        mPlayer->skip_key_value = -10000;
+        mPlayer->sliderReleased();
+    } else if (event->key() == Qt::Key_Right) {
+        mPlayer->skip_key_value = 10000;
+        mPlayer->sliderReleased();
+    } else if (event->key() == Qt::Key_Up) {
+        mPlayer->setVolume(5);
+    } else if (event->key() == Qt::Key_Down) {
+        mPlayer->setVolume(-5);
+    } else if (event->key() == Qt::Key_Escape) { // TODO: Comprobar que funcione.
+        closePlayer();
+    } else if (event->key() == (Qt::Key_Escape && Qt::ControlModifier)) { // TODO: Comprobar que funcione.
+        quit();
+    }
+}
+
+void PIG::mousePressEvent(QMouseEvent *event)
+{
+    qDebug() << event;
 }
 
 void PIG::closePlayer()
@@ -276,11 +274,6 @@ void PIG::closePlayer()
     container->show();
     //mPlayer->close();
     delete mPlayer;
-
-    SpaceBar->setEnabled(false);
-    UpArrow->setEnabled(false);
-    DownArrow->setEnabled(false);
-    Esc->setEnabled(false);
 
     emit hidePlayerLayerSIGNAL();
 }

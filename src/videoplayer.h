@@ -19,14 +19,19 @@ public:
     ~VideoPlayer();
 
     Q_INVOKABLE void downloadInfo(int bitRate, int peers);
-    Q_INVOKABLE void progress(int lengthPiece, int total_kb, int downloaded_kb);
+    Q_INVOKABLE void progress(int piece_kb, int total_kb, int downloaded_kb);
     Q_INVOKABLE void update(int total_pieces, int currentPiece);
 
     QObject *_torrent;
     QVBoxLayout *layout;
 
+    int skip_key_value;
+
 public slots:
     void doRun(QString absoluteFilePath);
+    void playPause();
+    void setVolume(int volume_key_value);
+    void sliderReleased();
 
 private:
     QVideoWidget *videoWidget;
@@ -35,6 +40,7 @@ private:
     QPixmap icon;
     QLabel *volumeIcon;
     QLabel *volumeLabel;
+    QLabel *pauseLabel;
     QLabel *currentTimeLabel;
     QLabel *totalTimeLabel;
     QLabel *bitRateLabel;
@@ -42,28 +48,21 @@ private:
     QProgressBar *bar;
     QSlider *slider;
 
-    bool init;
-    bool control;
-    bool pausedForUser;
+    bool skip;
+    bool paused;
+    int skip_player_msec;
     int volume;
 
-    bool skip;
-
-    int skipTo_msec;
 
 private slots:
     void standBy();
-    void playPause();
     void statusChange(QMediaPlayer::MediaStatus status);
     void error(QMediaPlayer::Error);
-    void setPositiveVolume();
-    void setNegativeVolume();
     void setCurrentTime(qint64 msecs);
     void setTotalTime(qint64 msecs);
     void setSliderPosition(qint64 position);
     void sliderPressed();
     void sliderMoved(int position);
-    void sliderReleased();
 };
 
 #endif

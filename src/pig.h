@@ -11,7 +11,7 @@
 #include <QWidget>
 #include <QApplication>
 #include <QtSql>
-#include <QShortcut>
+#include <QKeyEvent>
 #include <QMouseEvent>
 #include <QVBoxLayout>
 
@@ -28,6 +28,10 @@ public:
     QWidget *container;
     QVBoxLayout *layout;
 
+protected:
+    void keyPressEvent(QKeyEvent *event);
+    void mousePressEvent(QMouseEvent *event);
+
 public slots:
     void setRootObject(QObject *root);
 
@@ -40,9 +44,6 @@ signals:
     void hidePlayerLayerSIGNAL();
     void showErrorDbSIGNAL();
 
-protected:
-    void mouseMoveEvent(QMouseEvent *event);
-
 private:
     QObject *mRoot;
     Password *mPassword;
@@ -51,11 +52,6 @@ private:
     VideoPlayer *mPlayer;
 
     QSqlDatabase db;
-    QShortcut *SpaceBar;
-    QShortcut *UpArrow;
-    QShortcut *DownArrow;
-    QShortcut *Esc;
-    QShortcut *Quit;
 
 private slots:
     void passwordHandle(QString pass, bool init, bool write);

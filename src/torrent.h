@@ -1,12 +1,10 @@
 #ifndef TORRENT_H
 #define TORRENT_H
 
+#include <QObject>
 #include <libtorrent/session.hpp>
-
 #include <stdlib.h>
 #include <iostream>
-
-#include <QObject>
 
 class Torrent : public QObject
 {
@@ -34,18 +32,18 @@ private:
     libtorrent::error_code ec;
 
     bool remap;
-    bool widget;
-    int offset;
-    int neededPices;
-    int availablePiece;
-    int downloadOffsetPieces;
-    int needed_kb;
-
     bool skip;
+    bool toWidget;
+    int piece_kb;
+    int required_kb;
+    int requiredPieces;
+    int availablePiece;
+    int downloadedPieces;
+    int offset;
 
 private slots:
     void metadataReady();
-    void minimumPiecesReady();
+    void minimumPiecesRequired();
     void progress();
     void downloadInfo();
 };
