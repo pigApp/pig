@@ -43,7 +43,7 @@ Item {
             opacity: { PathView.recipeOpacity || 1 }
             z: { PathView.recipeZ || 1 }
 
-            Keys.onUpPressed: { if (!output.zoomIn) fiveMoreTimer.start() }
+            Keys.onUpPressed: { if (!output.zoomIn && !onShowPlayerLayer) fiveMoreTimer.start() }
             Timer {
                 id: fiveMoreTimer
                 running: false
@@ -51,7 +51,7 @@ Item {
                 interval: 500
                 onTriggered: { pathView.fiveMore() }
             }
-            Keys.onDownPressed: { if (!output.zoomIn) fiveLessTimer.start() }
+            Keys.onDownPressed: { if (!output.zoomIn && !onShowPlayerLayer) fiveLessTimer.start() }
             Timer {
                 id: fiveLessTimer
                 running: false
@@ -59,8 +59,8 @@ Item {
                 interval: 500
                 onTriggered: { pathView.fiveLess() }
             }
-            Keys.onRightPressed: { if (!output.zoomIn) pathView.next() }
-            Keys.onLeftPressed: { if (!output.zoomIn) pathView.prior() }
+            Keys.onRightPressed: { if (!output.zoomIn && !onShowPlayerLayer) pathView.next() }
+            Keys.onLeftPressed: { if (!output.zoomIn && !onShowPlayerLayer) pathView.prior() }
 
             Image {
                 id: poster
@@ -93,15 +93,15 @@ Item {
             }
             Text {
                 id: counterLabel
-                text: currentFilm+" "+totalFilms
+                text: currentFilm+"➟"+totalFilms
                 color: Qt.rgba(1, 1, 1, 0.02)
                 font.family: pigFont.name
-                font.letterSpacing: -13
-                font.pixelSize: 225/strap
-                anchors.right: parent.right
-                anchors.rightMargin: 40
-                anchors.bottom: cover.top
-                anchors.bottomMargin: -41
+                font.letterSpacing: 0
+                font.pixelSize: 225
+                anchors.horizontalCenter: cover.horizontalCenter
+                anchors.horizontalCenterOffset: 150
+                anchors.top: cover.bottom
+                anchors.topMargin: -40
             }
             Image {
                 id: stripes
@@ -313,7 +313,7 @@ Item {
                 State {
                     name: "hidePlayerLayer"
                     PropertyChanges { target: root; peers: 0 }
-                    PropertyChanges { target: root; needed: 0 }
+                    PropertyChanges { target: root; required: 0 }
                     PropertyChanges { target: root; downloaded: 0 }
                 },
                 State {
@@ -331,7 +331,10 @@ Item {
                 },
                 Transition {
                     to: "hidePlayerLayer"
-                        NumberAnimation { target: playerLayer; property: "height"; to: 0; duration: 1000; easing.type: Easing.InOutQuart }
+                        SequentialAnimation {
+                            NumberAnimation { target: playerLayer; property: "height"; to: 0; duration: 1000; easing.type: Easing.InOutQuart }
+                            PropertyAction { target: output; property: "onShowPlayerLayer"; value: false }
+                        }
                 },
                 Transition {
                     to: "showAll"
@@ -418,15 +421,17 @@ Item {
         }
 
         Keys.onPressed: {
-            if (!zoomIn && event.key === Qt.Key_Escape && !(event.modifiers & Qt.ControlModifier)) {  
-                loader_finder_output.source = "Finder.qml"
-                event.accepted = true;
-            } else if (event.key === Qt.Key_H && (event.modifiers & Qt.ControlModifier)) {
-                screen.state = "showHelp"
-                event.accepted = true
-            } else if (event.key === Qt.Key_Escape && (event.modifiers & Qt.ControlModifier)) {
-                root.quit()
-                event.accepted = true;
+            if (!onShowPlayerLayer) {
+                if (!zoomIn && event.key === Qt.Key_Escape && !(event.modifiers & Qt.ControlModifier)) {
+                    loader_finder_output.source = "Finder.qml"
+                    event.accepted = true;
+                } else if (event.key === Qt.Key_H && (event.modifiers & Qt.ControlModifier)) {
+                    screen.state = "showHelp"
+                    event.accepted = true
+                } else if (event.key === Qt.Key_Escape && (event.modifiers & Qt.ControlModifier)) {
+                    root.quit()
+                    event.accepted = true;
+                }
             }
         }
 

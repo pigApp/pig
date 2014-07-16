@@ -20,7 +20,7 @@ class PIG : public QWidget
     Q_OBJECT
 
 public:
-    PIG(QWidget *parent = 0);
+    PIG(QWidget *parent=0);
     ~PIG();
 
     Q_INVOKABLE void playerHandle(const QString absoluteFilePath);
@@ -31,6 +31,7 @@ public:
 protected:
     void keyPressEvent(QKeyEvent *event);
     void mousePressEvent(QMouseEvent *event);
+    void mouseReleaseEvent(QMouseEvent *event);
 
 public slots:
     void setRootObject(QObject *root);

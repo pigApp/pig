@@ -234,46 +234,65 @@ void PIG::torrentHandle(QString magnetUrl, QString scenne)
 // Player
 void PIG::playerHandle(const QString absoluteFilePath)
 {
-    mPlayer = new VideoPlayer(this, this->geometry().width(), this->geometry().height());
+    mPlayer = new VideoPlayer();
     mPlayer->_torrent = mTorrent;
     mTorrent->_player = mPlayer;
     mPlayer->doRun(absoluteFilePath);
 
     container->hide();
-    layout->addLayout(mPlayer->layout);
+    layout->addWidget(mPlayer);
 }
 
 void PIG::keyPressEvent(QKeyEvent *event)
 {
-    if (event->key() == Qt::Key_Space) {
-        mPlayer->playPause();
-    } else if (event->key() == Qt::Key_Left) {
-        mPlayer->skip_key_value = -10000;
-        mPlayer->sliderReleased();
-    } else if (event->key() == Qt::Key_Right) {
-        mPlayer->skip_key_value = 10000;
-        mPlayer->sliderReleased();
-    } else if (event->key() == Qt::Key_Up) {
-        mPlayer->setVolume(5);
-    } else if (event->key() == Qt::Key_Down) {
-        mPlayer->setVolume(-5);
-    } else if (event->key() == Qt::Key_Escape) { // TODO: Comprobar que funcione.
-        closePlayer();
-    } else if (event->key() == (Qt::Key_Escape && Qt::ControlModifier)) { // TODO: Comprobar que funcione.
+    if (mPlayer->isActiveWindow()) {
+        mPlayer->hideControlsTimer->stop();
+        mPlayer->showControls();
+        mPlayer->hideControlsTimer->start();
+
+        if (event->key() == Qt::Key_Space) {
+            mPlayer->playPause();
+        } else if (event->key() == Qt::Key_Left) {
+            mPlayer->skip_key_value = -10000;
+            mPlayer->sliderReleased();
+        } else if (event->key() == Qt::Key_Right) {
+            mPlayer->skip_key_value = 10000;
+            mPlayer->sliderReleased();
+        } else if (event->key() == Qt::Key_Up) {
+            mPlayer->setVolume(5);
+        } else if (event->key() == Qt::Key_Down) {
+            mPlayer->setVolume(-5);
+        } else if (event->key() == Qt::Key_L) {
+            mPlayer->setLoop();
+        } else if (event->key() == Qt::Key_Escape) { // TODO: Comprobar que funcione.
+            closePlayer();
+        }
+    }
+    if (event->key() == (Qt::Key_Escape && Qt::ControlModifier)) { // TODO: Comprobar que funcione.
         quit();
     }
 }
 
 void PIG::mousePressEvent(QMouseEvent *event)
 {
-    qDebug() << event;
+    if (mPlayer->isActiveWindow()) {
+        mPlayer->hideControlsTimer->stop();
+        mPlayer->showControls();
+        mPlayer->hideControlsTimer->start();
+    }
+}
+
+void PIG::mouseReleaseEvent(QMouseEvent *event)
+{
+    this->setFocus();
 }
 
 void PIG::closePlayer()
 {
+    layout->removeWidget(mPlayer);
     container->show();
-    //mPlayer->close();
-    delete mPlayer;
+    mPlayer->close();
+    //delete mPlayer;
 
     emit hidePlayerLayerSIGNAL();
 }
