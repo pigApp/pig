@@ -27,8 +27,8 @@ VideoPlayer::VideoPlayer(QVideoWidget *parent) : QVideoWidget(parent)
     box->hide();
 
     volumeIcon = new QLabel();
-    icon.load((":/images/player/volume.png"));
-    volumeIcon->setPixmap(icon);
+    volumePixmap.load((":/images/player/volume.png"));
+    volumeIcon->setPixmap(volumePixmap);
     volumeIcon->setGeometry(30, 30, 30, 30);
     volumeIcon->setStyleSheet("background: black; border: none;");
     volumeIcon->setParent(this);
@@ -82,7 +82,7 @@ VideoPlayer::VideoPlayer(QVideoWidget *parent) : QVideoWidget(parent)
     bar->setGeometry(3.4, screenHeight-5, screenWidth-8.3, 3);
     bar->setStyleSheet (
                 "QProgressBar { background: #141414; border: none; }"
-                "QProgressBar::chunk { background: #252525; }"
+                "QProgressBar::chunk { background: #5e5e5e; }"
     );
     bar->setTextVisible(false);
     bar->setMinimum(0);
@@ -102,8 +102,26 @@ VideoPlayer::VideoPlayer(QVideoWidget *parent) : QVideoWidget(parent)
     slider->setParent(this);
     slider->hide();
 
+    loopIcon = new QLabel();
+    loopPixmap.load((":/images/player/loop.png"));
+    loopIcon->setPixmap(loopPixmap);
+    loopIcon->setGeometry(170, 30, 30, 30);
+    loopIcon->setStyleSheet("background: black; border: none;");
+    loopIcon->setParent(this);
+    loopIcon->hide();
+
+    font.setPixelSize(13.5);
+    font.setBold(true);
+    startLoopLabel = new QLabel();
+    startLoopLabel->setGeometry(4, screenHeight-83, 122, 19);
+    startLoopLabel->setStyleSheet("background: black; border: none; color: white;");
+    startLoopLabel->setFont(font);
+    startLoopLabel->setParent(this);
+    startLoopLabel->hide();
+    startLoopLabel->setText("SET START LOOP");
+
     sliderStartLoop = new QSlider(Qt::Horizontal);
-    sliderStartLoop->setGeometry(4, screenHeight-55, screenWidth-9, 5);
+    sliderStartLoop->setGeometry(4, screenHeight-58, screenWidth-9, 5);
     sliderStartLoop->setStyleSheet (
         "QSlider::groove:horizontal { background: #141414; border: none; }"
         "QSlider::sub-page:horizontal { background: #dfff00; }"
@@ -116,7 +134,7 @@ VideoPlayer::VideoPlayer(QVideoWidget *parent) : QVideoWidget(parent)
     sliderStartLoop->hide();
 
     sliderStopLoop = new QSlider(Qt::Horizontal);
-    sliderStopLoop->setGeometry(4, screenHeight-40, screenWidth-9, 5);
+    sliderStopLoop->setGeometry(4, screenHeight-52, screenWidth-9, 5);
     sliderStopLoop->setStyleSheet (
         "QSlider::groove:horizontal { background: #141414; border: none; }"
         "QSlider::sub-page:horizontal { background: #dfff00; }"
@@ -128,14 +146,24 @@ VideoPlayer::VideoPlayer(QVideoWidget *parent) : QVideoWidget(parent)
     sliderStopLoop->setParent(this);
     sliderStopLoop->hide();
 
+    stopLoopLabel = new QLabel();
+    stopLoopLabel->setGeometry(4, screenHeight-40.05, 108, 19);
+    stopLoopLabel->setStyleSheet("background: black; border: none; color: white;");
+    stopLoopLabel->setFont(font);
+    stopLoopLabel->setParent(this);
+    stopLoopLabel->hide();
+    stopLoopLabel->setText("SET END LOOP");
+
     connect(player, SIGNAL(positionChanged(qint64)), this, SLOT(setCurrentTime(qint64)));
     connect(player, SIGNAL(durationChanged(qint64)), this, SLOT(setTotalTime(qint64)));
     connect(player, SIGNAL(positionChanged(qint64)), this, SLOT(setSliderPosition(qint64)));
     connect(slider, SIGNAL(sliderPressed()), this, SLOT(sliderPressed()));
     connect(slider, SIGNAL(sliderMoved(int)), this, SLOT(sliderMoved(int)));
     connect(slider, SIGNAL(sliderReleased()), this, SLOT(sliderReleased()));
+    connect(sliderStartLoop, SIGNAL(sliderPressed()), this, SLOT(sliderStartLoopPressed()));
     connect(sliderStartLoop, SIGNAL(sliderMoved(int)), this, SLOT(sliderStartLoopMoved(int)));
     connect(sliderStartLoop, SIGNAL(sliderReleased()), this, SLOT(sliderStartLoopReleased()));
+    connect(sliderStopLoop, SIGNAL(sliderPressed()), this, SLOT(sliderStopLoopPressed()));
     connect(sliderStopLoop, SIGNAL(sliderMoved(int)), this, SLOT(sliderStopLoopMoved(int)));
     connect(sliderStopLoop, SIGNAL(sliderReleased()), this, SLOT(sliderStopLoopReleased()));
     connect(player, SIGNAL(mediaStatusChanged(QMediaPlayer::MediaStatus)), this, SLOT(statusChange(QMediaPlayer::MediaStatus)));
@@ -155,24 +183,27 @@ VideoPlayer::~VideoPlayer()
 void VideoPlayer::doRun(QString absoluteFilePath)
 {
     skip = false;
-    skip_key_value = 0;
-    paused = false;
     loop = false;
+    paused = false;
+    skip_key_value = 0;
+
     player->setMedia(QUrl::fromLocalFile(absoluteFilePath));
     player->play();
 }
 
 void VideoPlayer::playPause()
 {
-    if (player->state() == QMediaPlayer::PlayingState) {
-        player->pause();
-        paused = true;
-        pauseLabel->show();
-        hideControlsTimer->stop();
-    } else if (player->state() == QMediaPlayer::PausedState && !skip) {
-        player->play();
-        paused = false;
-        pauseLabel->hide();
+    if (!loop) {
+        if (player->state() == QMediaPlayer::PlayingState) {
+            player->pause();
+            paused = true;
+            pauseLabel->show();
+            hideControlsTimer->stop();
+        } else if (player->state() == QMediaPlayer::PausedState && !skip) {
+            player->play();
+            paused = false;
+            pauseLabel->hide();
+        }
     }
 }
 
@@ -197,11 +228,11 @@ void VideoPlayer::setVolume(int volume_key_value)
         player->setVolume(volume);
         volumeLabel->setText(QString::number(volume));
         if (volume > 0) {
-            icon.load(":/images/player/volume.png");
-            volumeIcon->setPixmap(icon);
+            volumePixmap.load(":/images/player/volume.png");
+            volumeIcon->setPixmap(volumePixmap);
         } else {
-            icon.load(":/images/player/volumeOff.png");
-            volumeIcon->setPixmap(icon);
+            volumePixmap.load(":/images/player/volumeOff.png");
+            volumeIcon->setPixmap(volumePixmap);
         }
     }
 }
@@ -209,23 +240,40 @@ void VideoPlayer::setVolume(int volume_key_value)
 void VideoPlayer::setLoop()
 {
     if (sliderStartLoop->isHidden()) {
-        playPause();
+        player->pause();
+        slider->setDisabled(true);
+
+        loop = true;
+        paused = true;
+        startLoop_msec = 0;
+        stopLoop_msec = 0;
+        pauseLabel->hide();
+        loopIcon->show();
+        startLoopLabel->show();
         sliderStartLoop->setMaximum(player->duration());
         sliderStartLoop->setEnabled(true);
         sliderStartLoop->show();
         sliderStopLoop->setMaximum(player->duration());
-        sliderStopLoop->setEnabled(true);
         sliderStopLoop->show();
     } else {
-        player->play();
-        pauseLabel->hide();
+        loop = false;
+        paused = false;
+        loopIcon->hide();
+        startLoopLabel->hide();
+        stopLoopLabel->hide();
         sliderStartLoop->setEnabled(false);
         sliderStartLoop->hide();
         sliderStopLoop->setEnabled(false);
         sliderStopLoop->hide();
-        loop = false;
-        hideControlsTimer->start();
+
+        player->play();
+        slider->setDisabled(false);
     }
+}
+
+void VideoPlayer::sliderStartLoopPressed()
+{
+    hideControlsTimer->stop();
 }
 
 void VideoPlayer::sliderStartLoopMoved(int position)
@@ -236,6 +284,27 @@ void VideoPlayer::sliderStartLoopMoved(int position)
 void VideoPlayer::sliderStartLoopReleased()
 {
     startLoop_msec = sliderStartLoop->value();
+    if (startLoop_msec >= readyToRead_msec) {
+        startLoop_msec = readyToRead_msec-20000;
+        sliderStartLoop->setValue(startLoop_msec);
+    } else if (startLoop_msec >= stopLoop_msec && sliderStopLoop->isEnabled()) {
+         startLoop_msec = stopLoop_msec-10000;
+         sliderStartLoop->setValue(startLoop_msec);
+    }
+
+    if (stopLoop_msec == 0) {
+        startLoopLabel->hide();
+        stopLoopLabel->show();
+        sliderStopLoop->setEnabled(true);
+    } else {
+        player->setPosition(startLoop_msec);
+        hideControlsTimer->start();
+    }
+}
+
+void VideoPlayer::sliderStopLoopPressed()
+{
+    hideControlsTimer->stop();
 }
 
 void VideoPlayer::sliderStopLoopMoved(int position)
@@ -245,16 +314,20 @@ void VideoPlayer::sliderStopLoopMoved(int position)
 
 void VideoPlayer::sliderStopLoopReleased()
 {
-    // TODO: Comprobar que stopLoop_msec sea menor que readyToRead_msec.
-          // Si no lo es setarlo a readyToRead_msec-10000
-          // Comprobar que stopLoop_msec sea mayor que startLoop_msec
-          // Si no lo es setearlo a startLoop_msec +10000
-
     stopLoop_msec = sliderStopLoop->value();
+    if (stopLoop_msec > readyToRead_msec) {
+        stopLoop_msec = readyToRead_msec-10000;
+        sliderStopLoop->setValue(stopLoop_msec);
+    } else if (stopLoop_msec <= startLoop_msec) {
+        stopLoop_msec = startLoop_msec+10000;
+        sliderStopLoop->setValue(stopLoop_msec);
+    }
 
     player->setPosition(startLoop_msec);
-    playPause();
-    loop = true;
+    player->play();
+    paused = false;
+
+    stopLoopLabel->hide();
     hideControlsTimer->start();
 }
 
@@ -303,7 +376,7 @@ void VideoPlayer::progress(int piece_kb=0, int total_kb=0, int downloaded_kb=0)
 
         //qDebug() << "DOWNLOADED_MSEC: " << downloaded_msec;
 
-        int readyToRead_msec = ((downloaded_kb-(piece_kb*8))*player->duration())/total_kb;
+        readyToRead_msec = ((downloaded_kb-(piece_kb*8))*player->duration())/total_kb;
         if (!paused) {
             if (slider->value() < readyToRead_msec) {
                 if(player->state() == QMediaPlayer::PausedState) {
@@ -318,10 +391,9 @@ void VideoPlayer::progress(int piece_kb=0, int total_kb=0, int downloaded_kb=0)
             }
         }
 
-        if (loop) {
+        if (loop && player->state() == 1)
             if (slider->value() >= stopLoop_msec)
                 player->setPosition(startLoop_msec);
-        }
 
         //qDebug() << "CURRENT_MSEC: " << slider->value();
         //qDebug() << "READY___MSEC: " << readyToRead_msec;
@@ -361,22 +433,24 @@ void VideoPlayer::sliderReleased()
     int offset_msec = slider->value()+skip_key_value;
     bool available;
 
-    QMetaObject::invokeMethod(_torrent, "isAvailable", Qt::DirectConnection, Q_RETURN_ARG(bool, available), Q_ARG(int, total_msec), Q_ARG(int, offset_msec), Q_ARG(int, 0));
-    if(available) {
-        if (skip_key_value != 0) {
-            player->setPosition(qint64(slider->value()+skip_key_value));
+    if (!loop) {
+        QMetaObject::invokeMethod(_torrent, "isAvailable", Qt::DirectConnection, Q_RETURN_ARG(bool, available), Q_ARG(int, total_msec), Q_ARG(int, offset_msec), Q_ARG(int, 0));
+        if(available) {
+            if (skip_key_value != 0) {
+                player->setPosition(qint64(slider->value()+skip_key_value));
+                skip_key_value = 0;
+            } else {
+                skip = false;
+                player->setPosition(qint64(slider->value()));
+                player->play();
+                hideControlsTimer->start();
+            }
+        } else if (!available && skip_key_value == 0) {
+            bar->setValue(qint64(slider->value()));
+            QMetaObject::invokeMethod(_torrent, "offsetPiece", Qt::DirectConnection, Q_ARG(int, total_msec), Q_ARG(int, offset_msec));
+        } else if (!available && skip_key_value != 0) {
             skip_key_value = 0;
-        } else {
-            skip = false;
-            player->setPosition(qint64(slider->value()));
-            player->play();
-            hideControlsTimer->start();
         }
-    } else if (!available && skip_key_value == 0) {
-        bar->setValue(qint64(slider->value()));
-        QMetaObject::invokeMethod(_torrent, "offsetPiece", Qt::DirectConnection, Q_ARG(int, total_msec), Q_ARG(int, offset_msec));
-    } else if (!available && skip_key_value != 0) {
-        skip_key_value = 0;
     }
 }
 
@@ -393,19 +467,30 @@ void VideoPlayer::showControls()
     peersLabel->show();
     bar->show();
     slider->show();
+    if (loop) {
+        loopIcon->show();
+        sliderStartLoop->show();
+        sliderStopLoop->show();
+    }
 }
 
 void VideoPlayer::hideControls()
 {
-    box->hide();
-    volumeIcon->hide();
-    volumeLabel->hide();
-    currentTimeLabel->hide();
-    totalTimeLabel->hide();
-    bitRateLabel->hide();
-    peersLabel->hide();
-    bar->hide();
-    slider->hide();
+    if (!loop || (loop && player->state() == 1)) {
+        box->hide();
+        volumeIcon->hide();
+        volumeLabel->hide();
+        pauseLabel->hide();
+        loopIcon->hide();
+        currentTimeLabel->hide();
+        totalTimeLabel->hide();
+        bitRateLabel->hide();
+        peersLabel->hide();
+        sliderStartLoop->hide();
+        sliderStopLoop->hide();
+        bar->hide();
+        slider->hide();
+    }
 }
 
 void VideoPlayer::statusChange(QMediaPlayer::MediaStatus status)

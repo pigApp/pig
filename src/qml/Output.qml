@@ -93,15 +93,15 @@ Item {
             }
             Text {
                 id: counterLabel
-                text: currentFilm+"➟"+totalFilms
+                text: currentFilm+"."+totalFilms
                 color: Qt.rgba(1, 1, 1, 0.02)
                 font.family: pigFont.name
-                font.letterSpacing: 0
-                font.pixelSize: 225
-                anchors.horizontalCenter: cover.horizontalCenter
-                anchors.horizontalCenterOffset: 150
-                anchors.top: cover.bottom
-                anchors.topMargin: -40
+                font.bold: true
+                font.pixelSize: 112
+                anchors.right: parent.right
+                anchors.rightMargin: 10
+                anchors.bottom: parent.bottom
+                anchors.bottomMargin: -20
             }
             Image {
                 id: stripes
@@ -236,7 +236,7 @@ Item {
                     if (posterLoaded && coverLoaded) {
                         loader.source = ""
                         recipe.state = "showAll"
-                        delayFocus.start()
+                        focusDelay.start()
                     }else {
                         imagesStatus.restart()
                     }
@@ -396,7 +396,7 @@ Item {
                 ++currentFilm
                 ++location
             }
-            delayFocus.start()
+            focusDelay.start()
         }
         onPrior: {
             focusPath = false
@@ -410,10 +410,10 @@ Item {
                 --currentFilm
                 --location
             }
-            delayFocus.start()
+            focusDelay.start()
         }
         Timer {
-            id: delayFocus
+            id: focusDelay
             running: false
             repeat: false
             interval: 200
@@ -537,8 +537,15 @@ Item {
         coverLoaded = false
         root.list = ''
         model.clear()
-        loader.source = "Wait.qml"
         root.find(inputText, category, pornstar, offset, false)
+        waitDelay.start();
+    }
+    Timer {
+        id: waitDelay
+        running: false
+        repeat: false
+        interval: 600
+        onTriggered: { loader.source = "Wait.qml" }
     }
     
     Connections {

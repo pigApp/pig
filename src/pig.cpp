@@ -35,7 +35,7 @@ void PIG::setRootObject(QObject *root)
     QString tmp = "C:/tmp/pig/";
 #else
     QString target = QDir::homePath()+"/.pig/db.sqlite";
-    QString tmp = "/tmp/pig/";
+    QString tmp = QDir::homePath()+"/.pig/tmp/";
 #endif
     QFile file(target);
     if (file.exists()) {
@@ -245,7 +245,7 @@ void PIG::playerHandle(const QString absoluteFilePath)
 
 void PIG::keyPressEvent(QKeyEvent *event)
 {
-    if (mPlayer->isActiveWindow()) {
+    if (mPlayer->isActiveWindow()) { // TODO: Da error al bajar playerLayer. El teclado no se anula desde aca o desde output.qml.
         mPlayer->hideControlsTimer->stop();
         mPlayer->showControls();
         mPlayer->hideControlsTimer->start();
@@ -295,6 +295,25 @@ void PIG::closePlayer()
     //delete mPlayer;
 
     emit hidePlayerLayerSIGNAL();
+
+/* TODO: Descomentar. Limpia tmp.
+#ifdef _WIN32
+    QString target = "C:/tmp/pig/";
+#else
+    QString target = QDir::homePath()+"/.pig/tmp/";
+#endif
+    QDir tmp(target);
+
+    tmp.setFilter(QDir::NoDotAndDotDot | QDir::Files);
+    foreach(QString tmpItem, tmp.entryList())
+        tmp.remove(tmpItem);
+
+    tmp.setFilter(QDir::NoDotAndDotDot | QDir::Dirs);
+    foreach(QString tmpItem, tmp.entryList()) {
+        QDir subDir(tmp.absoluteFilePath(tmpItem));
+        subDir.removeRecursively();
+    }
+*/
 }
 
 // ErrorDb
@@ -305,6 +324,24 @@ void PIG::errorDb()
 
 void PIG::quit()
 {
+/* TODO: Descomentar. Limpia tmp.
+#ifdef _WIN32
+    QString target = "C:/tmp/pig/";
+#else
+    QString target = QDir::homePath()+"/.pig/tmp/";
+#endif
+    QDir tmp(target);
+
+    tmp.setFilter(QDir::NoDotAndDotDot | QDir::Files);
+    foreach(QString tmpItem, tmp.entryList())
+        tmp.remove(tmpItem);
+
+    tmp.setFilter(QDir::NoDotAndDotDot | QDir::Dirs);
+    foreach(QString tmpItem, tmp.entryList()) {
+        QDir subDir(tmp.absoluteFilePath(tmpItem));
+        subDir.removeRecursively();
+    }
+*/
     this->destroy(); // TODO: Salir bien.
     //qApp->quit();
     //exit(0);

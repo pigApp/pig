@@ -25,9 +25,10 @@ Torrent::Torrent(QObject *parent) : QObject(parent)
 void Torrent::doRun(QString mangnetUrl)
 {       
 #ifdef _WIN32
-        static std::string path = "C:/tmp/pig/";
+    std::string path = "C:/tmp/pig/";
 #else
-        static std::string path = "/tmp/pig/";
+    QString home = QDir::homePath();
+    std::string path = home.toStdString()+"/.pig/tmp/";
 #endif
     params.save_path = path;
     params.url = mangnetUrl.toStdString();

@@ -497,6 +497,7 @@ qrc_qml.cpp: qml.qrc \
 		images/pig/icon.ico \
 		images/player/volume.png \
 		images/player/volumeOff.png \
+		images/player/loop.png \
 		images/available/posterNotAvailable.png \
 		images/available/coverNotAvailable.png \
 		images/available/pornstarNotAvailable.png \

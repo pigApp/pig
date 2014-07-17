@@ -38,7 +38,8 @@ public slots:
 private:
     QMediaPlayer *player;
     QWidget *box;
-    QPixmap icon;
+    QPixmap volumePixmap;
+    QPixmap loopPixmap;
     QLabel *volumeIcon;
     QLabel *volumeLabel;
     QLabel *pauseLabel;
@@ -46,6 +47,9 @@ private:
     QLabel *totalTimeLabel;
     QLabel *bitRateLabel;
     QLabel *peersLabel;
+    QLabel *loopIcon;
+    QLabel *startLoopLabel;
+    QLabel *stopLoopLabel;
     QProgressBar *bar;
     QSlider *slider;
     QSlider *sliderStartLoop;
@@ -54,6 +58,7 @@ private:
     bool skip;
     bool paused;
     bool loop;
+    int readyToRead_msec;
     int skip_player_msec;
     int volume;
     qint64 startLoop_msec;
@@ -66,8 +71,10 @@ private slots:
     void setSliderPosition(qint64 position);
     void sliderPressed();
     void sliderMoved(int position);
+    void sliderStartLoopPressed();
     void sliderStartLoopMoved(int position);
     void sliderStartLoopReleased();
+    void sliderStopLoopPressed();
     void sliderStopLoopMoved(int position);
     void sliderStopLoopReleased();
     void hideControls();

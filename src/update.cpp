@@ -186,8 +186,8 @@ void Update::replace(QString path, QString file)
         replaceBinaryReady(0);
     }
 #else
-    updaterProc = new QProcess(this);
-    updaterProc->start("/bin/bash", QStringList() << "-c" << "gksu -u root -m 'PIG authorization to install update' 'mv /tmp/pig/pig /usr/bin/ ; chmod +x /usr/bin/pig'");
+    updaterProc = new QProcess(this);                                                                    // TODO: Ver si QDir de la linea de abajo funciona.
+    updaterProc->start("/bin/bash", QStringList() << "-c" << "gksu -u root -m 'PIG authorization to install update' 'mv "+QDir::homePath()+"/.pig/tmp/pig /usr/bin/ ; chmod +x /usr/bin/pig'");
     connect(updaterProc, SIGNAL(finished(int)), this, SLOT(replaceBinaryReady(int)));
 #endif
     } else if (newDatabaseAvailable && !newsAvailable) {

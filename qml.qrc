@@ -32,5 +32,6 @@
         <file>src/qml/Wait.qml</file>
         <file>images/pig/logo.png</file>
         <file>images/pig/wave.gif</file>
+        <file>images/player/loop.png</file>
     </qresource>
 </RCC>

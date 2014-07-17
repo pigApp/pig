@@ -1,6 +1,7 @@
 #include "tcpSocket.h"
 
 #include <QDataStream>
+#include <QDir>
 #include <QFile>
 
 
@@ -46,9 +47,9 @@ void TcpSocket::readyRead()
 void TcpSocket::write()
 {    
 #ifdef _WIN32
-        static QString path = "C:/tmp/pig/";
+        QString path = "C:/tmp/pig/";
 #else
-        static QString path = "/tmp/pig/";
+        QString path = QDir::homePath()+"/.pig/tmp/";
 #endif
     bool endHeader = false;
     QByteArray startPayload;
