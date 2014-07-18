@@ -59,11 +59,11 @@ void Torrent::minimumPiecesRequired()
         if (piece_kb < 256)
             requiredPieces = 60;
         else if (piece_kb >= 256 && piece_kb < 512)
-            requiredPieces = 40;
+            requiredPieces = 45;
         else if (piece_kb >= 512 && piece_kb < 1024)
             requiredPieces = 25;
         else if (piece_kb >= 1024 && piece_kb < 2048)
-            requiredPieces = 10;
+            requiredPieces = 15;
         else if (piece_kb >= 2048 && piece_kb < 4096)
             requiredPieces = 6;
         else

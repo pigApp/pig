@@ -10,8 +10,8 @@ VideoPlayer::VideoPlayer(QVideoWidget *parent) : QVideoWidget(parent)
     //int screenWidth =  screen->geometry().width();
     //int screenHeight = screen->geometry().height(); // TODO: Obtener width y height.
 
-    int screenWidth = 1920;
-    int screenHeight = 1080;
+    screenWidth = 1920;
+    screenHeight = 1080;
 
     player = new QMediaPlayer();
     player->setVideoOutput(this);
@@ -110,22 +110,24 @@ VideoPlayer::VideoPlayer(QVideoWidget *parent) : QVideoWidget(parent)
     loopIcon->setParent(this);
     loopIcon->hide();
 
-    font.setPixelSize(13.5);
-    font.setBold(true);
-    startLoopLabel = new QLabel();
-    startLoopLabel->setGeometry(4, screenHeight-83, 122, 19);
-    startLoopLabel->setStyleSheet("background: black; border: none; color: white;");
-    startLoopLabel->setFont(font);
-    startLoopLabel->setParent(this);
-    startLoopLabel->hide();
-    startLoopLabel->setText("SET START LOOP");
+    loopLabel = new QLabel();
+    loopLabel->setStyleSheet("background: black; border: none; color: white;");
+    loopLabel->setFont(font);
+    loopLabel->setParent(this);
+    loopLabel->hide();
+    
+    loopTimeLabel = new QLabel();
+    loopTimeLabel->setStyleSheet("background: black; border: none; color: white;");
+    loopTimeLabel->setFont(font);
+    loopTimeLabel->setParent(this);
+    loopTimeLabel->hide();
 
     sliderStartLoop = new QSlider(Qt::Horizontal);
-    sliderStartLoop->setGeometry(4, screenHeight-58, screenWidth-9, 5);
+    sliderStartLoop->setGeometry(4, screenHeight-38, screenWidth-9, 5);
     sliderStartLoop->setStyleSheet (
         "QSlider::groove:horizontal { background: #141414; border: none; }"
-        "QSlider::sub-page:horizontal { background: #dfff00; }"
-        "QSlider::handle:horizontal { background: black; border: 1px solid #ffffff; width: 13px; }"
+        "QSlider::sub-page:horizontal { background: yellow; }"
+        "QSlider::handle:horizontal { background: yellow; border: 1px solid yellow; width: 13px; }"
     );
     sliderStartLoop->setMinimum(0);
     sliderStartLoop->setTracking(true);
@@ -134,25 +136,17 @@ VideoPlayer::VideoPlayer(QVideoWidget *parent) : QVideoWidget(parent)
     sliderStartLoop->hide();
 
     sliderStopLoop = new QSlider(Qt::Horizontal);
-    sliderStopLoop->setGeometry(4, screenHeight-52, screenWidth-9, 5);
+    sliderStopLoop->setGeometry(4, screenHeight-32, screenWidth-9, 5);
     sliderStopLoop->setStyleSheet (
         "QSlider::groove:horizontal { background: #141414; border: none; }"
-        "QSlider::sub-page:horizontal { background: #dfff00; }"
-        "QSlider::handle:horizontal { background: black; border: 1px solid #ffffff; width: 13px; }"
+        "QSlider::sub-page:horizontal { background: yellow; }"
+        "QSlider::handle:horizontal { background: yellow; border: 1px solid yellow; width: 13px; }"
     );
     sliderStopLoop->setMinimum(0);
     sliderStopLoop->setTracking(true);
     sliderStopLoop->setEnabled(false);
     sliderStopLoop->setParent(this);
     sliderStopLoop->hide();
-
-    stopLoopLabel = new QLabel();
-    stopLoopLabel->setGeometry(4, screenHeight-40.05, 108, 19);
-    stopLoopLabel->setStyleSheet("background: black; border: none; color: white;");
-    stopLoopLabel->setFont(font);
-    stopLoopLabel->setParent(this);
-    stopLoopLabel->hide();
-    stopLoopLabel->setText("SET END LOOP");
 
     connect(player, SIGNAL(positionChanged(qint64)), this, SLOT(setCurrentTime(qint64)));
     connect(player, SIGNAL(durationChanged(qint64)), this, SLOT(setTotalTime(qint64)));
@@ -162,9 +156,11 @@ VideoPlayer::VideoPlayer(QVideoWidget *parent) : QVideoWidget(parent)
     connect(slider, SIGNAL(sliderReleased()), this, SLOT(sliderReleased()));
     connect(sliderStartLoop, SIGNAL(sliderPressed()), this, SLOT(sliderStartLoopPressed()));
     connect(sliderStartLoop, SIGNAL(sliderMoved(int)), this, SLOT(sliderStartLoopMoved(int)));
+    connect(sliderStartLoop, SIGNAL(sliderMoved(int)), this, SLOT(setSliderLoopTime(int)));
     connect(sliderStartLoop, SIGNAL(sliderReleased()), this, SLOT(sliderStartLoopReleased()));
     connect(sliderStopLoop, SIGNAL(sliderPressed()), this, SLOT(sliderStopLoopPressed()));
     connect(sliderStopLoop, SIGNAL(sliderMoved(int)), this, SLOT(sliderStopLoopMoved(int)));
+    connect(sliderStopLoop, SIGNAL(sliderMoved(int)), this, SLOT(setSliderLoopTime(int)));
     connect(sliderStopLoop, SIGNAL(sliderReleased()), this, SLOT(sliderStopLoopReleased()));
     connect(player, SIGNAL(mediaStatusChanged(QMediaPlayer::MediaStatus)), this, SLOT(statusChange(QMediaPlayer::MediaStatus)));
     connect(player, SIGNAL(error(QMediaPlayer::Error)), this, SLOT(error(QMediaPlayer::Error)));
@@ -241,31 +237,34 @@ void VideoPlayer::setLoop()
 {
     if (sliderStartLoop->isHidden()) {
         player->pause();
-        slider->setDisabled(true);
-
         loop = true;
         paused = true;
+        slider->setDisabled(true);
         startLoop_msec = 0;
         stopLoop_msec = 0;
         pauseLabel->hide();
         loopIcon->show();
-        startLoopLabel->show();
+        loopLabel->setGeometry(4, screenHeight-100, 340, 50);
+        loopLabel->setText("SET START LOOP");
+        loopLabel->show();
+        loopTimeLabel->setGeometry(360, screenHeight-100, 177, 50);
         sliderStartLoop->setMaximum(player->duration());
+        sliderStartLoop->setValue(startLoop_msec);
         sliderStartLoop->setEnabled(true);
         sliderStartLoop->show();
         sliderStopLoop->setMaximum(player->duration());
+        sliderStopLoop->setValue(stopLoop_msec);
         sliderStopLoop->show();
     } else {
         loop = false;
         paused = false;
         loopIcon->hide();
-        startLoopLabel->hide();
-        stopLoopLabel->hide();
+        loopLabel->hide();
+        loopTimeLabel->hide();
         sliderStartLoop->setEnabled(false);
         sliderStartLoop->hide();
         sliderStopLoop->setEnabled(false);
         sliderStopLoop->hide();
-
         player->play();
         slider->setDisabled(false);
     }
@@ -284,6 +283,7 @@ void VideoPlayer::sliderStartLoopMoved(int position)
 void VideoPlayer::sliderStartLoopReleased()
 {
     startLoop_msec = sliderStartLoop->value();
+
     if (startLoop_msec >= readyToRead_msec) {
         startLoop_msec = readyToRead_msec-20000;
         sliderStartLoop->setValue(startLoop_msec);
@@ -291,14 +291,17 @@ void VideoPlayer::sliderStartLoopReleased()
          startLoop_msec = stopLoop_msec-10000;
          sliderStartLoop->setValue(startLoop_msec);
     }
-
-    if (stopLoop_msec == 0) {
-        startLoopLabel->hide();
-        stopLoopLabel->show();
+    if (loopLabel->text() == "SET START LOOP") {
+        loopTimeLabel->hide();
+        loopTimeLabel->setGeometry(317, screenHeight-100, 177, 50);
+        loopLabel->setGeometry(4, screenHeight-100, 297, 50);
+        loopLabel->setText("SET END LOOP");
+        sliderStartLoop->setEnabled(false);
         sliderStopLoop->setEnabled(true);
     } else {
         player->setPosition(startLoop_msec);
         hideControlsTimer->start();
+        loopTimeLabel->hide();
     }
 }
 
@@ -315,6 +318,7 @@ void VideoPlayer::sliderStopLoopMoved(int position)
 void VideoPlayer::sliderStopLoopReleased()
 {
     stopLoop_msec = sliderStopLoop->value();
+
     if (stopLoop_msec > readyToRead_msec) {
         stopLoop_msec = readyToRead_msec-10000;
         sliderStopLoop->setValue(stopLoop_msec);
@@ -322,13 +326,33 @@ void VideoPlayer::sliderStopLoopReleased()
         stopLoop_msec = startLoop_msec+10000;
         sliderStopLoop->setValue(stopLoop_msec);
     }
-
     player->setPosition(startLoop_msec);
     player->play();
     paused = false;
-
-    stopLoopLabel->hide();
+    sliderStartLoop->setEnabled(true);
+    loopLabel->setText("");
+    loopLabel->hide();
+    loopTimeLabel->hide();
     hideControlsTimer->start();
+}
+
+void VideoPlayer::setSliderLoopTime(int msecs)
+{
+    int hours = msecs/(1000*60*60);
+    int minutes = (msecs-(hours*1000*60*60))/(1000*60);
+    int seconds = (msecs-(minutes*1000*60)-(hours*1000*60*60))/1000;
+
+    QString formattedTime;
+    formattedTime.append(QString( "%1" ).arg(hours, 2, 10, QLatin1Char('0')) + ":" +
+                         QString( "%1" ).arg(minutes, 2, 10, QLatin1Char('0')) + ":" +
+                         QString( "%1" ).arg(seconds, 2, 10, QLatin1Char('0')));
+
+    loopTimeLabel->setText(formattedTime);
+    if (loopTimeLabel->isHidden()) {
+        if (loopLabel->text() == "")
+            loopTimeLabel->setGeometry(4, screenHeight-100, 177, 50);
+        loopTimeLabel->show();
+    }
 }
 
 void VideoPlayer::setCurrentTime(qint64 msecs)
@@ -476,7 +500,7 @@ void VideoPlayer::showControls()
 
 void VideoPlayer::hideControls()
 {
-    if (!loop || (loop && player->state() == 1)) {
+    if ((!loop && !paused) || (loop && player->state() == 1)) {
         box->hide();
         volumeIcon->hide();
         volumeLabel->hide();

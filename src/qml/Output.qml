@@ -91,18 +91,6 @@ Item {
                 samples: 32
                 anchors.fill: poster
             }
-            Text {
-                id: counterLabel
-                text: currentFilm+"."+totalFilms
-                color: Qt.rgba(1, 1, 1, 0.02)
-                font.family: pigFont.name
-                font.bold: true
-                font.pixelSize: 112
-                anchors.right: parent.right
-                anchors.rightMargin: 10
-                anchors.bottom: parent.bottom
-                anchors.bottomMargin: -20
-            }
             Image {
                 id: stripes
                 source: "qrc:/images/output/stripes.png"
@@ -296,6 +284,28 @@ Item {
                 anchors.leftMargin: 2
                 anchors.verticalCenter: parent.verticalCenter
                 anchors.verticalCenterOffset: 40
+            }
+            Row {
+                id: counterRow
+                spacing: 2
+                anchors.right: parent.right
+                anchors.rightMargin: 10
+                anchors.bottom: parent.bottom
+                anchors.bottomMargin: -20
+                Text {
+                    id: currentLabel
+                    text: currentFilm
+                    color: Qt.rgba(1, 1, 1, 0.04)
+                    font.family: pigFont.name
+                    font.pixelSize: 112
+                }
+                Text {
+                    id: totalLabel
+                    text: totalFilms
+                    color: Qt.rgba(1, 1, 1, 0.04)
+                    font.family: pigFont.name
+                    font.pixelSize: 112
+                }
             }
 
             NumberAnimation { running: recipe.PathView.isCurrentItem; target: poster; property: "opacity"; to: 1; duration: 4000; easing.type: Easing.InOutQuad }

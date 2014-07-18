@@ -48,8 +48,8 @@ private:
     QLabel *bitRateLabel;
     QLabel *peersLabel;
     QLabel *loopIcon;
-    QLabel *startLoopLabel;
-    QLabel *stopLoopLabel;
+    QLabel *loopLabel;
+    QLabel *loopTimeLabel;
     QProgressBar *bar;
     QSlider *slider;
     QSlider *sliderStartLoop;
@@ -61,22 +61,25 @@ private:
     int readyToRead_msec;
     int skip_player_msec;
     int volume;
+    int screenWidth;
+    int screenHeight;
     qint64 startLoop_msec;
     qint64 stopLoop_msec;
 
 private slots:
     void standBy();
-    void setCurrentTime(qint64 msecs);
-    void setTotalTime(qint64 msecs);
-    void setSliderPosition(qint64 position);
-    void sliderPressed();
-    void sliderMoved(int position);
     void sliderStartLoopPressed();
     void sliderStartLoopMoved(int position);
     void sliderStartLoopReleased();
     void sliderStopLoopPressed();
     void sliderStopLoopMoved(int position);
     void sliderStopLoopReleased();
+    void setSliderLoopTime(int msec);
+    void setCurrentTime(qint64 msecs);
+    void setTotalTime(qint64 msecs);
+    void setSliderPosition(qint64 position);
+    void sliderPressed();
+    void sliderMoved(int position);
     void hideControls();
     void statusChange(QMediaPlayer::MediaStatus status);
     void error(QMediaPlayer::Error);
