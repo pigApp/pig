@@ -39,7 +39,7 @@ Item {
     signal skip()
     signal getFiles()
     signal find(string inputText, string category, string pornstar, int offset, bool init)
-    signal torrentHandle(string magnetUrl, string scenne)
+    signal torrentHandle(string magnetUrl, string scenne, bool abort)
     signal quit()
 
     FontLoader { id: pigFont; source: "qrc:/images/font/pig.ttf" }

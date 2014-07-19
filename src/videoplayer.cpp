@@ -118,6 +118,7 @@ VideoPlayer::VideoPlayer(QVideoWidget *parent) : QVideoWidget(parent)
     
     loopTimeLabel = new QLabel();
     loopTimeLabel->setStyleSheet("background: black; border: none; color: white;");
+    loopTimeLabel->setAlignment(Qt::AlignRight);
     loopTimeLabel->setFont(font);
     loopTimeLabel->setParent(this);
     loopTimeLabel->hide();
@@ -247,7 +248,8 @@ void VideoPlayer::setLoop()
         loopLabel->setGeometry(4, screenHeight-100, 340, 50);
         loopLabel->setText("SET START LOOP");
         loopLabel->show();
-        loopTimeLabel->setGeometry(360, screenHeight-100, 177, 50);
+        loopTimeLabel->setGeometry(340, screenHeight-100, 197, 50);
+        setSliderLoopTime(0);
         sliderStartLoop->setMaximum(player->duration());
         sliderStartLoop->setValue(startLoop_msec);
         sliderStartLoop->setEnabled(true);
@@ -284,18 +286,19 @@ void VideoPlayer::sliderStartLoopReleased()
 {
     startLoop_msec = sliderStartLoop->value();
 
-    if (startLoop_msec >= readyToRead_msec) {
-        startLoop_msec = readyToRead_msec-20000;
-        sliderStartLoop->setValue(startLoop_msec);
+    if (startLoop_msec >= readyToRead_msec && !sliderStopLoop->isEnabled()) {
+         startLoop_msec = readyToRead_msec-120000;
+         sliderStartLoop->setValue(startLoop_msec);
     } else if (startLoop_msec >= stopLoop_msec && sliderStopLoop->isEnabled()) {
          startLoop_msec = stopLoop_msec-10000;
          sliderStartLoop->setValue(startLoop_msec);
     }
+
     if (loopLabel->text() == "SET START LOOP") {
-        loopTimeLabel->hide();
-        loopTimeLabel->setGeometry(317, screenHeight-100, 177, 50);
         loopLabel->setGeometry(4, screenHeight-100, 297, 50);
         loopLabel->setText("SET END LOOP");
+        loopTimeLabel->setGeometry(297, screenHeight-100, 197, 50);
+        setSliderLoopTime(0);
         sliderStartLoop->setEnabled(false);
         sliderStopLoop->setEnabled(true);
     } else {
@@ -320,20 +323,23 @@ void VideoPlayer::sliderStopLoopReleased()
     stopLoop_msec = sliderStopLoop->value();
 
     if (stopLoop_msec > readyToRead_msec) {
-        stopLoop_msec = readyToRead_msec-10000;
+        stopLoop_msec = readyToRead_msec-120000;
         sliderStopLoop->setValue(stopLoop_msec);
-    } else if (stopLoop_msec <= startLoop_msec) {
+    }
+    if (stopLoop_msec <= startLoop_msec) {
         stopLoop_msec = startLoop_msec+10000;
         sliderStopLoop->setValue(stopLoop_msec);
     }
     player->setPosition(startLoop_msec);
     player->play();
     paused = false;
-    sliderStartLoop->setEnabled(true);
-    loopLabel->setText("");
-    loopLabel->hide();
     loopTimeLabel->hide();
     hideControlsTimer->start();
+    if (loopLabel->text() != "") {
+        loopLabel->setText("");
+        loopLabel->hide();
+        sliderStartLoop->setEnabled(true);
+    }
 }
 
 void VideoPlayer::setSliderLoopTime(int msecs)

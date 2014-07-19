@@ -9,21 +9,29 @@
 #include <QDebug>
 
 Torrent::Torrent(QObject *parent) : QObject(parent)
-{
-    remap = true;
-    skip = false;
-    toWidget = false;
-    offset = 0;
-    downloadedPieces = 0;
-
+{    
     client.listen_on(std::make_pair(6881, 6889), ec);
     client.start_dht();
     client.start_upnp();
     client.add_extension(&libtorrent::create_ut_pex_plugin);
 }
 
+Torrent::~Torrent()
+{
+    client.abort();
+    _pig->disconnect();
+    _root->disconnect();
+}
+
 void Torrent::doRun(QString mangnetUrl)
 {       
+    abort = false;
+    remap = true;
+    skip = false;
+    toWidget = false;
+    offset = 0;
+    downloadedPieces = 0;
+
 #ifdef _WIN32
     std::string path = "C:/tmp/pig/";
 #else
@@ -46,7 +54,7 @@ void Torrent::metadataReady()
 {
     if (handle.status(1).state != 2) {
         minimumPiecesRequired();
-    } else {
+    } else if(!abort) {
         QTimer::singleShot(1000, this, SLOT(metadataReady()));
     }
 }
@@ -90,31 +98,32 @@ void Torrent::minimumPiecesRequired()
     qDebug() << "REQUEST__PIECES: " << requiredPieces;
     qDebug() << "DOWNLOAD_PIECES-DOWNLOAD_OFFSET: " << handle.status().num_pieces-downloadedPieces;
 
-    if(handle.status().num_pieces-downloadedPieces < requiredPieces) {
-        QTimer::singleShot(1000, this, SLOT(minimumPiecesRequired()));
-    } else {
-        if (downloadedPieces == 0) {
-            static QStringList scennesAbsolutePath;
-
-            QString dirPath = QString::fromStdString(handle.save_path())+QString::fromStdString(handle.name());
-            QDir dir(dirPath);
-            if (!dir.exists())
-                dir.setPath(QString::fromStdString(handle.save_path()));
-
-            dir.setNameFilters(QStringList() << "*.avi" << "*.divx" << "*.flv" << "*.h264" << "*.mkv" << "*.mp4" << "*.mpg" << "*.mpeg" << "*.ogm"<< "*.ogv" << "*.wmv");
-            QFileInfoList filesList(dir.entryInfoList(QDir::Files, QDir::Name));
-            foreach(const QFileInfo & fi, filesList )
-                scennesAbsolutePath << fi.absoluteFilePath();
-
-            toWidget = true;
-            QMetaObject::invokeMethod(_pig, "playerHandle", Qt::QueuedConnection, Q_ARG(QString, scennesAbsolutePath[scenne-1]));
-
-            QTimer::singleShot(1000, this, SLOT(progress()));
+    if (!abort) {
+        if(handle.status().num_pieces-downloadedPieces < requiredPieces) {
+            QTimer::singleShot(1000, this, SLOT(minimumPiecesRequired()));
         } else {
-            QMetaObject::invokeMethod(_player, "update", Qt::QueuedConnection, Q_ARG(int, handle.get_torrent_info().num_pieces()), Q_ARG(int, offset));
+            if (downloadedPieces == 0) {
+                static QStringList scennesAbsolutePath;
 
-            //skip = false;
-            //QTimer::singleShot(7000, this, SLOT(progress()));
+                QString dirPath = QString::fromStdString(handle.save_path())+QString::fromStdString(handle.name());
+                QDir dir(dirPath);
+                if (!dir.exists())
+                    dir.setPath(QString::fromStdString(handle.save_path()));
+
+                dir.setNameFilters(QStringList() << "*.avi" << "*.divx" << "*.flv" << "*.h264" << "*.mkv" << "*.mp4" << "*.mpg" << "*.mpeg" << "*.ogm"<< "*.ogv" << "*.wmv");
+                QFileInfoList filesList(dir.entryInfoList(QDir::Files, QDir::Name));
+                foreach(const QFileInfo & fi, filesList )
+                    scennesAbsolutePath << fi.absoluteFilePath();
+
+                toWidget = true;
+                QMetaObject::invokeMethod(_pig, "playerHandle", Qt::QueuedConnection, Q_ARG(QString, scennesAbsolutePath[scenne-1]));
+
+                QTimer::singleShot(1000, this, SLOT(progress()));
+            } else {
+                QMetaObject::invokeMethod(_player, "update", Qt::QueuedConnection, Q_ARG(int, handle.get_torrent_info().num_pieces()), Q_ARG(int, offset));
+                //skip = false;
+                //QTimer::singleShot(7000, this, SLOT(progress()));
+            }
         }
     }
 }
@@ -141,7 +150,8 @@ void Torrent::downloadInfo()
         _root->setProperty("peers", handle.status().num_peers);
     }
 
-    QTimer::singleShot(1000, this, SLOT(downloadInfo()));
+    if (!abort)
+        QTimer::singleShot(1000, this, SLOT(downloadInfo()));
 }
 
 bool Torrent::isAvailable(int total_msec, int offset_msec,int availablePiece)
@@ -168,6 +178,12 @@ void Torrent::offsetPiece(int total_msec, int offset_msec)
 
     downloadedPieces = handle.status().num_pieces;
     minimumPiecesRequired();
+}
+
+void Torrent::stop()
+{
+    client.remove_torrent(handle, optind = client.delete_files);
+    abort = true;
 }
 
 

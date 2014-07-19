@@ -12,6 +12,7 @@ class Torrent : public QObject
 
 public:
     explicit Torrent(QObject *parent=0);
+    ~Torrent();
 
     Q_INVOKABLE bool isAvailable(int total_msec, int offset_msec, int availablePiece);
     Q_INVOKABLE void offsetPiece(int total_msec, int offset_msec);
@@ -24,6 +25,7 @@ public:
 
 public slots:
     void doRun(QString mangnetUrl);
+    void stop();
 
 private:
     libtorrent::session client;
@@ -31,6 +33,7 @@ private:
     libtorrent::add_torrent_params params;
     libtorrent::error_code ec;
 
+    bool abort;
     bool remap;
     bool skip;
     bool toWidget;
@@ -47,4 +50,5 @@ private slots:
     void progress();
     void downloadInfo();
 };
+
 #endif

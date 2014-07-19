@@ -5,6 +5,7 @@ Item {
     id: output
     opacity: 0
 
+    property bool abort
     property bool posterLoaded
     property bool coverLoaded
     property bool hideAll
@@ -463,29 +464,52 @@ Item {
         color: "black"
 
         Button {
-            id: cancelDownloadButton
+            id: abortDownloadButton
             width: 100
             height: 25
-            label: { if (root.bitRate != 0 && playerLayer.height == screen.height) "CANCEL"; else "" }
+            label: "ABORT"
             labelColor: Qt.rgba(0.1, 0.1, 0.1, 0.5)
             labelInColor: "white"
             labelOutColor: Qt.rgba(0.1, 0.1, 0.1, 0.5)
             labelBold: true
             labelSize: 30
+            visible:  { if (playerLayer.height == screen.height && !abort) true; else false }
             anchors.centerIn: parent
             anchors.horizontalCenter: parent.horizontalCenter
-            anchors.horizontalCenterOffset: -197
+            anchors.horizontalCenterOffset: -180
+            onClicked: {
+                abort = true
+                root.torrentHandle("", "", true)
+                abortPlayerLayer.running = true
+                abortCleanUpDelay.start()
+            }
+        }
+        NumberAnimation { id: abortPlayerLayer; running: false; target: playerLayer; property: "height"; to: 0; duration: 1000; easing.type: Easing.InOutQuart }
+        Timer {
+            id: abortCleanUpDelay
+            running: false
+            repeat: false
+            interval: 1100
+            onTriggered: {
+                root.peers = 0
+                root.required = 0
+                root.downloaded = 0
+                root.bitRate = ""
+                onShowPlayerLayer = false
+                abort = false
+            }
         }
 
         ProgressBar {
             id: progressBar
             value: root.downloaded
-            visible: { if (playerLayer.height > 24) true; else false }
+            visible: { if (playerLayer.height > 24 && !abort) true; else false }
             anchors.centerIn: parent
         }
         Row {
             id: downloadInfoLabel
             spacing: 17
+            visible: { !abort }
             anchors.left: progressBar.right
             anchors.leftMargin: 20
             anchors.verticalCenter: parent.verticalCenter

@@ -13,7 +13,7 @@ Rectangle {
     property string scenne
 
     signal clicked()
-    onClicked: { onShowPlayerLayer = true; root.torrentHandle(magnetUrl, scenne) }
+    onClicked: { onShowPlayerLayer = true; root.torrentHandle(magnetUrl, scenne, false) }
     
     RectangularGlow {
         id: effect

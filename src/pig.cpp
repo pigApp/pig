@@ -27,7 +27,7 @@ void PIG::setRootObject(QObject *root)
 
     if(mRoot) connect(mRoot, SIGNAL(passwordHandle(QString, bool, bool)), this, SLOT(passwordHandle(QString, bool, bool)));
     if(mRoot) connect(mRoot, SIGNAL(find(QString, QString, QString, int, bool)), this, SLOT(find(QString, QString, QString, int, bool)));
-    if(mRoot) connect(mRoot, SIGNAL(torrentHandle(QString, QString)), this, SLOT(torrentHandle(QString, QString)));
+    if(mRoot) connect(mRoot, SIGNAL(torrentHandle(QString, QString, bool)), this, SLOT(torrentHandle(QString, QString, bool)));
     if(mRoot) connect(mRoot, SIGNAL(quit()), this, SLOT(quit()));
 
 #ifdef _WIN32
@@ -131,6 +131,10 @@ void PIG::start()
             mRoot->setProperty("nCategoryList", nCategoryList);
             mRoot->setProperty("pornstarList", pornstarList);
             mRoot->setProperty("nPornstarList", nPornstarList);
+
+            mTorrent = new Torrent();
+            mTorrent->_pig = this;
+            mTorrent->_root = mRoot;
         }
     } else {
         errorDb();
@@ -222,13 +226,14 @@ void PIG::find(const QString inputText, QString category, QString pornstar, int 
 }
 
 // Torrent
-void PIG::torrentHandle(QString magnetUrl, QString scenne)
+void PIG::torrentHandle(QString magnetUrl, QString scenne, bool abort)
 {
-    mTorrent = new Torrent();
-    mTorrent->_pig = this;
-    mTorrent->_root = mRoot;
-    mTorrent->scenne = scenne.toInt();
-    mTorrent->doRun(magnetUrl);
+    if (abort) {
+        mTorrent->stop();
+    } else {
+        mTorrent->scenne = scenne.toInt();
+        mTorrent->doRun(magnetUrl);
+    }
 }
 
 // Player
@@ -287,6 +292,28 @@ void PIG::mouseReleaseEvent(QMouseEvent *event)
     this->setFocus();
 }
 
+
+bool PIG::cleanUp()
+{
+    #ifdef _WIN32
+        QString target = "C:/tmp/pig/";
+    #else
+        QString target = QDir::homePath()+"/.pig/tmp/";
+    #endif
+        QDir tmp(target);
+
+        tmp.setFilter(QDir::NoDotAndDotDot | QDir::Files);
+        foreach(QString tmpItem, tmp.entryList())
+            tmp.remove(tmpItem);
+
+        tmp.setFilter(QDir::NoDotAndDotDot | QDir::Dirs);
+        foreach(QString tmpItem, tmp.entryList()) {
+            QDir subDir(tmp.absoluteFilePath(tmpItem));
+            subDir.removeRecursively();
+        }
+        return true;
+}
+
 void PIG::closePlayer()
 {
     layout->removeWidget(mPlayer);
@@ -295,25 +322,7 @@ void PIG::closePlayer()
     //delete mPlayer;
 
     emit hidePlayerLayerSIGNAL();
-
-/* TODO: Descomentar. Limpia tmp.
-#ifdef _WIN32
-    QString target = "C:/tmp/pig/";
-#else
-    QString target = QDir::homePath()+"/.pig/tmp/";
-#endif
-    QDir tmp(target);
-
-    tmp.setFilter(QDir::NoDotAndDotDot | QDir::Files);
-    foreach(QString tmpItem, tmp.entryList())
-        tmp.remove(tmpItem);
-
-    tmp.setFilter(QDir::NoDotAndDotDot | QDir::Dirs);
-    foreach(QString tmpItem, tmp.entryList()) {
-        QDir subDir(tmp.absoluteFilePath(tmpItem));
-        subDir.removeRecursively();
-    }
-*/
+    //cleanUp();
 }
 
 // ErrorDb
@@ -324,25 +333,11 @@ void PIG::errorDb()
 
 void PIG::quit()
 {
-/* TODO: Descomentar. Limpia tmp.
-#ifdef _WIN32
-    QString target = "C:/tmp/pig/";
-#else
-    QString target = QDir::homePath()+"/.pig/tmp/";
-#endif
-    QDir tmp(target);
+    //if (cleanUp()) {
 
-    tmp.setFilter(QDir::NoDotAndDotDot | QDir::Files);
-    foreach(QString tmpItem, tmp.entryList())
-        tmp.remove(tmpItem);
-
-    tmp.setFilter(QDir::NoDotAndDotDot | QDir::Dirs);
-    foreach(QString tmpItem, tmp.entryList()) {
-        QDir subDir(tmp.absoluteFilePath(tmpItem));
-        subDir.removeRecursively();
-    }
-*/
     this->destroy(); // TODO: Salir bien.
     //qApp->quit();
     //exit(0);
+
+    //}
 }
