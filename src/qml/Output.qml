@@ -5,7 +5,7 @@ Item {
     id: output
     opacity: 0
 
-    property bool abort
+    property bool abortTorrent
     property bool posterLoaded
     property bool coverLoaded
     property bool hideAll
@@ -322,12 +322,6 @@ Item {
                     when: onShowPlayerLayer
                 },
                 State {
-                    name: "hidePlayerLayer"
-                    PropertyChanges { target: root; peers: 0 }
-                    PropertyChanges { target: root; required: 0 }
-                    PropertyChanges { target: root; downloaded: 0 }
-                },
-                State {
                     name: "showAll"
                 },
                 State {
@@ -341,13 +335,6 @@ Item {
                         NumberAnimation { target: playerLayer; property: "height"; to: screen.height; duration: 2000; easing.type: Easing.InOutQuart }
                 },
                 Transition {
-                    to: "hidePlayerLayer"
-                        SequentialAnimation {
-                            NumberAnimation { target: playerLayer; property: "height"; to: 0; duration: 1000; easing.type: Easing.InOutQuart }
-                            PropertyAction { target: output; property: "onShowPlayerLayer"; value: false }
-                        }
-                },
-                Transition {
                     to: "showAll"
                     NumberAnimation { target: output; property: "opacity"; to: 1; duration: 1000; easing.type: Easing.InOutQuad }
                 },
@@ -355,12 +342,7 @@ Item {
                     to: "hideAll"
                     NumberAnimation { target: output; property: "opacity"; to: 0; duration: 500; easing.type: Easing.InOutQuad }
                 }
-            ]
-            
-            Connections {
-                target: cppSignals
-                onHidePlayerLayerSIGNAL: { recipe.state = "hidePlayerLayer" }
-            }
+            ]            
         }
     }
 
@@ -464,7 +446,7 @@ Item {
         color: "black"
 
         Button {
-            id: abortDownloadButton
+            id: abortTorrentButton
             width: 100
             height: 25
             label: "ABORT"
@@ -473,20 +455,15 @@ Item {
             labelOutColor: Qt.rgba(0.1, 0.1, 0.1, 0.5)
             labelBold: true
             labelSize: 30
-            visible:  { if (playerLayer.height == screen.height && !abort) true; else false }
+            visible:  { if (playerLayer.height == screen.height && !abortTorrent) true; else false }
             anchors.centerIn: parent
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.horizontalCenterOffset: -180
-            onClicked: {
-                abort = true
-                root.torrentHandle("", "", true)
-                abortPlayerLayer.running = true
-                abortCleanUpDelay.start()
-            }
+            onClicked: { abortTorrent = true }
         }
-        NumberAnimation { id: abortPlayerLayer; running: false; target: playerLayer; property: "height"; to: 0; duration: 1000; easing.type: Easing.InOutQuart }
+        NumberAnimation { id: hidePlayerLayer; running: false; target: playerLayer; property: "height"; to: 0; duration: 1000; easing.type: Easing.InOutQuart }
         Timer {
-            id: abortCleanUpDelay
+            id: abortTorrentResetDelay
             running: false
             repeat: false
             interval: 1100
@@ -496,20 +473,19 @@ Item {
                 root.downloaded = 0
                 root.bitRate = ""
                 onShowPlayerLayer = false
-                abort = false
+                abortTorrent = false
             }
         }
-
         ProgressBar {
             id: progressBar
             value: root.downloaded
-            visible: { if (playerLayer.height > 24 && !abort) true; else false }
+            visible: { if (playerLayer.height > 24 && !abortTorrent) true; else false }
             anchors.centerIn: parent
         }
         Row {
             id: downloadInfoLabel
             spacing: 17
-            visible: { !abort }
+            visible: { !abortTorrent }
             anchors.left: progressBar.right
             anchors.leftMargin: 20
             anchors.verticalCenter: parent.verticalCenter
@@ -542,6 +518,13 @@ Item {
                 font.bold: true
                 font.pixelSize: 30
             }
+        }
+    }
+    onAbortTorrentChanged: {
+        if (abortTorrent) {
+            root.torrentHandle("", "", true)
+            hidePlayerLayer.running = true
+            abortTorrentResetDelay.start()
         }
     }
     
@@ -585,6 +568,7 @@ Item {
     Connections {
         target: cppSignals
         onListUpdatedSIGNAL: { listCreator() }
+        onAbortTorrentSIGNAL: { abortTorrent = true }
     }
 
     Component.onCompleted: { listCreator(root.n, root.list) }

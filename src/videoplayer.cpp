@@ -169,12 +169,15 @@ VideoPlayer::VideoPlayer(QVideoWidget *parent) : QVideoWidget(parent)
     hideControlsTimer = new QTimer(this);
     hideControlsTimer->setSingleShot(true);
     connect(hideControlsTimer, SIGNAL(timeout()), this, SLOT(hideControls()));
+
+    setMouseTracking(true);
 }
 
 VideoPlayer::~VideoPlayer()
 {
-    player->stop();
-    delete player;
+    //_torrent->disconnect();
+    //player->stop();
+    //delete player;
 }
 
 void VideoPlayer::doRun(QString absoluteFilePath)
@@ -186,6 +189,7 @@ void VideoPlayer::doRun(QString absoluteFilePath)
 
     player->setMedia(QUrl::fromLocalFile(absoluteFilePath));
     player->play();
+    this->setFocus();
 }
 
 void VideoPlayer::playPause()
@@ -487,7 +491,6 @@ void VideoPlayer::sliderReleased()
 void VideoPlayer::showControls()
 {
     hideControlsTimer->stop();
-
     box->show();
     volumeIcon->show();
     volumeLabel->show();
@@ -551,4 +554,40 @@ void VideoPlayer::statusChange(QMediaPlayer::MediaStatus status)
 void VideoPlayer::error(QMediaPlayer::Error)
 {
     qDebug() << "--ERROR: " << player->QMediaPlayer::error();
+}
+
+void VideoPlayer::keyPressEvent(QKeyEvent *event)
+{
+    hideControlsTimer->stop();
+    showControls();
+    hideControlsTimer->start();
+
+    if (event->key() == Qt::Key_Space) {
+        playPause();
+    } else if (event->key() == Qt::Key_Left) {
+        skip_key_value = -10000;
+        sliderReleased();
+    } else if (event->key() == Qt::Key_Right) {
+        skip_key_value = 10000;
+        sliderReleased();
+    } else if (event->key() == Qt::Key_Up) {
+        setVolume(5);
+    } else if (event->key() == Qt::Key_Down) {
+        setVolume(-5);
+    } else if (event->key() == Qt::Key_L) {
+        setLoop();
+    } else if (event->key() == Qt::Key_Escape) {
+        QMetaObject::invokeMethod(_pig, "playerHandle", Qt::QueuedConnection, Q_ARG(QString, ""), Q_ARG(bool, true));
+    }
+
+    if (event->key() == (Qt::Key_Escape && Qt::ControlModifier)) { // TODO: No funciona. Posiblemente al Esc de arriba falta agregarle !Qt::ControlModifier.
+        //QMetaObject::invokeMethod(_pig, "quit", Qt::QueuedConnection);
+    }
+}
+
+void VideoPlayer::mousePressEvent(QMouseEvent *event)
+{
+    hideControlsTimer->stop();
+    showControls();
+    hideControlsTimer->start();
 }

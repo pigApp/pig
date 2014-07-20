@@ -12,7 +12,6 @@
 #include <QApplication>
 #include <QtSql>
 #include <QKeyEvent>
-#include <QMouseEvent>
 #include <QVBoxLayout>
 
 class PIG : public QWidget
@@ -23,15 +22,10 @@ public:
     PIG(QWidget *parent=0);
     ~PIG();
 
-    Q_INVOKABLE void playerHandle(const QString absoluteFilePath);
+    Q_INVOKABLE void playerHandle(const QString absoluteFilePath, bool abort);
 
     QWidget *container;
     QVBoxLayout *layout;
-
-protected:
-    void keyPressEvent(QKeyEvent *event);
-    void mousePressEvent(QMouseEvent *event);
-    void mouseReleaseEvent(QMouseEvent *event);
 
 public slots:
     void setRootObject(QObject *root);
@@ -42,7 +36,7 @@ signals:
     void showOutputSIGNAL();
     void listUpdatedSIGNAL();
     void noResultSIGNAL();
-    void hidePlayerLayerSIGNAL();
+    void abortTorrentSIGNAL();
     void showErrorDbSIGNAL();
 
 private:
@@ -61,7 +55,6 @@ private slots:
     void find(const QString inputText, QString category, QString pornstar, int offset, bool init);
     void torrentHandle(QString magnetUrl, QString scenne, bool abort);
     bool cleanUp();
-    void closePlayer();
     void errorDb();
     void quit();
 };

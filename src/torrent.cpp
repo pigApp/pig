@@ -47,7 +47,7 @@ void Torrent::doRun(QString mangnetUrl)
     //handle.add_tracker(tracker);
     //handle.add_tracker(trackerTwo);
 
-    metadataReady();
+    metadataReady(); // TODO: En vez de llamar a esta funcion usar la alerta de metadata descargada.
 }
 
 void Torrent::metadataReady()
@@ -116,7 +116,7 @@ void Torrent::minimumPiecesRequired()
                     scennesAbsolutePath << fi.absoluteFilePath();
 
                 toWidget = true;
-                QMetaObject::invokeMethod(_pig, "playerHandle", Qt::QueuedConnection, Q_ARG(QString, scennesAbsolutePath[scenne-1]));
+                QMetaObject::invokeMethod(_pig, "playerHandle", Qt::QueuedConnection, Q_ARG(QString, scennesAbsolutePath[scenne-1]), Q_ARG(bool, false));
 
                 QTimer::singleShot(1000, this, SLOT(progress()));
             } else {
@@ -164,7 +164,7 @@ bool Torrent::isAvailable(int total_msec, int offset_msec,int availablePiece)
     }
 }
 
-void Torrent::offsetPiece(int total_msec, int offset_msec)
+void Torrent::offsetPiece(int total_msec, int offset_msec) // TODO: Si se empieza a  bajar desde una pieza que no se tiene, poner disable el slider en videoplayer.
 {
     skip = true;
     offset = (offset_msec*handle.get_torrent_info().num_pieces())/total_msec;
@@ -182,9 +182,34 @@ void Torrent::offsetPiece(int total_msec, int offset_msec)
 
 void Torrent::stop()
 {
-    client.remove_torrent(handle, optind = client.delete_files);
+    if (handle.status().has_metadata) { // TODO: Al terminar de descargar la metadata vuelve a dar invalido. Agregar (handle.status().has_metadata || el archivo se esta escribiendo)
+        client.remove_torrent(handle, optind = client.delete_files);
+    } else {
+        // TODO: Detener el torrent sin remove_torrent.
+    }
     abort = true;
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

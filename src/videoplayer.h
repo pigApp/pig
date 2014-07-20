@@ -9,6 +9,8 @@
 #include <QLabel>
 #include <QPushButton>
 #include <QTimer>
+#include <QKeyEvent>
+#include <QMouseEvent>
 
 class VideoPlayer : public QVideoWidget
 {
@@ -22,18 +24,16 @@ public:
     Q_INVOKABLE void progress(int piece_kb, int total_kb, int downloaded_kb);
     Q_INVOKABLE void update(int total_pieces, int currentPiece);
 
+    QObject *_pig;
     QObject *_torrent;
     QTimer *hideControlsTimer;
 
-    int skip_key_value;
+protected:
+    void keyPressEvent(QKeyEvent *event);
+    void mousePressEvent(QMouseEvent *event);
 
 public slots:
     void doRun(QString absoluteFilePath);
-    void playPause();
-    void setVolume(int volume_key_value);
-    void setLoop();
-    void sliderReleased();
-    void showControls();
 
 private:
     QMediaPlayer *player;
@@ -59,6 +59,7 @@ private:
     bool paused;
     bool loop;
     int readyToRead_msec;
+    int skip_key_value;
     int skip_player_msec;
     int volume;
     int screenWidth;
@@ -67,7 +68,10 @@ private:
     qint64 stopLoop_msec;
 
 private slots:
+    void playPause();
     void standBy();
+    void setVolume(int volume_key_value);
+    void setLoop();
     void sliderStartLoopPressed();
     void sliderStartLoopMoved(int position);
     void sliderStartLoopReleased();
@@ -80,6 +84,8 @@ private slots:
     void setSliderPosition(qint64 position);
     void sliderPressed();
     void sliderMoved(int position);
+    void sliderReleased();
+    void showControls();
     void hideControls();
     void statusChange(QMediaPlayer::MediaStatus status);
     void error(QMediaPlayer::Error);

@@ -2,6 +2,8 @@
 #include "tcpSocket.h"
 
 #include <stdlib.h>
+
+#include <QLayoutItem>
 #include <QDir>
 #include <QFile>
 #include <QTextStream>
@@ -13,8 +15,6 @@ PIG::PIG(QWidget *parent) : QWidget(parent), mRoot(0)
     layout->setMargin(0);
     layout->setSpacing(0);
     setLayout(layout);
-
-    setMouseTracking(true);
 }
 
 PIG::~PIG()
@@ -228,70 +228,36 @@ void PIG::find(const QString inputText, QString category, QString pornstar, int 
 // Torrent
 void PIG::torrentHandle(QString magnetUrl, QString scenne, bool abort)
 {
-    if (abort) {
-        mTorrent->stop();
-    } else {
+    if (!abort) {
         mTorrent->scenne = scenne.toInt();
         mTorrent->doRun(magnetUrl);
+    } else {
+        mTorrent->stop();
     }
 }
 
 // Player
-void PIG::playerHandle(const QString absoluteFilePath)
+void PIG::playerHandle(const QString absoluteFilePath, bool abort)
 {
-    mPlayer = new VideoPlayer();
-    mPlayer->_torrent = mTorrent;
-    mTorrent->_player = mPlayer;
-    mPlayer->doRun(absoluteFilePath);
+    if (!abort) {
+        mPlayer = new VideoPlayer();
+        mPlayer->_torrent = mTorrent;
+        mPlayer->_pig = this;
+        mTorrent->_player = mPlayer;
+        mPlayer->doRun(absoluteFilePath);
+        mPlayer->showFullScreen();
+        this->hide();
+    } else {
+        this->show();
+        emit abortTorrentSIGNAL();
+        mTorrent->_player->disconnect();
+        mPlayer->_torrent->disconnect();
+        mPlayer->_pig->disconnect();
+        mPlayer->close();
 
-    container->hide();
-    layout->addWidget(mPlayer);
-}
-
-void PIG::keyPressEvent(QKeyEvent *event)
-{
-    if (mPlayer->isActiveWindow()) { // TODO: Da error al bajar playerLayer. El teclado no se anula desde aca o desde output.qml.
-        mPlayer->hideControlsTimer->stop();
-        mPlayer->showControls();
-        mPlayer->hideControlsTimer->start();
-
-        if (event->key() == Qt::Key_Space) {
-            mPlayer->playPause();
-        } else if (event->key() == Qt::Key_Left) {
-            mPlayer->skip_key_value = -10000;
-            mPlayer->sliderReleased();
-        } else if (event->key() == Qt::Key_Right) {
-            mPlayer->skip_key_value = 10000;
-            mPlayer->sliderReleased();
-        } else if (event->key() == Qt::Key_Up) {
-            mPlayer->setVolume(5);
-        } else if (event->key() == Qt::Key_Down) {
-            mPlayer->setVolume(-5);
-        } else if (event->key() == Qt::Key_L) {
-            mPlayer->setLoop();
-        } else if (event->key() == Qt::Key_Escape) { // TODO: Comprobar que funcione.
-            closePlayer();
-        }
-    }
-    if (event->key() == (Qt::Key_Escape && Qt::ControlModifier)) { // TODO: Comprobar que funcione.
-        quit();
+        //delete mPlayer; // TODO: Borrar mPlayer
     }
 }
-
-void PIG::mousePressEvent(QMouseEvent *event)
-{
-    if (mPlayer->isActiveWindow()) {
-        mPlayer->hideControlsTimer->stop();
-        mPlayer->showControls();
-        mPlayer->hideControlsTimer->start();
-    }
-}
-
-void PIG::mouseReleaseEvent(QMouseEvent *event)
-{
-    this->setFocus();
-}
-
 
 bool PIG::cleanUp()
 {
@@ -314,24 +280,13 @@ bool PIG::cleanUp()
         return true;
 }
 
-void PIG::closePlayer()
-{
-    layout->removeWidget(mPlayer);
-    container->show();
-    mPlayer->close();
-    //delete mPlayer;
-
-    emit hidePlayerLayerSIGNAL();
-    //cleanUp();
-}
-
 // ErrorDb
 void PIG::errorDb()
 {
     emit showErrorDbSIGNAL();
 }
 
-void PIG::quit()
+void PIG::quit() // TODO: Llamar a ~PIG en vez de a esta funcion.
 {
     //if (cleanUp()) {
 
