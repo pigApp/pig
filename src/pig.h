@@ -54,7 +54,7 @@ private slots:
     void start();
     void find(const QString inputText, QString category, QString pornstar, int offset, bool init);
     void torrentHandle(QString magnetUrl, QString scenne, bool abort);
-    bool cleanUp();
+    void cleanUp();
     void errorDb();
     void quit();
 };

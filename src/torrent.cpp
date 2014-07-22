@@ -1,6 +1,4 @@
 #include "torrent.h"
-
-#include <libtorrent/file_storage.hpp>
 #include <libtorrent/extensions/ut_pex.hpp>
 
 #include <QDir>
@@ -10,17 +8,18 @@
 
 Torrent::Torrent(QObject *parent) : QObject(parent)
 {    
-    client.listen_on(std::make_pair(6881, 6889), ec);
-    client.start_dht();
-    client.start_upnp();
-    client.add_extension(&libtorrent::create_ut_pex_plugin);
+    client = new libtorrent::session;
+    client->listen_on(std::make_pair(6881, 6889), ec);
+    client->start_dht();
+    client->start_upnp();
+    client->add_extension(&libtorrent::create_ut_pex_plugin);
 }
 
 Torrent::~Torrent()
 {
-    client.abort();
-    _pig->disconnect();
-    _root->disconnect();
+    //client->abort();
+    //_pig->disconnect(this);
+    //_root->disconnect(this);
 }
 
 void Torrent::doRun(QString mangnetUrl)
@@ -40,7 +39,7 @@ void Torrent::doRun(QString mangnetUrl)
 #endif
     params.save_path = path;
     params.url = mangnetUrl.toStdString();
-    handle = client.add_torrent(params);
+    handle = client->add_torrent(params);
 
     //std::string tracker = "udp://tracker.publicbt.com:80/announce";
     //std::string trackerTwo = "udp://tracker.istole.it:80/announce";
@@ -121,8 +120,8 @@ void Torrent::minimumPiecesRequired()
                 QTimer::singleShot(1000, this, SLOT(progress()));
             } else {
                 QMetaObject::invokeMethod(_player, "update", Qt::QueuedConnection, Q_ARG(int, handle.get_torrent_info().num_pieces()), Q_ARG(int, offset));
-                //skip = false;
-                //QTimer::singleShot(7000, this, SLOT(progress()));
+                skip = false;
+                QTimer::singleShot(7000, this, SLOT(progress()));
             }
         }
     }
@@ -130,28 +129,29 @@ void Torrent::minimumPiecesRequired()
 
 void Torrent::progress()
 {
-    int total_kb = handle.get_torrent_info().total_size()/1024;  // TODO: Obtener el numero de bytes total, solo de la pieza actual.
-    int downloaded_kb = handle.status().total_done/1024; 
-
-    QMetaObject::invokeMethod(_player, "progress", Qt::QueuedConnection, Q_ARG(int, piece_kb), Q_ARG(int, total_kb), Q_ARG(int, downloaded_kb));
-    if (!skip)
-        QTimer::singleShot(1000, this, SLOT(progress()));
+    if (!abort) {
+        int total_kb = handle.get_torrent_info().total_size()/1024;  // TODO: Obtener el numero de bytes total, solo de la pieza actual.
+        int downloaded_kb = handle.status().total_done/1024;
+        QMetaObject::invokeMethod(_player, "progress", Qt::QueuedConnection, Q_ARG(int, piece_kb), Q_ARG(int, total_kb), Q_ARG(int, downloaded_kb));
+        if (!skip)
+            QTimer::singleShot(1000, this, SLOT(progress()));
+    }
 }
 
 void Torrent::downloadInfo()
 {
-    if (toWidget) {
-        QMetaObject::invokeMethod(_player, "downloadInfo", Qt::QueuedConnection, Q_ARG(int, handle.status().download_rate/1024), Q_ARG(int, handle.status().num_peers));
-    } else {
-        int downloaded_kb = handle.status().total_done;
-        _root->setProperty("required", required_kb);
-        _root->setProperty("downloaded", downloaded_kb);
-        _root->setProperty("bitRate", QString::number(handle.status().download_rate/1024));
-        _root->setProperty("peers", handle.status().num_peers);
-    }
-
-    if (!abort)
+    if (!abort) {
+        if (toWidget) {
+            QMetaObject::invokeMethod(_player, "downloadInfo", Qt::QueuedConnection, Q_ARG(int, handle.status().download_rate/1024), Q_ARG(int, handle.status().num_peers));
+        } else {
+            int downloaded_kb = handle.status().total_done;
+            _root->setProperty("required", required_kb);
+            _root->setProperty("downloaded", downloaded_kb);
+            _root->setProperty("bitRate", QString::number(handle.status().download_rate/1024));
+            _root->setProperty("peers", handle.status().num_peers);
+        }
         QTimer::singleShot(1000, this, SLOT(downloadInfo()));
+    }
 }
 
 bool Torrent::isAvailable(int total_msec, int offset_msec,int availablePiece)
@@ -182,12 +182,13 @@ void Torrent::offsetPiece(int total_msec, int offset_msec) // TODO: Si se empiez
 
 void Torrent::stop()
 {
-    if (handle.status().has_metadata) { // TODO: Al terminar de descargar la metadata vuelve a dar invalido. Agregar (handle.status().has_metadata || el archivo se esta escribiendo)
-        client.remove_torrent(handle, optind = client.delete_files);
-    } else {
-        // TODO: Detener el torrent sin remove_torrent.
-    }
     abort = true;
+
+    if (handle.status().has_metadata) {
+        client->remove_torrent(handle, optind = client->delete_files);
+    } else {
+        // TODO: Detener el torrent sin borrar filas.
+    }
 }
 
 

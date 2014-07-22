@@ -19,6 +19,14 @@ PIG::PIG(QWidget *parent) : QWidget(parent), mRoot(0)
 
 PIG::~PIG()
 {
+    //cleanUp();
+
+    mRoot->disconnect(this);
+    delete mPassword;
+    delete mTorrent;
+    if (mPlayer->isEnabled()) // TODO: ver si esta instanciado de ora forma.
+        delete mPlayer;
+    exit(0);
 }
 
 void PIG::setRootObject(QObject *root)
@@ -45,6 +53,7 @@ void PIG::setRootObject(QObject *root)
         if (!dir.exists())
             dir.mkdir(tmp);
 
+        mPassword = new Password();
         passwordHandle("", true, false);
     } else {
         QTimer::singleShot(10, this, SLOT(errorDb()));
@@ -97,7 +106,7 @@ void PIG::updateHandle()
 // Start
 void PIG::start()
 {
-    mUpdate = 0;
+    mUpdate = 0; // TODO: Ver por que falla sin esta linea. En update usar new pare crear los sockets y delete en el destructor.
     delete mUpdate;
 
     if (db.open()) {
@@ -251,15 +260,12 @@ void PIG::playerHandle(const QString absoluteFilePath, bool abort)
         this->show();
         emit abortTorrentSIGNAL();
         mTorrent->_player->disconnect();
-        mPlayer->_torrent->disconnect();
-        mPlayer->_pig->disconnect();
         mPlayer->close();
-
-        //delete mPlayer; // TODO: Borrar mPlayer
+        delete mPlayer;
     }
 }
 
-bool PIG::cleanUp()
+void PIG::cleanUp()
 {
     #ifdef _WIN32
         QString target = "C:/tmp/pig/";
@@ -277,7 +283,6 @@ bool PIG::cleanUp()
             QDir subDir(tmp.absoluteFilePath(tmpItem));
             subDir.removeRecursively();
         }
-        return true;
 }
 
 // ErrorDb
@@ -286,13 +291,7 @@ void PIG::errorDb()
     emit showErrorDbSIGNAL();
 }
 
-void PIG::quit() // TODO: Llamar a ~PIG en vez de a esta funcion.
+void PIG::quit()
 {
-    //if (cleanUp()) {
-
-    this->destroy(); // TODO: Salir bien.
-    //qApp->quit();
-    //exit(0);
-
-    //}
+    this->~PIG();
 }

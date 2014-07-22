@@ -175,9 +175,11 @@ VideoPlayer::VideoPlayer(QVideoWidget *parent) : QVideoWidget(parent)
 
 VideoPlayer::~VideoPlayer()
 {
-    //_torrent->disconnect();
-    //player->stop();
-    //delete player;
+    _pig->disconnect(this);
+    _torrent->disconnect(this);
+    hideControlsTimer->stop();
+    player->stop();
+    delete player;
 }
 
 void VideoPlayer::doRun(QString absoluteFilePath)
@@ -441,7 +443,6 @@ void VideoPlayer::update(int total_pieces, int currentPiece)
     QTimer::singleShot(5000, this, SLOT(standBy()));
 
     //skip = false;
-    qDebug() << "PLAYER_SKIP_TO: " << skip_player_msec;
 }
 
 void VideoPlayer::setSliderPosition(qint64 position)
@@ -576,13 +577,14 @@ void VideoPlayer::keyPressEvent(QKeyEvent *event)
         setVolume(-5);
     } else if (event->key() == Qt::Key_L) {
         setLoop();
-    } else if (event->key() == Qt::Key_Escape) {
+    } else
+    if ((event->key() == Qt::Key_Escape && event->key() != Qt::ControlModifier)) {
         QMetaObject::invokeMethod(_pig, "playerHandle", Qt::QueuedConnection, Q_ARG(QString, ""), Q_ARG(bool, true));
     }
 
-    if (event->key() == (Qt::Key_Escape && Qt::ControlModifier)) { // TODO: No funciona. Posiblemente al Esc de arriba falta agregarle !Qt::ControlModifier.
+    //if (event->key() == (Qt::Key_Escape && Qt::ControlModifier)) { // TODO: No funciona. Posiblemente al Esc de arriba falta agregarle !Qt::ControlModifier.
         //QMetaObject::invokeMethod(_pig, "quit", Qt::QueuedConnection);
-    }
+    //}
 }
 
 void VideoPlayer::mousePressEvent(QMouseEvent *event)

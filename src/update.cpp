@@ -16,7 +16,8 @@ Update::Update(QObject *parent) : QObject(parent)
 
 Update::~Update()
 {
-    delete _root;
+    //db.removeDatabase(databaseUrl);
+    //_root->disconnect(this);
 }
 
 void Update::doCheck()
