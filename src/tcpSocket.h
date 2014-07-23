@@ -6,12 +6,13 @@
 #include <QTcpSocket>
 #include <QTimer>
 
-class TcpSocket : public QObject
+class TcpSocket : public QTcpSocket
 {
     Q_OBJECT
 
 public:
-    explicit TcpSocket(QObject *parent = 0);
+    explicit TcpSocket(QTcpSocket *parent = 0);
+    ~TcpSocket();
 
     QString host;
     QString url;
@@ -27,7 +28,6 @@ signals:
     void errorSocket();
 
 private:
-    QTcpSocket *socket;
     QByteArray data;
     QTimer *timeOut;
 

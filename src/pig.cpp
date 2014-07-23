@@ -1,5 +1,4 @@
 #include "pig.h"
-#include "tcpSocket.h"
 
 #include <stdlib.h>
 
@@ -10,6 +9,10 @@
 
 PIG::PIG(QWidget *parent) : QWidget(parent), mRoot(0)
 {
+    mPassword = NULL;
+    mUpdate = NULL;
+    mTorrent = NULL;
+
     layout = new QVBoxLayout;
     layout->setContentsMargins(0, 0, 0, 0);
     layout->setMargin(0);
@@ -19,13 +22,14 @@ PIG::PIG(QWidget *parent) : QWidget(parent), mRoot(0)
 
 PIG::~PIG()
 {
+    if (mPassword != NULL)
+        delete mPassword;
+    if (mUpdate != NULL)
+        delete mUpdate;
+    if (mTorrent != NULL)
+        delete mTorrent;
     //cleanUp();
-
     mRoot->disconnect(this);
-    delete mPassword;
-    delete mTorrent;
-    if (mPlayer->isEnabled()) // TODO: ver si esta instanciado de ora forma.
-        delete mPlayer;
     exit(0);
 }
 
@@ -106,8 +110,8 @@ void PIG::updateHandle()
 // Start
 void PIG::start()
 {
-    mUpdate = 0; // TODO: Ver por que falla sin esta linea. En update usar new pare crear los sockets y delete en el destructor.
     delete mUpdate;
+    mUpdate = NULL;
 
     if (db.open()) {
         QSqlQuery qry;
@@ -259,7 +263,6 @@ void PIG::playerHandle(const QString absoluteFilePath, bool abort)
     } else {
         this->show();
         emit abortTorrentSIGNAL();
-        mTorrent->_player->disconnect();
         mPlayer->close();
         delete mPlayer;
     }

@@ -177,7 +177,6 @@ VideoPlayer::~VideoPlayer()
 {
     _pig->disconnect(this);
     _torrent->disconnect(this);
-    hideControlsTimer->stop();
     player->stop();
     delete player;
 }
@@ -577,14 +576,12 @@ void VideoPlayer::keyPressEvent(QKeyEvent *event)
         setVolume(-5);
     } else if (event->key() == Qt::Key_L) {
         setLoop();
-    } else
-    if ((event->key() == Qt::Key_Escape && event->key() != Qt::ControlModifier)) {
+    } else if ((event->key() == (Qt::Key_Escape)) && !(event->modifiers() & Qt::ControlModifier)) {
         QMetaObject::invokeMethod(_pig, "playerHandle", Qt::QueuedConnection, Q_ARG(QString, ""), Q_ARG(bool, true));
+    } else if ((event->key() == (Qt::Key_Escape)) && (event->modifiers() & Qt::ControlModifier)) {
+        this->~VideoPlayer();
+        QMetaObject::invokeMethod(_pig, "quit", Qt::QueuedConnection);
     }
-
-    //if (event->key() == (Qt::Key_Escape && Qt::ControlModifier)) { // TODO: No funciona. Posiblemente al Esc de arriba falta agregarle !Qt::ControlModifier.
-        //QMetaObject::invokeMethod(_pig, "quit", Qt::QueuedConnection);
-    //}
 }
 
 void VideoPlayer::mousePressEvent(QMouseEvent *event)

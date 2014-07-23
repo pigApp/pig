@@ -12,12 +12,18 @@ Update::Update(QObject *parent) : QObject(parent)
     newBinaryAvailable = false;
     newDatabaseAvailable = false;
     databaseUpdated = false;
+
+    mSocket = new TcpSocket();
+    connect(mSocket, SIGNAL(versionReady(QString)), this, SLOT(evaluate(QString)));
+    connect(mSocket, SIGNAL(fileReady(QString, QString)), this, SLOT(integrityFile(QString, QString)));
+    connect(mSocket, SIGNAL(errorSocket()), this, SLOT(abort()));
 }
 
 Update::~Update()
 {
-    //db.removeDatabase(databaseUrl);
-    //_root->disconnect(this);
+    _root->disconnect(this);
+    db.removeDatabase(databaseUrl);
+    mSocket->deleteLater();
 }
 
 void Update::doCheck()
@@ -62,14 +68,11 @@ void Update::doCheck()
 
 void Update::getVersion(QString host, QString url)
 {
-    mSocket.host = host;
-    mSocket.url = url;
-    mSocket.file = ".";
-    mSocket.order = "getVersion";
-    mSocket.doConnect();
-
-    connect(&mSocket, SIGNAL(versionReady(QString)), this, SLOT(evaluate(QString)));
-    connect(&mSocket, SIGNAL(errorSocket()), this, SLOT(abort()));
+    mSocket->host = host;
+    mSocket->url = url;
+    mSocket->file = ".";
+    mSocket->order = "getVersion";
+    mSocket->doConnect();
 }
 
 void Update::evaluate(QString version)
@@ -111,31 +114,28 @@ void Update::getFiles()
     _root->setProperty("requireConfirmation", false);
 
     if (newBinaryAvailable && !newDatabaseAvailable && !newsAvailable) {
-        mSocket.host = hostFiles;
-        mSocket.url = binaryUrl;
+        mSocket->host = hostFiles;
+        mSocket->url = binaryUrl;
 #ifdef _WIN32
-    mSocket.file = "pig.exe";
+    mSocket->file = "pig.exe";
 #else
-    mSocket.file = "pig";
+    mSocket->file = "pig";
 #endif
-        mSocket.order = "getFile";
-        mSocket.doConnect();
+        mSocket->order = "getFile";
+        mSocket->doConnect();
     } else if (newDatabaseAvailable && !newsAvailable) {
-        mSocket.host = hostFiles;
-        mSocket.url = databaseUrl;
-        mSocket.file = "db.sqlite";
-        mSocket.order = "getFile";
-        mSocket.doConnect();
+        mSocket->host = hostFiles;
+        mSocket->url = databaseUrl;
+        mSocket->file = "db.sqlite";
+        mSocket->order = "getFile";
+        mSocket->doConnect();
     } else if (newsAvailable) {
-        mSocket.host = hostFiles;
-        mSocket.url = newsUrl;
-        mSocket.file = "news.txt";
-        mSocket.order = "getFile";
-        mSocket.doConnect();
+        mSocket->host = hostFiles;
+        mSocket->url = newsUrl;
+        mSocket->file = "news.txt";
+        mSocket->order = "getFile";
+        mSocket->doConnect();
     }
-
-    connect(&mSocket, SIGNAL(fileReady(QString, QString)), this, SLOT(integrityFile(QString, QString)));
-    connect(&mSocket, SIGNAL(errorSocket()), this, SLOT(abort()));
 }
 
 void Update::integrityFile(QString path, QString file)
@@ -298,6 +298,6 @@ void Update::abort()
         if (file_backup.exists())
             file_backup.rename(target);
     }
-
     emit forward();
 }
+

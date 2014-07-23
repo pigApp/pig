@@ -4,21 +4,25 @@
 #include <QDir>
 #include <QFile>
 
-
-TcpSocket::TcpSocket(QObject *parent) : QObject(parent)
+TcpSocket::TcpSocket(QTcpSocket *parent) : QTcpSocket(parent)
 {
-    socket = new QTcpSocket(this);
-    connect(socket, SIGNAL(connected()), this, SLOT(connected()));
-    connect(socket, SIGNAL(disconnected()), this, SLOT(disconnected()));
-    connect(socket, SIGNAL(readyRead()), this, SLOT(readyRead()));
+    connect(this, SIGNAL(connected()), this, SLOT(connected()));
+    connect(this, SIGNAL(disconnected()), this, SLOT(disconnected()));
+    connect(this, SIGNAL(readyRead()), this, SLOT(readyRead()));
+}
+
+TcpSocket::~TcpSocket()
+{
+    this->abort();
 }
 
 void TcpSocket::doConnect()
 {
     data.clear();
-    socket->connectToHost(host, 80);
+    this->connectToHost(host, 80);
 
     timeOut = new QTimer(this);
+    timeOut->setSingleShot(true);
     connect(timeOut, SIGNAL(timeout()), this, SLOT(error()));
     timeOut->start(15000);
 }
@@ -27,8 +31,8 @@ void TcpSocket::connected()
 {
     QString get = "GET "+url+" HTTP/1.1\r\nConnection: Close\r\nHost: "+host+"\r\n\r\n\r\n";
     const QByteArray ba = get.toUtf8();
-    const char *request = ba.constData();
-    socket->write(request);
+    const char *request = ba.constData(); 
+    this->writeData(request, ba.size());
 }
 
 void TcpSocket::disconnected()
@@ -40,8 +44,8 @@ void TcpSocket::readyRead()
 {
     timeOut->stop();
     
-    while (!socket->atEnd())
-        data.append(socket->read(100));
+    while (!this->atEnd())
+        data.append(this->read(100));
 }
 
 void TcpSocket::write()
@@ -86,7 +90,6 @@ void TcpSocket::write()
 
 void TcpSocket::error()
 {
-    timeOut->stop();
-    socket->abort();
     emit errorSocket();
 }
+

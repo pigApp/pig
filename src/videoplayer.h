@@ -17,7 +17,7 @@ class VideoPlayer : public QVideoWidget
     Q_OBJECT
 
 public:
-    explicit VideoPlayer(QVideoWidget *parent=0);
+    explicit VideoPlayer(QVideoWidget *parent = 0);
     ~VideoPlayer();
 
     Q_INVOKABLE void downloadInfo(int bitRate, int peers);

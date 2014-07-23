@@ -7,7 +7,7 @@
 #include <QDebug>
 
 Torrent::Torrent(QObject *parent) : QObject(parent)
-{    
+{
     client = new libtorrent::session;
     client->listen_on(std::make_pair(6881, 6889), ec);
     client->start_dht();
@@ -17,13 +17,12 @@ Torrent::Torrent(QObject *parent) : QObject(parent)
 
 Torrent::~Torrent()
 {
-    //client->abort();
-    //_pig->disconnect(this);
-    //_root->disconnect(this);
+    _pig->disconnect(this);
+    _root->disconnect(this);
 }
 
 void Torrent::doRun(QString mangnetUrl)
-{       
+{
     abort = false;
     remap = true;
     skip = false;
@@ -186,6 +185,7 @@ void Torrent::stop()
 
     if (handle.status().has_metadata) {
         client->remove_torrent(handle, optind = client->delete_files);
+        _player->disconnect();
     } else {
         // TODO: Detener el torrent sin borrar filas.
     }

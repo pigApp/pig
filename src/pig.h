@@ -3,7 +3,6 @@
 
 #include "password.h"
 #include "update.h"
-#include "tcpSocket.h"
 #include "torrent.h"
 #include "videoplayer.h"
 
@@ -23,6 +22,7 @@ public:
     ~PIG();
 
     Q_INVOKABLE void playerHandle(const QString absoluteFilePath, bool abort);
+    Q_INVOKABLE void quit();
 
     QWidget *container;
     QVBoxLayout *layout;
@@ -56,6 +56,5 @@ private slots:
     void torrentHandle(QString magnetUrl, QString scenne, bool abort);
     void cleanUp();
     void errorDb();
-    void quit();
 };
 #endif

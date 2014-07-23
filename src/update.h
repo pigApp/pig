@@ -26,7 +26,7 @@ signals:
     void errorDb();
 
 private:
-    TcpSocket mSocket;
+    TcpSocket *mSocket;
 
     QString hostFiles;
     QString databaseUrl;
