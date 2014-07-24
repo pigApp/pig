@@ -16,8 +16,8 @@ public:
     explicit Torrent(QObject *parent=0);
     ~Torrent();
 
-    Q_INVOKABLE bool isAvailable(int total_msec, int offset_msec, int availablePiece);
-    Q_INVOKABLE void offsetPiece(int total_msec, int offset_msec);
+    Q_INVOKABLE bool piece_is_available(int total_msec, int offset_msec, int piece);
+    Q_INVOKABLE void piece_offset(int total_msec, int offset_msec);
 
     QObject *_pig;
     QObject *_player;
@@ -26,7 +26,7 @@ public:
     int scenne;
 
 public slots:
-    void doRun(QString mangnetUrl);
+    void doConnect(QString mangnetUrl);
     void stop();
 
 private:
@@ -47,10 +47,10 @@ private:
     int offset;
 
 private slots:
-    void metadataReady();
-    void minimumPiecesRequired();
+    void ready_to_download();
+    void minimum_pieces_required();
     void progress();
-    void downloadInfo();
+    void download_Information();
 };
 
 #endif

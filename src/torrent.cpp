@@ -21,7 +21,7 @@ Torrent::~Torrent()
     _root->disconnect(this);
 }
 
-void Torrent::doRun(QString mangnetUrl)
+void Torrent::doConnect(QString mangnetUrl)
 {
     abort = false;
     remap = true;
@@ -45,19 +45,19 @@ void Torrent::doRun(QString mangnetUrl)
     //handle.add_tracker(tracker);
     //handle.add_tracker(trackerTwo);
 
-    metadataReady(); // TODO: En vez de llamar a esta funcion usar la alerta de metadata descargada.
+    ready_to_download(); // TODO: En vez de llamar a esta funcion usar la alerta de metadata descargada.
 }
 
-void Torrent::metadataReady()
+void Torrent::ready_to_download()
 {
     if (handle.status(1).state != 2) {
-        minimumPiecesRequired();
+        minimum_pieces_required();
     } else if(!abort) {
-        QTimer::singleShot(1000, this, SLOT(metadataReady()));
+        QTimer::singleShot(1000, this, SLOT(ready_to_download()));
     }
 }
 
-void Torrent::minimumPiecesRequired()
+void Torrent::minimum_pieces_required()
 {
     if (remap) {
         piece_kb = handle.get_torrent_info().piece_length()/1024;
@@ -90,7 +90,7 @@ void Torrent::minimumPiecesRequired()
         handle.set_priority(255);
         remap = false;
         
-        downloadInfo();
+        download_Information();
     }
 
     qDebug() << "REQUEST__PIECES: " << requiredPieces;
@@ -98,7 +98,7 @@ void Torrent::minimumPiecesRequired()
 
     if (!abort) {
         if(handle.status().num_pieces-downloadedPieces < requiredPieces) {
-            QTimer::singleShot(1000, this, SLOT(minimumPiecesRequired()));
+            QTimer::singleShot(1000, this, SLOT(minimum_pieces_required()));
         } else {
             if (downloadedPieces == 0) {
                 static QStringList scennesAbsolutePath;
@@ -114,7 +114,7 @@ void Torrent::minimumPiecesRequired()
                     scennesAbsolutePath << fi.absoluteFilePath();
 
                 toWidget = true;
-                QMetaObject::invokeMethod(_pig, "playerHandle", Qt::QueuedConnection, Q_ARG(QString, scennesAbsolutePath[scenne-1]), Q_ARG(bool, false));
+                QMetaObject::invokeMethod(_pig, "player_handle", Qt::QueuedConnection, Q_ARG(QString, scennesAbsolutePath[scenne-1]), Q_ARG(bool, false));
 
                 QTimer::singleShot(1000, this, SLOT(progress()));
             } else {
@@ -137,11 +137,11 @@ void Torrent::progress()
     }
 }
 
-void Torrent::downloadInfo()
+void Torrent::download_Information()
 {
     if (!abort) {
         if (toWidget) {
-            QMetaObject::invokeMethod(_player, "downloadInfo", Qt::QueuedConnection, Q_ARG(int, handle.status().download_rate/1024), Q_ARG(int, handle.status().num_peers));
+            QMetaObject::invokeMethod(_player, "download_Information", Qt::QueuedConnection, Q_ARG(int, handle.status().download_rate/1024), Q_ARG(int, handle.status().num_peers));
         } else {
             int downloaded_kb = handle.status().total_done;
             _root->setProperty("required", required_kb);
@@ -149,21 +149,21 @@ void Torrent::downloadInfo()
             _root->setProperty("bitRate", QString::number(handle.status().download_rate/1024));
             _root->setProperty("peers", handle.status().num_peers);
         }
-        QTimer::singleShot(1000, this, SLOT(downloadInfo()));
+        QTimer::singleShot(1000, this, SLOT(download_Information()));
     }
 }
 
-bool Torrent::isAvailable(int total_msec, int offset_msec,int availablePiece)
+bool Torrent::piece_is_available(int total_msec, int offset_msec,int piece)
 {
-    if (availablePiece == 0) {
+    if (piece == 0) {
         offset = (offset_msec*handle.get_torrent_info().num_pieces())/total_msec;
         return handle.have_piece(offset);
     } else {
-        return handle.have_piece(availablePiece);
+        return handle.have_piece(piece);
     }
 }
 
-void Torrent::offsetPiece(int total_msec, int offset_msec) // TODO: Si se empieza a  bajar desde una pieza que no se tiene, poner disable el slider en videoplayer.
+void Torrent::piece_offset(int total_msec, int offset_msec) // TODO: Si se empieza a  bajar desde una pieza que no se tiene, poner disable el slider en videoplayer.
 {
     skip = true;
     offset = (offset_msec*handle.get_torrent_info().num_pieces())/total_msec;
@@ -176,7 +176,7 @@ void Torrent::offsetPiece(int total_msec, int offset_msec) // TODO: Si se empiez
     }
 
     downloadedPieces = handle.status().num_pieces;
-    minimumPiecesRequired();
+    minimum_pieces_required();
 }
 
 void Torrent::stop()
@@ -317,5 +317,5 @@ qDebug() << "PROGRESS: " << progress;
 if(progress < 50000)
     QTimer::singleShot(2000, this, SLOT(minimumPiecesReady()));
 else
-    QMetaObject::invokeMethod(_pig, "playerHandle", Qt::QueuedConnection, Q_ARG(QString, pathx), Q_ARG(QString, filex));
+    QMetaObject::invokeMethod(_pig, "player_handle", Qt::QueuedConnection, Q_ARG(QString, pathx), Q_ARG(QString, filex));
 */

@@ -20,7 +20,7 @@ public:
     explicit VideoPlayer(QVideoWidget *parent = 0);
     ~VideoPlayer();
 
-    Q_INVOKABLE void downloadInfo(int bitRate, int peers);
+    Q_INVOKABLE void download_Information(int bitRate, int peers);
     Q_INVOKABLE void progress(int piece_kb, int total_kb, int downloaded_kb);
     Q_INVOKABLE void update(int total_pieces, int currentPiece);
 
@@ -33,7 +33,7 @@ protected:
     void mousePressEvent(QMouseEvent *event);
 
 public slots:
-    void doRun(QString absoluteFilePath);
+    void start(QString absoluteFilePath);
 
 private:
     QMediaPlayer *player;
@@ -68,26 +68,26 @@ private:
     qint64 stopLoop_msec;
 
 private slots:
-    void playPause();
+    void play_pause();
     void standBy();
-    void setVolume(int volume_key_value);
-    void setLoop();
-    void sliderStartLoopPressed();
-    void sliderStartLoopMoved(int position);
-    void sliderStartLoopReleased();
-    void sliderStopLoopPressed();
-    void sliderStopLoopMoved(int position);
-    void sliderStopLoopReleased();
-    void setSliderLoopTime(int msec);
-    void setCurrentTime(qint64 msecs);
-    void setTotalTime(qint64 msecs);
-    void setSliderPosition(qint64 position);
-    void sliderPressed();
-    void sliderMoved(int position);
-    void sliderReleased();
-    void showControls();
-    void hideControls();
-    void statusChange(QMediaPlayer::MediaStatus status);
+    void set_volume(int volume_key_value);
+    void set_loop();
+    void slider_startLoop_pressed();
+    void slider_startLoop_moved(int position);
+    void slider_startLoop_released();
+    void slider_stopLoop_pressed();
+    void slider_stopLoop_moved(int position);
+    void slider_stopLoop_released();
+    void set_sliderLoop_time(int msec);
+    void set_currentTime(qint64 msecs);
+    void set_totalTime(qint64 msecs);
+    void set_slider_position(qint64 position);
+    void slider_pressed();
+    void slider_moved(int position);
+    void slider_released();
+    void show_controls();
+    void hide_controls();
+    void status_change(QMediaPlayer::MediaStatus status);
     void error(QMediaPlayer::Error);
 };
 

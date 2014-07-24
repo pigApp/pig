@@ -23,9 +23,9 @@ public slots:
     void doConnect();
 
 signals:
-    void versionReady(QString version);
-    void fileReady(QString path, QString file);
-    void errorSocket();
+    void version_ready(QString version);
+    void file_ready(QString path, QString file);
+    void error_socket();
 
 private:
     QByteArray data;
@@ -34,7 +34,7 @@ private:
 private slots:
     void connected();
     void disconnected();
-    void readyRead();
+    void ready_to_read();
     void write();
     void error();
 };

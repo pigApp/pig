@@ -8,7 +8,7 @@ TcpSocket::TcpSocket(QTcpSocket *parent) : QTcpSocket(parent)
 {
     connect(this, SIGNAL(connected()), this, SLOT(connected()));
     connect(this, SIGNAL(disconnected()), this, SLOT(disconnected()));
-    connect(this, SIGNAL(readyRead()), this, SLOT(readyRead()));
+    connect(this, SIGNAL(readyRead()), this, SLOT(ready_to_read()));
 }
 
 TcpSocket::~TcpSocket()
@@ -40,7 +40,7 @@ void TcpSocket::disconnected()
     write();
 }
 
-void TcpSocket::readyRead()
+void TcpSocket::ready_to_read()
 {
     timeOut->stop();
     
@@ -73,7 +73,7 @@ void TcpSocket::write()
     if (order == "getVersion") {
         QByteArray dataFromBase = QByteArray::fromBase64(data);
         QString version(dataFromBase);
-        emit versionReady(version);
+        emit version_ready(version);
     } else {
         QFile target(path+file);
         target.open(QIODevice::WriteOnly);
@@ -84,12 +84,12 @@ void TcpSocket::write()
             target.write(data);
         }
         target.close();
-        emit fileReady(path, file);
+        emit file_ready(path, file);
     }
 }
 
 void TcpSocket::error()
 {
-    emit errorSocket();
+    emit error_socket();
 }
 

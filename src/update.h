@@ -19,11 +19,11 @@ public:
     QObject *_root;
 
 public slots:
-    void doCheck();
+    void check();
 
 signals:
-    void forward();
-    void errorDb();
+    void forwardSIGNAL();
+    void errorDatabaseSIGNAL();
 
 private:
     TcpSocket *mSocket;
@@ -41,12 +41,12 @@ private:
     bool newsAvailable, newDatabaseAvailable, newBinaryAvailable, databaseUpdated;
 
 private slots:
-    void getVersion(QString host, QString url);
+    void get_version(QString host, QString url);
     void evaluate(QString version);
-    void getFiles();
+    void get_files();
     void integrityFile(QString path, QString file);
     void replace(QString path, QString file);
-    void replaceBinaryReady(int exitCode);
+    void replace_binary_ready(int exitCode);
     void abort();
 };
 

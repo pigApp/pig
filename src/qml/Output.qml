@@ -290,25 +290,24 @@ Item {
                 id: counterRow
                 spacing: 2
                 anchors.right: parent.right
-                anchors.rightMargin: 10
+                anchors.rightMargin: 15
                 anchors.bottom: parent.bottom
-                anchors.bottomMargin: -20
+                anchors.bottomMargin: 15
                 Text {
                     id: currentLabel
                     text: currentFilm
-                    color: Qt.rgba(1, 1, 1, 0.04)
-                    font.family: pigFont.name
-                    font.pixelSize: 112
+                    color: Qt.rgba(1, 1, 1, 1)
+                    font.family: counterFont.name
+                    font.pixelSize: 30
                 }
                 Text {
                     id: totalLabel
                     text: totalFilms
-                    color: Qt.rgba(1, 1, 1, 0.04)
-                    font.family: pigFont.name
-                    font.pixelSize: 112
+                    color: Qt.rgba(1, 1, 1, 0.5)
+                    font.family: counterFont.name
+                    font.pixelSize: 30
                 }
             }
-
             NumberAnimation { running: recipe.PathView.isCurrentItem; target: poster; property: "opacity"; to: 1; duration: 4000; easing.type: Easing.InOutQuad }
             NumberAnimation { running: recipe.PathView.isCurrentItem; target: posterEffect; property: "opacity"; to: 1; duration: 4000; easing.type: Easing.InOutQuad }
             NumberAnimation { running: recipe.PathView.isCurrentItem; target: datesColumn; property: "opacity"; to: 1; duration: 2000; easing.type: Easing.OutElastic }

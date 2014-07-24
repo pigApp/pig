@@ -46,7 +46,7 @@ Rectangle {
             outEffect.start()
         }
     }
-    NumberAnimation { id: inEffect; target: effect; properties: "opacity"; to: 0.3; duration: 200; easing.type: Easing.InOutQuart }
+    NumberAnimation { id: inEffect; target: effect; properties: "opacity"; to: 0.2; duration: 200; easing.type: Easing.InOutQuart }
     NumberAnimation { id: outEffect; target: effect; properties: "opacity"; to: 0; duration: 300; easing.type: Easing.InOutQuart }
 }
 // Espacios hechos.

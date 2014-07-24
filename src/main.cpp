@@ -13,7 +13,7 @@ int main(int argc, char *argv[])
     view->setIcon(QIcon("qrc:/images/pig/icon.png"));
 
     PIG pig;
-    pig.setRootObject(view->rootObject());
+    pig.set_root_object(view->rootObject());
     pig.container = QWidget::createWindowContainer(view);
     pig.container->setFocusPolicy(Qt::TabFocus);
     pig.layout->addWidget(pig.container);

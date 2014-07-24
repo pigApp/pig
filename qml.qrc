@@ -14,7 +14,6 @@
         <file>images/output/1080.png</file>
         <file>images/player/volume.png</file>
         <file>images/player/volumeOff.png</file>
-        <file>images/font/pig.ttf</file>
         <file>src/qml/main.qml</file>
         <file>src/qml/AskPassword.qml</file>
         <file>src/qml/Update.qml</file>
@@ -33,5 +32,7 @@
         <file>images/pig/logo.png</file>
         <file>images/pig/wave.gif</file>
         <file>images/player/loop.png</file>
+        <file>images/fonts/pig.ttf</file>
+        <file>images/fonts/counter.ttf</file>
     </qresource>
 </RCC>

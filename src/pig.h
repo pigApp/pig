@@ -21,14 +21,14 @@ public:
     PIG(QWidget *parent=0);
     ~PIG();
 
-    Q_INVOKABLE void playerHandle(const QString absoluteFilePath, bool abort);
+    Q_INVOKABLE void player_handle(const QString absoluteFilePath, bool abort);
     Q_INVOKABLE void quit();
 
     QWidget *container;
     QVBoxLayout *layout;
 
 public slots:
-    void setRootObject(QObject *root);
+    void set_root_object(QObject *root);
 
 signals:
     void showUpdateSIGNAL();
@@ -49,12 +49,12 @@ private:
     QSqlDatabase db;
 
 private slots:
-    void passwordHandle(QString pass, bool init, bool write);
-    void updateHandle();
+    void password_handle(QString pass, bool init, bool write);
+    void update_handle();
     void start();
     void find(const QString inputText, QString category, QString pornstar, int offset, bool init);
-    void torrentHandle(QString magnetUrl, QString scenne, bool abort);
+    void torrent_handle(QString magnetUrl, QString scenne, bool abort);
     void cleanUp();
-    void errorDb();
+    void error_database();
 };
 #endif

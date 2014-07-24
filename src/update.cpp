@@ -14,9 +14,9 @@ Update::Update(QObject *parent) : QObject(parent)
     databaseUpdated = false;
 
     mSocket = new TcpSocket();
-    connect(mSocket, SIGNAL(versionReady(QString)), this, SLOT(evaluate(QString)));
-    connect(mSocket, SIGNAL(fileReady(QString, QString)), this, SLOT(integrityFile(QString, QString)));
-    connect(mSocket, SIGNAL(errorSocket()), this, SLOT(abort()));
+    connect(mSocket, SIGNAL(version_ready(QString)), this, SLOT(evaluate(QString)));
+    connect(mSocket, SIGNAL(file_ready(QString, QString)), this, SLOT(integrityFile(QString, QString)));
+    connect(mSocket, SIGNAL(error_socket()), this, SLOT(abort()));
 }
 
 Update::~Update()
@@ -26,7 +26,7 @@ Update::~Update()
     mSocket->deleteLater();
 }
 
-void Update::doCheck()
+void Update::check()
 {
     _root->setProperty("showWave", true);
     _root->setProperty("status", "SEEKING UPDATE");
@@ -36,7 +36,7 @@ void Update::doCheck()
         qry.prepare("SELECT BinaryVersion, DatabaseVersion, Release, Host, Url FROM PigData");
         if (!qry.exec()) {
             db.close();
-            emit errorDb();
+            emit errorDatabaseSIGNAL();
         } else {
             qry.next();
             currentBinaryVersion = qry.value(0).toInt();
@@ -59,14 +59,14 @@ void Update::doCheck()
         url = urlList[1];
 #endif
             db.close();
-            getVersion(host, url);
+            get_version(host, url);
         }
     } else {
-        emit errorDb();
+        emit errorDatabaseSIGNAL();
     }
 }
 
-void Update::getVersion(QString host, QString url)
+void Update::get_version(QString host, QString url)
 {
     mSocket->host = host;
     mSocket->url = url;
@@ -103,11 +103,11 @@ void Update::evaluate(QString version)
     } else {
         _root->setProperty("showWave", false);
         _root->setProperty("status", "");
-        emit forward();
+        emit forwardSIGNAL();
     }
 }
 
-void Update::getFiles()
+void Update::get_files()
 {
     _root->setProperty("showWave", true);
     _root->setProperty("status", "GETTING UPDATE");
@@ -184,12 +184,12 @@ void Update::replace(QString path, QString file)
         _root->setProperty("status", "PERMISSION DENIED");
         _root->setProperty("information", "RESTART THE APPLICATION WITH ADMINITRATOR RIGHTS");
     } else {
-        replaceBinaryReady(0);
+        replace_binary_ready(0);
     }
 #else
     updaterProc = new QProcess(this);                                                                    // TODO: Ver si QDir de la linea de abajo funciona.
     updaterProc->start("/bin/bash", QStringList() << "-c" << "gksu -u root -m 'PIG authorization to install update' 'mv "+QDir::homePath()+"/.pig/tmp/pig /usr/bin/ ; chmod +x /usr/bin/pig'");
-    connect(updaterProc, SIGNAL(finished(int)), this, SLOT(replaceBinaryReady(int)));
+    connect(updaterProc, SIGNAL(finished(int)), this, SLOT(replace_binary_ready(int)));
 #endif
     } else if (newDatabaseAvailable && !newsAvailable) {
 #ifdef _WIN32
@@ -206,11 +206,11 @@ void Update::replace(QString path, QString file)
         if (QFile::copy(path+file, target)) {
             databaseUpdated = true;
             if (newBinaryAvailable) {
-                getFiles();
+                get_files();
             } else {
                 QFile f_backup(target_backup);
                 f.remove();
-                emit forward();
+                emit forwardSIGNAL();
             }
         } else {
             newBinaryAvailable = false;
@@ -226,11 +226,11 @@ void Update::replace(QString path, QString file)
 #endif
         QFile::copy(path+file, target);
         newsAvailable = false;
-        getFiles();
+        get_files();
     }
 }
 
-void Update::replaceBinaryReady(int exitCode)
+void Update::replace_binary_ready(int exitCode)
 {
     _root->setProperty("showWave", false);
 #ifdef _WIN32
@@ -298,6 +298,6 @@ void Update::abort()
         if (file_backup.exists())
             file_backup.rename(target);
     }
-    emit forward();
+    emit forwardSIGNAL();
 }
 

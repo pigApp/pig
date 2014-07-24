@@ -42,7 +42,8 @@ Item {
     signal torrentHandle(string magnetUrl, string scenne, bool abort)
     signal quit()
 
-    FontLoader { id: pigFont; source: "qrc:/images/font/pig.ttf" }
+    FontLoader { id: pigFont; source: "qrc:/images/fonts/pig.ttf" }
+    FontLoader { id: counterFont; source: "qrc:/images/fonts/counter.ttf" }
     
     Rectangle {
         id: screen

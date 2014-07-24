@@ -33,13 +33,13 @@ PIG::~PIG()
     exit(0);
 }
 
-void PIG::setRootObject(QObject *root)
+void PIG::set_root_object(QObject *root)
 {
     if(mRoot!=0) mRoot->disconnect(this); mRoot = root;
 
-    if(mRoot) connect(mRoot, SIGNAL(passwordHandle(QString, bool, bool)), this, SLOT(passwordHandle(QString, bool, bool)));
+    if(mRoot) connect(mRoot, SIGNAL(passwordHandle(QString, bool, bool)), this, SLOT(password_handle(QString, bool, bool)));
     if(mRoot) connect(mRoot, SIGNAL(find(QString, QString, QString, int, bool)), this, SLOT(find(QString, QString, QString, int, bool)));
-    if(mRoot) connect(mRoot, SIGNAL(torrentHandle(QString, QString, bool)), this, SLOT(torrentHandle(QString, QString, bool)));
+    if(mRoot) connect(mRoot, SIGNAL(torrentHandle(QString, QString, bool)), this, SLOT(torrent_handle(QString, QString, bool)));
     if(mRoot) connect(mRoot, SIGNAL(quit()), this, SLOT(quit()));
 
 #ifdef _WIN32
@@ -58,19 +58,19 @@ void PIG::setRootObject(QObject *root)
             dir.mkdir(tmp);
 
         mPassword = new Password();
-        passwordHandle("", true, false);
+        password_handle("", true, false);
     } else {
-        QTimer::singleShot(10, this, SLOT(errorDb()));
+        QTimer::singleShot(10, this, SLOT(error_database()));
     }
 }
 
 // Password
-void PIG::passwordHandle(QString plain, bool init, bool write)
+void PIG::password_handle(QString plain, bool init, bool write)
 {
     if (!init && !write) {
         if (mPassword->right(plain)) {
             mRoot->setProperty("require_password", false);
-            updateHandle();
+            update_handle();
         } else {
             mRoot->setProperty("fail_password", true);
         }
@@ -79,7 +79,7 @@ void PIG::passwordHandle(QString plain, bool init, bool write)
             mRoot->setProperty("require_password", true);
             init = false;
         } else {
-            QTimer::singleShot(10, this, SLOT(updateHandle()));
+            QTimer::singleShot(10, this, SLOT(update_handle()));
             init = false;
         }
     } else if (write) {
@@ -92,19 +92,19 @@ void PIG::passwordHandle(QString plain, bool init, bool write)
 }
 
 // Update
-void PIG::updateHandle()
+void PIG::update_handle()
 {
     emit showUpdateSIGNAL();
 
     mUpdate = new Update();
     mUpdate->db = db;
     mUpdate->_root = mRoot;
-    mUpdate->doCheck();
+    mUpdate->check();
 
-    connect(mUpdate, SIGNAL(forward()), this, SLOT(start()));
-    connect(mUpdate, SIGNAL(errorDb()), this, SLOT(errorDb()));
+    connect(mUpdate, SIGNAL(forwardSIGNAL()), this, SLOT(start()));
+    connect(mUpdate, SIGNAL(errorDatabaseSIGNAL()), this, SLOT(error_database()));
     connect(mRoot, SIGNAL(skip()), this, SLOT(start()));
-    connect(mRoot, SIGNAL(getFiles()), mUpdate, SLOT(getFiles()));
+    connect(mRoot, SIGNAL(getFiles()), mUpdate, SLOT(get_files()));
 }
 
 // Start
@@ -118,7 +118,7 @@ void PIG::start()
         qry.prepare("SELECT DatabaseVersion, BinaryVersion, Release, Category, NCategory, Pornstar, NPornstar FROM PigData, FiltersData");
         if (!qry.exec()) {
             db.close();
-            errorDb();
+            error_database();
         } else {
             qry.next();
             int currentDatabaseVersion = qry.value(0).toInt();
@@ -150,7 +150,7 @@ void PIG::start()
             mTorrent->_root = mRoot;
         }
     } else {
-        errorDb();
+        error_database();
     }
 
 #ifdef _WIN32
@@ -191,7 +191,7 @@ void PIG::find(const QString inputText, QString category, QString pornstar, int 
     int row = 0;
 
     if (!db.open()) {
-        errorDb();
+        error_database();
     } else {
         _list.clear();
         QString strOffset = QString::number(offset);
@@ -199,7 +199,7 @@ void PIG::find(const QString inputText, QString category, QString pornstar, int 
             qry.prepare( "SELECT Title, Pornstar, Quality, Category, UrlCover, UrlPoster, UrlPreview, Torrent FROM Films WHERE Title LIKE '%"+inputText+"%' AND Category LIKE '%"+category+"%' AND Pornstar LIKE '%"+pornstar+"%' ORDER BY Title ASC LIMIT 1000 OFFSET '"+strOffset+"'" );
         if (!qry.exec()) { // TODO: Cambiar Ponstar por Cast. Tambien en la db.
             db.close();
-            errorDb();
+            error_database();
         } else {
             if (init) {
                 qry.last();
@@ -239,25 +239,25 @@ void PIG::find(const QString inputText, QString category, QString pornstar, int 
 }
 
 // Torrent
-void PIG::torrentHandle(QString magnetUrl, QString scenne, bool abort)
+void PIG::torrent_handle(QString magnetUrl, QString scenne, bool abort)
 {
     if (!abort) {
         mTorrent->scenne = scenne.toInt();
-        mTorrent->doRun(magnetUrl);
+        mTorrent->doConnect(magnetUrl);
     } else {
         mTorrent->stop();
     }
 }
 
 // Player
-void PIG::playerHandle(const QString absoluteFilePath, bool abort)
+void PIG::player_handle(const QString absoluteFilePath, bool abort)
 {
     if (!abort) {
         mPlayer = new VideoPlayer();
         mPlayer->_torrent = mTorrent;
         mPlayer->_pig = this;
         mTorrent->_player = mPlayer;
-        mPlayer->doRun(absoluteFilePath);
+        mPlayer->start(absoluteFilePath);
         mPlayer->showFullScreen();
         this->hide();
     } else {
@@ -289,7 +289,7 @@ void PIG::cleanUp()
 }
 
 // ErrorDb
-void PIG::errorDb()
+void PIG::error_database()
 {
     emit showErrorDbSIGNAL();
 }
