@@ -2,6 +2,7 @@
 #define TORRENT_H
 
 #include <libtorrent/session.hpp>
+#include <libtorrent/file_storage.hpp>
 
 #include <stdlib.h>
 #include <iostream>
@@ -33,14 +34,15 @@ private:
     libtorrent::session *client;
     libtorrent::torrent_handle handle;
     libtorrent::add_torrent_params params;
+    libtorrent::file_storage files;
     libtorrent::error_code ec;
+
+    QString fileName;
 
     bool abort;
     bool remap;
     bool skip;
     bool toWidget;
-    int piece_kb;
-    int required_kb;
     int requiredPieces;
     int availablePiece;
     int downloadedPieces;
@@ -49,6 +51,7 @@ private:
 private slots:
     void ready_to_download();
     void minimum_pieces_required();
+    void call_player();
     void progress();
     void download_Information();
 };

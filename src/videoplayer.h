@@ -33,6 +33,7 @@ protected:
     void mousePressEvent(QMouseEvent *event);
 
 public slots:
+    bool sandbox(QString absoluteFilePath);
     void start(QString absoluteFilePath);
 
 private:

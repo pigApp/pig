@@ -498,11 +498,10 @@ qrc_qml.cpp: qml.qrc \
 		images/player/volume.png \
 		images/player/volumeOff.png \
 		images/player/loop.png \
-		images/fonts/pig.ttf \
-		images/fonts/counter.ttf \
 		images/available/posterNotAvailable.png \
 		images/available/coverNotAvailable.png \
 		images/available/pornstarNotAvailable.png \
+		images/font/pig.ttf \
 		images/output/stripes.png \
 		images/output/frame.png \
 		images/output/1080.png \

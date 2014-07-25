@@ -57,7 +57,7 @@ Item {
             onClicked: {
                 root.status = ""
                 root.information = ""
-                root.getFiles()
+                root.getFilesSIGNAL_QML()
             }
         }
         Button {
@@ -72,13 +72,13 @@ Item {
             labelOutColor: Qt.rgba(0.1, 0.1, 0.1, 0.2)
             visible: { root.requireConfirmation }
             enabled: { root.requireConfirmation }
-            onClicked: { root.skip() }
+            onClicked: { root.skipSIGNAL_QML() }
         }
     }
 
     Keys.onPressed: {
         if (event.key === Qt.Key_Escape && (event.modifiers & Qt.ControlModifier)) {
-            root.quit()
+            root.quitSIGNAL_QML()
             event.accepted = true;
         }
     }

@@ -290,22 +290,21 @@ Item {
                 id: counterRow
                 spacing: 2
                 anchors.right: parent.right
-                anchors.rightMargin: 15
+                anchors.rightMargin: 10
                 anchors.bottom: parent.bottom
-                anchors.bottomMargin: 15
                 Text {
                     id: currentLabel
                     text: currentFilm
                     color: Qt.rgba(1, 1, 1, 1)
-                    font.family: counterFont.name
-                    font.pixelSize: 30
+                    font.family: pigFont.name
+                    font.pixelSize: 39
                 }
                 Text {
                     id: totalLabel
                     text: totalFilms
                     color: Qt.rgba(1, 1, 1, 0.5)
-                    font.family: counterFont.name
-                    font.pixelSize: 30
+                    font.family: pigFont.name
+                    font.pixelSize: 39
                 }
             }
             NumberAnimation { running: recipe.PathView.isCurrentItem; target: poster; property: "opacity"; to: 1; duration: 4000; easing.type: Easing.InOutQuad }
@@ -421,7 +420,7 @@ Item {
                     screen.state = "showHelp"
                     event.accepted = true
                 } else if (event.key === Qt.Key_Escape && (event.modifiers & Qt.ControlModifier)) {
-                    root.quit()
+                    root.quitSIGNAL_QML()
                     event.accepted = true;
                 }
             }
@@ -521,7 +520,7 @@ Item {
     }
     onAbortTorrentChanged: {
         if (abortTorrent) {
-            root.torrentHandle("", "", true)
+            root.torrentHandleSIGNAL_QML("", "", true)
             hidePlayerLayer.running = true
             abortTorrentResetDelay.start()
         }
@@ -553,7 +552,7 @@ Item {
         coverLoaded = false
         root.list = ''
         model.clear()
-        root.find(inputText, category, pornstar, offset, false)
+        root.findSIGNAL_QML(inputText, category, pornstar, offset, false)
         waitDelay.start();
     }
     Timer {

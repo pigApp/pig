@@ -181,6 +181,16 @@ VideoPlayer::~VideoPlayer()
     delete player;
 }
 
+bool VideoPlayer::sandbox(QString absoluteFilePath)
+{
+    player->setMedia(QUrl::fromLocalFile(absoluteFilePath));
+    player->play();
+    if (player->error())
+        return false;
+    else
+        return true;
+}
+
 void VideoPlayer::start(QString absoluteFilePath)
 {
     skip = false;
@@ -526,36 +536,6 @@ void VideoPlayer::hide_controls()
     }
 }
 
-void VideoPlayer::status_change(QMediaPlayer::MediaStatus status)
-{
-    qDebug() << "STATUS: " << status;
-    if (status == QMediaPlayer::BufferedMedia) {
-        if (!slider->isEnabled()) {
-            box->show();
-            volumeIcon->show();
-            volumeLabel->show();
-            currentTimeLabel->show();
-            totalTimeLabel->show();
-            bitRateLabel->show();
-            peersLabel->show();
-            bar->show();
-            slider->setEnabled(true);
-            slider->show();
-            hideControlsTimer->start(3000);
-        } else if (!skip){
-            player->play();
-        }
-    } else if (status == QMediaPlayer::InvalidMedia || status == QMediaPlayer::EndOfMedia) {
-        skip = false;
-        QTimer::singleShot(40000, this, SLOT(standBy()));
-    }
-}
-
-void VideoPlayer::error(QMediaPlayer::Error)
-{
-    qDebug() << "--ERROR: " << player->QMediaPlayer::error();
-}
-
 void VideoPlayer::keyPressEvent(QKeyEvent *event)
 {
     hideControlsTimer->stop();
@@ -589,4 +569,34 @@ void VideoPlayer::mousePressEvent(QMouseEvent *event)
     hideControlsTimer->stop();
     show_controls();
     hideControlsTimer->start();
+}
+
+void VideoPlayer::status_change(QMediaPlayer::MediaStatus status)
+{
+    qDebug() << "STATUS: " << status;
+    if (status == QMediaPlayer::BufferedMedia) {
+        if (!slider->isEnabled()) {
+            box->show();
+            volumeIcon->show();
+            volumeLabel->show();
+            currentTimeLabel->show();
+            totalTimeLabel->show();
+            bitRateLabel->show();
+            peersLabel->show();
+            bar->show();
+            slider->setEnabled(true);
+            slider->show();
+            hideControlsTimer->start(3000);
+        } else if (!skip){
+            player->play();
+        }
+    } else if (status == QMediaPlayer::InvalidMedia || status == QMediaPlayer::EndOfMedia) {
+        skip = false;
+        QTimer::singleShot(40000, this, SLOT(standBy()));
+    }
+}
+
+void VideoPlayer::error(QMediaPlayer::Error)
+{
+    qDebug() << "--ERROR: " << player->QMediaPlayer::error();
 }

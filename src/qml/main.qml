@@ -35,15 +35,14 @@ Item {
     property variant nPornstarList
     property variant list
 
-    signal passwordHandle(string plain, bool init, bool write)
-    signal skip()
-    signal getFiles()
-    signal find(string inputText, string category, string pornstar, int offset, bool init)
-    signal torrentHandle(string magnetUrl, string scenne, bool abort)
-    signal quit()
+    signal passwordHandleSIGNAL_QML(string plain, bool init, bool write)
+    signal skipSIGNAL_QML()
+    signal getFilesSIGNAL_QML()
+    signal findSIGNAL_QML(string inputText, string category, string pornstar, int offset, bool init)
+    signal torrentHandleSIGNAL_QML(string magnetUrl, string scenne, bool abort)
+    signal quitSIGNAL_QML()
 
-    FontLoader { id: pigFont; source: "qrc:/images/fonts/pig.ttf" }
-    FontLoader { id: counterFont; source: "qrc:/images/fonts/counter.ttf" }
+    FontLoader { id: pigFont; source: "qrc:/images/font/pig.ttf" }
     
     Rectangle {
         id: screen
@@ -122,7 +121,7 @@ Item {
         target: cppSignals
         onShowUpdateSIGNAL: { loader.source = "Update.qml" }
         onStartSIGNAL: { loader.source = ""; loader_finder_output.source = "Finder.qml" }
-        onShowErrorDbSIGNAL: { loader_finder_output.source = ""; loader.source = "ErrorDb.qml"; logo.visible = false; blur.visible = false }
+        onShowErrorDatabaseSIGNAL: { loader_finder_output.source = ""; loader.source = "ErrorDb.qml"; logo.visible = false; blur.visible = false }
     }
 
     Component.onCompleted: {

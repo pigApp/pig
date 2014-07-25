@@ -37,7 +37,7 @@ signals:
     void listUpdatedSIGNAL();
     void noResultSIGNAL();
     void abortTorrentSIGNAL();
-    void showErrorDbSIGNAL();
+    void showErrorDatabaseSIGNAL();
 
 private:
     QObject *mRoot;

@@ -80,7 +80,7 @@ Item {
 
     Keys.onPressed: {
         if (event.key === Qt.Key_Escape && (event.modifiers & Qt.ControlModifier)) {
-            root.quit()
+            root.quitSIGNAL_QML()
             event.accepted = true;
         }
     }

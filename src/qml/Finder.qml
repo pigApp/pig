@@ -21,7 +21,7 @@ Item {
         anchors.leftMargin: -150
         anchors.verticalCenter: parent.verticalCenter
         anchors.verticalCenterOffset: -4
-        onAccepted: { root.find(input.text, category, pornstar, 0, true) }
+        onAccepted: { root.findSIGNAL_QML(input.text, category, pornstar, 0, true) }
         onCursorPositionChanged: { if (noResultLabel.visible) noResultLabel.visible = false; input.visible = true }
         Keys.onPressed: {
             if (event.key === Qt.Key_P && (event.modifiers & Qt.ControlModifier)) {
@@ -33,7 +33,7 @@ Item {
                     screen.state = "showHelp"
                 event.accepted = true
             } else if (event.key === Qt.Key_Escape && (event.modifiers & Qt.ControlModifier)) {
-                root.quit()
+                root.quitSIGNAL_QML()
                 event.accepted = true
             }
         }
@@ -109,7 +109,7 @@ Item {
             event.accepted = true;
             input.forceActiveFocus()
         } else if (event.key === Qt.Key_Escape && (event.modifiers & Qt.ControlModifier)) {
-            root.quit()
+            root.quitSIGNAL_QML()
         }
     }
     function filtersManager(filter, label) {
@@ -120,7 +120,7 @@ Item {
             pornstar = label.toUpperCase()
 
         finder.state = "hideAll"
-        root.find('', category, pornstar, 0, true)
+        root.findSIGNAL_QML('', category, pornstar, 0, true)
         noResultLabel.visible = false
     }
 

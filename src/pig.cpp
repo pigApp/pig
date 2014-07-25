@@ -37,10 +37,10 @@ void PIG::set_root_object(QObject *root)
 {
     if(mRoot!=0) mRoot->disconnect(this); mRoot = root;
 
-    if(mRoot) connect(mRoot, SIGNAL(passwordHandle(QString, bool, bool)), this, SLOT(password_handle(QString, bool, bool)));
-    if(mRoot) connect(mRoot, SIGNAL(find(QString, QString, QString, int, bool)), this, SLOT(find(QString, QString, QString, int, bool)));
-    if(mRoot) connect(mRoot, SIGNAL(torrentHandle(QString, QString, bool)), this, SLOT(torrent_handle(QString, QString, bool)));
-    if(mRoot) connect(mRoot, SIGNAL(quit()), this, SLOT(quit()));
+    if(mRoot) connect(mRoot, SIGNAL(passwordHandleSIGNAL_QML(QString, bool, bool)), this, SLOT(password_handle(QString, bool, bool)));
+    if(mRoot) connect(mRoot, SIGNAL(findSIGNAL_QML(QString, QString, QString, int, bool)), this, SLOT(find(QString, QString, QString, int, bool)));
+    if(mRoot) connect(mRoot, SIGNAL(torrentHandleSIGNAL_QML(QString, QString, bool)), this, SLOT(torrent_handle(QString, QString, bool)));
+    if(mRoot) connect(mRoot, SIGNAL(quitSIGNAL_QML()), this, SLOT(quit()));
 
 #ifdef _WIN32
     QString target = "C:/pig/.pig/db.sqlite";
@@ -103,8 +103,8 @@ void PIG::update_handle()
 
     connect(mUpdate, SIGNAL(forwardSIGNAL()), this, SLOT(start()));
     connect(mUpdate, SIGNAL(errorDatabaseSIGNAL()), this, SLOT(error_database()));
-    connect(mRoot, SIGNAL(skip()), this, SLOT(start()));
-    connect(mRoot, SIGNAL(getFiles()), mUpdate, SLOT(get_files()));
+    connect(mRoot, SIGNAL(skipSIGNAL_QML()), this, SLOT(start()));
+    connect(mRoot, SIGNAL(getFilesSIGNAL_QML()), mUpdate, SLOT(get_files()));
 }
 
 // Start
@@ -185,6 +185,7 @@ void PIG::start()
     emit startSIGNAL();
 }
 
+//Find
 void PIG::find(const QString inputText, QString category, QString pornstar, int offset, bool init)
 {
     static QStringList _list;
@@ -291,7 +292,7 @@ void PIG::cleanUp()
 // ErrorDb
 void PIG::error_database()
 {
-    emit showErrorDbSIGNAL();
+    emit showErrorDatabaseSIGNAL();
 }
 
 void PIG::quit()

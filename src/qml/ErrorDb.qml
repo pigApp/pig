@@ -1,7 +1,7 @@
 import QtQuick 2.2
 
 Item {
-    id: errorDb
+    id: errorDatabaseMessage
 
     Rectangle {
         id: layer
@@ -35,10 +35,10 @@ Item {
 
     Keys.onPressed: {
         if (event.key === Qt.Key_Escape && (event.modifiers & Qt.ControlModifier)) {
-            root.quit()
+            root.quitSIGNAL_QML()
             event.accepted = true;
         }
     }
 
-    Component.onCompleted: errorDb.forceActiveFocus()
+    Component.onCompleted: errorDatabaseMessage.forceActiveFocus()
 }

@@ -3,6 +3,8 @@
         <file>images/pig/icon.ico</file>
         <file>images/pig/icon.png</file>
         <file>images/pig/icon.rc</file>
+        <file>images/pig/logo.png</file>
+        <file>images/pig/wave.gif</file>
         <file>images/available/pornstarNotAvailable.png</file>
         <file>images/available/coverNotAvailable.png</file>
         <file>images/available/posterNotAvailable.png</file>
@@ -14,6 +16,8 @@
         <file>images/output/1080.png</file>
         <file>images/player/volume.png</file>
         <file>images/player/volumeOff.png</file>
+        <file>images/player/loop.png</file>
+        <file>images/font/pig.ttf</file>
         <file>src/qml/main.qml</file>
         <file>src/qml/AskPassword.qml</file>
         <file>src/qml/Update.qml</file>
@@ -29,10 +33,5 @@
         <file>src/qml/ProgressBar.qml</file>
         <file>src/qml/ErrorDb.qml</file>
         <file>src/qml/Wait.qml</file>
-        <file>images/pig/logo.png</file>
-        <file>images/pig/wave.gif</file>
-        <file>images/player/loop.png</file>
-        <file>images/fonts/pig.ttf</file>
-        <file>images/fonts/counter.ttf</file>
     </qresource>
 </RCC>

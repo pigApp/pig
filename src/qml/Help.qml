@@ -197,7 +197,7 @@ Item {
             screen.state = "cleanUp"
             event.accepted = true;
         } else if (event.key === Qt.Key_Escape && (event.modifiers & Qt.ControlModifier)) {
-            root.quit()
+            root.quitSIGNAL_QML()
             event.accepted = true;
         }
     }

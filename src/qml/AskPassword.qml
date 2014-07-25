@@ -34,7 +34,7 @@ Item {
             onCursorPositionChanged: { label.text = ""; input.visible = true }
             onAccepted: {
                 if (input.text !== '') {
-                    root.passwordHandle(input.text, false, false)
+                    root.passwordHandleSIGNAL_QML(input.text, false, false)
                     if (root.fail_password) {
                         input.visible = false
                         label.text = "WRONG PASSWORD"
@@ -43,7 +43,7 @@ Item {
             }
             Keys.onPressed: {
                 if (event.key === Qt.Key_Escape && (event.modifiers & Qt.ControlModifier)) {
-                    root.quit()
+                    root.quitSIGNAL_QML()
                     event.accepted = true;
                 }
             }

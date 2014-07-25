@@ -35,7 +35,7 @@ Item {
             onCursorPositionChanged: { label.text = ""; input.visible = true }
             onAccepted: {
                 if (input.text !== '') {
-                    root.passwordHandle(input.text, false, true)
+                    root.passwordHandleSIGNAL_QML(input.text, false, true)
                     input.visible = false
                     input.enabled = false
                     if (root.ok_password)
@@ -50,7 +50,7 @@ Item {
                     screen.state = "cleanUp"
                     event.accepted = true
                 } else if (event.key === Qt.Key_Escape && (event.modifiers & Qt.ControlModifier)) {
-                    root.quit()
+                    root.quitSIGNAL_QML()
                     event.accepted = true;
                 }
             }
