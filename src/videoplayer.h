@@ -21,7 +21,7 @@ public:
     ~VideoPlayer();
 
     Q_INVOKABLE void download_Information(int bitRate, int peers);
-    Q_INVOKABLE void progress(int piece_kb, int total_kb, int downloaded_kb);
+    Q_INVOKABLE void progress(int total_kb, int downloaded_kb);
     Q_INVOKABLE void update(int total_pieces, int currentPiece);
 
     QObject *_pig;
@@ -33,8 +33,7 @@ protected:
     void mousePressEvent(QMouseEvent *event);
 
 public slots:
-    bool sandbox(QString absoluteFilePath);
-    void start(QString absoluteFilePath);
+    void sandbox(QString absoluteFilePath);
 
 private:
     QMediaPlayer *player;
@@ -56,6 +55,7 @@ private:
     QSlider *sliderStartLoop;
     QSlider *sliderStopLoop;
 
+    bool onSandbox;
     bool skip;
     bool paused;
     bool loop;
@@ -69,7 +69,7 @@ private:
     qint64 stopLoop_msec;
 
 private slots:
-    void play_pause();
+    void play_pause_stop();
     void standBy();
     void set_volume(int volume_key_value);
     void set_loop();

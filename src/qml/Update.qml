@@ -6,7 +6,7 @@ Item {
     Rectangle {
         id: waveLayer
         width: wave.width
-        height: wave.height+8
+        height: wave.height
         visible: root.showWave
         AnimatedImage {
             id: wave
@@ -14,7 +14,6 @@ Item {
         }
         anchors.horizontalCenter: statusLabel.horizontalCenter
         anchors.verticalCenter: statusLabel.verticalCenter
-        anchors.verticalCenterOffset: -30
     }
     Text {
         id: statusLabel

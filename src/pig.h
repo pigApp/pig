@@ -21,7 +21,7 @@ public:
     PIG(QWidget *parent=0);
     ~PIG();
 
-    Q_INVOKABLE void player_handle(const QString absoluteFilePath, bool abort);
+    Q_INVOKABLE void player_handle(const QString absoluteFilePath, bool init, bool sandbox, bool fileReady, bool abort);
     Q_INVOKABLE void quit();
 
     QWidget *container;
@@ -37,6 +37,8 @@ signals:
     void listUpdatedSIGNAL();
     void noResultSIGNAL();
     void abortTorrentSIGNAL();
+    void checkingFileSIGNAL();
+    void fileReadySIGNAL();
     void showErrorDatabaseSIGNAL();
 
 private:

@@ -5,12 +5,14 @@ Item {
     id: output
     opacity: 0
 
-    property bool abortTorrent
     property bool posterLoaded
     property bool coverLoaded
+    property bool abortTorrent
+    property bool fileNotReady
     property bool hideAll
     property bool focusPath
     property bool zoomIn
+    property bool onShowPlayerLayer
 
     property string inputText
     property string category
@@ -20,8 +22,7 @@ Item {
     property int currentFilm: 1
     property int locationOnList
     property int nIndex: 0
-
-    property bool onShowPlayerLayer
+    property int timeLeft: 5
 
     ListModel {
         id: model
@@ -472,6 +473,7 @@ Item {
                 root.bitRate = ""
                 onShowPlayerLayer = false
                 abortTorrent = false
+                fileNotReady = false
             }
         }
         ProgressBar {
@@ -481,7 +483,7 @@ Item {
             anchors.centerIn: parent
         }
         Row {
-            id: downloadInfoLabel
+            id: peerInformationRow
             spacing: 17
             visible: { !abortTorrent }
             anchors.left: progressBar.right
@@ -517,6 +519,42 @@ Item {
                 font.pixelSize: 30
             }
         }
+        Text {
+            id: checkingFileLabel
+            text: "CHECKING FILE"
+            color: Qt.rgba(0.1, 0.1, 0.1, 1)
+            font.family: pigFont.name
+            font.pixelSize: 15
+            visible: { fileNotReady && !abortTorrent }
+            anchors.horizontalCenter: parent.horizontalCenter
+            anchors.top: progressBar.bottom
+            anchors.topMargin: 10
+        }
+        Text {
+            id: fileRecheckLabel
+            text: ""
+            color: Qt.rgba(0.1, 0.1, 0.1, 1)
+            font.family: pigFont.name
+            font.pixelSize: 15
+            visible: { fileNotReady && !abortTorrent }
+            anchors.horizontalCenter: parent.horizontalCenter
+            anchors.top: checkingFileLabel.bottom
+            anchors.topMargin: 2
+        }
+        Timer {
+            id: fileRecheckDelay
+            running: false
+            repeat: true
+            interval: 1000
+            onTriggered: {
+                if (output.timeLeft > 0)
+                    output.timeLeft -= 1
+                else
+                    output.timeLeft = 5
+                checkingFileLabel.text = "FILE NOT READY. PLEASE WAIT"
+                fileRecheckLabel.text = "RECHECK ON "+output.timeLeft
+            }
+        }
     }
     onAbortTorrentChanged: {
         if (abortTorrent) {
@@ -538,7 +576,7 @@ Item {
            model.append({ "title": list[row], "cast": list[row+1], "quality": list[row+2], "categories": list[row+3],
                           "urlCover": list[row+4], "urlPoster": list[row+5], "urlPreview": list[row+6], "magnetUrl": torrent[0],
                           "scennes": nScennes })
-           row +=11
+           row += 11
         }
         location = 0
         locationOnList = 0
@@ -567,6 +605,8 @@ Item {
         target: cppSignals
         onListUpdatedSIGNAL: { listCreator() }
         onAbortTorrentSIGNAL: { abortTorrent = true }
+        onCheckingFileSIGNAL: { fileNotReady = true; output.timeLeft = 5; fileRecheckDelay.start() }
+        onFileReadySIGNAL: { fileNotReady = false; fileRecheckDelay.stop() }
     }
 
     Component.onCompleted: { listCreator(root.n, root.list) }

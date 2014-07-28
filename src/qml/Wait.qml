@@ -6,19 +6,18 @@ Item {
     Rectangle {
         id: waveLayer
         width: wave.width
-        height: wave.height+8
+        height: wave.height
         AnimatedImage {
             id: wave
             source: "qrc:/images/pig/wave.gif"
         }
         anchors.horizontalCenter: msg.horizontalCenter
         anchors.verticalCenter: msg.verticalCenter
-        anchors.verticalCenterOffset: -30
     }
     Text {
         id: msg
         text: "PLEASE WAIT"
-        color: { if (waveLayer.visible) "white"; else Qt.rgba(0.1, 0.1, 0.1, 0.2) }
+        color: "white"
         font.family: pigFont.name
         font.bold: true
         font.pixelSize: 30

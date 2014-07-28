@@ -1,5 +1,4 @@
 import QtQuick 2.2
-import QtGraphicalEffects 1.0
 
 Rectangle {
     id: buttonScenne
@@ -11,22 +10,16 @@ Rectangle {
     property string quality
     property string magnetUrl
     property string scenne
-
-    signal clicked()
-    onClicked: { onShowPlayerLayer = true; root.torrentHandleSIGNAL_QML(magnetUrl, scenne, false) }
+    property int size: 100
     
-    RectangularGlow {
-        id: effect
-        color: "white"
-        glowRadius: 1
-        spread: 0
-        cornerRadius: 90
-        opacity: 0
-        anchors.fill: icon
-    }
     Image {
         id: icon
-        source: { if (quality == '1080p') "qrc:/images/output/1080.png"; else "qrc:/images/output/720.png" }
+        width: size
+        height: size
+        source: { if (quality == '1080p') "qrc:/images/output/1080.png"; else if (quality == '720p') "qrc:/images/output/720.png"; else "qrc:/images/output/sd.png" }
+        sourceSize.width: buttonScenne.size
+        sourceSize.height: buttonScenne.size
+        smooth: true
         fillMode: Image.PreserveAspectCrop
         anchors.centerIn: parent
     }
@@ -35,7 +28,7 @@ Rectangle {
         hoverEnabled: true
         onEntered: { enter = true }
         onHoveredChanged: { enter = false }
-        onClicked: { buttonScenne.clicked() }
+        onClicked: { onShowPlayerLayer = true; root.torrentHandleSIGNAL_QML(magnetUrl, scenne, false) }
         anchors.fill: parent
     }
     onEnterChanged: {
@@ -46,7 +39,7 @@ Rectangle {
             outEffect.start()
         }
     }
-    NumberAnimation { id: inEffect; target: effect; properties: "opacity"; to: 0.2; duration: 200; easing.type: Easing.InOutQuart }
-    NumberAnimation { id: outEffect; target: effect; properties: "opacity"; to: 0; duration: 300; easing.type: Easing.InOutQuart }
+    NumberAnimation { id: inEffect; target: buttonScenne; properties: "size"; to: 110; duration: 200; easing.type: Easing.InOutQuart }
+    NumberAnimation { id: outEffect; target: buttonScenne; properties: "size"; to: 100; duration: 300; easing.type: Easing.InOutQuart }
 }
 // Espacios hechos.

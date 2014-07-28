@@ -251,16 +251,25 @@ void PIG::torrent_handle(QString magnetUrl, QString scenne, bool abort)
 }
 
 // Player
-void PIG::player_handle(const QString absoluteFilePath, bool abort)
+void PIG::player_handle(const QString absoluteFilePath, bool init, bool sandbox, bool fileReady, bool abort)
 {
     if (!abort) {
-        mPlayer = new VideoPlayer();
-        mPlayer->_torrent = mTorrent;
-        mPlayer->_pig = this;
-        mTorrent->_player = mPlayer;
-        mPlayer->start(absoluteFilePath);
-        mPlayer->showFullScreen();
-        this->hide();
+        if (init) {
+            mPlayer = new VideoPlayer();
+            mPlayer->_torrent = mTorrent;
+            mPlayer->_pig = this;
+            mTorrent->_player = mPlayer;
+        }
+        if (sandbox) {
+            mPlayer->sandbox(absoluteFilePath);
+            emit checkingFileSIGNAL();
+        }
+        if (fileReady) {
+            mTorrent->toPlayer = true;
+            mPlayer->showFullScreen();
+            this->hide();
+            emit fileReadySIGNAL();
+        }
     } else {
         this->show();
         emit abortTorrentSIGNAL();

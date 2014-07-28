@@ -504,6 +504,7 @@ qrc_qml.cpp: qml.qrc \
 		images/font/pig.ttf \
 		images/output/stripes.png \
 		images/output/frame.png \
+		images/output/sd.png \
 		images/output/1080.png \
 		images/output/screenTest.jpg \
 		images/output/720.png \

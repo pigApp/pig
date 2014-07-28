@@ -1,4 +1,4 @@
-#ifndef TORRENT_H
+    #ifndef TORRENT_H
 #define TORRENT_H
 
 #include <libtorrent/session.hpp>
@@ -25,6 +25,7 @@ public:
     QObject *_root;
 
     int scenne;
+    bool toPlayer;
 
 public slots:
     void doConnect(QString mangnetUrl);
@@ -40,20 +41,16 @@ private:
     QString fileName;
 
     bool abort;
-    bool remap;
     bool skip;
-    bool toWidget;
-    int requiredPieces;
-    int availablePiece;
-    int downloadedPieces;
     int offset;
 
 private slots:
-    void ready_to_download();
-    void minimum_pieces_required();
+    void metadata_ready();
+    void filterFile();
+    void minimum_ready();
+    void download_Information();
     void call_player();
     void progress();
-    void download_Information();
 };
 
 #endif
