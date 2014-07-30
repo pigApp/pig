@@ -240,11 +240,11 @@ void PIG::find(const QString inputText, QString category, QString pornstar, int 
 }
 
 // Torrent
-void PIG::torrent_handle(QString magnetUrl, QString scenne, bool abort)
+void PIG::torrent_handle(QString magnet, QString scenne, bool abort)
 {
     if (!abort) {
         mTorrent->scenne = scenne.toInt();
-        mTorrent->doConnect(magnetUrl);
+        mTorrent->doConnect(magnet);
     } else {
         mTorrent->stop();
     }

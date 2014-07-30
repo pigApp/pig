@@ -17,8 +17,8 @@ public:
     explicit Torrent(QObject *parent=0);
     ~Torrent();
 
-    Q_INVOKABLE bool piece_is_available(int total_msec, int offset_msec, int piece);
-    Q_INVOKABLE void piece_offset(int total_msec, int offset_msec);
+    Q_INVOKABLE bool piece_is_available(int total_msec, int offset_msec);
+    Q_INVOKABLE void piece_update(int total_msec, int offset_msec);
 
     QObject *_pig;
     QObject *_player;
@@ -28,7 +28,7 @@ public:
     bool toPlayer;
 
 public slots:
-    void doConnect(QString mangnetUrl);
+    void doConnect(QString magnet);
     void stop();
 
 private:
@@ -43,6 +43,7 @@ private:
     bool abort;
     bool skip;
     int offset;
+    int offset_kb;
 
 private slots:
     void metadata_ready();

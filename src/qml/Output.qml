@@ -269,7 +269,7 @@ Item {
                         var component = Qt.createComponent("ButtonScenne.qml")
                         var object = component.createObject(openScenneRow)
                         object.quality = quality
-                        object.magnetUrl = magnetUrl
+                        object.magnet = magnet
                         object.scenne = i
                     }
                 }
@@ -574,7 +574,7 @@ Item {
            torrent = list[row+7].split(",")
            var nScennes = Number(torrent[1])
            model.append({ "title": list[row], "cast": list[row+1], "quality": list[row+2], "categories": list[row+3],
-                          "urlCover": list[row+4], "urlPoster": list[row+5], "urlPreview": list[row+6], "magnetUrl": torrent[0],
+                          "urlCover": list[row+4], "urlPoster": list[row+5], "urlPreview": list[row+6], "magnet": torrent[0],
                           "scennes": nScennes })
            row += 11
         }

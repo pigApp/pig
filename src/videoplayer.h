@@ -21,8 +21,8 @@ public:
     ~VideoPlayer();
 
     Q_INVOKABLE void download_Information(int bitRate, int peers);
-    Q_INVOKABLE void progress(int total_kb, int downloaded_kb);
-    Q_INVOKABLE void update(int total_pieces, int currentPiece);
+    Q_INVOKABLE void progress(int total_kb, int downloaded_kb, int downloaded_offset);
+    Q_INVOKABLE void update();
 
     QObject *_pig;
     QObject *_torrent;
@@ -43,6 +43,7 @@ private:
     QLabel *volumeIcon;
     QLabel *volumeLabel;
     QLabel *pauseLabel;
+    QProgressBar *barOffset;
     QLabel *currentTimeLabel;
     QLabel *totalTimeLabel;
     QLabel *bitRateLabel;

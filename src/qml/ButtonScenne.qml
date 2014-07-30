@@ -8,7 +8,7 @@ Rectangle {
 
     property bool enter
     property string quality
-    property string magnetUrl
+    property string magnet
     property string scenne
     property int size: 100
     
@@ -28,7 +28,7 @@ Rectangle {
         hoverEnabled: true
         onEntered: { enter = true }
         onHoveredChanged: { enter = false }
-        onClicked: { onShowPlayerLayer = true; root.torrentHandleSIGNAL_QML(magnetUrl, scenne, false) }
+        onClicked: { onShowPlayerLayer = true; root.torrentHandleSIGNAL_QML(magnet, scenne, false) }
         anchors.fill: parent
     }
     onEnterChanged: {

@@ -51,6 +51,18 @@ VideoPlayer::VideoPlayer(QVideoWidget *parent) : QVideoWidget(parent)
     pauseLabel->hide();
     pauseLabel->setText("||");
 
+    barOffset = new QProgressBar();
+    barOffset->setGeometry(170, 45, screenWidth/13, 3);
+    barOffset->setStyleSheet (
+        "QProgressBar { background: #141414; border: none; }"
+        "QProgressBar::chunk { background: white; }"
+    );
+    barOffset->setTextVisible(false);
+    barOffset->setMinimum(0);
+    barOffset->setMaximum(20);
+    barOffset->setParent(this);
+    barOffset->hide();
+
     currentTimeLabel = new QLabel();
     currentTimeLabel->setGeometry((screenWidth/2)-190, 20, 200, 50);
     currentTimeLabel->setStyleSheet("background: black; border: none; color: white;");
@@ -83,7 +95,7 @@ VideoPlayer::VideoPlayer(QVideoWidget *parent) : QVideoWidget(parent)
     bar->setGeometry(3.4, screenHeight-7, screenWidth-8.3, 3);
     bar->setStyleSheet (
                 "QProgressBar { background: #141414; border: none; }"
-                "QProgressBar::chunk { background: #5e5e5e; }"
+                "QProgressBar::chunk { background: #9c9c9c; }"
     );
     bar->setTextVisible(false);
     bar->setMinimum(0);
@@ -207,6 +219,12 @@ void VideoPlayer::play_pause_stop()
             player->play();
             paused = false;
             pauseLabel->hide();
+        } else if (player->state() == QMediaPlayer::PausedState && skip) {
+            skip = false;
+            barOffset->hide();
+            player->setPosition(skip_player_msec);
+            player->play();
+            hideControlsTimer->start();
         } else if (player->state() == QMediaPlayer::StoppedState) {
             player->setPosition(qint64(0));
             player->play();
@@ -408,13 +426,12 @@ void VideoPlayer::download_Information(int bitRate, int peers)
     peersLabel->setText("PEERS "+QString::number(peers));
 }
 
-void VideoPlayer::progress(int total_kb=0, int downloaded_kb=0)
+void VideoPlayer::progress(int total_kb=0, int downloaded_kb=0, int downloaded_offset=0)
 {
     if (!skip) {
-        int downloaded_msec = ((downloaded_kb-4096)*player->duration())/total_kb;
-        bar->setValue(downloaded_msec); // TODO: Si el torrent termino la descaga(señal enviada desde Torrent), forzar la barra a estar cargada totalmente.
-
-        readyToRead_msec = ((downloaded_kb-8192)*player->duration())/total_kb;
+        readyToRead_msec = ((downloaded_kb-12288)*player->duration())/total_kb; //8192
+        bar->setValue(readyToRead_msec); // TODO: Si el torrent termino la descarga(señal enviada desde Torrent), forzar la barra a estar cargada totalmente.
+        
         if (!paused) {
             if (slider->value() < readyToRead_msec) {
                 if(player->state() == QMediaPlayer::PausedState) {
@@ -433,31 +450,19 @@ void VideoPlayer::progress(int total_kb=0, int downloaded_kb=0)
             if (slider->value() >= stopLoop_msec)
                 player->setPosition(startLoop_msec);
 
-        //qDebug() << "CURRENT_MSEC: " << slider->value();
-        //qDebug() << "READY___MSEC: " << readyToRead_msec;
+        qDebug() << "SLIDER_MSEC: " << slider->value();
+        qDebug() << "READY__MSEC: " << readyToRead_msec;
+    } else {
+        barOffset->setValue(downloaded_offset);
     }
 }
 
-void VideoPlayer::update(int total_pieces, int currentPiece)
+void VideoPlayer::update()
 {
-    
-    int total_msec = player->duration();
-    bool available;
-
-    QMetaObject::invokeMethod(_torrent, "piece_is_available", Qt::DirectConnection, Q_RETURN_ARG(bool, available), Q_ARG(int, total_msec), Q_ARG(int, currentPiece), Q_ARG(int, 0));
-    qDebug() << "PIECE_AVAILABLE: " << available;  
-    
-    qDebug() << "MSEC_FROM_PIECE: " <<  ((currentPiece*player->duration())/total_pieces);
-    skip_player_msec = slider->value();
-
-    qDebug() << "SKIP_PLAYER_MSEC: " << skip_player_msec;
-
-    bar->setValue(qint64(slider->value()+1000));
-
-    QTimer::singleShot(5000, this, SLOT(standBy()));
-
     //slider->setEnabled(true);
-    skip = false;
+    qDebug() << "----UPDATE";
+    skip_player_msec = slider->value()+1000;
+    QTimer::singleShot(5000, this, SLOT(play_pause_stop()));
 }
 
 void VideoPlayer::set_slider_position(qint64 position)
@@ -475,17 +480,18 @@ void VideoPlayer::slider_pressed()
 void VideoPlayer::slider_moved(int position)
 {
     slider->setValue(position);
+    set_currentTime(qint64(slider->value()));
 }
 
 void VideoPlayer::slider_released()
 {
     int total_msec = player->duration();
     int offset_msec = slider->value()+skip_key_value;
-    bool available;
+    bool available = false;
 
     if (!loop) {
-        QMetaObject::invokeMethod(_torrent, "piece_is_available", Qt::DirectConnection, Q_RETURN_ARG(bool, available), Q_ARG(int, total_msec), Q_ARG(int, offset_msec), Q_ARG(int, 0));
-        if(available) {
+        QMetaObject::invokeMethod(_torrent, "piece_is_available", Qt::DirectConnection, Q_RETURN_ARG(bool, available), Q_ARG(int, total_msec), Q_ARG(int, offset_msec));
+        if (((slider->value()) < (bar->value())) && available) {
             if (skip_key_value != 0) {
                 player->setPosition(qint64(slider->value()+skip_key_value));
                 skip_key_value = 0;
@@ -495,12 +501,13 @@ void VideoPlayer::slider_released()
                 player->play();
                 hideControlsTimer->start();
             }
-        } else if (!available && skip_key_value == 0) {
-            bar->setValue(qint64(slider->value()));
+        } else if (skip_key_value == 0 && !available) {
+            pauseLabel->hide();
+            bar->setValue(qint64(slider->value()+4500));
+            barOffset->show();
             //slider->setEnabled(false);
-            qDebug() << "PRE_SLIDER: " << slider->value();
-            QMetaObject::invokeMethod(_torrent, "piece_offset", Qt::DirectConnection, Q_ARG(int, total_msec), Q_ARG(int, offset_msec));
-        } else if (!available && skip_key_value != 0) {
+            QMetaObject::invokeMethod(_torrent, "piece_update", Qt::DirectConnection, Q_ARG(int, total_msec), Q_ARG(int, offset_msec));
+        } else if (skip_key_value != 0 && !available) {
             skip_key_value = 0;
         }
     }
@@ -571,6 +578,7 @@ void VideoPlayer::keyPressEvent(QKeyEvent *event)
             this->~VideoPlayer();
             QMetaObject::invokeMethod(_pig, "quit", Qt::QueuedConnection);
         }
+        event->accept();
     }
 }
 
@@ -579,6 +587,7 @@ void VideoPlayer::mousePressEvent(QMouseEvent *event)
     hideControlsTimer->stop();
     show_controls();
     hideControlsTimer->start();
+    event->accept();
 }
 
 void VideoPlayer::status_change(QMediaPlayer::MediaStatus status)
