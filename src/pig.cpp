@@ -38,7 +38,7 @@ void PIG::set_root_object(QObject *root)
     if(mRoot!=0) mRoot->disconnect(this); mRoot = root;
 
     if(mRoot) connect(mRoot, SIGNAL(passwordHandleSIGNAL_QML(QString, bool, bool)), this, SLOT(password_handle(QString, bool, bool)));
-    if(mRoot) connect(mRoot, SIGNAL(findSIGNAL_QML(QString, QString, QString, int, bool)), this, SLOT(find(QString, QString, QString, int, bool)));
+    if(mRoot) connect(mRoot, SIGNAL(findSIGNAL_QML(QString, QString, QString, QString, QString, int, bool)), this, SLOT(find(QString, QString, QString, QString, QString, int, bool)));
     if(mRoot) connect(mRoot, SIGNAL(torrentHandleSIGNAL_QML(QString, QString, bool)), this, SLOT(torrent_handle(QString, QString, bool)));
     if(mRoot) connect(mRoot, SIGNAL(quitSIGNAL_QML()), this, SLOT(quit()));
 
@@ -186,7 +186,7 @@ void PIG::start()
 }
 
 //Find
-void PIG::find(const QString inputText, QString category, QString pornstar, int offset, bool init)
+void PIG::find(const QString input, QString pornstar, QString category, QString quality, QString full, int offset, bool init)
 {
     static QStringList _list;
     int row = 0;
@@ -197,8 +197,8 @@ void PIG::find(const QString inputText, QString category, QString pornstar, int 
         _list.clear();
         QString strOffset = QString::number(offset);
         QSqlQuery qry;
-            qry.prepare( "SELECT Title, Pornstar, Quality, Category, UrlCover, UrlPoster, UrlPreview, Torrent FROM Films WHERE Title LIKE '%"+inputText+"%' AND Category LIKE '%"+category+"%' AND Pornstar LIKE '%"+pornstar+"%' ORDER BY Title ASC LIMIT 1000 OFFSET '"+strOffset+"'" );
-        if (!qry.exec()) { // TODO: Cambiar Ponstar por Cast. Tambien en la db.
+            qry.prepare("SELECT Title, Cas, Category, Quality, Full, UrlPoster, UrlCover, UrlScreens, Torrent FROM Films WHERE Title LIKE '%"+input+"%' AND Cas LIKE '%"+pornstar+"%' AND Category LIKE '%"+category+"%' AND Quality LIKE '%"+quality+"%' AND Full LIKE '%"+full+"%' ORDER BY Title ASC LIMIT 1000 OFFSET '"+strOffset+"'");
+        if (!qry.exec()) {
             db.close();
             error_database();
         } else {
@@ -208,17 +208,17 @@ void PIG::find(const QString inputText, QString category, QString pornstar, int 
                 qry.first();
                 qry.previous();
             }
-
             for (row=0; qry.next()&&row<5; row++) {
                 QString _title = qry.value(0).toString();
-                QString _pornstars = qry.value(1).toString();
-                QString _quality = qry.value(2).toString();
-                QString _category = qry.value(3).toString();
-                QString _urlCover = qry.value(4).toString();
+                QString _cast = qry.value(1).toString();
+                QString _category = qry.value(2).toString();
+                QString _quality = qry.value(3).toString();
+                QString _full = qry.value(4).toString();
                 QString _urlPoster = qry.value(5).toString();
-                QString _urlPreview = qry.value(6).toString();
-                QString _torrent = qry.value(7).toString();
-                _list << _title << _pornstars << _quality << _category << _urlCover << _urlPoster << _urlPreview << _torrent << inputText << category << pornstar;
+                QString _urlCover = qry.value(6).toString();
+                QString _urlScreens = qry.value(7).toString();
+                QString _torrent = qry.value(8).toString();
+                _list << _title << _cast << _category << _quality << _full << _urlPoster << _urlCover << _urlScreens << _torrent;
             }
             db.close();
 

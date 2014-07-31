@@ -7,16 +7,13 @@ Item {
 
     property bool posterLoaded
     property bool coverLoaded
+    property bool screensLoaded
     property bool abortTorrent
     property bool fileNotReady
     property bool hideAll
     property bool focusPath
     property bool zoomIn
     property bool onShowPlayerLayer
-
-    property string inputText
-    property string category
-    property string pornstar
 
     property int location: 0
     property int currentFilm: 1
@@ -76,12 +73,12 @@ Item {
                 onStatusChanged: { 
                     if (poster.source == list[5] && poster.progress == 1.0) {
                         posterLoaded = true
-                        if (!coverLoaded)
+                        if (!coverLoaded || !screensLoaded)
                             imagesStatus.start()
                     } else if (poster.source == list[5] && poster.status == Image.Error) {
                         poster.source = "qrc:/images/available/posterNotAvailable.png"
                         posterLoaded = true
-                        if (!coverLoaded)
+                        if (!coverLoaded || !screensLoaded)
                             imagesStatus.start()
                     }
                 }
@@ -127,12 +124,24 @@ Item {
                 id: screens
                 width: 630
                 height: 430
-                source: "qrc:/images/output/screenTest.jpg"
+                source: urlScreens
                 opacity: 0.1
-                clip: true
+                smooth: true
                 anchors.left: parent.left
                 anchors.verticalCenter: parent.verticalCenter
                 anchors.verticalCenterOffset: 2
+                onStatusChanged: {
+                    if (screens.source == list[7] && poster.progress == 1.0) {
+                        screensLoaded = true
+                        if (!posterLoaded || !coverLoaded)
+                            imagesStatus.start()
+                    } else if (screens.source == list[7] && screens.status == Image.Error) {
+                        screens.source = "qrc:/images/available/screensNotAvailable.png"
+                        screensLoaded = true
+                        if (!posterLoaded || !coverLoaded)
+                            imagesStatus.start()
+                    }
+                }
                 MouseArea {
                     id: zoom
                     hoverEnabled: true
@@ -205,14 +214,14 @@ Item {
                 anchors.verticalCenter: parent.verticalCenter
                 anchors.verticalCenterOffset: -4
                 onStatusChanged: {
-                    if (cover.source == list[4] && cover.progress == 1.0) {
+                    if (cover.source == list[6] && cover.progress == 1.0) {
                         coverLoaded = true
-                        if (!posterLoaded)
+                        if (!posterLoaded || !screensLoaded)
                             imagesStatus.start()
-                    } else if (cover.source == list[4] && cover.status == Image.Error) {
+                    } else if (cover.source == list[6] && cover.status == Image.Error) {
                         cover.source = "qrc:/images/available/coverNotAvailable.png"
                         coverLoaded = true
-                        if (!posterLoaded)
+                        if (!posterLoaded || !screensLoaded)
                             imagesStatus.start()
                     }
                 }
@@ -257,13 +266,23 @@ Item {
                     font.bold: true
                     font.pixelSize: 30
                 }
+                Text {
+                    id: fullLabel
+                    text: "FULL"
+                    color: { if (full == "NOT") "black"; else "white" }
+                    font.family: pigFont.name
+                    font.italic: true
+                    font.bold: true
+                    font.strikeout: { if (full == "NOT") true; else false }
+                    font.pixelSize: 30
+                }
             }
             Row {
                 id: openScenneRow
                 spacing: 1
                 anchors.left: datesColumn.left
                 anchors.verticalCenter: parent.verticalCenter
-                anchors.verticalCenterOffset: 31
+                anchors.verticalCenterOffset: 54
                 Component.onCompleted: {
                     for (var i=1; i<=scennes && i<=8; i++) {
                         var component = Qt.createComponent("ButtonScenne.qml")
@@ -379,12 +398,12 @@ Item {
         onNext: {
             focusPath = false
             incrementCurrentIndex()
-            if (locationOnList == list.length-11) {
+            if (locationOnList == list.length-9) {
                 locationOnList = 0
                 location = 0
                 currentFilm = currentFilm-n+1 
             } else {
-                locationOnList = locationOnList+11
+                locationOnList = locationOnList+9
                 ++currentFilm
                 ++location
             }
@@ -394,11 +413,11 @@ Item {
             focusPath = false
             decrementCurrentIndex()
             if (locationOnList == 0) {
-                locationOnList = list.length-11
+                locationOnList = list.length-9
                 location = n-1
                 currentFilm = currentFilm+n-1 
             } else {
-                locationOnList = locationOnList-11
+                locationOnList = locationOnList-9
                 --currentFilm
                 --location
             }
@@ -565,18 +584,14 @@ Item {
     }
     
     function listCreator() {
-        inputText = list[8]
-        category = list[9]
-        pornstar = list[10]
         var torrent
         var row = 0
         for(var i=0; i<n; i++) {
-           torrent = list[row+7].split(",")
+           torrent = list[row+8].split(",")
            var nScennes = Number(torrent[1])
-           model.append({ "title": list[row], "cast": list[row+1], "quality": list[row+2], "categories": list[row+3],
-                          "urlCover": list[row+4], "urlPoster": list[row+5], "urlPreview": list[row+6], "magnet": torrent[0],
-                          "scennes": nScennes })
-           row += 11
+           model.append({ "title": list[row], "cast": list[row+1], "categories": list[row+2], "quality": list[row+3], "full": list[row+4],
+                          "urlPoster": list[row+5], "urlCover": list[row+6], "urlScreens": list[row+7], "magnet": torrent[0], "scennes": nScennes })
+           row += 9
         }
         location = 0
         locationOnList = 0
@@ -590,7 +605,7 @@ Item {
         coverLoaded = false
         root.list = ''
         model.clear()
-        root.findSIGNAL_QML(inputText, category, pornstar, offset, false)
+        root.findSIGNAL_QML(root.input, root.pornstar, root.category, root.quality, root.full, offset, false)
         waitDelay.start();
     }
     Timer {

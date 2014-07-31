@@ -6,12 +6,12 @@
         <file>images/pig/logo.png</file>
         <file>images/pig/wave.gif</file>
         <file>images/available/pornstarNotAvailable.png</file>
-        <file>images/available/coverNotAvailable.png</file>
         <file>images/available/posterNotAvailable.png</file>
+        <file>images/available/coverNotAvailable.png</file>
+        <file>images/available/screensNotAvailable.png</file>
         <file>images/pornstars/Belladonna.jpg</file>
         <file>images/output/frame.png</file>
         <file>images/output/stripes.png</file>
-        <file>images/output/screenTest.jpg</file>
         <file>images/output/sd.png</file>
         <file>images/output/720.png</file>
         <file>images/output/1080.png</file>
@@ -34,5 +34,6 @@
         <file>src/qml/ProgressBar.qml</file>
         <file>src/qml/ErrorDb.qml</file>
         <file>src/qml/Wait.qml</file>
+        <file>src/qml/Selectors.qml</file>
     </qresource>
 </RCC>

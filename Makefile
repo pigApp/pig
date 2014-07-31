@@ -501,12 +501,12 @@ qrc_qml.cpp: qml.qrc \
 		images/available/posterNotAvailable.png \
 		images/available/coverNotAvailable.png \
 		images/available/pornstarNotAvailable.png \
+		images/available/screensNotAvailable.png \
 		images/font/pig.ttf \
 		images/output/stripes.png \
 		images/output/frame.png \
 		images/output/sd.png \
 		images/output/1080.png \
-		images/output/screenTest.jpg \
 		images/output/720.png \
 		images/pornstars/Belladonna.jpg \
 		src/qml/Button.qml \
@@ -522,6 +522,7 @@ qrc_qml.cpp: qml.qrc \
 		src/qml/SetPassword.qml \
 		src/qml/News.qml \
 		src/qml/ProgressBar.qml \
+		src/qml/Selectors.qml \
 		src/qml/main.qml \
 		src/qml/Help.qml
 	/usr/lib/qt/bin/rcc -name qml qml.qrc -o qrc_qml.cpp

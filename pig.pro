@@ -35,6 +35,7 @@ OTHER_FILES += src/qml/main.qml\
 	       src/qml/Output.qml\
 	       src/qml/SetPassword.qml\
 	       src/qml/Filters.qml\
+               src/qml/Selectors.qml\
 	       src/qml/Wait.qml\
 	       src/qml/Button.qml\
 	       src/qml/ButtonFilter.qml\

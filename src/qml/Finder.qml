@@ -3,12 +3,10 @@ import QtQuick 2.2
 Item {
     id: finder
 
-    property string category: ''
-    property string pornstar: ''
     property string enableFilter
 
     TextInput {
-        id: input
+        id: userInput
         color: Qt.rgba(0.1, 0.1, 0.1, 0.2)
         font.family: pigFont.name
         font.bold: true
@@ -21,8 +19,8 @@ Item {
         anchors.leftMargin: -150
         anchors.verticalCenter: parent.verticalCenter
         anchors.verticalCenterOffset: -4
-        onAccepted: { root.findSIGNAL_QML(input.text, category, pornstar, 0, true) }
-        onCursorPositionChanged: { if (noResultLabel.visible) noResultLabel.visible = false; input.visible = true }
+        onAccepted: { root.input = userInput.text; root.findSIGNAL_QML(root.input, root.pornstar, root.category, root.quality, root.full, 0, true) }
+        onCursorPositionChanged: { if (noResultLabel.visible) noResultLabel.visible = false; userInput.visible = true }
         Keys.onPressed: {
             if (event.key === Qt.Key_P && (event.modifiers & Qt.ControlModifier)) {
                 if (!loaderFilter.active)
@@ -62,7 +60,7 @@ Item {
         anchors.verticalCenter: parent.verticalCenter
         anchors.verticalCenterOffset: -70
         z: 2
-        onEnabledChanged: { if (enabled) input.forceActiveFocus() }
+        onEnabledChanged: { if (enabled) userInput.forceActiveFocus() }
         Button {
             id: categoryFilter
             width: 440
@@ -107,21 +105,29 @@ Item {
         if (event.key === Qt.Key_Escape && !(event.modifiers & Qt.ControlModifier)) {
             finder.state = "hideFilter"
             event.accepted = true;
-            input.forceActiveFocus()
+            userInput.forceActiveFocus()
         } else if (event.key === Qt.Key_Escape && (event.modifiers & Qt.ControlModifier)) {
             root.quitSIGNAL_QML()
         }
     }
     function filtersManager(filter, label) {
-
         if (filter === 'categoryFilter')
-            category = label.toUpperCase()
+            root.category = label.toUpperCase()
         else
-            pornstar = label.toUpperCase()
-
+            root.pornstar = label.toUpperCase()
         finder.state = "hideAll"
-        root.findSIGNAL_QML('', category, pornstar, 0, true)
+        root.findSIGNAL_QML('', root.pornstar, root.category, root.quality, root.full, 0, true)
         noResultLabel.visible = false
+    }
+    Loader {
+        id: loaderSelectors
+        source: "Selectors.qml"
+        asynchronous: true
+        active: true
+        visible: { !root.news && screen.state !== "showSetPassword" && screen.state !== "showHelp" }
+        enabled: { !root.news && screen.state !== "showSetPassword" && screen.state !== "showHelp" }
+        opacity: 0
+        anchors.fill: parent
     }
 
     states: [
@@ -154,6 +160,7 @@ Item {
                     NumberAnimation { target: blur; properties: "radius"; to: 40; duration: 1700; easing.type: Easing.InOutQuart }
                 }
                 PropertyAction { target: buttonsFiltersColumn; property: "opacity"; value: 1.0 }
+                PropertyAction { target: loaderSelectors; property: "opacity"; value: 1.0 }
                 PropertyAction { target: loader; property: "source"; value: "News.qml" }
             }
         },
@@ -166,6 +173,7 @@ Item {
                     NumberAnimation { target: blur; properties: "radius"; to: 40; duration: 1700; easing.type: Easing.InOutQuart }
                 }
                 NumberAnimation { target: buttonsFiltersColumn; properties: "opacity"; to: 1.0; duration: 400; easing.type: Easing.InOutQuart }
+                NumberAnimation { target: loaderSelectors; properties: "opacity"; to: 1.0; duration: 400; easing.type: Easing.InOutQuart }
             }
         },
         Transition {
@@ -174,10 +182,13 @@ Item {
                 PropertyAction { target: loaderFilter; property: "source"; value: "" }
                 PropertyAction { target: loaderFilter; property: "active"; value: false }
                 ParallelAnimation {
-                    NumberAnimation { target: input; properties: "opacity"; to: 0; duration: 300; easing.type: Easing.InOutQuart }
+                    NumberAnimation { target: userInput; properties: "opacity"; to: 0; duration: 300; easing.type: Easing.InOutQuart }
                     NumberAnimation { target: noResultLabel; properties: "opacity"; to: 0; duration: 300; easing.type: Easing.InOutQuart }
                     NumberAnimation { target: buttonsFiltersColumn; properties: "opacity"; to: 0; duration: 300; easing.type: Easing.InOutQuart }
+                    NumberAnimation { target: loaderSelectors; properties: "opacity"; to: 0; duration: 300; easing.type: Easing.InOutQuart }
                 }
+                PropertyAction { target: loaderSelectors; property: "source"; value: "" }
+                PropertyAction { target: loaderSelectors; property: "active"; value: false }
                 ParallelAnimation {
                     NumberAnimation { target: blur; easing.amplitude: 1.65; properties: "opacity"; to: 0; duration: 800; easing.type: Easing.OutInElastic }
                     NumberAnimation { target: logo; easing.amplitude: 1.65; properties: "opacity"; to: 0; duration: 800; easing.type: Easing.OutInElastic }
@@ -189,10 +200,11 @@ Item {
         Transition {
             to: "showFilter"
             SequentialAnimation {
-                PropertyAction { target: input; property: "visible"; value: false }
-                PropertyAction { target: input; property: "focus"; value: true }
+                PropertyAction { target: userInput; property: "visible"; value: false }
+                PropertyAction { target: userInput; property: "focus"; value: true }
                 PropertyAction { target: noResultLabel; property: "visible"; value: false }
                 PropertyAction { target: buttonsFiltersColumn; property: "visible"; value: false }
+                PropertyAction { target: loaderSelectors; property: "visible"; value: false }
                 NumberAnimation { target: filterLayer; easing.amplitude: 1.7; properties: "anchors.leftMargin"; to: -screen.width; duration: 1100; easing.type: Easing.OutQuart }
                 PropertyAction { target: loaderFilter; property: "active"; value: true }
             }
@@ -203,7 +215,8 @@ Item {
                 PropertyAction { target: loaderFilter; property: "active"; value: false }
                 NumberAnimation { target: filterLayer; easing.amplitude: 1.7; properties: "anchors.leftMargin"; to: 0; duration: 700; easing.type: Easing.OutQuart }
                 PropertyAction { target: buttonsFiltersColumn; property: "visible"; value: true }
-                PropertyAction { target: input; property: "visible"; value: true }
+                PropertyAction { target: loaderSelectors; property: "visible"; value: true }
+                PropertyAction { target: userInput; property: "visible"; value: true }
             }
         },
         Transition {
@@ -213,6 +226,8 @@ Item {
                 PropertyAction { target: loaderFilter; property: "active"; value: false }
                 NumberAnimation { target: filterLayer; easing.amplitude: 1.7; properties: "anchors.leftMargin"; to: 0; duration: 1000; easing.type: Easing.OutQuart }
                 PropertyAction { target: buttonsFiltersColumn; property: "visible"; value: true }
+                PropertyAction { target: loaderSelectors; property: "source"; value: "" }
+                PropertyAction { target: loaderSelectors; property: "active"; value: false }
                 ParallelAnimation {
                     NumberAnimation { target: blur; easing.amplitude: 1.65; properties: "opacity"; to: 0; duration: 800; easing.type: Easing.OutInElastic }
                     NumberAnimation { target: logo; easing.amplitude: 1.65; properties: "opacity"; to: 0; duration: 800; easing.type: Easing.OutInElastic }
@@ -226,13 +241,13 @@ Item {
     Connections {
         target: cppSignals
         onShowOutputSIGNAL:{
-            if (category != '' || pornstar != '')
+            if (root.pornstar != "" || root.category != "")
                 finder.state = "hideAll"
             else
                 finder.state = "hide"
         }
         onNoResultSIGNAL: {
-            input.visible = false
+            userInput.visible = false
             noResultLabel.visible = true
         }
     }
@@ -242,7 +257,10 @@ Item {
             finder.state = "showNews"
         else
             finder.state = 'show'
-        input.forceActiveFocus()
+        root.input = ""
+        root.pornstar = ""
+        root.category = ""
+        userInput.forceActiveFocus()
     }
 }
 // Espacios hechos.

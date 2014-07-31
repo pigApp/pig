@@ -54,7 +54,7 @@ private slots:
     void password_handle(QString pass, bool init, bool write);
     void update_handle();
     void start();
-    void find(const QString inputText, QString category, QString pornstar, int offset, bool init);
+    void find(const QString inputText, QString pornstar, QString category, QString quality, QString full, int offset, bool init);
     void torrent_handle(QString magnet, QString scenne, bool abort);
     void cleanUp();
     void error_database();

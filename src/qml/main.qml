@@ -19,6 +19,11 @@ Item {
     property string databaseNews: ""
     property string binaryVersion
     property string databaseVersion
+    property string input: ""
+    property string pornstar: ""
+    property string category: ""
+    property string quality: ""
+    property string full: ""
     property string release
     property string bitRate
 
@@ -38,7 +43,7 @@ Item {
     signal passwordHandleSIGNAL_QML(string plain, bool init, bool write)
     signal skipSIGNAL_QML()
     signal getFilesSIGNAL_QML()
-    signal findSIGNAL_QML(string inputText, string category, string pornstar, int offset, bool init)
+    signal findSIGNAL_QML(string input, string pornstar, string category, string quality, string full, int offset, bool init)
     signal torrentHandleSIGNAL_QML(string magnet, string scenne, bool abort)
     signal quitSIGNAL_QML()
 

@@ -18,13 +18,14 @@ Item {
                 text: "DATABASE IS CORRUPTED OR NOT EXIST"
                 color: "white"
                 font.family: pigFont.name
+                font.bold: true
                 font.pixelSize: 30
                 horizontalAlignment: Text.AlignHCenter
             }
             Text {
                 id: getDbInformationLabel
                 text: "GET LATEST DATABASE FROM https://sourceforge/pigApp/db" // TODO: Url real db.
-                color: Qt.rgba(0.1, 0.1, 0.1, 0.5)
+                color: Qt.rgba(0.1, 0.1, 0.1, 1)
                 font.family: pigFont.name
                 font.bold: true
                 font.pixelSize: 20

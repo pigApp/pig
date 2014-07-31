@@ -59,18 +59,18 @@ Item {
         }
         Button {
             id: ok
-            width: 62
-            height: 39
+            width: 37
+            height: 20
             label: "OK"
             labelColor: "white"
             labelBold: true
-            labelSize: 50
+            labelSize: 30
             labelInColor: "white"
             labelOutColor: "white"
             anchors.right: parent.right
-            anchors.rightMargin: 23
+            anchors.rightMargin: 10
             anchors.bottom: parent.bottom
-            anchors.bottomMargin: 13
+            anchors.bottomMargin: 8
             onClicked: {
                 root.news = false
                 loader.source = ""
