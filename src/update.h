@@ -15,7 +15,7 @@ public:
     explicit Update(QObject *parent = 0);
     ~Update();
 
-    QSqlDatabase db;
+    QSqlDatabase *db;
     QObject *_root;
 
 public slots:
@@ -37,15 +37,15 @@ private:
     QString newsHash;
     QProcess *updaterProc;
 
-    int currentDatabaseVersion, currentBinaryVersion, currentRelease;
     bool newsAvailable, newDatabaseAvailable, newBinaryAvailable, databaseUpdated;
+    int currentDatabaseVersion, currentBinaryVersion, currentRelease;
 
 private slots:
-    void get_version(QString host, QString url);
+    void get_version(const QString * const host, const QString * const url);
     void evaluate(QString version);
     void get_files();
     void integrityFile(QString path, QString file);
-    void replace(QString path, QString file);
+    void replace(QString *path, QString *file);
     void replace_binary_ready(int exitCode);
     void abort();
 };

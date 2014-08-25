@@ -63,8 +63,11 @@ Item {
 
             Image {
                 id: poster
+                width: parent.width
+                height: parent.height
                 source: urlPoster
-                fillMode: Image.PreserveAspectCrop
+                sourceSize.width: 1920
+                sourceSize.height: 1080
                 Rectangle {
                     id: posterLayer
                     color: Qt.rgba(0, 0, 0, 0.6)
@@ -83,17 +86,12 @@ Item {
                     }
                 }
             }
-            GaussianBlur {
-                id: posterEffect
-                source: poster
-                radius: 30
-                samples: 32
-                anchors.fill: poster
-            }
-            Image {
-                id: stripes
-                source: "qrc:/images/output/stripes.png"
-                fillMode: Image.PreserveAspectCrop
+            Rectangle {
+                id: translucedLayer
+                width: parent.width
+                height: parent.height
+                color: "black"
+                anchors.centerIn: parent
             }
 
             Text {
@@ -102,34 +100,35 @@ Item {
                 color: "white"
                 font.family: pigFont.name
                 font.letterSpacing: -10
-                font.pixelSize: 225/strap
+                font.pixelSize: parent.height/6.35
                 anchors.left: parent.left
                 anchors.bottom: cover.top
-                anchors.bottomMargin: -41
+                anchors.bottomMargin: -parent.height/83.07
             }
 
             Image {
                 id: frame
-                width: screen.width
-                height: 500
-                sourceSize.width: screen.width
-                sourceSize.height: 500
+                width: parent.width
+                height: parent.height/2.16
                 source: "qrc:/images/output/frame.png"
+                sourceSize.width: 1920
+                sourceSize.height: 500
                 anchors.centerIn: parent
             }
 
             property bool enter
-            
             Image {
                 id: screens
-                width: 630
-                height: 430
+                width: screen.width/3.04
+                height: screen.height/2.51
                 source: urlScreens
+                sourceSize.width: 1920
+                sourceSize.height: 1080
                 opacity: 0.1
                 smooth: true
                 anchors.left: parent.left
                 anchors.verticalCenter: parent.verticalCenter
-                anchors.verticalCenterOffset: 2
+                anchors.verticalCenterOffset: parent.height/540
                 onStatusChanged: {
                     if (screens.source == list[7] && poster.progress == 1.0) {
                         screensLoaded = true
@@ -149,7 +148,7 @@ Item {
                     onHoveredChanged: { enter = false }
                     anchors.fill: parent
                 }
-                Keys.onPressed: { if (output.zoomIn && event.key === Qt.Key_Escape && !(event.modifiers & Qt.ControlModifier)) enter = false }
+                Keys.onPressed: { if (output.zoomIn && event.key === Qt.Key_Escape) enter = false }
             }
             onEnterChanged: {
                 if (enter) {
@@ -187,11 +186,11 @@ Item {
             }
             NumberAnimation { id: inScreensA; target: screens; properties: "z"; to: 5; duration: 500; easing.type: Easing.InOutQuart }
             NumberAnimation { id: inScreensB; target: screens; properties: "opacity"; to: 1; duration: 1000; easing.type: Easing.InOutQuart }
-            NumberAnimation { id: inScreensC; target: screens; properties: "width"; to: 1920; duration: 1000; easing.type: Easing.InOutQuart }
-            NumberAnimation { id: inScreensD; target: screens; properties: "height"; to: 1080; duration: 1000; easing.type: Easing.InOutQuart }
+            NumberAnimation { id: inScreensC; target: screens; properties: "width"; to: parent.width; duration: 1000; easing.type: Easing.InOutQuart }
+            NumberAnimation { id: inScreensD; target: screens; properties: "height"; to: parent.height; duration: 1000; easing.type: Easing.InOutQuart }
             NumberAnimation { id: outScreensA; target: screens; properties: "z"; to: 1; duration: 1000; easing.type: Easing.InOutQuart }
-            NumberAnimation { id: outScreensB; target: screens; properties: "width"; to: 630; duration: 1000; easing.type: Easing.InOutQuart }
-            NumberAnimation { id: outScreensC; target: screens; properties: "height"; to: 430; duration: 1000; easing.type: Easing.InOutQuart }
+            NumberAnimation { id: outScreensB; target: screens; properties: "width"; to: parent.width/3.04; duration: 1000; easing.type: Easing.InOutQuart }
+            NumberAnimation { id: outScreensC; target: screens; properties: "height"; to: parent.height/2.51; duration: 1000; easing.type: Easing.InOutQuart }
             NumberAnimation { id: outScreensD; target: screens; properties: "opacity"; to: 0.1; duration: 1000; easing.type: Easing.InOutQuart }
             
             RectangularGlow {
@@ -204,15 +203,15 @@ Item {
             }
             Image {
                 id: cover
-                width: 415
-                height: 600
+                width: parent.width/4.62
+                height: parent.height/1.8
+                source: urlCover
                 sourceSize.width: 415
                 sourceSize.height: 600
-                source: urlCover
                 anchors.centerIn: parent
-                anchors.horizontalCenterOffset: -121
+                anchors.horizontalCenterOffset: -parent.width/15.86
                 anchors.verticalCenter: parent.verticalCenter
-                anchors.verticalCenterOffset: -4
+                anchors.verticalCenterOffset: -parent.height/270
                 onStatusChanged: {
                     if (cover.source == list[6] && cover.progress == 1.0) {
                         coverLoaded = true
@@ -236,18 +235,18 @@ Item {
                         loader.source = ""
                         recipe.state = "showAll"
                         focusDelay.start()
-                    }else {
+                    } else {
                         imagesStatus.restart()
                     }
                 }
             }
             Column {
                 id: datesColumn
-                spacing: 5
+                spacing: parent.height/216
                 anchors.left: cover.right
-                anchors.leftMargin: 25
+                anchors.leftMargin: parent.width/54.85
                 anchors.verticalCenter: parent.verticalCenter
-                anchors.verticalCenterOffset: -68
+                anchors.verticalCenterOffset: -parent.height/15.88
                 Text {
                     id: castLabel
                     text: cast
@@ -255,7 +254,7 @@ Item {
                     font.family: pigFont.name
                     font.italic: true
                     font.bold: true
-                    font.pixelSize: 30
+                    font.pixelSize: screen.height/36
                 }
                 Text {
                     id: categoryLabel
@@ -264,17 +263,17 @@ Item {
                     font.family: pigFont.name
                     font.italic: true
                     font.bold: true
-                    font.pixelSize: 30
+                    font.pixelSize: screen.height/36
                 }
                 Text {
                     id: fullLabel
                     text: "FULL"
-                    color: { if (full == "NOT") "black"; else "white" }
+                    color: { if (full === "NOT") "black"; else "white" }
                     font.family: pigFont.name
                     font.italic: true
                     font.bold: true
-                    font.strikeout: { if (full == "NOT") true; else false }
-                    font.pixelSize: 30
+                    font.strikeout: { if (full === "NOT") true; else false }
+                    font.pixelSize: screen.height/36
                 }
             }
             Row {
@@ -282,14 +281,14 @@ Item {
                 spacing: 1
                 anchors.left: datesColumn.left
                 anchors.verticalCenter: parent.verticalCenter
-                anchors.verticalCenterOffset: 54
+                anchors.verticalCenterOffset: parent.height/20.37
                 Component.onCompleted: {
                     for (var i=1; i<=scennes && i<=8; i++) {
-                        var component = Qt.createComponent("ButtonScenne.qml")
+                        var component = Qt.createComponent("ButtonScene.qml")
                         var object = component.createObject(openScenneRow)
                         object.quality = quality
                         object.magnet = magnet
-                        object.scenne = i
+                        object.scene = i
                     }
                 }
             }
@@ -299,39 +298,39 @@ Item {
                 color: "black"
                 font.family: pigFont.name
                 font.bold: true
-                font.pixelSize: 20
-                visible: { if (scennes == 1) true; else false }
+                font.pixelSize: parent.height/54
+                visible: { if (scennes === 1) true; else false }
                 anchors.left: openScenneRow.right
-                anchors.leftMargin: 2
+                anchors.leftMargin: parent.width/960
                 anchors.verticalCenter: parent.verticalCenter
-                anchors.verticalCenterOffset: 40
+                anchors.verticalCenterOffset: parent.height/16.95
             }
             Row {
                 id: counterRow
-                spacing: 2
+                spacing: parent.width/960
                 anchors.right: parent.right
-                anchors.rightMargin: 10
+                anchors.rightMargin: parent.width/192
                 anchors.bottom: parent.bottom
                 Text {
                     id: currentLabel
                     text: currentFilm
                     color: Qt.rgba(1, 1, 1, 1)
                     font.family: pigFont.name
-                    font.pixelSize: 39
+                    font.pixelSize: screen.height/27.69
                 }
                 Text {
                     id: totalLabel
                     text: totalFilms
                     color: Qt.rgba(1, 1, 1, 0.5)
                     font.family: pigFont.name
-                    font.pixelSize: 39
+                    font.pixelSize: screen.height/27.69
                 }
             }
             NumberAnimation { running: recipe.PathView.isCurrentItem; target: poster; property: "opacity"; to: 1; duration: 4000; easing.type: Easing.InOutQuad }
-            NumberAnimation { running: recipe.PathView.isCurrentItem; target: posterEffect; property: "opacity"; to: 1; duration: 4000; easing.type: Easing.InOutQuad }
+            NumberAnimation { running: recipe.PathView.isCurrentItem; target: translucedLayer; property: "opacity"; to: 0.7; duration: 4000; easing.type: Easing.InOutQuad }
             NumberAnimation { running: recipe.PathView.isCurrentItem; target: datesColumn; property: "opacity"; to: 1; duration: 2000; easing.type: Easing.OutElastic }
             PropertyAction  { running: !recipe.PathView.isCurrentItem; target: poster; property: "opacity"; value: 0 }
-            PropertyAction  { running: !recipe.PathView.isCurrentItem; target: posterEffect; property: "opacity"; value: 0 }
+            PropertyAction  { running: !recipe.PathView.isCurrentItem; target: translucedLayer; property: "opacity"; value: 0 }
             NumberAnimation { running: !recipe.PathView.isCurrentItem; target: datesColumn; property: "opacity"; to: 0; duration: 1; easing.type: Easing.InOutQuad }
 
             states: [
@@ -398,7 +397,7 @@ Item {
         onNext: {
             focusPath = false
             incrementCurrentIndex()
-            if (locationOnList == list.length-9) {
+            if (locationOnList === list.length-9) {
                 locationOnList = 0
                 location = 0
                 currentFilm = currentFilm-n+1 
@@ -412,7 +411,7 @@ Item {
         onPrior: {
             focusPath = false
             decrementCurrentIndex()
-            if (locationOnList == 0) {
+            if (locationOnList === 0) {
                 locationOnList = list.length-9
                 location = n-1
                 currentFilm = currentFilm+n-1 
@@ -433,13 +432,13 @@ Item {
 
         Keys.onPressed: {
             if (!onShowPlayerLayer) {
-                if (!zoomIn && event.key === Qt.Key_Escape && !(event.modifiers & Qt.ControlModifier)) {
+                if (!zoomIn && event.key === Qt.Key_Escape) {
                     loader_finder_output.source = "Finder.qml"
                     event.accepted = true;
                 } else if (event.key === Qt.Key_H && (event.modifiers & Qt.ControlModifier)) {
                     screen.state = "showHelp"
                     event.accepted = true
-                } else if (event.key === Qt.Key_Escape && (event.modifiers & Qt.ControlModifier)) {
+                } else if (event.key === Qt.Key_Q && (event.modifiers & Qt.ControlModifier)) {
                     root.quitSIGNAL_QML()
                     event.accepted = true;
                 }
@@ -465,18 +464,18 @@ Item {
 
         Button {
             id: abortTorrentButton
-            width: 100
-            height: 25
+            width: screen.width/19.2 //100
+            height: screen.height/43.2 //25
             label: "ABORT"
             labelColor: Qt.rgba(0.1, 0.1, 0.1, 0.5)
             labelInColor: "white"
             labelOutColor: Qt.rgba(0.1, 0.1, 0.1, 0.5)
             labelBold: true
-            labelSize: 30
-            visible:  { if (playerLayer.height == screen.height && !abortTorrent) true; else false }
+            labelSize: screen.height/36 //30
+            visible:  { if (playerLayer.height === screen.height && !abortTorrent) true; else false }
             anchors.centerIn: parent
-            anchors.horizontalCenter: parent.horizontalCenter
-            anchors.horizontalCenterOffset: -180
+            anchors.horizontalCenterOffset: -screen.width/10.66 //-180
+            anchors.verticalCenterOffset: screen.height/600 //1.8
             onClicked: { abortTorrent = true }
         }
         NumberAnimation { id: hidePlayerLayer; running: false; target: playerLayer; property: "height"; to: 0; duration: 1000; easing.type: Easing.InOutQuart }
@@ -488,7 +487,6 @@ Item {
             onTriggered: {
                 root.peers = 0
                 root.required = 0
-                root.downloaded = 0
                 root.bitRate = ""
                 onShowPlayerLayer = false
                 abortTorrent = false
@@ -503,18 +501,18 @@ Item {
         }
         Row {
             id: peerInformationRow
-            spacing: 17
+            spacing: screen.width/112.94 //17
             visible: { !abortTorrent }
             anchors.left: progressBar.right
-            anchors.leftMargin: 20
+            anchors.leftMargin: screen.width/96 //20
             anchors.verticalCenter: parent.verticalCenter
 
             Text {
                 id: bitRateLabel
                 text: {
-                    if (root.bitRate != 0 && playerLayer.height == screen.height)
+                    if (root.bitRate !== 0 && playerLayer.height === screen.height)
                         root.bitRate+"kb/s"
-                    else if (playerLayer.height == screen.height)
+                    else if (playerLayer.height === screen.height)
                         "CONNECTING"
                     else
                         ""
@@ -522,12 +520,12 @@ Item {
                 color: "white"
                 font.family: pigFont.name
                 font.bold: true
-                font.pixelSize: 30
+                font.pixelSize: screen.height/36 //30
             }
             Text {
                 id: peersLabel
                 text: {
-                    if (root.peers != 0 && playerLayer.height == screen.height)
+                    if (root.peers !== 0 && playerLayer.height === screen.height)
                         "PEERS "+root.peers
                     else
                         ""
@@ -535,7 +533,7 @@ Item {
                 color: "white"
                 font.family: pigFont.name
                 font.bold: true
-                font.pixelSize: 30
+                font.pixelSize: screen.height/36 //30
             }
         }
         Text {
@@ -543,22 +541,22 @@ Item {
             text: "CHECKING FILE"
             color: Qt.rgba(0.1, 0.1, 0.1, 1)
             font.family: pigFont.name
-            font.pixelSize: 15
+            font.pixelSize: screen.height/72 //15
             visible: { fileNotReady && !abortTorrent }
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.top: progressBar.bottom
-            anchors.topMargin: 10
+            anchors.topMargin: screen.height/108 //10
         }
         Text {
             id: fileRecheckLabel
             text: ""
             color: Qt.rgba(0.1, 0.1, 0.1, 1)
             font.family: pigFont.name
-            font.pixelSize: 15
+            font.pixelSize: screen.height/72 //15
             visible: { fileNotReady && !abortTorrent }
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.top: checkingFileLabel.bottom
-            anchors.topMargin: 2
+            anchors.topMargin: screen.height/540 //2
         }
         Timer {
             id: fileRecheckDelay
@@ -578,6 +576,7 @@ Item {
     onAbortTorrentChanged: {
         if (abortTorrent) {
             root.torrentHandleSIGNAL_QML("", "", true)
+            root.downloaded = 0
             hidePlayerLayer.running = true
             abortTorrentResetDelay.start()
         }

@@ -12,13 +12,13 @@ MAKEFILE      = Makefile
 
 CC            = gcc
 CXX           = g++
-DEFINES       = -DBOOST_ASIO_DYN_LINK -DTORRENT_USE_OPENSSL -DBOOST_ASIO_HASH_MAP_BUCKETS=1021 -DBOOST_EXCEPTION_DISABLE -DBOOST_ASIO_ENABLE_CANCELIO -DTORRENT_LINKING_SHARED -DQT_NO_DEBUG -DQT_MULTIMEDIAWIDGETS_LIB -DQT_QUICK_LIB -DQT_MULTIMEDIA_LIB -DQT_QML_LIB -DQT_WIDGETS_LIB -DQT_SQL_LIB -DQT_NETWORK_LIB -DQT_GUI_LIB -DQT_CORE_LIB
+DEFINES       = -DQT_NO_DEBUG -DQT_MULTIMEDIAWIDGETS_LIB -DQT_QUICK_LIB -DQT_MULTIMEDIA_LIB -DQT_QML_LIB -DQT_WIDGETS_LIB -DQT_SQL_LIB -DQT_NETWORK_LIB -DQT_GUI_LIB -DQT_CORE_LIB
 CFLAGS        = -pipe -march=x86-64 -mtune=generic -O2 -pipe -fstack-protector-strong --param=ssp-buffer-size=4 -Wall -W -D_REENTRANT -fPIE $(DEFINES)
 CXXFLAGS      = -pipe -march=x86-64 -mtune=generic -O2 -pipe -fstack-protector-strong --param=ssp-buffer-size=4 -Wall -W -D_REENTRANT -fPIE $(DEFINES)
-INCPATH       = -I/usr/lib/qt/mkspecs/linux-g++ -I. -isystem /usr/include/libtorrent -isystem /usr/include/qt -isystem /usr/include/qt/QtMultimediaWidgets -isystem /usr/include/qt/QtQuick -isystem /usr/include/qt/QtMultimedia -isystem /usr/include/qt/QtQml -isystem /usr/include/qt/QtWidgets -isystem /usr/include/qt/QtSql -isystem /usr/include/qt/QtNetwork -isystem /usr/include/qt/QtGui -isystem /usr/include/qt/QtCore -I.
+INCPATH       = -I/usr/lib/qt/mkspecs/linux-g++ -I. -isystem /usr/include/qt -isystem /usr/include/qt/QtMultimediaWidgets -isystem /usr/include/qt/QtQuick -isystem /usr/include/qt/QtMultimedia -isystem /usr/include/qt/QtQml -isystem /usr/include/qt/QtWidgets -isystem /usr/include/qt/QtSql -isystem /usr/include/qt/QtNetwork -isystem /usr/include/qt/QtGui -isystem /usr/include/qt/QtCore -I.
 LINK          = g++
 LFLAGS        = -Wl,-O1,--sort-common,--as-needed,-z,relro -Wl,-O1 -Wl,-rpath-link,/usr/lib
-LIBS          = $(SUBLIBS) -ltorrent-rasterbar -lboost_system -lQt5MultimediaWidgets -lQt5Quick -lQt5Multimedia -lQt5Qml -lQt5Widgets -lQt5Sql -lQt5Network -lQt5Gui -lQt5Core -lGL -lpthread 
+LIBS          = $(SUBLIBS) -lQt5MultimediaWidgets -lQt5Quick -lQt5Multimedia -lQt5Qml -lQt5Widgets -lQt5Sql -lQt5Network -lQt5Gui -lQt5Core -lGL -lpthread 
 AR            = ar cqs
 RANLIB        = 
 QMAKE         = /usr/lib/qt/bin/qmake
@@ -50,27 +50,23 @@ SOURCES       = src/main.cpp \
 		src/password.cpp \
 		src/update.cpp \
 		src/tcpSocket.cpp \
-		src/torrent.cpp \
 		src/videoplayer.cpp qrc_qml.cpp \
 		moc_pig.cpp \
 		moc_password.cpp \
 		moc_update.cpp \
 		moc_tcpSocket.cpp \
-		moc_torrent.cpp \
 		moc_videoplayer.cpp
 OBJECTS       = main.o \
 		pig.o \
 		password.o \
 		update.o \
 		tcpSocket.o \
-		torrent.o \
 		videoplayer.o \
 		qrc_qml.o \
 		moc_pig.o \
 		moc_password.o \
 		moc_update.o \
 		moc_tcpSocket.o \
-		moc_torrent.o \
 		moc_videoplayer.o
 DIST          = /usr/lib/qt/mkspecs/features/spec_pre.prf \
 		/usr/lib/qt/mkspecs/common/shell-unix.conf \
@@ -168,7 +164,6 @@ DIST          = /usr/lib/qt/mkspecs/features/spec_pre.prf \
 		/usr/lib/qt/mkspecs/features/default_pre.prf \
 		/usr/lib/qt/mkspecs/features/resolve_config.prf \
 		/usr/lib/qt/mkspecs/features/default_post.prf \
-		/usr/lib/qt/mkspecs/features/link_pkgconfig.prf \
 		/usr/lib/qt/mkspecs/features/warn_on.prf \
 		/usr/lib/qt/mkspecs/features/qt.prf \
 		/usr/lib/qt/mkspecs/features/resources.prf \
@@ -185,7 +180,6 @@ DIST          = /usr/lib/qt/mkspecs/features/spec_pre.prf \
 		src/password.cpp \
 		src/update.cpp \
 		src/tcpSocket.cpp \
-		src/torrent.cpp \
 		src/videoplayer.cpp
 QMAKE_TARGET  = pig
 DESTDIR       = #avoid trailing-slash linebreak
@@ -315,7 +309,6 @@ Makefile: pig.pro /usr/lib/qt/mkspecs/linux-g++/qmake.conf /usr/lib/qt/mkspecs/f
 		/usr/lib/qt/mkspecs/features/default_pre.prf \
 		/usr/lib/qt/mkspecs/features/resolve_config.prf \
 		/usr/lib/qt/mkspecs/features/default_post.prf \
-		/usr/lib/qt/mkspecs/features/link_pkgconfig.prf \
 		/usr/lib/qt/mkspecs/features/warn_on.prf \
 		/usr/lib/qt/mkspecs/features/qt.prf \
 		/usr/lib/qt/mkspecs/features/resources.prf \
@@ -435,7 +428,6 @@ Makefile: pig.pro /usr/lib/qt/mkspecs/linux-g++/qmake.conf /usr/lib/qt/mkspecs/f
 /usr/lib/qt/mkspecs/features/default_pre.prf:
 /usr/lib/qt/mkspecs/features/resolve_config.prf:
 /usr/lib/qt/mkspecs/features/default_post.prf:
-/usr/lib/qt/mkspecs/features/link_pkgconfig.prf:
 /usr/lib/qt/mkspecs/features/warn_on.prf:
 /usr/lib/qt/mkspecs/features/qt.prf:
 /usr/lib/qt/mkspecs/features/resources.prf:
@@ -465,7 +457,7 @@ qmake_all: FORCE
 
 dist: 
 	@test -d .tmp/pig1.0.0 || mkdir -p .tmp/pig1.0.0
-	$(COPY_FILE) --parents $(DIST) .tmp/pig1.0.0/ && $(COPY_FILE) --parents qml.qrc .tmp/pig1.0.0/ && $(COPY_FILE) --parents src/pig.h src/password.h src/update.h src/tcpSocket.h src/torrent.h src/videoplayer.h /usr/include/libtorrent/entry.hpp /usr/include/libtorrent/bencode.hpp /usr/include/libtorrent/session.hpp /usr/include/libtorrent/torrent_info.hpp /usr/include/libtorrent/torrent_handle.hpp .tmp/pig1.0.0/ && $(COPY_FILE) --parents src/main.cpp src/pig.cpp src/password.cpp src/update.cpp src/tcpSocket.cpp src/torrent.cpp src/videoplayer.cpp .tmp/pig1.0.0/ && (cd `dirname .tmp/pig1.0.0` && $(TAR) pig1.0.0.tar pig1.0.0 && $(COMPRESS) pig1.0.0.tar) && $(MOVE) `dirname .tmp/pig1.0.0`/pig1.0.0.tar.gz . && $(DEL_FILE) -r .tmp/pig1.0.0
+	$(COPY_FILE) --parents $(DIST) .tmp/pig1.0.0/ && $(COPY_FILE) --parents qml.qrc .tmp/pig1.0.0/ && $(COPY_FILE) --parents src/pig.h src/password.h src/update.h src/tcpSocket.h src/videoplayer.h /usr/include/libtorrent/entry.hpp /usr/include/libtorrent/bencode.hpp /usr/include/libtorrent/session.hpp /usr/include/libtorrent/torrent_info.hpp /usr/include/libtorrent/torrent_handle.hpp lib/libtorrent-rasterbar-1.0.1/include/entry.hpp lib/libtorrent-rasterbar-1.0.1/include/bencode.hpp lib/libtorrent-rasterbar-1.0.1/include/session.hpp lib/libtorrent-rasterbar-1.0.1/include/torrent_info.hpp lib/libtorrent-rasterbar-1.0.1/include/torrent_handle.hpp .tmp/pig1.0.0/ && $(COPY_FILE) --parents src/main.cpp src/pig.cpp src/password.cpp src/update.cpp src/tcpSocket.cpp src/videoplayer.cpp .tmp/pig1.0.0/ && (cd `dirname .tmp/pig1.0.0` && $(TAR) pig1.0.0.tar pig1.0.0 && $(COMPRESS) pig1.0.0.tar) && $(MOVE) `dirname .tmp/pig1.0.0`/pig1.0.0.tar.gz . && $(DEL_FILE) -r .tmp/pig1.0.0
 
 
 clean:compiler_clean 
@@ -491,19 +483,17 @@ compiler_rcc_clean:
 	-$(DEL_FILE) qrc_qml.cpp
 qrc_qml.cpp: qml.qrc \
 		images/pig/icon.png \
-		images/pig/wave.gif \
+		images/pig/network.png \
 		images/pig/icon.rc \
 		images/pig/logo.png \
 		images/pig/icon.ico \
 		images/player/volume.png \
 		images/player/volumeOff.png \
-		images/player/loop.png \
 		images/available/posterNotAvailable.png \
 		images/available/coverNotAvailable.png \
 		images/available/pornstarNotAvailable.png \
 		images/available/screensNotAvailable.png \
 		images/font/pig.ttf \
-		images/output/stripes.png \
 		images/output/frame.png \
 		images/output/sd.png \
 		images/output/1080.png \
@@ -511,7 +501,6 @@ qrc_qml.cpp: qml.qrc \
 		images/pornstars/Belladonna.jpg \
 		src/qml/Button.qml \
 		src/qml/Wait.qml \
-		src/qml/ButtonScenne.qml \
 		src/qml/Output.qml \
 		src/qml/Update.qml \
 		src/qml/Finder.qml \
@@ -521,38 +510,35 @@ qrc_qml.cpp: qml.qrc \
 		src/qml/AskPassword.qml \
 		src/qml/SetPassword.qml \
 		src/qml/News.qml \
+		src/qml/ButtonScene.qml \
 		src/qml/ProgressBar.qml \
 		src/qml/Selectors.qml \
 		src/qml/main.qml \
 		src/qml/Help.qml
 	/usr/lib/qt/bin/rcc -name qml qml.qrc -o qrc_qml.cpp
 
-compiler_moc_header_make_all: moc_pig.cpp moc_password.cpp moc_update.cpp moc_tcpSocket.cpp moc_torrent.cpp moc_videoplayer.cpp
+compiler_moc_header_make_all: moc_pig.cpp moc_password.cpp moc_update.cpp moc_tcpSocket.cpp moc_videoplayer.cpp
 compiler_moc_header_clean:
-	-$(DEL_FILE) moc_pig.cpp moc_password.cpp moc_update.cpp moc_tcpSocket.cpp moc_torrent.cpp moc_videoplayer.cpp
+	-$(DEL_FILE) moc_pig.cpp moc_password.cpp moc_update.cpp moc_tcpSocket.cpp moc_videoplayer.cpp
 moc_pig.cpp: src/password.h \
 		src/update.h \
 		src/tcpSocket.h \
-		src/torrent.h \
 		src/videoplayer.h \
 		src/pig.h
-	/usr/lib/qt/bin/moc $(DEFINES) -I/usr/lib/qt/mkspecs/linux-g++ -I/home/lxfb/pig -I/usr/include/libtorrent -I/usr/include/qt -I/usr/include/qt/QtMultimediaWidgets -I/usr/include/qt/QtQuick -I/usr/include/qt/QtMultimedia -I/usr/include/qt/QtQml -I/usr/include/qt/QtWidgets -I/usr/include/qt/QtSql -I/usr/include/qt/QtNetwork -I/usr/include/qt/QtGui -I/usr/include/qt/QtCore -I/usr/include/c++/4.9.0 -I/usr/include/c++/4.9.0/x86_64-unknown-linux-gnu -I/usr/include/c++/4.9.0/backward -I/usr/lib/gcc/x86_64-unknown-linux-gnu/4.9.0/include -I/usr/local/include -I/usr/lib/gcc/x86_64-unknown-linux-gnu/4.9.0/include-fixed -I/usr/include src/pig.h -o moc_pig.cpp
+	/usr/lib/qt/bin/moc $(DEFINES) -I/usr/lib/qt/mkspecs/linux-g++ -I/home/lxfb/pig_windows -I/usr/include/qt -I/usr/include/qt/QtMultimediaWidgets -I/usr/include/qt/QtQuick -I/usr/include/qt/QtMultimedia -I/usr/include/qt/QtQml -I/usr/include/qt/QtWidgets -I/usr/include/qt/QtSql -I/usr/include/qt/QtNetwork -I/usr/include/qt/QtGui -I/usr/include/qt/QtCore -I/usr/include/c++/4.9.0 -I/usr/include/c++/4.9.0/x86_64-unknown-linux-gnu -I/usr/include/c++/4.9.0/backward -I/usr/lib/gcc/x86_64-unknown-linux-gnu/4.9.0/include -I/usr/local/include -I/usr/lib/gcc/x86_64-unknown-linux-gnu/4.9.0/include-fixed -I/usr/include src/pig.h -o moc_pig.cpp
 
 moc_password.cpp: src/password.h
-	/usr/lib/qt/bin/moc $(DEFINES) -I/usr/lib/qt/mkspecs/linux-g++ -I/home/lxfb/pig -I/usr/include/libtorrent -I/usr/include/qt -I/usr/include/qt/QtMultimediaWidgets -I/usr/include/qt/QtQuick -I/usr/include/qt/QtMultimedia -I/usr/include/qt/QtQml -I/usr/include/qt/QtWidgets -I/usr/include/qt/QtSql -I/usr/include/qt/QtNetwork -I/usr/include/qt/QtGui -I/usr/include/qt/QtCore -I/usr/include/c++/4.9.0 -I/usr/include/c++/4.9.0/x86_64-unknown-linux-gnu -I/usr/include/c++/4.9.0/backward -I/usr/lib/gcc/x86_64-unknown-linux-gnu/4.9.0/include -I/usr/local/include -I/usr/lib/gcc/x86_64-unknown-linux-gnu/4.9.0/include-fixed -I/usr/include src/password.h -o moc_password.cpp
+	/usr/lib/qt/bin/moc $(DEFINES) -I/usr/lib/qt/mkspecs/linux-g++ -I/home/lxfb/pig_windows -I/usr/include/qt -I/usr/include/qt/QtMultimediaWidgets -I/usr/include/qt/QtQuick -I/usr/include/qt/QtMultimedia -I/usr/include/qt/QtQml -I/usr/include/qt/QtWidgets -I/usr/include/qt/QtSql -I/usr/include/qt/QtNetwork -I/usr/include/qt/QtGui -I/usr/include/qt/QtCore -I/usr/include/c++/4.9.0 -I/usr/include/c++/4.9.0/x86_64-unknown-linux-gnu -I/usr/include/c++/4.9.0/backward -I/usr/lib/gcc/x86_64-unknown-linux-gnu/4.9.0/include -I/usr/local/include -I/usr/lib/gcc/x86_64-unknown-linux-gnu/4.9.0/include-fixed -I/usr/include src/password.h -o moc_password.cpp
 
 moc_update.cpp: src/tcpSocket.h \
 		src/update.h
-	/usr/lib/qt/bin/moc $(DEFINES) -I/usr/lib/qt/mkspecs/linux-g++ -I/home/lxfb/pig -I/usr/include/libtorrent -I/usr/include/qt -I/usr/include/qt/QtMultimediaWidgets -I/usr/include/qt/QtQuick -I/usr/include/qt/QtMultimedia -I/usr/include/qt/QtQml -I/usr/include/qt/QtWidgets -I/usr/include/qt/QtSql -I/usr/include/qt/QtNetwork -I/usr/include/qt/QtGui -I/usr/include/qt/QtCore -I/usr/include/c++/4.9.0 -I/usr/include/c++/4.9.0/x86_64-unknown-linux-gnu -I/usr/include/c++/4.9.0/backward -I/usr/lib/gcc/x86_64-unknown-linux-gnu/4.9.0/include -I/usr/local/include -I/usr/lib/gcc/x86_64-unknown-linux-gnu/4.9.0/include-fixed -I/usr/include src/update.h -o moc_update.cpp
+	/usr/lib/qt/bin/moc $(DEFINES) -I/usr/lib/qt/mkspecs/linux-g++ -I/home/lxfb/pig_windows -I/usr/include/qt -I/usr/include/qt/QtMultimediaWidgets -I/usr/include/qt/QtQuick -I/usr/include/qt/QtMultimedia -I/usr/include/qt/QtQml -I/usr/include/qt/QtWidgets -I/usr/include/qt/QtSql -I/usr/include/qt/QtNetwork -I/usr/include/qt/QtGui -I/usr/include/qt/QtCore -I/usr/include/c++/4.9.0 -I/usr/include/c++/4.9.0/x86_64-unknown-linux-gnu -I/usr/include/c++/4.9.0/backward -I/usr/lib/gcc/x86_64-unknown-linux-gnu/4.9.0/include -I/usr/local/include -I/usr/lib/gcc/x86_64-unknown-linux-gnu/4.9.0/include-fixed -I/usr/include src/update.h -o moc_update.cpp
 
 moc_tcpSocket.cpp: src/tcpSocket.h
-	/usr/lib/qt/bin/moc $(DEFINES) -I/usr/lib/qt/mkspecs/linux-g++ -I/home/lxfb/pig -I/usr/include/libtorrent -I/usr/include/qt -I/usr/include/qt/QtMultimediaWidgets -I/usr/include/qt/QtQuick -I/usr/include/qt/QtMultimedia -I/usr/include/qt/QtQml -I/usr/include/qt/QtWidgets -I/usr/include/qt/QtSql -I/usr/include/qt/QtNetwork -I/usr/include/qt/QtGui -I/usr/include/qt/QtCore -I/usr/include/c++/4.9.0 -I/usr/include/c++/4.9.0/x86_64-unknown-linux-gnu -I/usr/include/c++/4.9.0/backward -I/usr/lib/gcc/x86_64-unknown-linux-gnu/4.9.0/include -I/usr/local/include -I/usr/lib/gcc/x86_64-unknown-linux-gnu/4.9.0/include-fixed -I/usr/include src/tcpSocket.h -o moc_tcpSocket.cpp
-
-moc_torrent.cpp: src/torrent.h
-	/usr/lib/qt/bin/moc $(DEFINES) -I/usr/lib/qt/mkspecs/linux-g++ -I/home/lxfb/pig -I/usr/include/libtorrent -I/usr/include/qt -I/usr/include/qt/QtMultimediaWidgets -I/usr/include/qt/QtQuick -I/usr/include/qt/QtMultimedia -I/usr/include/qt/QtQml -I/usr/include/qt/QtWidgets -I/usr/include/qt/QtSql -I/usr/include/qt/QtNetwork -I/usr/include/qt/QtGui -I/usr/include/qt/QtCore -I/usr/include/c++/4.9.0 -I/usr/include/c++/4.9.0/x86_64-unknown-linux-gnu -I/usr/include/c++/4.9.0/backward -I/usr/lib/gcc/x86_64-unknown-linux-gnu/4.9.0/include -I/usr/local/include -I/usr/lib/gcc/x86_64-unknown-linux-gnu/4.9.0/include-fixed -I/usr/include src/torrent.h -o moc_torrent.cpp
+	/usr/lib/qt/bin/moc $(DEFINES) -I/usr/lib/qt/mkspecs/linux-g++ -I/home/lxfb/pig_windows -I/usr/include/qt -I/usr/include/qt/QtMultimediaWidgets -I/usr/include/qt/QtQuick -I/usr/include/qt/QtMultimedia -I/usr/include/qt/QtQml -I/usr/include/qt/QtWidgets -I/usr/include/qt/QtSql -I/usr/include/qt/QtNetwork -I/usr/include/qt/QtGui -I/usr/include/qt/QtCore -I/usr/include/c++/4.9.0 -I/usr/include/c++/4.9.0/x86_64-unknown-linux-gnu -I/usr/include/c++/4.9.0/backward -I/usr/lib/gcc/x86_64-unknown-linux-gnu/4.9.0/include -I/usr/local/include -I/usr/lib/gcc/x86_64-unknown-linux-gnu/4.9.0/include-fixed -I/usr/include src/tcpSocket.h -o moc_tcpSocket.cpp
 
 moc_videoplayer.cpp: src/videoplayer.h
-	/usr/lib/qt/bin/moc $(DEFINES) -I/usr/lib/qt/mkspecs/linux-g++ -I/home/lxfb/pig -I/usr/include/libtorrent -I/usr/include/qt -I/usr/include/qt/QtMultimediaWidgets -I/usr/include/qt/QtQuick -I/usr/include/qt/QtMultimedia -I/usr/include/qt/QtQml -I/usr/include/qt/QtWidgets -I/usr/include/qt/QtSql -I/usr/include/qt/QtNetwork -I/usr/include/qt/QtGui -I/usr/include/qt/QtCore -I/usr/include/c++/4.9.0 -I/usr/include/c++/4.9.0/x86_64-unknown-linux-gnu -I/usr/include/c++/4.9.0/backward -I/usr/lib/gcc/x86_64-unknown-linux-gnu/4.9.0/include -I/usr/local/include -I/usr/lib/gcc/x86_64-unknown-linux-gnu/4.9.0/include-fixed -I/usr/include src/videoplayer.h -o moc_videoplayer.cpp
+	/usr/lib/qt/bin/moc $(DEFINES) -I/usr/lib/qt/mkspecs/linux-g++ -I/home/lxfb/pig_windows -I/usr/include/qt -I/usr/include/qt/QtMultimediaWidgets -I/usr/include/qt/QtQuick -I/usr/include/qt/QtMultimedia -I/usr/include/qt/QtQml -I/usr/include/qt/QtWidgets -I/usr/include/qt/QtSql -I/usr/include/qt/QtNetwork -I/usr/include/qt/QtGui -I/usr/include/qt/QtCore -I/usr/include/c++/4.9.0 -I/usr/include/c++/4.9.0/x86_64-unknown-linux-gnu -I/usr/include/c++/4.9.0/backward -I/usr/lib/gcc/x86_64-unknown-linux-gnu/4.9.0/include -I/usr/local/include -I/usr/lib/gcc/x86_64-unknown-linux-gnu/4.9.0/include-fixed -I/usr/include src/videoplayer.h -o moc_videoplayer.cpp
 
 compiler_moc_source_make_all:
 compiler_moc_source_clean:
@@ -572,7 +558,6 @@ main.o: src/main.cpp src/pig.h \
 		src/password.h \
 		src/update.h \
 		src/tcpSocket.h \
-		src/torrent.h \
 		src/videoplayer.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o main.o src/main.cpp
 
@@ -580,7 +565,6 @@ pig.o: src/pig.cpp src/pig.h \
 		src/password.h \
 		src/update.h \
 		src/tcpSocket.h \
-		src/torrent.h \
 		src/videoplayer.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o pig.o src/pig.cpp
 
@@ -593,9 +577,6 @@ update.o: src/update.cpp src/update.h \
 
 tcpSocket.o: src/tcpSocket.cpp src/tcpSocket.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o tcpSocket.o src/tcpSocket.cpp
-
-torrent.o: src/torrent.cpp src/torrent.h
-	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o torrent.o src/torrent.cpp
 
 videoplayer.o: src/videoplayer.cpp src/videoplayer.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o videoplayer.o src/videoplayer.cpp
@@ -615,9 +596,6 @@ moc_update.o: moc_update.cpp
 moc_tcpSocket.o: moc_tcpSocket.cpp 
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o moc_tcpSocket.o moc_tcpSocket.cpp
 
-moc_torrent.o: moc_torrent.cpp 
-	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o moc_torrent.o moc_torrent.cpp
-
 moc_videoplayer.o: moc_videoplayer.cpp 
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o moc_videoplayer.o moc_videoplayer.cpp
 
@@ -636,7 +614,7 @@ uninstall_target: FORCE
 install_config: first FORCE
 	@test -d $(INSTALL_ROOT)/home/lxfb/.pig || mkdir -p $(INSTALL_ROOT)/home/lxfb/.pig
 	mkdir /home/lxfb/.pig -m 744 -p && chown lxfb.users /home/lxfb/.pig -R
-	-$(INSTALL_PROGRAM) /home/lxfb/pig/.pig/db.sqlite $(INSTALL_ROOT)/home/lxfb/.pig/
+	-$(INSTALL_PROGRAM) /home/lxfb/pig_windows/.pig/db.sqlite $(INSTALL_ROOT)/home/lxfb/.pig/
 	-strip $(INSTALL_ROOT)/home/lxfb/.pig/db.sqlite
 
 uninstall_config: FORCE

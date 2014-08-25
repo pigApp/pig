@@ -1,11 +1,15 @@
-    #ifndef TORRENT_H
+#ifndef TORRENT_H
 #define TORRENT_H
 
-#include <libtorrent/session.hpp>
-#include <libtorrent/file_storage.hpp>
+#ifdef _WIN32
+    #include "..\lib\libtorrent-rasterbar-1.0.1\include\libtorrent\session.hpp"
+    #include "..\lib\libtorrent-rasterbar-1.0.1\include\libtorrent\file_storage.hpp"
+#else
+    #include <libtorrent/session.hpp>
+    #include <libtorrent/file_storage.hpp>
+#endif
 
 #include <stdlib.h>
-#include <iostream>
 
 #include <QObject>
 
@@ -17,37 +21,37 @@ public:
     explicit Torrent(QObject *parent=0);
     ~Torrent();
 
-    Q_INVOKABLE bool piece_is_available(int total_msec, int offset_msec);
-    Q_INVOKABLE void piece_update(int total_msec, int offset_msec);
+    Q_INVOKABLE bool piece_is_available(qint64 total_msec, qint64 offset_msec);
+    Q_INVOKABLE void piece_update(qint64 total_msec, qint64 offset_msec);
 
     QObject *_pig;
     QObject *_player;
     QObject *_root;
 
-    int scenne;
     bool toPlayer;
+    int scene;
 
 public slots:
-    void doConnect(QString magnet);
+    void doConnect(QString *magnet);
     void stop();
 
 private:
     libtorrent::session *client;
     libtorrent::torrent_handle handle;
     libtorrent::add_torrent_params params;
-    libtorrent::file_storage files;
+    libtorrent::file_storage file_storage;
     libtorrent::error_code ec;
 
     QString fileName;
 
-    bool abort;
-    bool skip;
-    int offset;
-    int offset_kb;
+    bool abort, skip;
+    int minimum_mb; 
+    qint64 pieceLength, firstPiece_file, lastPiece_file, totalPieces_file, offsetPieces_file,
+           offsetPieces, totalPieces, total_kb, offset_kb;
 
 private slots:
     void metadata_ready();
-    void filterFile();
+    void filter_files();
     void minimum_ready();
     void download_Information();
     void call_player();

@@ -3,6 +3,7 @@
 
 #include <QObject>
 #include <QCryptographicHash>
+#include <QString>
 
 class Password : public QObject
 {
@@ -13,11 +14,14 @@ public:
     ~Password();
 
     bool require();
-    bool write(QString plain);
-    bool right(QString plain);
+    bool write(QString *plain);
+    bool right(QString *plain);
+
+private:
+    QString pd;
 
 private slots:
-    QString calculate(QString plain);
+    const QString calculate(QString **plain);
 };
 
 #endif

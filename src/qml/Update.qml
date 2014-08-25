@@ -3,26 +3,42 @@ import QtQuick 2.2
 Item {
     id: update
 
-    Rectangle {
-        id: waveLayer
-        width: wave.width
-        height: wave.height
-        visible: root.showWave
-        AnimatedImage {
-            id: wave
-            source: "qrc:/images/pig/wave.gif"
+    Image {
+        id: network
+        width: parent.width/5.36
+        height: parent.height/3.01
+        source: "qrc:/images/pig/network.png"
+        sourceSize.width: 358
+        sourceSize.height: 358
+        visible: { root.showNetwork }
+        anchors.centerIn: parent
+        SequentialAnimation {
+            running: { root.showNetwork }
+            loops: Animation.Infinite
+            PropertyAction { target: witnessStatusLabel; property: "visible"; value: "true" }
+            PauseAnimation { duration: 500 }
+            PropertyAction { target: witnessStatusLabel; property: "visible"; value: "false" }
+            PauseAnimation { duration: 500 }
         }
-        anchors.horizontalCenter: statusLabel.horizontalCenter
-        anchors.verticalCenter: statusLabel.verticalCenter
     }
     Text {
         id: statusLabel
         text: root.status
-        color: { if (waveLayer.visible) "white"; else Qt.rgba(0.1, 0.1, 0.1, 0.2) }
+        color: Qt.rgba(0.1, 0.1, 0.1, 0.2)
         font.family: pigFont.name
-        font.bold: root.showWave
-        font.pixelSize: 30
+        font.pixelSize: parent.height/36
         anchors.centerIn: parent
+    }
+    Text {
+        id: witnessStatusLabel
+        text: "•"
+        color: "white"
+        font.family: pigFont.name
+        font.pixelSize: parent.height/43.2
+        visible: { !root.showNetwork }
+        anchors.centerIn: parent
+        anchors.horizontalCenterOffset: parent.width/3500
+        anchors.verticalCenterOffset: parent.height/130
     }
     Text {
         id: informationLabel
@@ -30,25 +46,25 @@ Item {
         color: Qt.rgba(0.1, 0.1, 0.1, 0.2)
         font.family: pigFont.name
         font.italic: true
-        font.pixelSize: 20
+        font.pixelSize: parent.height54 //20
         anchors.centerIn: parent
-        anchors.verticalCenterOffset: 30
+        anchors.verticalCenterOffset: parent.height/36 //30
     }
 
     Row {
         id: buttonsRow
-        spacing: 23
+        spacing: parent.width/83.47 //23
         anchors.centerIn: parent
-        anchors.horizontalCenterOffset: -2
-        anchors.verticalCenterOffset: { if (informationLabel.text == '') 50; else 70 }
+        anchors.horizontalCenterOffset: -parent.width/960 //-2
+        anchors.verticalCenterOffset: { if (informationLabel.text === '') 50; else 70 }
         Button {
             id: accept
-            width: 83
-            height: 38
+            width: screen.width/23.13 //83
+            height: screen.height/28.42 //38
             label: "GET"
             labelColor: Qt.rgba(0.1, 0.1, 0.1, 0.2)
             labelBold: true
-            labelSize: 50
+            labelSize: screen.height/21.5 //50
             labelInColor: Qt.rgba(0.1, 0.1, 0.1, 0.3)
             labelOutColor: Qt.rgba(0.1, 0.1, 0.1, 0.2)
             visible: { root.requireConfirmation }
@@ -61,12 +77,12 @@ Item {
         }
         Button {
             id: skip
-            width: 93
-            height: 38
+            width: screen.width/20.64 //93
+            height: screen.height/28.42 //38
             label: "SKIP"
             labelColor: Qt.rgba(0.1, 0.1, 0.1, 0.2)
             labelBold: true
-            labelSize: 50
+            labelSize: screen.height/21.5 //50
             labelInColor: Qt.rgba(0.1, 0.1, 0.1, 0.3)
             labelOutColor: Qt.rgba(0.1, 0.1, 0.1, 0.2)
             visible: { root.requireConfirmation }
@@ -76,7 +92,7 @@ Item {
     }
 
     Keys.onPressed: {
-        if (event.key === Qt.Key_Escape && (event.modifiers & Qt.ControlModifier)) {
+        if (event.key === Qt.Key_Q && (event.modifiers & Qt.ControlModifier)) {
             root.quitSIGNAL_QML()
             event.accepted = true;
         }

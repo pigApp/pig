@@ -5,24 +5,24 @@ Item {
 
     Row {
         id: selectorsRow
-        spacing: 5
+        spacing: parent.width/384
         anchors.left: parent.left
-        anchors.leftMargin: 73//196//73
+        anchors.leftMargin: parent.width/26.66
         anchors.verticalCenter: parent.verticalCenter
-        anchors.verticalCenterOffset: 32
+        anchors.verticalCenterOffset: parent.height/33.75
         z: 2
 
         Text {
             id: fullMovieLabel
             text: "FULL MOVIE "
-            color: { if (root.full == "FULL") "white"; else Qt.rgba(0.1, 0.1, 0.1, 1) }
+            color: { if (root.full === "FULL") "white"; else Qt.rgba(0.1, 0.1, 0.1, 1) }
             font.family: pigFont.name
             font.bold: true
-            font.pixelSize: 15
+            font.pixelSize: screen.height/72
             MouseArea {
                 id: fullMovieMousearea
                 onClicked: {
-                    if (root.full == "FULL")
+                    if (root.full === "FULL")
                         root.full = ""
                     else
                         root.full= "FULL"
@@ -33,14 +33,14 @@ Item {
         Text {
             id: standardLabel
             text: " SD"
-            color: { if (root.quality == "SD") "white"; else Qt.rgba(0.1, 0.1, 0.1, 1) }
+            color: { if (root.quality === "SD") "white"; else Qt.rgba(0.1, 0.1, 0.1, 1) }
             font.family: pigFont.name
             font.bold: true
-            font.pixelSize: 15
+            font.pixelSize: screen.height/72
             MouseArea {
                 id: standardMousearea
                 onClicked: {
-                    if (root.quality == "SD")
+                    if (root.quality === "SD")
                         root.quality = ""
                     else
                         root.quality = "SD"
@@ -51,14 +51,14 @@ Item {
         Text {
             id: mediumLabel
             text: "720p"
-            color: { if (root.quality == "720p") "white"; else Qt.rgba(0.1, 0.1, 0.1, 1) }
+            color: { if (root.quality === "720p") "white"; else Qt.rgba(0.1, 0.1, 0.1, 1) }
             font.family: pigFont.name
             font.bold: true
-            font.pixelSize: 15
+            font.pixelSize: screen.height/72
             MouseArea {
                 id: mediumMousearea
                 onClicked: {
-                    if (root.quality == "720p")
+                    if (root.quality === "720p")
                         root.quality = ""
                     else
                         root.quality = "720p"
@@ -69,14 +69,14 @@ Item {
         Text {
             id: highLabel
             text: "1080p"
-            color: { if (root.quality == "1080p") "white"; else Qt.rgba(0.1, 0.1, 0.1, 1) }
+            color: { if (root.quality === "1080p") "white"; else Qt.rgba(0.1, 0.1, 0.1, 1) }
             font.family: pigFont.name
             font.bold: true
-            font.pixelSize: 15
+            font.pixelSize: screen.height/72
             MouseArea {
                 id: highMousearea
                 onClicked: {
-                    if (root.quality == "1080p")
+                    if (root.quality === "1080p")
                         root.quality = ""
                     else
                         root.quality = "1080p"

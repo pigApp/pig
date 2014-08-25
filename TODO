@@ -1,11 +1,18 @@
 - Control de errores.
-- Destructores.
-- Punteros en argumentos &string.
 - Aspect ratio para las imagenes y video.
 - Convertir medidas a porcentaje.
 - Agregar divisor para el tamaño de letras.
 - Installer, copiarlo desde ID
+- Links para update en la db. Distintos para windows, linux, 32 y 64.
 - Paso extra en update. Por si es necesario actulizar tambien las librerias.
-
-
+- Sacar el "DONE" al setear el password.
+- Completar la ayuda.
+- PLAYER
+  - Al adelantar el slider, si es necesario descargar una nueva pieza (descarga la pieza correcta - dos minutos antes - o dos minutos despues) ver por que.
+  - Al mover el slider, comprobar que marque correctamente si sobrepasa a bar (rojo - blanco). 
+  - Al mover el slider, las teclas quedan deshabilitadas (menos la tecla space).
+  - Si termino la descarga, mostrar bar completa. ( if(bar->value() >= total_msec-13312) mostrar bar completa).
+  - Si se aborta la descarga sin tener la metadata(desde QML), detener el torrent sin borrar las filas (ya que no existen).
+  - Al termina de descargar de los primeros 15 megas, intenta reproducir (sandbox) y se queda en LoadingState, ver que hacer.
+- Metadata.
 sudo pacman -S gstreamer0.10-{{base,good}{,-plugins},ffmpeg}

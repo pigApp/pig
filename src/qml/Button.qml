@@ -19,7 +19,7 @@ Rectangle {
         color: "white"
         font.family: pigFont.name
         font.bold: false
-        font.pixelSize: 100
+        font.pixelSize: labelSize
         horizontalAlignment: Text.AlignLeft
         verticalAlignment: Text.AlignVCenter
         anchors.fill: parent

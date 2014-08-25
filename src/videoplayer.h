@@ -21,19 +21,18 @@ public:
     ~VideoPlayer();
 
     Q_INVOKABLE void download_Information(int bitRate, int peers);
-    Q_INVOKABLE void progress(int total_kb, int downloaded_kb, int downloaded_offset);
-    Q_INVOKABLE void update();
+    Q_INVOKABLE void progress(qint64 total_kb, qint64 downloaded_kb, int downloaded_offset);
+    Q_INVOKABLE void update_player();
 
     QObject *_pig;
     QObject *_torrent;
-    QTimer *hideControlsTimer;
 
 protected:
     void keyPressEvent(QKeyEvent *event);
     void mousePressEvent(QMouseEvent *event);
 
 public slots:
-    void sandbox(QString absoluteFilePath);
+    void sandbox(const QString *absoluteFilePath);
 
 private:
     QMediaPlayer *player;
@@ -43,35 +42,27 @@ private:
     QLabel *volumeIcon;
     QLabel *volumeLabel;
     QLabel *pauseLabel;
+    QLabel *bufferLabel;
+    QLabel *witnessBufferLabel;
+    QLabel *startLoopTimeLabel;
+    QLabel *stopLoopTimeLabel;
     QProgressBar *barOffset;
     QLabel *currentTimeLabel;
     QLabel *totalTimeLabel;
     QLabel *bitRateLabel;
     QLabel *peersLabel;
-    QLabel *loopIcon;
-    QLabel *loopLabel;
-    QLabel *loopTimeLabel;
     QProgressBar *bar;
-    QSlider *slider;
     QSlider *sliderStartLoop;
     QSlider *sliderStopLoop;
+    QSlider *slider;
+    QTimer *hideControlsDelay;
 
-    bool onSandbox;
-    bool skip;
-    bool paused;
-    bool loop;
-    int readyToRead_msec;
-    int skip_key_value;
-    int skip_player_msec;
-    int volume;
-    int screenWidth;
-    int screenHeight;
-    qint64 startLoop_msec;
-    qint64 stopLoop_msec;
+    bool onSandbox, buffering, skip, paused, loop;
+    int skip_key_value, volume, screenWidth, screenHeight;
+    qint64 readyToRead_msec, update_msec, startLoop_msec, stopLoop_msec;
 
 private slots:
     void play_pause_stop();
-    void standBy();
     void set_volume(int volume_key_value);
     void set_loop();
     void slider_startLoop_pressed();
@@ -83,6 +74,7 @@ private slots:
     void set_sliderLoop_time(int msec);
     void set_currentTime(qint64 msecs);
     void set_totalTime(qint64 msecs);
+    void onBuffering();
     void set_slider_position(qint64 position);
     void slider_pressed();
     void slider_moved(int position);

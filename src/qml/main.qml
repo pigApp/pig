@@ -11,7 +11,7 @@ Item {
     property bool get
     property bool requireRestart
     property bool news
-    property bool showWave
+    property bool showNetwork
 
     property string status
     property string information
@@ -29,7 +29,6 @@ Item {
 
     property int totalFilms
     property int n
-    property real strap: 1
     property int peers: 0
     property int required: 0
     property int downloaded: 0
@@ -44,7 +43,7 @@ Item {
     signal skipSIGNAL_QML()
     signal getFilesSIGNAL_QML()
     signal findSIGNAL_QML(string input, string pornstar, string category, string quality, string full, int offset, bool init)
-    signal torrentHandleSIGNAL_QML(string magnet, string scenne, bool abort)
+    signal torrentHandleSIGNAL_QML(string magnet, string str_scene, bool abort)
     signal quitSIGNAL_QML()
 
     FontLoader { id: pigFont; source: "qrc:/images/font/pig.ttf" }
@@ -56,11 +55,14 @@ Item {
 
         Image {
             id: logo
+            width: parent.width/1.75
+            height: parent.height/1.39
             source: "qrc:/images/pig/logo.png"
+            sourceSize.width: 1091
+            sourceSize.height: 774
             cache: false
-            fillMode: Image.PreserveAspectCrop
             anchors.left: parent.left
-            anchors.leftMargin: -270
+            anchors.leftMargin: -parent.width/7.11
             anchors.verticalCenter: parent.verticalCenter
             opacity: 0
         }
@@ -78,7 +80,7 @@ Item {
             id: loader
             asynchronous: true
             focus: true
-            visible: { status == Loader.Ready }
+            visible: { status === Loader.Ready }
             anchors.fill: parent
             z: 2
         }
@@ -86,12 +88,12 @@ Item {
         Loader {
             id: loader_finder_output
             asynchronous: true
-            visible: { status == Loader.Ready }
+            visible: { status === Loader.Ready }
             anchors.fill: parent
             onZChanged: {
-                if (z == 0) {
+                if (z === 0) {
                     loader_finder_output.forceActiveFocus()
-                    if (loader_finder_output.source == "qrc:/src/qml/Finder.qml") {
+                    if (loader_finder_output.source === "qrc:/src/qml/Finder.qml") {
                         logo.visible = true
                         blur.visible = true
                     }
@@ -127,17 +129,6 @@ Item {
         onShowUpdateSIGNAL: { loader.source = "Update.qml" }
         onStartSIGNAL: { loader.source = ""; loader_finder_output.source = "Finder.qml" }
         onShowErrorDatabaseSIGNAL: { loader_finder_output.source = ""; loader.source = "ErrorDb.qml"; logo.visible = false; blur.visible = false }
-    }
-
-    Component.onCompleted: {
-        if (root.width >= 1920)
-            strap = 1
-        else if (root.width > 1399 && root.width < 1920)
-            strap = 1.1
-        else if (root.width > 1023 && root.width < 1400)
-            strap = 1.2
-        else
-            strap = 1
     }
 }
 // TODO: TimeOut's.

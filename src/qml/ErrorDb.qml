@@ -5,13 +5,13 @@ Item {
 
     Rectangle {
         id: layer
-        width: screen.width
-        height: 200
+        width: parent.width
+        height: parent.height/5.4
         color: "black"
         anchors.centerIn: parent
         Column {
             id: errorColumn
-            spacing: 10
+            spacing: parent.width/192
             anchors.centerIn: parent
             Text {
                 id: errorInformationLabel
@@ -19,7 +19,7 @@ Item {
                 color: "white"
                 font.family: pigFont.name
                 font.bold: true
-                font.pixelSize: 30
+                font.pixelSize: screen.height/36
                 horizontalAlignment: Text.AlignHCenter
             }
             Text {
@@ -28,14 +28,14 @@ Item {
                 color: Qt.rgba(0.1, 0.1, 0.1, 1)
                 font.family: pigFont.name
                 font.bold: true
-                font.pixelSize: 20
+                font.pixelSize: screen.height/54
                 horizontalAlignment: Text.AlignHCenter
             }
         }
     }
 
     Keys.onPressed: {
-        if (event.key === Qt.Key_Escape && (event.modifiers & Qt.ControlModifier)) {
+        if (event.key === Qt.Key_Q && (event.modifiers & Qt.ControlModifier)) {
             root.quitSIGNAL_QML()
             event.accepted = true;
         }

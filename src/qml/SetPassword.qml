@@ -5,8 +5,8 @@ Item {
 
     Rectangle {
         id: layer
-        width: screen.width
-        height: 35
+        width: parent.width
+        height: parent.height/30.85
         color: Qt.rgba(0, 0, 0, 0.5)
         radius: 2
         anchors.centerIn: parent
@@ -18,7 +18,7 @@ Item {
             color: "white"
             font.family: pigFont.name
             font.bold: true
-            font.pixelSize: 30
+            font.pixelSize: screen.height/36
             horizontalAlignment: Text.AlignHCenter
             anchors.centerIn: parent
         }
@@ -26,30 +26,32 @@ Item {
             id: input
             color: "white"
             font.family: pigFont.name
-            font.pixelSize: 25
+            font.pixelSize: screen.height/43.2
             maximumLength: 16
             echoMode: TextInput.Password
             horizontalAlignment: Text.AlignHCenter
             anchors.centerIn: parent
-            anchors.verticalCenterOffset: -1.5
+            anchors.verticalCenterOffset: -screen.height/720
             onCursorPositionChanged: { label.text = ""; input.visible = true }
             onAccepted: {
                 if (input.text !== '') {
                     root.passwordHandleSIGNAL_QML(input.text, false, true)
                     input.visible = false
                     input.enabled = false
-                    if (root.ok_password)
-                        label.text = "DONE"
-                    else
+                    if (root.ok_password) {
+                        label.text = ""
+                        screen.state = "cleanUp"
+                    } else {
                         label.text = "FAIL. TRY LATER"
-                    back.start()
+                        back.start()
+                    }
                 }
             }
             Keys.onPressed: {
-                if (event.key === Qt.Key_Escape && !(event.modifiers & Qt.ControlModifier)) {
+                if (event.key === Qt.Key_Escape) {
                     screen.state = "cleanUp"
                     event.accepted = true
-                } else if (event.key === Qt.Key_Escape && (event.modifiers & Qt.ControlModifier)) {
+                } else if (event.key === Qt.Key_Q && (event.modifiers & Qt.ControlModifier)) {
                     root.quitSIGNAL_QML()
                     event.accepted = true;
                 }

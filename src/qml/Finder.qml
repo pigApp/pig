@@ -11,14 +11,14 @@ Item {
         font.family: pigFont.name
         font.bold: true
         font.capitalization: Font.AllUppercase
-        font.pixelSize: 50
+        font.pixelSize: parent.height/21.6
         maximumLength: 25
-        visible: { if (buttonsFiltersColumn.opacity == 1) true; else false }
-        enabled: { if (buttonsFiltersColumn.opacity == 1) true; else false }
+        visible: { if (buttonsFiltersColumn.opacity === 1) true; else false }
+        enabled: { if (buttonsFiltersColumn.opacity === 1) true; else false }
         anchors.left: parent.horizontalCenter
-        anchors.leftMargin: -150
+        anchors.leftMargin: -parent.width/12.8
         anchors.verticalCenter: parent.verticalCenter
-        anchors.verticalCenterOffset: -4
+        anchors.verticalCenterOffset: -parent.width/480
         onAccepted: { root.input = userInput.text; root.findSIGNAL_QML(root.input, root.pornstar, root.category, root.quality, root.full, 0, true) }
         onCursorPositionChanged: { if (noResultLabel.visible) noResultLabel.visible = false; userInput.visible = true }
         Keys.onPressed: {
@@ -30,7 +30,7 @@ Item {
                 if (!loaderFilter.active)
                     screen.state = "showHelp"
                 event.accepted = true
-            } else if (event.key === Qt.Key_Escape && (event.modifiers & Qt.ControlModifier)) {
+            } else if (event.key === Qt.Key_Q && (event.modifiers & Qt.ControlModifier)) {
                 root.quitSIGNAL_QML()
                 event.accepted = true
             }
@@ -42,30 +42,31 @@ Item {
         color: Qt.rgba(0.1, 0.1, 0.1, 0.1)
         font.family: pigFont.name
         font.bold: true
-        font.pixelSize: 50
+        font.pixelSize: parent.height/21.6
         visible: false
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.verticalCenter: parent.verticalCenter
-        anchors.verticalCenterOffset: -4
+        anchors.verticalCenterOffset: -parent.height/270
     }
 
     Column {
         id: buttonsFiltersColumn
-        spacing: 16
+        spacing: parent.height/67.5
         visible: { !root.news && screen.state !== "showSetPassword" && screen.state !== "showHelp" }
         enabled: { !root.news && screen.state !== "showSetPassword" && screen.state !== "showHelp" }
         opacity: 0      
         anchors.left: parent.left
-        anchors.leftMargin: 64
+        anchors.leftMargin: parent.width/30
         anchors.verticalCenter: parent.verticalCenter
-        anchors.verticalCenterOffset: -70
+        anchors.verticalCenterOffset: -parent.height/15.42
         z: 2
         onEnabledChanged: { if (enabled) userInput.forceActiveFocus() }
         Button {
             id: categoryFilter
-            width: 440
-            height: 75
+            width: screen.width/4.36
+            height: screen.height/14.4
             label: "CATEGORY"
+            labelSize: screen.height/10.8 // TODO: Falla con resoluciones menores a 1240x720 posiblemente por width y height. Probar logo.height.
             labelInColor: Qt.rgba(0.1, 0.1, 0.1, 0.5)
             labelOutColor: "white"
             onClicked: { 
@@ -75,9 +76,10 @@ Item {
         }
         Button {
             id: pornstarFilter
-            width: 445
-            height: 75
+            width: screen.width/4.31
+            height: screen.height/14.4
             label: "PORNSTAR"
+            labelSize: screen.height/10.8 // TODO: Falla con resoluciones menores a 1240x720 posiblemente por width y height.
             labelInColor: Qt.rgba(0.1, 0.1, 0.1, 0.5)
             labelOutColor: "white"
             onClicked: {
@@ -102,11 +104,11 @@ Item {
         anchors.fill: parent
     }
     Keys.onPressed: {
-        if (event.key === Qt.Key_Escape && !(event.modifiers & Qt.ControlModifier)) {
+        if (event.key === Qt.Key_Escape) {
             finder.state = "hideFilter"
             event.accepted = true;
             userInput.forceActiveFocus()
-        } else if (event.key === Qt.Key_Escape && (event.modifiers & Qt.ControlModifier)) {
+        } else if (event.key === Qt.Key_Q && (event.modifiers & Qt.ControlModifier)) {
             root.quitSIGNAL_QML()
         }
     }
@@ -241,7 +243,7 @@ Item {
     Connections {
         target: cppSignals
         onShowOutputSIGNAL:{
-            if (root.pornstar != "" || root.category != "")
+            if (root.pornstar !== "" || root.category !== "")
                 finder.state = "hideAll"
             else
                 finder.state = "hide"

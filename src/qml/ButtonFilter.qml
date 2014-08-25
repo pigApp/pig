@@ -3,13 +3,13 @@ import QtGraphicalEffects 1.0
 
 Rectangle {
     id: buttonFilter
-    height: 200
-    color: Qt.rgba(0 ,0 ,0 , 0.03)
+    height: screen.height/5.4
+    color: Qt.rgba(0, 0, 0, 0.03)
     radius: 2
 
-    ColorAnimation on color { to: Qt.rgba(1, 0, 0, 0.5); duration: 400 }
+    ColorAnimation on color { to: Qt.rgba(1, 0.6, 0, 0.5); duration: 400 }
     ColorAnimation on color { id: inColor; running: false; to: "white"; duration: 200 }
-    ColorAnimation on color { id: outColor; running: false; to: Qt.rgba(1, 0, 0, 0.5); duration: 200 }
+    ColorAnimation on color { id: outColor; running: false; to: Qt.rgba(1, 0.6, 0, 0.5); duration: 200 }
 
     property bool enter
     property bool pornStarsVisible
@@ -30,16 +30,19 @@ Rectangle {
     }
     Image {
         id: starPic
+        width: screen.width/11.29
+        height: screen.height/5.4
+        sourceSize.width: 170
+        sourceSize.height: 200
         opacity: 0
         anchors.centerIn: parent
     }
 
     Text {
         id: nLabel
-        color: Qt.rgba(0.1, 0.1, 0.1, 0.2)
+        color: Qt.rgba(0.1, 0.1, 0.1, 0.15)
         font.family: pigFont.name
-        font.bold: true
-        font.pixelSize: 150
+        font.pixelSize: screen.height/10.8
         visible: false
         opacity: 0
         anchors.centerIn: parent
@@ -49,10 +52,10 @@ Rectangle {
         color: "white"
         font.family: pigFont.name
         font.capitalization: Font.AllUppercase
-        font.pixelSize: 50
+        font.pixelSize: screen.height/21.6
         visible: false
         anchors.centerIn: parent
-        ColorAnimation on color { id: inLabelColor; running: false; to: "black"; duration: 200 }
+        ColorAnimation on color { id: inLabelColor; running: false; to: Qt.rgba(0.1, 0.1, 0.1, 0.6); duration: 200 }
         ColorAnimation on color { id: outLabelColor; running: false; to: "white"; duration: 200 }
     }
     MouseArea {

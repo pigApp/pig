@@ -1,9 +1,9 @@
 TEMPLATE = app
 TARGET = pig 
 
-CONFIG += link_pkgconfig
-PKGCONFIG += libtorrent-rasterbar
-DEFINES += BOOST_ASIO_DYN_LINK
+#CONFIG += link_pkgconfig
+#PKGCONFIG += libtorrent-rasterbar
+#DEFINES += BOOST_ASIO_DYN_LINK
 
 QT += qml quick sql network multimedia multimediawidgets
 
@@ -12,21 +12,25 @@ SOURCES += src/main.cpp\
 	   src/password.cpp\
 	   src/update.cpp\
 	   src/tcpSocket.cpp\
-	   src/torrent.cpp\
+           #src/torrent.cpp\
 	   src/videoplayer.cpp
 
 HEADERS += src/pig.h\
 	   src/password.h\
 	   src/update.h\
 	   src/tcpSocket.h\
-	   src/torrent.h\
+           #src/torrent.h\
 	   src/videoplayer.h\
-	   /usr/include/libtorrent/entry.hpp\
-	   /usr/include/libtorrent/bencode.hpp\
-	   /usr/include/libtorrent/session.hpp\
-	   /usr/include/libtorrent/torrent_info.hpp\
-	   /usr/include/libtorrent/torrent_handle.hpp
-
+           /usr/include/libtorrent/entry.hpp\
+           /usr/include/libtorrent/bencode.hpp\
+           /usr/include/libtorrent/session.hpp\
+           /usr/include/libtorrent/torrent_info.hpp\
+           /usr/include/libtorrent/torrent_handle.hpp\
+           lib\libtorrent-rasterbar-1.0.1\include\entry.hpp\
+           lib\libtorrent-rasterbar-1.0.1\include\bencode.hpp\
+           lib\libtorrent-rasterbar-1.0.1\include\session.hpp\
+           lib\libtorrent-rasterbar-1.0.1\include\torrent_info.hpp\
+           lib\libtorrent-rasterbar-1.0.1\include\torrent_handle.hpp
 
 OTHER_FILES += src/qml/main.qml\
 	       src/qml/AskPassword.qml\
@@ -39,7 +43,7 @@ OTHER_FILES += src/qml/main.qml\
 	       src/qml/Wait.qml\
 	       src/qml/Button.qml\
 	       src/qml/ButtonFilter.qml\
-	       src/qml/ButtonScenne.qml\
+	       src/qml/ButtonScene.qml\
 	       src/qml/ProgressBar.qml\
 	       src/qml/News.qml\
 	       src/qml/Help.qml\

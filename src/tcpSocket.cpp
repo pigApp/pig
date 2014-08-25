@@ -29,7 +29,7 @@ void TcpSocket::doConnect()
 
 void TcpSocket::connected()
 {
-    QString get = "GET "+url+" HTTP/1.1\r\nConnection: Close\r\nHost: "+host+"\r\n\r\n\r\n";
+    const QString get = "GET "+url+" HTTP/1.1\r\nConnection: Close\r\nHost: "+host+"\r\n\r\n\r\n";
     const QByteArray ba = get.toUtf8();
     const char *request = ba.constData(); 
     this->writeData(request, ba.size());
@@ -51,15 +51,15 @@ void TcpSocket::ready_to_read()
 void TcpSocket::write()
 {    
 #ifdef _WIN32
-        QString path = "C:/tmp/pig/";
+    const QString path = "C:/tmp/pig/";
 #else
-        QString path = QDir::homePath()+"/.pig/tmp/";
+    const QString path = QDir::homePath()+"/.pig/tmp/";
 #endif
     bool endHeader = false;
     QByteArray startPayload;
-    QDataStream in(data);
+    const QDataStream in(data);
     while (!in.atEnd()) {
-        QByteArray line = in.device()->readLine();
+        const QByteArray line = in.device()->readLine();
         if (endHeader) {
             startPayload = line;
             break;
@@ -67,18 +67,18 @@ void TcpSocket::write()
         if (line.toHex() == "0d0a")
             endHeader = true;
     }
-    int header = data.indexOf(startPayload);
+    const int header = data.indexOf(startPayload);
     data.remove(0, header);
 
     if (order == "getVersion") {
-        QByteArray dataFromBase = QByteArray::fromBase64(data);
-        QString version(dataFromBase);
+        const QByteArray dataFromBase = QByteArray::fromBase64(data);
+        const QString version(dataFromBase);
         emit version_ready(version);
     } else {
         QFile target(path+file);
         target.open(QIODevice::WriteOnly);
         if (file == "news.txt") {
-            QByteArray dataFromBase = QByteArray::fromBase64(data);
+            const QByteArray dataFromBase = QByteArray::fromBase64(data);
             target.write(dataFromBase);
         } else {
             target.write(data);
