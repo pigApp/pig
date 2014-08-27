@@ -4,20 +4,20 @@ Item {
     id: update
 
     Image {
-        id: network
+        id: networkIcon
         width: parent.width/5.36
         height: parent.height/3.01
         source: "qrc:/images/pig/network.png"
         sourceSize.width: 358
         sourceSize.height: 358
-        visible: { root.showNetwork }
+        visible: { root.showNetworkIcon }
         anchors.centerIn: parent
         SequentialAnimation {
-            running: { root.showNetwork }
+            running: { root.showNetworkIcon }
             loops: Animation.Infinite
-            PropertyAction { target: witnessStatusLabel; property: "visible"; value: "true" }
+            PropertyAction { target: networkIcon; property: "opacity"; value: 1 }
             PauseAnimation { duration: 500 }
-            PropertyAction { target: witnessStatusLabel; property: "visible"; value: "false" }
+            PropertyAction { target: networkIcon; property: "opacity"; value: 0.9 }
             PauseAnimation { duration: 500 }
         }
     }
@@ -30,23 +30,12 @@ Item {
         anchors.centerIn: parent
     }
     Text {
-        id: witnessStatusLabel
-        text: "•"
-        color: "white"
-        font.family: pigFont.name
-        font.pixelSize: parent.height/43.2
-        visible: { !root.showNetwork }
-        anchors.centerIn: parent
-        anchors.horizontalCenterOffset: parent.width/3500
-        anchors.verticalCenterOffset: parent.height/130
-    }
-    Text {
         id: informationLabel
         text: root.information
         color: Qt.rgba(0.1, 0.1, 0.1, 0.2)
         font.family: pigFont.name
         font.italic: true
-        font.pixelSize: parent.height54 //20
+        font.pixelSize: parent.height/54 //20
         anchors.centerIn: parent
         anchors.verticalCenterOffset: parent.height/36 //30
     }

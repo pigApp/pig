@@ -3,7 +3,7 @@
 
 #include "password.h"
 #include "update.h"
-//#include "torrent.h"
+#include "torrent.h"//w
 #include "videoplayer.h"
 
 #include <QObject>
@@ -45,7 +45,7 @@ private:
     QObject *mRoot;
     Password *mPassword;
     Update *mUpdate;
-    //Torrent *mTorrent;
+    Torrent *mTorrent;//w
     VideoPlayer *mPlayer;
 
     QSqlDatabase db;

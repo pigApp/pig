@@ -1,11 +1,7 @@
-- Control de errores.
-- Aspect ratio para las imagenes y video.
-- Convertir medidas a porcentaje.
-- Agregar divisor para el tamaño de letras.
+- Desconectar internet y probar el time out de output.
 - Installer, copiarlo desde ID
 - Links para update en la db. Distintos para windows, linux, 32 y 64.
 - Paso extra en update. Por si es necesario actulizar tambien las librerias.
-- Sacar el "DONE" al setear el password.
 - Completar la ayuda.
 - PLAYER
   - Al adelantar el slider, si es necesario descargar una nueva pieza (descarga la pieza correcta - dos minutos antes - o dos minutos despues) ver por que.

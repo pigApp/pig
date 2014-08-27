@@ -46,6 +46,7 @@ Rectangle {
         visible: false
         opacity: 0
         anchors.centerIn: parent
+        anchors.verticalCenterOffset: -1
     }
     Text {
         id: label

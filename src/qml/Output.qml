@@ -74,11 +74,11 @@ Item {
                     anchors.fill: parent
                 }
                 onStatusChanged: { 
-                    if (poster.source == list[5] && poster.progress == 1.0) {
+                    if (poster.source == list[5] && poster.status == Image.Ready) {
                         posterLoaded = true
                         if (!coverLoaded || !screensLoaded)
                             imagesStatus.start()
-                    } else if (poster.source == list[5] && poster.status == Image.Error) {
+                    } else if (poster.status == Image.Error) {
                         poster.source = "qrc:/images/available/posterNotAvailable.png"
                         posterLoaded = true
                         if (!coverLoaded || !screensLoaded)
@@ -130,11 +130,11 @@ Item {
                 anchors.verticalCenter: parent.verticalCenter
                 anchors.verticalCenterOffset: parent.height/540
                 onStatusChanged: {
-                    if (screens.source == list[7] && poster.progress == 1.0) {
+                    if (screens.source == list[7] && screens.status == Image.Ready) {
                         screensLoaded = true
                         if (!posterLoaded || !coverLoaded)
                             imagesStatus.start()
-                    } else if (screens.source == list[7] && screens.status == Image.Error) {
+                    } else if (screens.status == Image.Error) {
                         screens.source = "qrc:/images/available/screensNotAvailable.png"
                         screensLoaded = true
                         if (!posterLoaded || !coverLoaded)
@@ -213,11 +213,11 @@ Item {
                 anchors.verticalCenter: parent.verticalCenter
                 anchors.verticalCenterOffset: -parent.height/270
                 onStatusChanged: {
-                    if (cover.source == list[6] && cover.progress == 1.0) {
+                    if (cover.source == list[6] && cover.status == Image.Ready) {
                         coverLoaded = true
                         if (!posterLoaded || !screensLoaded)
                             imagesStatus.start()
-                    } else if (cover.source == list[6] && cover.status == Image.Error) {
+                    } else if (cover.status == Image.Error) {
                         cover.source = "qrc:/images/available/coverNotAvailable.png"
                         coverLoaded = true
                         if (!posterLoaded || !screensLoaded)
@@ -229,9 +229,10 @@ Item {
                 id: imagesStatus
                 running: false
                 repeat: false
-                interval: 20
+                interval: 100
                 onTriggered: {
-                    if (posterLoaded && coverLoaded) {
+                    if (posterLoaded && screensLoaded && coverLoaded) {
+                        timeOutNetwork.stop()
                         loader.source = ""
                         recipe.state = "showAll"
                         focusDelay.start()
@@ -327,7 +328,7 @@ Item {
                 }
             }
             NumberAnimation { running: recipe.PathView.isCurrentItem; target: poster; property: "opacity"; to: 1; duration: 4000; easing.type: Easing.InOutQuad }
-            NumberAnimation { running: recipe.PathView.isCurrentItem; target: translucedLayer; property: "opacity"; to: 0.7; duration: 4000; easing.type: Easing.InOutQuad }
+            NumberAnimation { running: recipe.PathView.isCurrentItem; target: translucedLayer; property: "opacity"; to: 0.8; duration: 4000; easing.type: Easing.InOutQuad }
             NumberAnimation { running: recipe.PathView.isCurrentItem; target: datesColumn; property: "opacity"; to: 1; duration: 2000; easing.type: Easing.OutElastic }
             PropertyAction  { running: !recipe.PathView.isCurrentItem; target: poster; property: "opacity"; value: 0 }
             PropertyAction  { running: !recipe.PathView.isCurrentItem; target: translucedLayer; property: "opacity"; value: 0 }
@@ -446,14 +447,14 @@ Item {
         }
 
         path: Path {
-            startX: parent.width/2
-            startY: parent.height/2
+            startX: screen.width/2
+            startY: screen.height/2
             PathAttribute { name: "recipeOpacity"; value: 1 }
             PathAttribute { name: "recipeZ"; value: 2 }
-            PathQuad { x: parent.width/2; y: parent.height/2; controlX: parent.width+parent.width*2.77; controlY: parent.height/2 }
+            PathQuad { x: screen.width/2; y: screen.height/2; controlX: screen.width+(screen.width*2.77); controlY: screen.height/2 }
             PathAttribute { name: "recipeOpacity"; value: 0 }
             PathAttribute { name: "recipeZ"; value: 0 }
-            PathQuad { x: parent.width/2; y: parent.height/2; controlX: -parent.width*2.77; controlY: parent.height/2 }
+            PathQuad { x: screen.width/2; y: screen.height/2; controlX: -screen.width*2.77; controlY: screen.height/2 }
         }
     }
 
@@ -464,18 +465,18 @@ Item {
 
         Button {
             id: abortTorrentButton
-            width: screen.width/19.2 //100
-            height: screen.height/43.2 //25
+            width: screen.width/19.2 
+            height: screen.height/43.2 
             label: "ABORT"
             labelColor: Qt.rgba(0.1, 0.1, 0.1, 0.5)
             labelInColor: "white"
             labelOutColor: Qt.rgba(0.1, 0.1, 0.1, 0.5)
             labelBold: true
-            labelSize: screen.height/36 //30
+            labelSize: screen.height/36
             visible:  { if (playerLayer.height === screen.height && !abortTorrent) true; else false }
             anchors.centerIn: parent
-            anchors.horizontalCenterOffset: -screen.width/10.66 //-180
-            anchors.verticalCenterOffset: screen.height/600 //1.8
+            anchors.horizontalCenterOffset: -screen.width/10.66
+            anchors.verticalCenterOffset: screen.height/600
             onClicked: { abortTorrent = true }
         }
         NumberAnimation { id: hidePlayerLayer; running: false; target: playerLayer; property: "height"; to: 0; duration: 1000; easing.type: Easing.InOutQuart }
@@ -501,16 +502,16 @@ Item {
         }
         Row {
             id: peerInformationRow
-            spacing: screen.width/112.94 //17
+            spacing: screen.width/112.94
             visible: { !abortTorrent }
             anchors.left: progressBar.right
-            anchors.leftMargin: screen.width/96 //20
+            anchors.leftMargin: screen.width/96
             anchors.verticalCenter: parent.verticalCenter
 
             Text {
                 id: bitRateLabel
                 text: {
-                    if (root.bitRate !== 0 && playerLayer.height === screen.height)
+                    if (root.bitRate !== "" && playerLayer.height === screen.height)
                         root.bitRate+"kb/s"
                     else if (playerLayer.height === screen.height)
                         "CONNECTING"
@@ -520,7 +521,7 @@ Item {
                 color: "white"
                 font.family: pigFont.name
                 font.bold: true
-                font.pixelSize: screen.height/36 //30
+                font.pixelSize: screen.height/36
             }
             Text {
                 id: peersLabel
@@ -533,7 +534,7 @@ Item {
                 color: "white"
                 font.family: pigFont.name
                 font.bold: true
-                font.pixelSize: screen.height/36 //30
+                font.pixelSize: screen.height/36
             }
         }
         Text {
@@ -541,22 +542,22 @@ Item {
             text: "CHECKING FILE"
             color: Qt.rgba(0.1, 0.1, 0.1, 1)
             font.family: pigFont.name
-            font.pixelSize: screen.height/72 //15
+            font.pixelSize: screen.height/72
             visible: { fileNotReady && !abortTorrent }
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.top: progressBar.bottom
-            anchors.topMargin: screen.height/108 //10
+            anchors.topMargin: screen.height/108
         }
         Text {
             id: fileRecheckLabel
             text: ""
             color: Qt.rgba(0.1, 0.1, 0.1, 1)
             font.family: pigFont.name
-            font.pixelSize: screen.height/72 //15
+            font.pixelSize: screen.height/72
             visible: { fileNotReady && !abortTorrent }
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.top: checkingFileLabel.bottom
-            anchors.topMargin: screen.height/540 //2
+            anchors.topMargin: screen.height/540
         }
         Timer {
             id: fileRecheckDelay
@@ -580,6 +581,14 @@ Item {
             hidePlayerLayer.running = true
             abortTorrentResetDelay.start()
         }
+    }
+    
+    Timer {
+        id: timeOutNetwork
+        running: false
+        repeat: false
+        interval: 60000
+        onTriggered: { root.networkError = true }
     }
     
     function listCreator() {
@@ -623,5 +632,5 @@ Item {
         onFileReadySIGNAL: { fileNotReady = false; fileRecheckDelay.stop() }
     }
 
-    Component.onCompleted: { listCreator(root.n, root.list) }
+    Component.onCompleted: { listCreator(root.n, root.list); timeOutNetwork.start() }
 }

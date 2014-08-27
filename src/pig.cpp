@@ -11,7 +11,7 @@ PIG::PIG(QWidget *parent) : QWidget(parent), mRoot(0)
 {
     mPassword = NULL;
     mUpdate = NULL;
-    //mTorrent = NULL;
+    mTorrent = NULL;//w
 
     layout = new QVBoxLayout;
     layout->setContentsMargins(0, 0, 0, 0);
@@ -26,8 +26,8 @@ PIG::~PIG()
         delete mPassword;
     if (mUpdate != NULL)
         delete mUpdate;
-    //if (mTorrent != NULL)
-        //delete mTorrent;
+    if (mTorrent != NULL)//w
+        delete mTorrent;//w
     //cleanUp();
     mRoot->disconnect(this);
     exit(0);
@@ -94,7 +94,7 @@ void PIG::password_handle(QString plain, bool init, bool write)
 //Update
 void PIG::update_handle()
 {
-    /*
+    //w
     emit showUpdateSIGNAL();
 
     mUpdate = new Update();
@@ -106,8 +106,8 @@ void PIG::update_handle()
     connect(mUpdate, SIGNAL(errorDatabaseSIGNAL()), this, SLOT(error_database()));
     connect(mRoot, SIGNAL(skipSIGNAL_QML()), this, SLOT(start()));
     connect(mRoot, SIGNAL(getFilesSIGNAL_QML()), mUpdate, SLOT(get_files()));
-    */
-    QTimer::singleShot(4000, this, SLOT(start()));
+    //w
+    //QTimer::singleShot(4000, this, SLOT(start())); //w
 }
 
 //Start
@@ -148,9 +148,9 @@ void PIG::start()
             mRoot->setProperty("pornstarList", pornstarList);
             mRoot->setProperty("nPornstarList", nPornstarList);
 
-            //mTorrent = new Torrent();
-            //mTorrent->_pig = this;
-            //mTorrent->_root = mRoot;
+            mTorrent = new Torrent();//w
+            mTorrent->_pig = this;//w
+            mTorrent->_root = mRoot;//w
         }
     } else {
         error_database();
@@ -247,15 +247,14 @@ void PIG::find(QString input, QString pornstar, QString category, QString qualit
 void PIG::torrent_handle(QString magnet, QString str_scene, bool abort)
 {
     cleanUp();
-
-    /*
+    //w
     if (!abort) {
         mTorrent->scene = str_scene.toInt();// Enviar como puntero.
         mTorrent->doConnect(&magnet);
     } else {
         mTorrent->stop();
     }
-    */
+    //w
 }
 
 //Player
@@ -264,16 +263,16 @@ void PIG::player_handle(const QString absoluteFilePath, bool init, bool sandbox,
     if (!abort) {
         if (init) {
             mPlayer = new VideoPlayer();
-            //mPlayer->_torrent = mTorrent;
+            mPlayer->_torrent = mTorrent;//w
             mPlayer->_pig = this;
-            //mTorrent->_player = mPlayer;
+            mTorrent->_player = mPlayer;//w
         }
         if (sandbox) {
             mPlayer->sandbox(&absoluteFilePath);
             emit checkingFileSIGNAL();
         }
         if (fileReady) {
-            //mTorrent->toPlayer = true;
+            mTorrent->toPlayer = true;//w
             mPlayer->showFullScreen();
             this->hide();
             emit fileReadySIGNAL();
@@ -295,7 +294,6 @@ void PIG::cleanUp()
         const QString target = QDir::homePath()+"/.pig/tmp/";
     #endif
         QDir tmp(target);
-
         tmp.setFilter(QDir::NoDotAndDotDot | QDir::Files);
         foreach(QString tmpItem, tmp.entryList())
             tmp.remove(tmpItem);

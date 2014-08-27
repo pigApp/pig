@@ -11,7 +11,8 @@ Item {
     property bool get
     property bool requireRestart
     property bool news
-    property bool showNetwork
+    property bool showNetworkIcon
+    property bool networkError
 
     property string status
     property string information
@@ -25,7 +26,7 @@ Item {
     property string quality: ""
     property string full: ""
     property string release
-    property string bitRate
+    property string bitRate: ""
 
     property int totalFilms
     property int n
