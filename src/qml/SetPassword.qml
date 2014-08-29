@@ -12,7 +12,7 @@ Item {
         anchors.centerIn: parent
         Text {
             id: label
-            text: "SET PASSWORD"
+            text: "NEW PASSWORD"
             anchors.left: parent.left
             anchors.leftMargin: 0
             color: "white"
@@ -29,6 +29,7 @@ Item {
             font.pixelSize: screen.height/43.2
             maximumLength: 16
             echoMode: TextInput.Password
+            visible: false
             horizontalAlignment: Text.AlignHCenter
             anchors.centerIn: parent
             anchors.verticalCenterOffset: -screen.height/720

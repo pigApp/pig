@@ -157,32 +157,41 @@ void PIG::start()
     }
 
 #ifdef _WIN32
+    const QString init = "C:/pig/.pig/.init";
     const QString target = "C:/pig/.pig/news.txt";
 #else
+    const QString init = QDir::homePath()+"/.pig/.init";
     const QString target = QDir::homePath()+"/.pig/news";
 #endif
-    QFile file(target);
+    QFile file(init);
+    if (file.exists()) {
+        file.close();
+        file.remove();
+        mRoot->setProperty("welcome", true);
+    }
+
+    file.setFileName(target);
     if (file.exists()) {
         file.open(QIODevice::ReadOnly | QIODevice::Text);
         bool head = true;
-        QString bn;
-        QString dbn;
+        QString binary_news;
+        QString database_news;
         QTextStream in(&file);
         while (!in.atEnd()) {
             const QString line = in.readLine();
             if (line.isEmpty()) head = false;
             if (head) {
-                bn.append(line+"\n");
+                binary_news.append(line+"\n");
             } else {
                 if(!line.isEmpty())
-                    dbn.append(line+"\n");
+                    database_news.append(line+"\n");
             }
         }
         file.close();
         file.remove();
 
-        mRoot->setProperty("binaryNews", bn);
-        mRoot->setProperty("databaseNews", dbn);
+        mRoot->setProperty("binaryNews", binary_news);
+        mRoot->setProperty("databaseNews", database_news);
         mRoot->setProperty("news", true);
     }
 

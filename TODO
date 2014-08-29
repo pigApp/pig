@@ -1,3 +1,4 @@
+- Si es la primera vez que se abre el programa. Recomendar ir a help CTRL H.
 - Desconectar internet y probar el time out de output.
 - Installer, copiarlo desde ID
 - Links para update en la db. Distintos para windows, linux, 32 y 64.
@@ -10,5 +11,12 @@
   - Si termino la descarga, mostrar bar completa. ( if(bar->value() >= total_msec-13312) mostrar bar completa).
   - Si se aborta la descarga sin tener la metadata(desde QML), detener el torrent sin borrar las filas (ya que no existen).
   - Al termina de descargar de los primeros 15 megas, intenta reproducir (sandbox) y se queda en LoadingState, ver que hacer.
+- Destacr que en linux es necesario tener instalado gksudo.
+- Agregar archvo .init
+- Cuando este todo terminado, cambiar los links de Help y errorDb por los reales.
+- Tabs.
 - Metadata.
 sudo pacman -S gstreamer0.10-{{base,good}{,-plugins},ffmpeg}
+
+- PROXIMA VERSION
+- traducciones.

@@ -13,7 +13,7 @@ Item {
         font.capitalization: Font.AllUppercase
         font.pixelSize: parent.height/21.6
         maximumLength: 25
-        visible: { if (buttonsFiltersColumn.opacity === 1) true; else false }
+        visible: { if (buttonsFiltersColumn.opacity === 1 && !root.welcome ) true; else false }
         enabled: { if (buttonsFiltersColumn.opacity === 1) true; else false }
         anchors.left: parent.horizontalCenter
         anchors.leftMargin: -parent.width/12.8
@@ -22,14 +22,16 @@ Item {
         onAccepted: { root.input = userInput.text; root.findSIGNAL_QML(root.input, root.pornstar, root.category, root.quality, root.full, 0, true) }
         onCursorPositionChanged: { if (noResultLabel.visible) noResultLabel.visible = false; userInput.visible = true }
         Keys.onPressed: {
-            if (event.key === Qt.Key_P && (event.modifiers & Qt.ControlModifier)) {
+            if (event.key === Qt.Key_P && (event.modifiers & Qt.ControlModifier) && !root.welcome) {
                 if (!loaderFilter.active)
                     screen.state = "showSetPassword"
                 event.accepted = true
             } else if (event.key === Qt.Key_H && (event.modifiers & Qt.ControlModifier)) {
-                if (!loaderFilter.active)
+                if (!loaderFilter.active) {
+                    root.welcome = false
                     screen.state = "showHelp"
-                event.accepted = true
+                    event.accepted = true
+                }
             } else if (event.key === Qt.Key_Q && (event.modifiers & Qt.ControlModifier)) {
                 root.quitSIGNAL_QML()
                 event.accepted = true
@@ -52,8 +54,8 @@ Item {
     Column {
         id: buttonsFiltersColumn
         spacing: parent.height/67.5
-        visible: { !root.news && screen.state !== "showSetPassword" && screen.state !== "showHelp" }
-        enabled: { !root.news && screen.state !== "showSetPassword" && screen.state !== "showHelp" }
+        visible: { !root.news && screen.state !== "showSetPassword" && screen.state !== "showHelp" && !root.welcome }
+        enabled: { !root.news && screen.state !== "showSetPassword" && screen.state !== "showHelp" && !root.welcome }
         opacity: 0      
         anchors.left: parent.left
         anchors.leftMargin: parent.width/30
@@ -69,7 +71,7 @@ Item {
             labelSize: screen.height/10.8 // TODO: Falla con resoluciones menores a 1240x720 posiblemente por width y height. Probar logo.height.
             labelInColor: Qt.rgba(0.1, 0.1, 0.1, 0.5)
             labelOutColor: "white"
-            onClicked: { 
+            onClicked: {
                 finder.state = "showFilter"
                 enableFilter = "CATEGORY"
             }
@@ -126,10 +128,22 @@ Item {
         source: "Selectors.qml"
         asynchronous: true
         active: true
-        visible: { !root.news && screen.state !== "showSetPassword" && screen.state !== "showHelp" }
-        enabled: { !root.news && screen.state !== "showSetPassword" && screen.state !== "showHelp" }
+        visible: { !root.news && screen.state !== "showSetPassword" && screen.state !== "showHelp" && !root.welcome }
+        enabled: { !root.news && screen.state !== "showSetPassword" && screen.state !== "showHelp" && !root.welcome }
         opacity: 0
         anchors.fill: parent
+    }
+
+    Text {
+        id: welcomeLabel
+        text: "WELCOME TO PIG. CTRL H TO HELP." 
+        color: Qt.rgba(0.1, 0.1, 0.1, 0.2)
+        font.family: pigFont.name
+        font.bold: true
+        font.pixelSize: parent.height/54
+        visible: { root.welcome && !root.news && buttonsFiltersColumn.opacity === 1 }
+        anchors.horizontalCenter: parent.horizontalCenter
+        anchors.verticalCenter: parent.verticalCenter
     }
 
     states: [

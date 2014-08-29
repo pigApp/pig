@@ -28,6 +28,7 @@ Item {
             focus: true
             maximumLength: 16
             echoMode: TextInput.Password
+            visible: false
             horizontalAlignment: Text.AlignHCenter
             anchors.centerIn: parent
             anchors.verticalCenterOffset: -screen.height/720

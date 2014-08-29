@@ -4,6 +4,7 @@ import QtGraphicalEffects 1.0
 Item {
     id: root
 
+    property bool welcome
     property bool require_password
     property bool ok_password
     property bool fail_password
