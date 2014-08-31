@@ -247,10 +247,10 @@ Item {
                 anchors.left: cover.right
                 anchors.leftMargin: parent.width/54.85
                 anchors.verticalCenter: parent.verticalCenter
-                anchors.verticalCenterOffset: -parent.height/15.88
+                anchors.verticalCenterOffset: -parent.height/27
                 Text {
                     id: castLabel
-                    text: cast
+                    text: "∙ "+cast
                     color: "white"
                     font.family: pigFont.name
                     font.italic: true
@@ -259,7 +259,7 @@ Item {
                 }
                 Text {
                     id: categoryLabel
-                    text: categories
+                    text: "∙ "+categories
                     color: "white"
                     font.family: pigFont.name
                     font.italic: true
@@ -267,44 +267,53 @@ Item {
                     font.pixelSize: screen.height/36
                 }
                 Text {
-                    id: fullLabel
-                    text: "FULL"
-                    color: { if (full === "NOT") "black"; else "white" }
+                    id: qualityLabel
+                    text: "∙ "+quality
+                    color: "white"
                     font.family: pigFont.name
                     font.italic: true
                     font.bold: true
+                    font.pixelSize: screen.height/36
+                }
+                Text {
+                    id: splitLabel
+                    text: { if (scenes === 1) "&nbsp;&nbsp; SPLIT"; else "∙ SPLIT" }
+                    color: { if (scenes === 1) "black"; else "white" }
+                    font.family: pigFont.name
+                    font.bold: true
+                    font.italic: true
+                    font.strikeout: { if (scenes === 1) true; else false }
+                    font.pixelSize: screen.height/36
+                    textFormat: Text.RichText
+                }
+                Text {
+                    id: fullLabel
+                    text: { if (full === "NOT") "&nbsp;&nbsp; FULL"; else "∙ FULL" }
+                    color: { if (full === "NOT") "black"; else "white" }
+                    font.family: pigFont.name
+                    font.bold: true
+                    font.italic: true
                     font.strikeout: { if (full === "NOT") true; else false }
                     font.pixelSize: screen.height/36
+                    textFormat: Text.RichText
                 }
             }
             Row {
-                id: openScenneRow
+                id: openSceneRow
                 spacing: 1
                 anchors.left: datesColumn.left
-                anchors.verticalCenter: parent.verticalCenter
-                anchors.verticalCenterOffset: parent.height/20.37
+                anchors.leftMargin: -parent.width/274.28 //7
+                anchors.top: datesColumn.bottom
+                anchors.topMargin: parent.height/38.57 //28
                 Component.onCompleted: {
-                    for (var i=1; i<=scennes && i<=8; i++) {
+                    for (var i=1; i<=scenes && i<=8; i++) {
                         var component = Qt.createComponent("ButtonScene.qml")
-                        var object = component.createObject(openScenneRow)
+                        var object = component.createObject(openSceneRow)
                         object.quality = quality
                         object.magnet = magnet
                         object.scene = i
                     }
                 }
-            }
-            Text {
-                id: noSplitLabel
-                text: "UNSPLIT"
-                color: "black"
-                font.family: pigFont.name
-                font.bold: true
-                font.pixelSize: parent.height/54
-                visible: { if (scennes === 1) true; else false }
-                anchors.left: openScenneRow.right
-                anchors.leftMargin: parent.width/960
-                anchors.verticalCenter: parent.verticalCenter
-                anchors.verticalCenterOffset: parent.height/16.95
             }
             Row {
                 id: counterRow
@@ -596,9 +605,9 @@ Item {
         var row = 0
         for(var i=0; i<n; i++) {
            torrent = list[row+8].split(",")
-           var nScennes = Number(torrent[1])
+           var nScenes = Number(torrent[1])
            model.append({ "title": list[row], "cast": list[row+1], "categories": list[row+2], "quality": list[row+3], "full": list[row+4],
-                          "urlPoster": list[row+5], "urlCover": list[row+6], "urlScreens": list[row+7], "magnet": torrent[0], "scennes": nScennes })
+                          "urlPoster": list[row+5], "urlCover": list[row+6], "urlScreens": list[row+7], "magnet": torrent[0], "scenes": nScenes })
            row += 9
         }
         location = 0

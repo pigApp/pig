@@ -16,7 +16,7 @@ Item {
             loops: Animation.Infinite
             PropertyAction { target: networkIcon; property: "opacity"; value: 1 }
             PauseAnimation { duration: 500 }
-            PropertyAction { target: networkIcon; property: "opacity"; value: 0.9 }
+            PropertyAction { target: networkIcon; property: "opacity"; value: 0.93 }
             PauseAnimation { duration: 500 }
         }
     }
@@ -25,6 +25,7 @@ Item {
         text: "NETWORK ERROR"
         color: Qt.rgba(0.1, 0.1, 0.1, 0.2)
         font.family: pigFont.name
+        font.bold: true
         font.pixelSize: parent.height/36
         visible: { root.networkError }
         anchors.horizontalCenter: parent.horizontalCenter

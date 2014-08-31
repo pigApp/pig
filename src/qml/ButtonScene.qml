@@ -16,7 +16,7 @@ Rectangle {
         id: icon
         width: size
         height: size
-        source: { if (quality === '1080p') "qrc:/images/output/1080.png"; else if (quality === '720p') "qrc:/images/output/720.png"; else "qrc:/images/output/sd.png" }
+        source: "qrc:/images/output/openScene.png"
         smooth: true
         anchors.centerIn: parent
     }

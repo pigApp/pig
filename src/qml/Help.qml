@@ -311,7 +311,7 @@ Item {
             }
             Text {
                 text: "<style type='text/css'> a:link{color:#757575;font-style:normal;text-decoration:none} </style>"+
-                      "<font color='#757575'>The Movies are not downloaded</font><br/>"+
+                      "<font color='#757575'>The movies are not downloaded</font><br/>"+
                       "You probably have blocked the port used<br/>"+
                       "by BitTorrent in your firewall or your ISP.<br/>"+
                       "Read more &nbsp;<a href=\'http://google.com\'>Here <font color='#ffffff'>➟<font/></a><br/><br/>"

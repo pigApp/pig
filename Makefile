@@ -504,9 +504,7 @@ qrc_qml.cpp: qml.qrc \
 		images/available/screensNotAvailable.png \
 		images/font/pig.ttf \
 		images/output/frame.png \
-		images/output/sd.png \
-		images/output/1080.png \
-		images/output/720.png \
+		images/output/openScene.png \
 		images/pornstars/Belladonna.jpg \
 		src/qml/Button.qml \
 		src/qml/Wait.qml \

@@ -17,7 +17,7 @@ Item {
             loops: Animation.Infinite
             PropertyAction { target: networkIcon; property: "opacity"; value: 1 }
             PauseAnimation { duration: 500 }
-            PropertyAction { target: networkIcon; property: "opacity"; value: 0.9 }
+            PropertyAction { target: networkIcon; property: "opacity"; value: 0.93 }
             PauseAnimation { duration: 500 }
         }
     }
@@ -26,6 +26,7 @@ Item {
         text: root.status
         color: Qt.rgba(0.1, 0.1, 0.1, 0.2)
         font.family: pigFont.name
+        font.bold: true
         font.pixelSize: parent.height/36
         anchors.centerIn: parent
     }
@@ -35,25 +36,25 @@ Item {
         color: Qt.rgba(0.1, 0.1, 0.1, 0.2)
         font.family: pigFont.name
         font.italic: true
-        font.pixelSize: parent.height/54 //20
+        font.pixelSize: parent.height/54
         anchors.centerIn: parent
-        anchors.verticalCenterOffset: parent.height/36 //30
+        anchors.verticalCenterOffset: parent.height/36
     }
 
     Row {
         id: buttonsRow
-        spacing: parent.width/83.47 //23
+        spacing: parent.width/384
         anchors.centerIn: parent
-        anchors.horizontalCenterOffset: -parent.width/960 //-2
-        anchors.verticalCenterOffset: { if (informationLabel.text === '') 50; else 70 }
+        anchors.horizontalCenterOffset: -parent.width/640
+        anchors.verticalCenterOffset: { if (informationLabel.text === '') parent.height/36; else parent.height/18 }
         Button {
-            id: accept
-            width: screen.width/23.13 //83
-            height: screen.height/28.42 //38
+            id: get
+            width: screen.width/34.90
+            height: screen.height/54
             label: "GET"
             labelColor: Qt.rgba(0.1, 0.1, 0.1, 0.2)
             labelBold: true
-            labelSize: screen.height/21.5 //50
+            labelSize: screen.height/36
             labelInColor: Qt.rgba(0.1, 0.1, 0.1, 0.3)
             labelOutColor: Qt.rgba(0.1, 0.1, 0.1, 0.2)
             visible: { root.requireConfirmation }
@@ -66,12 +67,12 @@ Item {
         }
         Button {
             id: skip
-            width: screen.width/20.64 //93
-            height: screen.height/28.42 //38
+            width: screen.width/34.90
+            height: screen.height/54
             label: "SKIP"
             labelColor: Qt.rgba(0.1, 0.1, 0.1, 0.2)
             labelBold: true
-            labelSize: screen.height/21.5 //50
+            labelSize: screen.height/36
             labelInColor: Qt.rgba(0.1, 0.1, 0.1, 0.3)
             labelOutColor: Qt.rgba(0.1, 0.1, 0.1, 0.2)
             visible: { root.requireConfirmation }
