@@ -187,8 +187,7 @@ void Torrent::piece_update(qint64 total_msec, qint64 offset_msec)
     std::vector<int> piecePriority;
     skip = true;
 
-    //offsetPieces_file = (offsetPieces+((offset_msec*totalPieces_file)/total_msec)); //40
-    offsetPieces_file = 590;
+    offsetPieces_file = (offsetPieces+(((offset_msec+fit)*totalPieces_file)/total_msec)); //40
     offset_kb = offsetPieces_file*(pieceLength/1024); //-40 piezas.
 
     qDebug() << "-- SCENE: " << scene;

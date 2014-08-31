@@ -39,7 +39,7 @@ void PIG::set_root_object(QObject *root)
 
     if(mRoot) connect(mRoot, SIGNAL(passwordHandleSIGNAL_QML(QString, bool, bool)), this, SLOT(password_handle(QString, bool, bool)));
     if(mRoot) connect(mRoot, SIGNAL(findSIGNAL_QML(QString, QString, QString, QString, QString, int, bool)), this, SLOT(find(QString, QString, QString, QString, QString, int, bool)));
-    if(mRoot) connect(mRoot, SIGNAL(torrentHandleSIGNAL_QML(QString, QString, bool)), this, SLOT(torrent_handle(QString, QString, bool)));
+    if(mRoot) connect(mRoot, SIGNAL(torrentHandleSIGNAL_QML(QString, int, int, bool)), this, SLOT(torrent_handle(QString, int, int, bool)));
     if(mRoot) connect(mRoot, SIGNAL(quitSIGNAL_QML()), this, SLOT(quit()));
 
 #ifdef _WIN32
@@ -210,7 +210,7 @@ void PIG::find(QString input, QString pornstar, QString category, QString qualit
         _list.clear();
         const QString strOffset = QString::number(offset);
         QSqlQuery qry;
-            qry.prepare("SELECT Title, Cas, Category, Quality, Full, UrlPoster, UrlCover, UrlScreens, Torrent FROM Films WHERE Title LIKE '%"+input+"%' AND Cas LIKE '%"+pornstar+"%' AND Category LIKE '%"+category+"%' AND Quality LIKE '%"+quality+"%' AND Full LIKE '%"+full+"%' ORDER BY Title ASC LIMIT 1000 OFFSET '"+strOffset+"'");
+            qry.prepare("SELECT Title, Cas, Category, Quality, Full, UrlPoster, UrlCover, UrlScreens, Torrent, Fit FROM Films WHERE Title LIKE '%"+input+"%' AND Cas LIKE '%"+pornstar+"%' AND Category LIKE '%"+category+"%' AND Quality LIKE '%"+quality+"%' AND Full LIKE '%"+full+"%' ORDER BY Title ASC LIMIT 1000 OFFSET '"+strOffset+"'");
         if (!qry.exec()) {
             db.close();
             error_database();
@@ -231,7 +231,8 @@ void PIG::find(QString input, QString pornstar, QString category, QString qualit
                 const QString _urlCover = qry.value(6).toString();
                 const QString _urlScreens = qry.value(7).toString();
                 const QString _torrent = qry.value(8).toString();
-                _list << _title << _cast << _category << _quality << _full << _urlPoster << _urlCover << _urlScreens << _torrent;
+                const QString _fit = qry.value(9).toString();
+                _list << _title << _cast << _category << _quality << _full << _urlPoster << _urlCover << _urlScreens << _torrent << _fit;
             }
             db.close();
 
@@ -253,12 +254,13 @@ void PIG::find(QString input, QString pornstar, QString category, QString qualit
 }
 
 //Torrent
-void PIG::torrent_handle(QString magnet, QString str_scene, bool abort)
+void PIG::torrent_handle(QString magnet, int scene, int fit, bool abort)
 {
     cleanUp();
     //w
     if (!abort) {
-        mTorrent->scene = str_scene.toInt();// Enviar como puntero.
+        mTorrent->scene = scene;
+        mTorrent->fit = fit; // TODO: Revisar porque al enviarlo como puntero cambia el valor.
         mTorrent->doConnect(&magnet);
     } else {
         mTorrent->stop();

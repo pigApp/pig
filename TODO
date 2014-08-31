@@ -5,7 +5,7 @@
   - Si termino la descarga, mostrar bar completa. ( if(bar->value() >= total_msec-13312) mostrar bar completa).
   - Si se aborta la descarga sin tener la metadata(desde QML), detener el torrent sin borrar las filas (ya que no existen).
   - Al termina de descargar de los primeros 15 megas, intenta reproducir (sandbox) y se queda en LoadingState, ver que hacer.
-
+- Pasar a px a porcentaje player.
 - Links para update en la db. Distintos para windows, linux, 32 y 64.
 - Installer, copiarlo desde ID
 - Destacar que en linux es necesario tener instalado gksudo.

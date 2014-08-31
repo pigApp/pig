@@ -30,6 +30,7 @@ public:
 
     bool toPlayer;
     int scene;
+    int fit;
 
 public slots:
     void doConnect(QString *magnet);

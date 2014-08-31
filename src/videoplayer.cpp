@@ -581,7 +581,7 @@ void VideoPlayer::slider_moved(int position)
 void VideoPlayer::slider_released()
 {
     const qint64 total_msec = player->duration();
-    const qint64 offset_msec = slider->value()+skip_key_value; // (pieceLenght 2048 = +215000) -120000
+    const qint64 offset_msec = slider->value()+skip_key_value;
     bool available = false;                               
 
     if (!loop) {

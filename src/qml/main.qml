@@ -45,7 +45,7 @@ Item {
     signal skipSIGNAL_QML()
     signal getFilesSIGNAL_QML()
     signal findSIGNAL_QML(string input, string pornstar, string category, string quality, string full, int offset, bool init)
-    signal torrentHandleSIGNAL_QML(string magnet, string str_scene, bool abort)
+    signal torrentHandleSIGNAL_QML(string magnet, int scene, int fit, bool abort)
     signal quitSIGNAL_QML()
 
     FontLoader { id: pigFont; source: "qrc:/images/font/pig.ttf" }

@@ -302,16 +302,25 @@ Item {
                 id: openSceneRow
                 spacing: 1
                 anchors.left: datesColumn.left
-                anchors.leftMargin: -parent.width/274.28 //7
+                anchors.leftMargin: -parent.width/120
                 anchors.top: datesColumn.bottom
-                anchors.topMargin: parent.height/38.57 //28
+                anchors.topMargin: parent.height/63.52
+                Text {
+                    text: "➟"
+                    color: "white"
+                    font.family: pigFont.name
+                    font.bold: true
+                    font.italic: true
+                    font.pixelSize: screen.height/36
+                    anchors.verticalCenter: parent.verticalCenter
+                }
                 Component.onCompleted: {
                     for (var i=1; i<=scenes && i<=8; i++) {
                         var component = Qt.createComponent("ButtonScene.qml")
                         var object = component.createObject(openSceneRow)
-                        object.quality = quality
                         object.magnet = magnet
                         object.scene = i
+                        object.fit = fit
                     }
                 }
             }
@@ -407,12 +416,12 @@ Item {
         onNext: {
             focusPath = false
             incrementCurrentIndex()
-            if (locationOnList === list.length-9) {
+            if (locationOnList === list.length-10) {
                 locationOnList = 0
                 location = 0
                 currentFilm = currentFilm-n+1 
             } else {
-                locationOnList = locationOnList+9
+                locationOnList = locationOnList+10
                 ++currentFilm
                 ++location
             }
@@ -422,11 +431,11 @@ Item {
             focusPath = false
             decrementCurrentIndex()
             if (locationOnList === 0) {
-                locationOnList = list.length-9
+                locationOnList = list.length-10
                 location = n-1
                 currentFilm = currentFilm+n-1 
             } else {
-                locationOnList = locationOnList-9
+                locationOnList = locationOnList-10
                 --currentFilm
                 --location
             }
@@ -579,13 +588,13 @@ Item {
                 else
                     output.timeLeft = 5
                 checkingFileLabel.text = "FILE NOT READY. PLEASE WAIT"
-                fileRecheckLabel.text = "RECHECK ON "+output.timeLeft
+                fileRecheckLabel.text = "RECHECK IN "+output.timeLeft
             }
         }
     }
     onAbortTorrentChanged: {
         if (abortTorrent) {
-            root.torrentHandleSIGNAL_QML("", "", true)
+            root.torrentHandleSIGNAL_QML("", 0, 0, true)
             root.downloaded = 0
             hidePlayerLayer.running = true
             abortTorrentResetDelay.start()
@@ -605,10 +614,9 @@ Item {
         var row = 0
         for(var i=0; i<n; i++) {
            torrent = list[row+8].split(",")
-           var nScenes = Number(torrent[1])
            model.append({ "title": list[row], "cast": list[row+1], "categories": list[row+2], "quality": list[row+3], "full": list[row+4],
-                          "urlPoster": list[row+5], "urlCover": list[row+6], "urlScreens": list[row+7], "magnet": torrent[0], "scenes": nScenes })
-           row += 9
+                          "urlPoster": list[row+5], "urlCover": list[row+6], "urlScreens": list[row+7], "fit": Number(list[row+9]), "magnet": torrent[0], "scenes": Number(torrent[1]) })
+           row += 10
         }
         location = 0
         locationOnList = 0

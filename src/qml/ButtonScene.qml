@@ -7,9 +7,9 @@ Rectangle {
     color: "transparent"
 
     property bool enter
-    property string quality
     property string magnet
-    property string scene
+    property int scene
+    property int fit
     property int size: screen.height/12.70
     
     Image {
@@ -25,7 +25,7 @@ Rectangle {
         hoverEnabled: true
         onEntered: { enter = true }
         onHoveredChanged: { enter = false }
-        onClicked: { onShowPlayerLayer = true; root.torrentHandleSIGNAL_QML(magnet, scene, false) }
+        onClicked: { onShowPlayerLayer = true; root.torrentHandleSIGNAL_QML(magnet, scene, fit, false) }
         anchors.fill: parent
     }
     onEnterChanged: {
