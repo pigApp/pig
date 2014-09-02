@@ -187,8 +187,8 @@ void Torrent::piece_update(qint64 total_msec, qint64 offset_msec)
     std::vector<int> piecePriority;
     skip = true;
 
-    offsetPieces_file = (offsetPieces+(((offset_msec+fit)*totalPieces_file)/total_msec)); //40
-    offset_kb = offsetPieces_file*(pieceLength/1024); //-40 piezas.
+    offsetPieces_file = offsetPieces+(((offset_msec+fit)*totalPieces_file)/total_msec); 
+    offset_kb = (offsetPieces+((offset_msec*totalPieces_file)/total_msec))*(pieceLength/1024);
 
     qDebug() << "-- SCENE: " << scene;
     qDebug() << "-- TOTAL_MSEC: " << total_msec;
@@ -200,7 +200,8 @@ void Torrent::piece_update(qint64 total_msec, qint64 offset_msec)
     qDebug() << "-- OFFSET_PIECES: " << offsetPieces;
     qDebug() << "-- OFFSET_PIECE_FILE: " << offsetPieces_file;
     
-    piecePriority.clear();
+    //piecePriority.clear();
+    std::fill(piecePriority.begin(), piecePriority.end(), 0);
     for (int i=0; i < (totalPieces+1); i++)
         if(i < offsetPieces_file)
             piecePriority.push_back(0);
@@ -209,11 +210,17 @@ void Torrent::piece_update(qint64 total_msec, qint64 offset_msec)
         else
             piecePriority.push_back(0);
 
+    // TODO: Falla al mover el slider hacia atras. LLama al reproductor directamente porque ve que ya bajo mas de 15 megas. Debe estar asignando mal la prioridad de las piezas. Ver con un loop la prioridad de la piezas.
+
+    // TODO: Falla al sumar fit. Si se mueve el slider a una posicion mayor que una hora, funciona bien. Si es menor, comienza a descargar desde un poco mas adelante. Menor es el msec al que se mueve el slider mayor es el margen. Posible solucion: Calcular el porcentaje de pelicula donde cae el slider y restarle a fit de acuerdo a eso.
+
+    /*
     const qint64 remnant = totalPieces-((offset_msec*totalPieces_file)/total_msec);
     if (((remnant*pieceLength)/1048576) < 15)
         minimum_mb = remnant-1; //TODO: Cuando este solucionado el tema del slider, revisar esto.
     else 
         minimum_mb = 15;
+    */
 
     handle.prioritize_pieces(piecePriority);
     minimum_ready();

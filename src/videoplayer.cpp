@@ -61,12 +61,12 @@ VideoPlayer::VideoPlayer(QVideoWidget *parent) : QVideoWidget(parent)
     bufferLabel->setText("BUFFERING");
     
     witnessBufferLabel = new QLabel();
-    witnessBufferLabel->setGeometry(292, 28, 15, 35);
+    witnessBufferLabel->setGeometry(292, 29, 15, 35);
     witnessBufferLabel->setStyleSheet("background: black; border: none; color: white;");
     witnessBufferLabel->setFont(bufferFont);
     witnessBufferLabel->setParent(this);
     witnessBufferLabel->hide();
-    witnessBufferLabel->setText("•");
+    witnessBufferLabel->setText("‧");
 
     startLoopTimeLabel = new QLabel();
     startLoopTimeLabel->setGeometry(170, 20, 200, 50);
@@ -471,17 +471,17 @@ void VideoPlayer::download_Information(int bitRate, int peers)
 void VideoPlayer::progress(qint64 total_kb=0, qint64 downloaded_kb=0, int downloaded_offset=0)
 {
     if (!skip && !onSandbox) {
-        readyToRead_msec = ((downloaded_kb-13312)*player->duration())/total_kb;
-        if ((player->duration()-(((downloaded_kb+13312)*player->duration())/total_kb)) <= 0) //TODO: Revisar.
+        readyToRead_msec = ((downloaded_kb*player->duration())/total_kb)-60000; 
+        if (readyToRead_msec >= (player->duration()-70000))
             readyToRead_msec = player->duration();
-        bar->setValue(readyToRead_msec);
+        bar->setValue(readyToRead_msec+40000);
         
         if (!paused) {
             if (slider->value() < readyToRead_msec) {
-                if(player->state() == QMediaPlayer::PausedState) 
+                if (player->state() == QMediaPlayer::PausedState) 
                     buffering = false;
             } else {
-                if(player->state() == QMediaPlayer::PlayingState) {
+                if (player->state() == QMediaPlayer::PlayingState) {
                     buffering = true;
                     onBuffering();
                 }
@@ -509,8 +509,9 @@ void VideoPlayer::onBuffering()
         witnessBufferLabel->setStyleSheet("background: black; border: none; color: black;");
 
     if (buffering) {
-        if (i==0) {
+        if (i == 0) {
             player->pause();
+            slider->setEnabled(false);
             show_controls();
             bufferLabel->show();
             witnessBufferLabel->show();
@@ -519,6 +520,7 @@ void VideoPlayer::onBuffering()
         QTimer::singleShot(500, this, SLOT(onBuffering()));
     } else {
         i = 0;
+        slider->setEnabled(true);
         bufferLabel->hide();
         witnessBufferLabel->hide();
         hideControlsDelay->start();

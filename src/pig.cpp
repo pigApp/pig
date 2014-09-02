@@ -256,7 +256,7 @@ void PIG::find(QString input, QString pornstar, QString category, QString qualit
 //Torrent
 void PIG::torrent_handle(QString magnet, int scene, int fit, bool abort)
 {
-    cleanUp();
+    //cleanUp();
     //w
     if (!abort) {
         mTorrent->scene = scene;

@@ -68,11 +68,6 @@ Item {
                 source: urlPoster
                 sourceSize.width: 1920
                 sourceSize.height: 1080
-                Rectangle {
-                    id: posterLayer
-                    color: Qt.rgba(0, 0, 0, 0.6)
-                    anchors.fill: parent
-                }
                 onStatusChanged: { 
                     if (poster.source == list[5] && poster.status == Image.Ready) {
                         posterLoaded = true
@@ -247,52 +242,42 @@ Item {
                 anchors.left: cover.right
                 anchors.leftMargin: parent.width/54.85
                 anchors.verticalCenter: parent.verticalCenter
-                anchors.verticalCenterOffset: -parent.height/27
+                anchors.verticalCenterOffset: -parent.height/36 //27
                 Text {
                     id: castLabel
-                    text: "∙ "+cast
+                    text: "‧ "+cast
                     color: "white"
                     font.family: pigFont.name
-                    font.italic: true
-                    font.bold: true
                     font.pixelSize: screen.height/36
                 }
                 Text {
                     id: categoryLabel
-                    text: "∙ "+categories
+                    text: "‧ "+categories
                     color: "white"
                     font.family: pigFont.name
-                    font.italic: true
-                    font.bold: true
                     font.pixelSize: screen.height/36
                 }
                 Text {
                     id: qualityLabel
-                    text: "∙ "+quality
+                    text: "‧ "+quality
                     color: "white"
                     font.family: pigFont.name
-                    font.italic: true
-                    font.bold: true
                     font.pixelSize: screen.height/36
                 }
                 Text {
                     id: splitLabel
-                    text: { if (scenes === 1) "&nbsp;&nbsp; SPLIT"; else "∙ SPLIT" }
+                    text: { if (scenes === 1) "&nbsp;&nbsp; SPLIT"; else "‧ SPLIT" }
                     color: { if (scenes === 1) "black"; else "white" }
                     font.family: pigFont.name
-                    font.bold: true
-                    font.italic: true
                     font.strikeout: { if (scenes === 1) true; else false }
                     font.pixelSize: screen.height/36
                     textFormat: Text.RichText
                 }
                 Text {
                     id: fullLabel
-                    text: { if (full === "NOT") "&nbsp;&nbsp; FULL"; else "∙ FULL" }
+                    text: { if (full === "NOT") "&nbsp;&nbsp; FULL"; else "‧ FULL" }
                     color: { if (full === "NOT") "black"; else "white" }
                     font.family: pigFont.name
-                    font.bold: true
-                    font.italic: true
                     font.strikeout: { if (full === "NOT") true; else false }
                     font.pixelSize: screen.height/36
                     textFormat: Text.RichText
@@ -302,9 +287,9 @@ Item {
                 id: openSceneRow
                 spacing: 1
                 anchors.left: datesColumn.left
-                anchors.leftMargin: -parent.width/120
+                anchors.leftMargin: -parent.width/84.2
                 anchors.top: datesColumn.bottom
-                anchors.topMargin: parent.height/63.52
+                anchors.topMargin: parent.height/93
                 Text {
                     text: "➟"
                     color: "white"
@@ -312,6 +297,8 @@ Item {
                     font.bold: true
                     font.italic: true
                     font.pixelSize: screen.height/36
+                    textFormat: Text.RichText
+                    anchors.horizontalCenterOffset: -screen.width/50
                     anchors.verticalCenter: parent.verticalCenter
                 }
                 Component.onCompleted: {
@@ -346,7 +333,7 @@ Item {
                 }
             }
             NumberAnimation { running: recipe.PathView.isCurrentItem; target: poster; property: "opacity"; to: 1; duration: 4000; easing.type: Easing.InOutQuad }
-            NumberAnimation { running: recipe.PathView.isCurrentItem; target: translucedLayer; property: "opacity"; to: 0.8; duration: 4000; easing.type: Easing.InOutQuad }
+            NumberAnimation { running: recipe.PathView.isCurrentItem; target: translucedLayer; property: "opacity"; to: 0.9; duration: 4000; easing.type: Easing.InOutQuad }
             NumberAnimation { running: recipe.PathView.isCurrentItem; target: datesColumn; property: "opacity"; to: 1; duration: 2000; easing.type: Easing.OutElastic }
             PropertyAction  { running: !recipe.PathView.isCurrentItem; target: poster; property: "opacity"; value: 0 }
             PropertyAction  { running: !recipe.PathView.isCurrentItem; target: translucedLayer; property: "opacity"; value: 0 }
