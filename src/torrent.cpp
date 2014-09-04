@@ -32,6 +32,7 @@ void Torrent::doConnect(QString *magnet)
     skip = false;
     toPlayer = false;
     minimum_mb = 15;
+    totalPreSkip_mb = 0;
     pieceLength = 0;
     firstPiece_file = 0;
     lastPiece_file = 0;
@@ -120,13 +121,13 @@ void Torrent::filter_files()
 void Torrent::minimum_ready()
 {
     if (!abort) {
-        if ((handle.status().total_wanted_done/1048576) < minimum_mb) {
+        if (((handle.status().total_done/1048576)-totalPreSkip_mb) < minimum_mb)
             QTimer::singleShot(1000, this, SLOT(minimum_ready()));
-        } else {
+        else 
             call_player();
-        }
     }
-    qDebug() << "DOWNLOADED: " << (handle.status().total_wanted_done/1048576) << " MB";
+
+    qDebug() << "DOWNLOADED: " << (handle.status().total_done/1048576)-totalPreSkip_mb << " MB";
 }
 
 void Torrent::download_Information()
@@ -169,8 +170,8 @@ void Torrent::progress()
             const qint64 downloaded_kb = offset_kb+(handle.status().total_wanted_done/1024);
             QMetaObject::invokeMethod(_player, "progress", Qt::QueuedConnection, Q_ARG(qint64, total_kb), Q_ARG(qint64, downloaded_kb), Q_ARG(int, 220));
         } else {
-            const int downloaded_offset = handle.status().total_wanted_done/1048576;
-            QMetaObject::invokeMethod(_player, "progress", Qt::QueuedConnection, Q_ARG(qint64, 0), Q_ARG(qint64, 0), Q_ARG(int, downloaded_offset));
+            const int downloadedSkip_mb = (handle.status().total_done/1048576)-totalPreSkip_mb;
+            QMetaObject::invokeMethod(_player, "progress", Qt::QueuedConnection, Q_ARG(qint64, 0), Q_ARG(qint64, 0), Q_ARG(int, downloadedSkip_mb));
         }
         QTimer::singleShot(1000, this, SLOT(progress()));
     }
@@ -189,6 +190,7 @@ void Torrent::piece_update(qint64 total_msec, qint64 offset_msec)
 
     offsetPieces_file = offsetPieces+(((offset_msec+fit)*totalPieces_file)/total_msec); 
     offset_kb = (offsetPieces+((offset_msec*totalPieces_file)/total_msec))*(pieceLength/1024);
+    totalPreSkip_mb = handle.status().total_done/1048576;
 
     qDebug() << "-- SCENE: " << scene;
     qDebug() << "-- TOTAL_MSEC: " << total_msec;
@@ -197,20 +199,22 @@ void Torrent::piece_update(qint64 total_msec, qint64 offset_msec)
     qDebug() << "-- LAST_PIECE_FILE: " << lastPiece_file;
     qDebug() << "-- TOTAL_PIECE_FILE: " << totalPieces_file;
     qDebug() << "-- TOTAL_PIECE: " << totalPieces;
+    qDebug() << "-- TOTAL_PRE_SKIP: " << totalPreSkip_mb;
     qDebug() << "-- OFFSET_PIECES: " << offsetPieces;
     qDebug() << "-- OFFSET_PIECE_FILE: " << offsetPieces_file;
     
-    //piecePriority.clear();
-    std::fill(piecePriority.begin(), piecePriority.end(), 0);
+    //std::fill(piecePriority.begin(), piecePriority.end(), 0);
     for (int i=0; i < (totalPieces+1); i++)
-        if(i < offsetPieces_file)
+        if (i < offsetPieces_file) 
             piecePriority.push_back(0);
-        else if (i >= offsetPieces_file && i <= lastPiece_file)
+        else if (i >= offsetPieces_file && i <= lastPiece_file) 
             piecePriority.push_back(7);
         else
             piecePriority.push_back(0);
 
-    // TODO: Falla al mover el slider hacia atras. LLama al reproductor directamente porque ve que ya bajo mas de 15 megas. Debe estar asignando mal la prioridad de las piezas. Ver con un loop la prioridad de la piezas.
+    for (int i=0; i < (totalPieces+1); i++)
+        qDebug() << "-- PIECE: " << i << "PRIORITIE: " << piecePriority[i];
+
 
     // TODO: Falla al sumar fit. Si se mueve el slider a una posicion mayor que una hora, funciona bien. Si es menor, comienza a descargar desde un poco mas adelante. Menor es el msec al que se mueve el slider mayor es el margen. Posible solucion: Calcular el porcentaje de pelicula donde cae el slider y restarle a fit de acuerdo a eso.
 
@@ -237,3 +241,25 @@ void Torrent::stop()
         // TODO: Detener el torrent de una manera que no necesite el handle. Si no se tiene la metadata el handle es invalido y falla. 
     }
 }
+
+
+
+    /*
+    for (int i=0; i < (totalPieces+1); i++) {
+        if (i < offsetPieces_file) {
+            piecePriority.push_back(0);
+        } else if (i >= offsetPieces_file && i <= lastPiece_file) {
+            if (offsetPiecesLast_file != 0 && offsetPiecesLast_file > offsetPieces_file) { 
+                if (i < offsetPiecesLast_file)
+                    piecePriority.push_back(7);
+                else
+                    piecePriority.push_back(0);
+            } else { 
+                piecePriority.push_back(7);
+            }    
+        } else {
+            piecePriority.push_back(0);
+        }
+    }
+    offsetPiecesLast_file = offsetPieces_file;   
+    */

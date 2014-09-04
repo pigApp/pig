@@ -242,11 +242,12 @@ Item {
                 anchors.left: cover.right
                 anchors.leftMargin: parent.width/54.85
                 anchors.verticalCenter: parent.verticalCenter
-                anchors.verticalCenterOffset: -parent.height/36 //27
+                anchors.verticalCenterOffset: -parent.height/25
                 Text {
                     id: castLabel
                     text: "‧ "+cast
                     color: "white"
+                    font.italic: true
                     font.family: pigFont.name
                     font.pixelSize: screen.height/36
                 }
@@ -254,6 +255,7 @@ Item {
                     id: categoryLabel
                     text: "‧ "+categories
                     color: "white"
+                    font.italic: true
                     font.family: pigFont.name
                     font.pixelSize: screen.height/36
                 }
@@ -261,6 +263,7 @@ Item {
                     id: qualityLabel
                     text: "‧ "+quality
                     color: "white"
+                    font.italic: true
                     font.family: pigFont.name
                     font.pixelSize: screen.height/36
                 }
@@ -268,6 +271,7 @@ Item {
                     id: splitLabel
                     text: { if (scenes === 1) "&nbsp;&nbsp; SPLIT"; else "‧ SPLIT" }
                     color: { if (scenes === 1) "black"; else "white" }
+                    font.italic: true
                     font.family: pigFont.name
                     font.strikeout: { if (scenes === 1) true; else false }
                     font.pixelSize: screen.height/36
@@ -277,6 +281,7 @@ Item {
                     id: fullLabel
                     text: { if (full === "NOT") "&nbsp;&nbsp; FULL"; else "‧ FULL" }
                     color: { if (full === "NOT") "black"; else "white" }
+                    font.italic: true
                     font.family: pigFont.name
                     font.strikeout: { if (full === "NOT") true; else false }
                     font.pixelSize: screen.height/36
@@ -287,20 +292,8 @@ Item {
                 id: openSceneRow
                 spacing: 1
                 anchors.left: datesColumn.left
-                anchors.leftMargin: -parent.width/84.2
                 anchors.top: datesColumn.bottom
-                anchors.topMargin: parent.height/93
-                Text {
-                    text: "➟"
-                    color: "white"
-                    font.family: pigFont.name
-                    font.bold: true
-                    font.italic: true
-                    font.pixelSize: screen.height/36
-                    textFormat: Text.RichText
-                    anchors.horizontalCenterOffset: -screen.width/50
-                    anchors.verticalCenter: parent.verticalCenter
-                }
+                anchors.topMargin: parent.height/80
                 Component.onCompleted: {
                     for (var i=1; i<=scenes && i<=8; i++) {
                         var component = Qt.createComponent("ButtonScene.qml")

@@ -82,17 +82,17 @@ VideoPlayer::VideoPlayer(QVideoWidget *parent) : QVideoWidget(parent)
     stopLoopTimeLabel->setParent(this);
     stopLoopTimeLabel->hide();
 
-    barOffset = new QProgressBar();
-    barOffset->setGeometry(170, 45, screenWidth/13, 3);
-    barOffset->setStyleSheet (
+    barSkip = new QProgressBar();
+    barSkip->setGeometry(170, 45, screenWidth/13, 3);
+    barSkip->setStyleSheet (
                    "QProgressBar { background: #181818; border: none; }"
                    "QProgressBar::chunk { background: white; }"
                );
-    barOffset->setTextVisible(false);
-    barOffset->setMinimum(0);
-    barOffset->setMaximum(15);
-    barOffset->setParent(this);
-    barOffset->hide();
+    barSkip->setTextVisible(false);
+    barSkip->setMinimum(0);
+    barSkip->setMaximum(15);
+    barSkip->setParent(this);
+    barSkip->hide();
 
     currentTimeLabel = new QLabel();
     currentTimeLabel->setGeometry((screenWidth/2)-190, 20, 200, 50);
@@ -468,7 +468,7 @@ void VideoPlayer::download_Information(int bitRate, int peers)
     peersLabel->setText("PEERS "+QString::number(peers));
 }
 
-void VideoPlayer::progress(qint64 total_kb=0, qint64 downloaded_kb=0, int downloaded_offset=0)
+void VideoPlayer::progress(qint64 total_kb=0, qint64 downloaded_kb=0, int downloadedSkip_mb=0)
 {
     if (!skip && !onSandbox) {
         readyToRead_msec = ((downloaded_kb*player->duration())/total_kb)-60000; 
@@ -496,7 +496,7 @@ void VideoPlayer::progress(qint64 total_kb=0, qint64 downloaded_kb=0, int downlo
         qDebug() << "READY__MSEC: " << readyToRead_msec;
         //
     } else if (!onSandbox) {
-        barOffset->setValue(downloaded_offset);
+        barSkip->setValue(downloadedSkip_mb);
     }
 }
 
@@ -531,7 +531,8 @@ void VideoPlayer::onBuffering()
 
 void VideoPlayer::update_player()
 {
-    barOffset->hide();
+    barSkip->hide();
+    barSkip->setValue(0);
     slider->setEnabled(true);
     hideControlsDelay->start();
 
@@ -544,7 +545,7 @@ void VideoPlayer::update_player()
                 "QSlider::handle:horizontal { background: black; border: 1px solid #ffffff; width: 13px; }"
             );
     skip = false;
-    bar->show();
+    //bar->show();
 
     qDebug() << "-- UPDATE_PLAYER_MSEC: " << update_msec;
 }
@@ -600,7 +601,7 @@ void VideoPlayer::slider_released()
         } else if (skip_key_value == 0 && !available) {
             bar->hide();
             pauseLabel->hide();
-            barOffset->show();
+            barSkip->show();
             slider->setEnabled(false);
             slider->setStyleSheet (
                         "QSlider::groove:horizontal { background: #141414; border: none; }"

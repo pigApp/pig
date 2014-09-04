@@ -48,7 +48,7 @@ private:
     bool abort, skip;
     int minimum_mb; 
     qint64 pieceLength, firstPiece_file, lastPiece_file, totalPieces_file, offsetPieces_file,
-           offsetPieces, totalPieces, total_kb, offset_kb;
+           offsetPieces, totalPieces, total_kb, totalPreSkip_mb, offset_kb;
 
 private slots:
     void metadata_ready();
