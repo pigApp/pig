@@ -14,9 +14,9 @@ Update::Update(QObject *parent) : QObject(parent)
     databaseUpdated = false;
 
     mSocket = new TcpSocket();
-    connect(mSocket, SIGNAL(version_ready(QString)), this, SLOT(evaluate(QString)));
-    connect(mSocket, SIGNAL(file_ready(QString, QString)), this, SLOT(integrityFile(QString, QString)));
-    connect(mSocket, SIGNAL(error_socket()), this, SLOT(abort()));
+    connect (mSocket, SIGNAL(version_ready(QString)), this, SLOT(evaluate(QString)));
+    connect (mSocket, SIGNAL(file_ready(QString, QString)), this, SLOT(integrityFile(QString, QString)));
+    connect (mSocket, SIGNAL(error_socket()), this, SLOT(abort()));
 }
 
 Update::~Update()
@@ -187,7 +187,7 @@ void Update::replace(QString *path, QString *file)
 #else
     updaterProc = new QProcess(this);                                                                    // TODO: Ver si QDir de la linea de abajo funciona.
     updaterProc->start("/bin/bash", QStringList() << "-c" << "gksu -u root -m 'PIG authorization to install update' 'mv "+QDir::homePath()+"/.pig/tmp/pig /usr/bin/ ; chmod +x /usr/bin/pig'");
-    connect(updaterProc, SIGNAL(finished(int)), this, SLOT(replace_binary_ready(int)));
+    connect (updaterProc, SIGNAL(finished(int)), this, SLOT(replace_binary_ready(int)));
 #endif
     } else if (newDatabaseAvailable && !newsAvailable) {
 #ifdef _WIN32

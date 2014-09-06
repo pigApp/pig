@@ -5,7 +5,6 @@
 #include <QMediaPlayer>
 #include <QProgressBar>
 #include <QSlider>
-#include <QPixmap>
 #include <QLabel>
 #include <QPushButton>
 #include <QTimer>
@@ -37,24 +36,22 @@ public slots:
 private:
     QMediaPlayer *player;
     QWidget *box;
-    QPixmap volumePixmap;
-    QPixmap loopPixmap;
-    QLabel *volumeIcon;
-    QLabel *volumeLabel;
     QLabel *pauseLabel;
     QLabel *bufferLabel;
     QLabel *witnessBufferLabel;
+    QProgressBar *skipBar;
     QLabel *startLoopTimeLabel;
     QLabel *stopLoopTimeLabel;
-    QProgressBar *barSkip;
     QLabel *currentTimeLabel;
     QLabel *totalTimeLabel;
+    QLabel *volumeIcon;
+    QLabel *volumeLabel;
     QLabel *bitRateLabel;
     QLabel *peersLabel;
-    QProgressBar *bar;
     QSlider *sliderStartLoop;
     QSlider *sliderStopLoop;
     QSlider *slider;
+    QProgressBar *progressBar;
     QTimer *hideControlsDelay;
 
     bool onSandbox, buffering, skip, paused, loop;
@@ -63,7 +60,7 @@ private:
 
 private slots:
     void play_pause_stop();
-    void set_volume(int volume_key_value);
+    void onBuffering();
     void set_loop();
     void slider_startLoop_pressed();
     void slider_startLoop_moved(int position);
@@ -74,7 +71,7 @@ private slots:
     void set_sliderLoop_time(int msec);
     void set_currentTime(qint64 msecs);
     void set_totalTime(qint64 msecs);
-    void onBuffering();
+    void set_volume(int volume_key_value);
     void set_slider_position(qint64 position);
     void slider_pressed();
     void slider_moved(int position);

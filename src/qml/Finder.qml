@@ -12,13 +12,12 @@ Item {
         font.bold: true
         font.capitalization: Font.AllUppercase
         font.pixelSize: parent.height/21.6
-        maximumLength: 25
+        maximumLength: 28
         visible: { if (buttonsFiltersColumn.opacity === 1 && !root.welcome ) true; else false }
         enabled: { if (buttonsFiltersColumn.opacity === 1) true; else false }
         anchors.left: parent.horizontalCenter
         anchors.leftMargin: -parent.width/12.8
         anchors.verticalCenter: parent.verticalCenter
-        anchors.verticalCenterOffset: -parent.width/480
         onAccepted: { root.input = userInput.text; root.findSIGNAL_QML(root.input, root.pornstar, root.category, root.quality, root.full, 0, true) }
         onCursorPositionChanged: { if (noResultLabel.visible) noResultLabel.visible = false; userInput.visible = true }
         Keys.onPressed: {
@@ -46,9 +45,7 @@ Item {
         font.bold: true
         font.pixelSize: parent.height/21.6
         visible: false
-        anchors.horizontalCenter: parent.horizontalCenter
-        anchors.verticalCenter: parent.verticalCenter
-        anchors.verticalCenterOffset: -parent.height/270
+        anchors.centerIn: parent
     }
 
     Column {

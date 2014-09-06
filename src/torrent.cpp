@@ -78,10 +78,10 @@ void Torrent::filter_files()
     int scennesOffset = 1;
 
     filePriority.clear();
-    for (int i=1; i<=numberOfFiles; i++) {
+    for (int i=1; i <= numberOfFiles; i++) {
         if (checkFile) {
             fileName = QString::fromStdString(file_storage.file_name(i-1));
-            for (int f=0; f<formats.size(); ++f) {
+            for (int f=0; f < formats.size(); ++f) {
                 if (fileName.endsWith(formats[f], Qt::CaseInsensitive)) {
                     if (scene == scennesOffset) {
                         filePriority.push_back(7);
@@ -111,7 +111,7 @@ void Torrent::filter_files()
     totalPieces_file = lastPiece_file - firstPiece_file;
     totalPieces = handle.get_torrent_info().num_pieces();
     total_kb = (totalPieces_file*pieceLength)/1024;
-    for (int i=0; i<(scene-1); i++ )
+    for (int i=0; i < (scene-1); i++ )
         offsetPieces = offsetPieces+(file_storage.map_file(i, file_storage.file_size(i), 0).piece - file_storage.map_file(i, 0, 0).piece);
         
     minimum_ready();
@@ -136,7 +136,7 @@ void Torrent::download_Information()
         const int bitRate = handle.status().download_rate/1024;
         const int peers = handle.status().num_peers;
         if (toPlayer) {
-            QMetaObject::invokeMethod(_player, "download_Information", Qt::QueuedConnection, Q_ARG(int, bitRate), Q_ARG(int, peers));
+            QMetaObject::invokeMethod (_player, "download_Information", Qt::QueuedConnection, Q_ARG(int, bitRate), Q_ARG(int, peers));
         } else {
             const int downloaded_mb = handle.status().total_wanted_done/1048576;
             _root->setProperty("required", 15);
@@ -155,11 +155,11 @@ void Torrent::call_player()
         if (!dir.exists())
             dir.setPath(QString::fromStdString(handle.save_path()));
         const QString absoluteFilePath = dir.absolutePath()+"/"+fileName;
-        QMetaObject::invokeMethod(_pig, "player_handle", Qt::QueuedConnection, Q_ARG(const QString, absoluteFilePath), Q_ARG(bool, true), Q_ARG(bool, true), Q_ARG(bool, false), Q_ARG(bool, false));
+        QMetaObject::invokeMethod (_pig, "player_handle", Qt::QueuedConnection, Q_ARG(const QString, absoluteFilePath), Q_ARG(bool, true), Q_ARG(bool, true), Q_ARG(bool, false), Q_ARG(bool, false));
         QTimer::singleShot(1000, this, SLOT(progress()));
     } else {
         skip = false;
-        QMetaObject::invokeMethod(_player, "update_player", Qt::DirectConnection);
+        QMetaObject::invokeMethod (_player, "update_player", Qt::DirectConnection);
     }
 }
 
@@ -168,10 +168,10 @@ void Torrent::progress()
     if (!abort) {
         if (!skip) {
             const qint64 downloaded_kb = offset_kb+(handle.status().total_wanted_done/1024);
-            QMetaObject::invokeMethod(_player, "progress", Qt::QueuedConnection, Q_ARG(qint64, total_kb), Q_ARG(qint64, downloaded_kb), Q_ARG(int, 220));
+            QMetaObject::invokeMethod (_player, "progress", Qt::QueuedConnection, Q_ARG(qint64, total_kb), Q_ARG(qint64, downloaded_kb), Q_ARG(int, 220));
         } else {
             const int downloadedSkip_mb = (handle.status().total_done/1048576)-totalPreSkip_mb;
-            QMetaObject::invokeMethod(_player, "progress", Qt::QueuedConnection, Q_ARG(qint64, 0), Q_ARG(qint64, 0), Q_ARG(int, downloadedSkip_mb));
+            QMetaObject::invokeMethod (_player, "progress", Qt::QueuedConnection, Q_ARG(qint64, 0), Q_ARG(qint64, 0), Q_ARG(int, downloadedSkip_mb));
         }
         QTimer::singleShot(1000, this, SLOT(progress()));
     }
@@ -188,7 +188,7 @@ void Torrent::piece_update(qint64 total_msec, qint64 offset_msec)
     std::vector<int> piecePriority;
     skip = true;
 
-    offsetPieces_file = offsetPieces+(((offset_msec+fit)*totalPieces_file)/total_msec); 
+    offsetPieces_file = 535; //356;//offsetPieces+(((offset_msec+fit)*totalPieces_file)/total_msec); 
     offset_kb = (offsetPieces+((offset_msec*totalPieces_file)/total_msec))*(pieceLength/1024);
     totalPreSkip_mb = handle.status().total_done/1048576;
 
@@ -203,7 +203,6 @@ void Torrent::piece_update(qint64 total_msec, qint64 offset_msec)
     qDebug() << "-- OFFSET_PIECES: " << offsetPieces;
     qDebug() << "-- OFFSET_PIECE_FILE: " << offsetPieces_file;
     
-    //std::fill(piecePriority.begin(), piecePriority.end(), 0);
     for (int i=0; i < (totalPieces+1); i++)
         if (i < offsetPieces_file) 
             piecePriority.push_back(0);
@@ -211,12 +210,6 @@ void Torrent::piece_update(qint64 total_msec, qint64 offset_msec)
             piecePriority.push_back(7);
         else
             piecePriority.push_back(0);
-
-    for (int i=0; i < (totalPieces+1); i++)
-        qDebug() << "-- PIECE: " << i << "PRIORITIE: " << piecePriority[i];
-
-
-    // TODO: Falla al sumar fit. Si se mueve el slider a una posicion mayor que una hora, funciona bien. Si es menor, comienza a descargar desde un poco mas adelante. Menor es el msec al que se mueve el slider mayor es el margen. Posible solucion: Calcular el porcentaje de pelicula donde cae el slider y restarle a fit de acuerdo a eso.
 
     /*
     const qint64 remnant = totalPieces-((offset_msec*totalPieces_file)/total_msec);

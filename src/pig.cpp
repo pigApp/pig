@@ -35,12 +35,14 @@ PIG::~PIG()
 
 void PIG::set_root_object(QObject *root)
 {
-    if(mRoot!=0) mRoot->disconnect(this); mRoot = root;
+    if (mRoot != 0)
+        mRoot->disconnect(this);
+    mRoot = root;
 
-    if(mRoot) connect(mRoot, SIGNAL(passwordHandleSIGNAL_QML(QString, bool, bool)), this, SLOT(password_handle(QString, bool, bool)));
-    if(mRoot) connect(mRoot, SIGNAL(findSIGNAL_QML(QString, QString, QString, QString, QString, int, bool)), this, SLOT(find(QString, QString, QString, QString, QString, int, bool)));
-    if(mRoot) connect(mRoot, SIGNAL(torrentHandleSIGNAL_QML(QString, int, int, bool)), this, SLOT(torrent_handle(QString, int, int, bool)));
-    if(mRoot) connect(mRoot, SIGNAL(quitSIGNAL_QML()), this, SLOT(quit()));
+    if (mRoot) connect (mRoot, SIGNAL(passwordHandleSIGNAL_QML(QString, bool, bool)), this, SLOT(password_handle(QString, bool, bool)));
+    if (mRoot) connect (mRoot, SIGNAL(findSIGNAL_QML(QString, QString, QString, QString, QString, int, bool)), this, SLOT(find(QString, QString, QString, QString, QString, int, bool)));
+    if (mRoot) connect (mRoot, SIGNAL(torrentHandleSIGNAL_QML(QString, int, int, bool)), this, SLOT(torrent_handle(QString, int, int, bool)));
+    if (mRoot) connect (mRoot, SIGNAL(quitSIGNAL_QML()), this, SLOT(quit()));
 
 #ifdef _WIN32
     const QString target = "C:/pig/.pig/db.sqlite";
@@ -102,10 +104,10 @@ void PIG::update_handle()
     mUpdate->_root = mRoot;
     mUpdate->check();
 
-    connect(mUpdate, SIGNAL(forwardSIGNAL()), this, SLOT(start()));
-    connect(mUpdate, SIGNAL(errorDatabaseSIGNAL()), this, SLOT(error_database()));
-    connect(mRoot, SIGNAL(skipSIGNAL_QML()), this, SLOT(start()));
-    connect(mRoot, SIGNAL(getFilesSIGNAL_QML()), mUpdate, SLOT(get_files()));
+    connect (mUpdate, SIGNAL(forwardSIGNAL()), this, SLOT(start()));
+    connect (mUpdate, SIGNAL(errorDatabaseSIGNAL()), this, SLOT(error_database()));
+    connect (mRoot, SIGNAL(skipSIGNAL_QML()), this, SLOT(start()));
+    connect (mRoot, SIGNAL(getFilesSIGNAL_QML()), mUpdate, SLOT(get_files()));
     //w
     //QTimer::singleShot(4000, this, SLOT(start())); //w
 }
@@ -179,7 +181,8 @@ void PIG::start()
         QTextStream in(&file);
         while (!in.atEnd()) {
             const QString line = in.readLine();
-            if (line.isEmpty()) head = false;
+            if (line.isEmpty())
+                head = false;
             if (head) {
                 binary_news.append(line+"\n");
             } else {
@@ -221,7 +224,7 @@ void PIG::find(QString input, QString pornstar, QString category, QString qualit
                 qry.first();
                 qry.previous();
             }
-            for (row=0; qry.next()&&row<5; row++) {
+            for (row=0; qry.next() && row<5; row++) {
                 const QString _title = qry.value(0).toString();
                 const QString _cast = qry.value(1).toString();
                 const QString _category = qry.value(2).toString();

@@ -7,9 +7,9 @@ Rectangle {
     color: Qt.rgba(0, 0, 0, 0.03)
     radius: 2
 
-    ColorAnimation on color { to: Qt.rgba(1, 0.6, 0, 0.5); duration: 400 }
+    ColorAnimation on color { to: Qt.rgba(0, 0, 0, 0.5); duration: 400 }
     ColorAnimation on color { id: inColor; running: false; to: "white"; duration: 200 }
-    ColorAnimation on color { id: outColor; running: false; to: Qt.rgba(1, 0.6, 0, 0.5); duration: 200 }
+    ColorAnimation on color { id: outColor; running: false; to: Qt.rgba(0, 0, 0, 0.5); duration: 200 }
 
     property bool enter
     property bool pornStarsVisible
@@ -40,13 +40,13 @@ Rectangle {
 
     Text {
         id: nLabel
-        color: Qt.rgba(0.1, 0.1, 0.1, 0.15)
+        color: Qt.rgba(0.1, 0.1, 0.1, 0.6)
         font.family: pigFont.name
-        font.pixelSize: screen.height/10.8
+        font.pixelSize: screen.height/21.6
         visible: false
         opacity: 0
         anchors.centerIn: parent
-        anchors.verticalCenterOffset: -1
+        anchors.verticalCenterOffset: screen.height/19.63
     }
     Text {
         id: label

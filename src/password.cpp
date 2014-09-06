@@ -20,7 +20,7 @@ bool Password::require()
     #else
         QFile file(QDir::homePath()+"/.pig/.pd");
     #endif
-    if (file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+    if (file.open(QIODevice::ReadOnly|QIODevice::Text)) {
         while (!file.atEnd()) {
             const QByteArray line = file.readLine();
             pd = QString(line).toUtf8();

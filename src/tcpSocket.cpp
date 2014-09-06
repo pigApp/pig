@@ -6,9 +6,9 @@
 
 TcpSocket::TcpSocket(QTcpSocket *parent) : QTcpSocket(parent)
 {
-    connect(this, SIGNAL(connected()), this, SLOT(connected()));
-    connect(this, SIGNAL(disconnected()), this, SLOT(disconnected()));
-    connect(this, SIGNAL(readyRead()), this, SLOT(ready_to_read()));
+    connect (this, SIGNAL(connected()), this, SLOT(connected()));
+    connect (this, SIGNAL(disconnected()), this, SLOT(disconnected()));
+    connect (this, SIGNAL(readyRead()), this, SLOT(ready_to_read()));
 }
 
 TcpSocket::~TcpSocket()
@@ -23,7 +23,7 @@ void TcpSocket::doConnect()
 
     timeOut = new QTimer(this);
     timeOut->setSingleShot(true);
-    connect(timeOut, SIGNAL(timeout()), this, SLOT(error()));
+    connect (timeOut, SIGNAL(timeout()), this, SLOT(error()));
     timeOut->start(15000);
 }
 
