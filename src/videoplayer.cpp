@@ -1,11 +1,12 @@
 #include "videoplayer.h"
 
-#include <QScreen>
+#include <QApplication>
+#include <QDesktopWidget>
+#include <QHBoxLayout>
+#include <QVBoxLayout>
 #include <QTimer>
 #include <QFont>
 #include <QDebug>
-#include <QHBoxLayout>
-#include <QVBoxLayout>
 
 VideoPlayer::VideoPlayer(QVideoWidget *parent) : QVideoWidget(parent)
 {    
@@ -14,71 +15,51 @@ VideoPlayer::VideoPlayer(QVideoWidget *parent) : QVideoWidget(parent)
     volume = 70;
     player->setVolume(volume);
 
-    //QScreen *screen;
-    //int screenWidth =  screen->geometry().width();
-    //int screenHeight = screen->geometry().height(); // TODO: Obtener width y height.
-    screenWidth = 1920;
-    screenHeight = 1080;
+    QRect rec = QApplication::desktop()->screenGeometry();
+    screenWidth = rec.width();
+    screenHeight = rec.height();
+
+    QFont font(":/images/font/pig.ttf", screenHeight/72);
 
     QVBoxLayout *boxLayout = new QVBoxLayout;
     boxLayout->setAlignment(Qt::AlignHCenter|Qt::AlignVCenter);
-    boxLayout->setSpacing(10);
-
-    QFont font(":/images/font/pig.ttf", 15);
-
+    boxLayout->setSpacing(screenHeight/108);
     box = new QWidget();
-    box->setGeometry(screenWidth-130, (screenHeight/2)-115, 130, 230);
-    box->setStyleSheet(
-             "background: black;"
-             "border: none;"
-         );
+    box->setGeometry(screenWidth-(screenWidth/14.77), (screenHeight/2)-(screenHeight/12), screenWidth/14.76, screenHeight/6);
+    box->setStyleSheet("background: black; border: none");
     box->setLayout(boxLayout);
     box->setParent(this);
     box->hide();
 
     pauseLabel = new QLabel();
-    pauseLabel->setAlignment(Qt::AlignHCenter);
-    pauseLabel->setStyleSheet(
-                    "color: white;"
-                    "background: black;"
-                    "border: none;"
-                );
+    pauseLabel->setAlignment(Qt::AlignLeft|Qt::AlignVCenter);
+    pauseLabel->setStyleSheet("color: #181818; background: black; border: none");
     pauseLabel->setFont(font);
     pauseLabel->hide();
     pauseLabel->setText("||");
 
-    QFont bufferFont(":/images/font/pig.ttf", 13);
     QHBoxLayout *bufferLayout = new QHBoxLayout;
-    bufferLayout->setAlignment(Qt::AlignHCenter|Qt::AlignVCenter);
-    bufferLayout->setSpacing(5);
-
+    bufferLayout->setAlignment(Qt::AlignLeft|Qt::AlignVCenter);
+    bufferLayout->setSpacing(screenWidth/384);
     bufferLabel = new QLabel();
-    bufferLabel->setStyleSheet(
-                     "color: #181818;"
-                     "background: black;"
-                     "border: none;"
-                 );
-    bufferLabel->setFont(bufferFont);
+    bufferLabel->setStyleSheet("color: #181818; background: black; border: none");
+    bufferLabel->setFont(font);
     bufferLabel->hide();
-    bufferLabel->setText("BUFFERING");
+    bufferLabel->setText("BUFFER");
     witnessBufferLabel = new QLabel();
-    witnessBufferLabel->setStyleSheet(
-                            "color: white;"
-                            "background: black;"
-                            "border: none;"
-                        );
-    witnessBufferLabel->setFont(bufferFont);
+    witnessBufferLabel->setStyleSheet("color: white; background: black; border: none");
+    witnessBufferLabel->setFont(font);
     witnessBufferLabel->hide();
     witnessBufferLabel->setText("‧");
     bufferLayout->addWidget(bufferLabel);
     bufferLayout->addWidget(witnessBufferLabel);
 
-    skipBar = new QProgressBar(); // TODO: Mover arriba de rate. Talvez Acortala. Achicar la altura de box y agrandarla si se activa el loop y talvez pause o cambiar el caracter de pause.
-    skipBar->setFixedWidth(100);  // Revisar el color de fondo de la barra de progreso. Ver como obtener with y heght de la pàntalla. Revisar que no queden valor fijos (x y width height).
+    skipBar = new QProgressBar();
+    skipBar->setFixedWidth(screenWidth/21.33);
     skipBar->setFixedHeight(3);
     skipBar->setStyleSheet (
-                 "QProgressBar { background: #181818; border: none; }"
-                 "QProgressBar::chunk { background: white; }"
+                 "QProgressBar { background: #181818; border: none }"
+                 "QProgressBar::chunk { background: white }"
              );
     skipBar->setTextVisible(false);
     skipBar->setMinimum(0);
@@ -88,19 +69,11 @@ VideoPlayer::VideoPlayer(QVideoWidget *parent) : QVideoWidget(parent)
     QVBoxLayout *loopTimeLayout = new QVBoxLayout;
     loopTimeLayout->setSpacing(0);
     startLoopTimeLabel = new QLabel();
-    startLoopTimeLabel->setStyleSheet(
-                            "color: #181818;"
-                            "background: black;"
-                            "border: none;"
-                        );
+    startLoopTimeLabel->setStyleSheet("color: #181818; background: black; border: none");
     startLoopTimeLabel->setFont(font);
     startLoopTimeLabel->hide();
     stopLoopTimeLabel = new QLabel();
-    stopLoopTimeLabel->setStyleSheet(
-                           "color: #181818;"
-                           "background: black;"
-                           "border: none;"
-                       );
+    stopLoopTimeLabel->setStyleSheet("color: #181818; background: black; border: none");
     stopLoopTimeLabel->setFont(font);
     stopLoopTimeLabel->hide();
     loopTimeLayout->addWidget(startLoopTimeLabel);
@@ -109,19 +82,11 @@ VideoPlayer::VideoPlayer(QVideoWidget *parent) : QVideoWidget(parent)
     QVBoxLayout *timeLayout = new QVBoxLayout;
     timeLayout->setSpacing(0);
     currentTimeLabel = new QLabel();
-    currentTimeLabel->setStyleSheet(
-                          "color: white;"
-                          "background: black;"
-                          "border: none;"
-                      );
+    currentTimeLabel->setStyleSheet("color: white; background: black; border: none");
     currentTimeLabel->setFont(font);
     currentTimeLabel->hide();
     totalTimeLabel = new QLabel();
-    totalTimeLabel->setStyleSheet(
-                        "color: #181818;"
-                        "background: black;"
-                        "border: none;"
-                    );
+    totalTimeLabel->setStyleSheet("color: #181818; background: black; border: none");
     totalTimeLabel->setFont(font);
     totalTimeLabel->hide();
     timeLayout->addWidget(currentTimeLabel);
@@ -129,22 +94,14 @@ VideoPlayer::VideoPlayer(QVideoWidget *parent) : QVideoWidget(parent)
 
     QHBoxLayout *volumeLayout = new QHBoxLayout;
     volumeLayout->setAlignment(Qt::AlignLeft|Qt::AlignVCenter);
-    volumeLayout->setSpacing(5);
+    volumeLayout->setSpacing(screenHeight/216);
     volumeIcon = new QLabel();
-    volumeIcon->setStyleSheet(
-                    "color: white;"
-                    "background: black;"
-                    "border: none;"
-                );
+    volumeIcon->setStyleSheet("color: white; background: black; border: none");
     volumeIcon->setFont(font);
     volumeIcon->hide();
     volumeIcon->setText("♫");
     volumeLabel = new QLabel();
-    volumeLabel->setStyleSheet(
-                     "color: white;"
-                     "background: black;"
-                     "border: none;"
-                 );
+    volumeLabel->setStyleSheet("color: white; background: black; border: none");
     volumeLabel->setFont(font);
     volumeLabel->hide();
     volumeLabel->setText(QString::number(volume));
@@ -154,19 +111,11 @@ VideoPlayer::VideoPlayer(QVideoWidget *parent) : QVideoWidget(parent)
     QVBoxLayout *rateLayout = new QVBoxLayout;
     rateLayout->setSpacing(0);
     bitRateLabel = new QLabel();
-    bitRateLabel->setStyleSheet(
-                      "color: white;"
-                      "background: black;"
-                      "border: none;"
-                  );
+    bitRateLabel->setStyleSheet("color: white; background: black; border: none");
     bitRateLabel->setFont(font);
     bitRateLabel->hide();
     peersLabel = new QLabel();
-    peersLabel->setStyleSheet(
-                    "color: white;"
-                    "background: black;"
-                    "border: none;"
-                );
+    peersLabel->setStyleSheet("color: white; background: black; border: none");
     peersLabel->setFont(font);
     peersLabel->hide();
     rateLayout->addWidget(bitRateLabel);
@@ -182,9 +131,9 @@ VideoPlayer::VideoPlayer(QVideoWidget *parent) : QVideoWidget(parent)
 
     sliderStartLoop = new QSlider(Qt::Horizontal);
     sliderStartLoop->setStyleSheet (
-                        "QSlider::groove:horizontal { background: #141414; border: none; }"
-                        "QSlider::sub-page:horizontal { background: white; }"
-                        "QSlider::handle:horizontal { background: black; border: 1px solid white; width: 13px; }"
+                        "QSlider::groove:horizontal { background: #141414; border: none }"
+                        "QSlider::sub-page:horizontal { background: white }"
+                        "QSlider::handle:horizontal { background: black; border: 1px solid white; width: 13px }"
                      );
     sliderStartLoop->setMinimum(0);
     sliderStartLoop->setTracking(true);
@@ -194,9 +143,9 @@ VideoPlayer::VideoPlayer(QVideoWidget *parent) : QVideoWidget(parent)
 
     sliderStopLoop = new QSlider(Qt::Horizontal);
     sliderStopLoop->setStyleSheet (
-                        "QSlider::groove:horizontal { background: #141414; border: none; }"
-                        "QSlider::sub-page:horizontal { background: white; }"
-                        "QSlider::handle:horizontal { background: black; border: 1px solid white; width: 13px; }"
+                        "QSlider::groove:horizontal { background: #141414; border: none }"
+                        "QSlider::sub-page:horizontal { background: white }"
+                        "QSlider::handle:horizontal { background: black; border: 1px solid white; width: 13px }"
                     );
     sliderStopLoop->setMinimum(0);
     sliderStopLoop->setTracking(true);
@@ -207,9 +156,9 @@ VideoPlayer::VideoPlayer(QVideoWidget *parent) : QVideoWidget(parent)
     slider = new QSlider(Qt::Horizontal);
     slider->setGeometry(0, screenHeight-15, screenWidth, 5);
     slider->setStyleSheet (
-                "QSlider::groove:horizontal { background: #141414; border: none; }"
-                "QSlider::sub-page:horizontal { background: white; }"
-                "QSlider::handle:horizontal { background: black; border: 1px solid white; width: 13px; }"
+                "QSlider::groove:horizontal { background: #141414; border: none }"
+                "QSlider::sub-page:horizontal { background: white }"
+                "QSlider::handle:horizontal { background: black; border: 1px solid white; width: 13px }"
             );
     slider->setMinimum(0);
     slider->setTracking(true);
@@ -220,8 +169,8 @@ VideoPlayer::VideoPlayer(QVideoWidget *parent) : QVideoWidget(parent)
     progressBar = new QProgressBar();
     progressBar->setGeometry(0, screenHeight-8, screenWidth, 3);
     progressBar->setStyleSheet (
-            "QProgressBar { background: #000000; border: none; }"
-            "QProgressBar::chunk { background: #9c9c9c; }"
+            "QProgressBar { background: #000000; border: none }"
+            "QProgressBar::chunk { background: #9c9c9c }"
          );
     progressBar->setTextVisible(false);
     progressBar->setMinimum(0);
@@ -303,9 +252,9 @@ void VideoPlayer::onBuffering()
 {
     static int i = 0;
     if (i%2 == 0)
-        witnessBufferLabel->setStyleSheet("background: black; border: none; color: white;");
+        witnessBufferLabel->setStyleSheet("background: black; border: none; color: white");
     else
-        witnessBufferLabel->setStyleSheet("background: black; border: none; color: black;");
+        witnessBufferLabel->setStyleSheet("background: black; border: none; color: black");
 
     if (buffering) {
         if (i == 0) {
@@ -337,6 +286,7 @@ void VideoPlayer::set_loop()
             slider->hide();
             pauseLabel->hide();
             player->pause();
+            box->setGeometry(screenWidth-(screenWidth/14.77), (screenHeight/2)-(screenHeight/9.8), screenWidth/14.76, screenHeight/4.9);
             sliderStartLoop->setGeometry(0, screenHeight-23, screenWidth, 5);
             sliderStartLoop->setMaximum(player->duration());
             sliderStartLoop->setValue(0);
@@ -362,6 +312,7 @@ void VideoPlayer::set_loop()
             stopLoopTimeLabel->hide();
             sliderStartLoop->hide();
             sliderStopLoop->hide();
+            box->setGeometry(screenWidth-(screenWidth/14.77), (screenHeight/2)-(screenHeight/12), screenWidth/14.76, screenHeight/6);
             player->play();
         }
     }
@@ -381,15 +332,15 @@ void VideoPlayer::slider_startLoop_moved(int position)
     
     if (sliderStartLoop->value() > readyToRead_msec || (sliderStartLoop->value() > sliderStopLoop->value() && stopLoop_msec != 0)) {
         sliderStartLoop->setStyleSheet (
-                            "QSlider::groove:horizontal { background: #141414; border: none; }"
-                            "QSlider::sub-page:horizontal { background: red; }"
-                            "QSlider::handle:horizontal { background: black; border: 1px solid white; width: 13px; }"
+                            "QSlider::groove:horizontal { background: #141414; border: none }"
+                            "QSlider::sub-page:horizontal { background: red }"
+                            "QSlider::handle:horizontal { background: black; border: 1px solid white; width: 13px }"
                          );
     } else {
         sliderStartLoop->setStyleSheet (
-                            "QSlider::groove:horizontal { background: #141414; border: none; }"
-                            "QSlider::sub-page:horizontal { background: white; }"
-                            "QSlider::handle:horizontal { background: black; border: 1px solid white; width: 13px; }"
+                            "QSlider::groove:horizontal { background: #141414; border: none }"
+                            "QSlider::sub-page:horizontal { background: white }"
+                            "QSlider::handle:horizontal { background: black; border: 1px solid white; width: 13px }"
                          );
     }
 }
@@ -418,9 +369,9 @@ void VideoPlayer::slider_startLoop_released()
         hideControlsDelay->start();
     }
     sliderStartLoop->setStyleSheet (
-                        "QSlider::groove:horizontal { background: #141414; border: none; }"
-                        "QSlider::sub-page:horizontal { background: white; }"
-                        "QSlider::handle:horizontal { background: black; border: 1px solid white; width: 13px; }"
+                        "QSlider::groove:horizontal { background: #141414; border: none }"
+                        "QSlider::sub-page:horizontal { background: white }"
+                        "QSlider::handle:horizontal { background: black; border: 1px solid white; width: 13px }"
                      );
 }
 
@@ -440,15 +391,15 @@ void VideoPlayer::slider_stopLoop_moved(int position)
 
     if (sliderStopLoop->value() > readyToRead_msec || (sliderStopLoop->value() < sliderStartLoop->value())) {
         sliderStopLoop->setStyleSheet (
-                            "QSlider::groove:horizontal { background: #141414; border: none; }"
-                            "QSlider::sub-page:horizontal { background: red; }"
-                            "QSlider::handle:horizontal { background: black; border: 1px solid white; width: 13px; }"
+                            "QSlider::groove:horizontal { background: #141414; border: none }"
+                            "QSlider::sub-page:horizontal { background: red }"
+                            "QSlider::handle:horizontal { background: black; border: 1px solid white; width: 13px }"
                         );
     } else {
         sliderStopLoop->setStyleSheet (
-                            "QSlider::groove:horizontal { background: #141414; border: none; }"
-                            "QSlider::sub-page:horizontal { background: white; }"
-                            "QSlider::handle:horizontal { background: black; border: 1px solid white; width: 13px; }"
+                            "QSlider::groove:horizontal { background: #141414; border: none }"
+                            "QSlider::sub-page:horizontal { background: white }"
+                            "QSlider::handle:horizontal { background: black; border: 1px solid white; width: 13px }"
                         );
     }
 }
@@ -474,9 +425,9 @@ void VideoPlayer::slider_stopLoop_released()
     sliderStartLoop->setEnabled(true);
     hideControlsDelay->start();
     sliderStopLoop->setStyleSheet (
-                        "QSlider::groove:horizontal { background: #141414; border: none; }"
-                        "QSlider::sub-page:horizontal { background: white; }"
-                        "QSlider::handle:horizontal { background: black; border: 1px solid white; width: 13px; }"
+                        "QSlider::groove:horizontal { background: #141414; border: none }"
+                        "QSlider::sub-page:horizontal { background: white }"
+                        "QSlider::handle:horizontal { background: black; border: 1px solid white; width: 13px }"
                     );
 }
 
@@ -539,11 +490,11 @@ void VideoPlayer::set_volume(int volume_key_value)
         player->setVolume(volume);
         volumeLabel->setText(QString::number(volume));
         if (volume > 0) {
-            volumeIcon->setStyleSheet("background: black; border: none; color: white;");
-            volumeLabel->setStyleSheet("background: black; border: none; color: white;");
+            volumeIcon->setStyleSheet("background: black; border: none; color: white");
+            volumeLabel->setStyleSheet("background: black; border: none; color: white");
         } else {
-            volumeIcon->setStyleSheet("background: black; border: none; color: #181818;");
-            volumeLabel->setStyleSheet("background: black; border: none; color: #181818;");
+            volumeIcon->setStyleSheet("background: black; border: none; color: #181818");
+            volumeLabel->setStyleSheet("background: black; border: none; color: #181818");
         }
     }
 }
@@ -572,15 +523,15 @@ void VideoPlayer::slider_moved(int position)
     set_currentTime(qint64(slider->value()));
     if (slider->value() > progressBar->value()) {
         slider->setStyleSheet (
-                    "QSlider::groove:horizontal { background: #141414; border: none; }"
-                    "QSlider::sub-page:horizontal { background: red; }"
-                    "QSlider::handle:horizontal { background: black; border: 1px solid #ffffff; width: 13px; }"
+                    "QSlider::groove:horizontal { background: #141414; border: none }"
+                    "QSlider::sub-page:horizontal { background: red }"
+                    "QSlider::handle:horizontal { background: black; border: 1px solid #ffffff; width: 13px }"
                 );
     } else {
         slider->setStyleSheet (
-                    "QSlider::groove:horizontal { background: #141414; border: none; }"
-                    "QSlider::sub-page:horizontal { background: white; }"
-                    "QSlider::handle:horizontal { background: black; border: 1px solid #ffffff; width: 13px; }"
+                    "QSlider::groove:horizontal { background: #141414; border: none }"
+                    "QSlider::sub-page:horizontal { background: white }"
+                    "QSlider::handle:horizontal { background: black; border: 1px solid #ffffff; width: 13px }"
                 );
     }
 }
@@ -609,9 +560,9 @@ void VideoPlayer::slider_released()
             skipBar->show();
             slider->setEnabled(false);
             slider->setStyleSheet (
-                        "QSlider::groove:horizontal { background: #141414; border: none; }"
-                        "QSlider::sub-page:horizontal { background: #9c9c9c; }"
-                        "QSlider::handle:horizontal { background: black; border: 1px solid #ffffff; width: 13px; }"
+                        "QSlider::groove:horizontal { background: #141414; border: none }"
+                        "QSlider::sub-page:horizontal { background: #9c9c9c }"
+                        "QSlider::handle:horizontal { background: black; border: 1px solid #ffffff; width: 13px }"
                     );
             QMetaObject::invokeMethod (_torrent, "piece_update", Qt::DirectConnection, Q_ARG(qint64, total_msec), Q_ARG(qint64, offset_msec));
         } 
@@ -623,12 +574,12 @@ void VideoPlayer::slider_released()
 void VideoPlayer::progress(qint64 total_kb=0, qint64 downloaded_kb=0, int downloadedSkip_mb=0)
 {
     if (!skip && !onSandbox) {
-        //readyToRead_msec = ((downloaded_kb*player->duration())/total_kb)-60000;
-        readyToRead_msec = (downloaded_kb*player->duration())/total_kb;
+        readyToRead_msec = ((downloaded_kb*player->duration())/total_kb)-60000;
+        //readyToRead_msec = (downloaded_kb*player->duration())/total_kb;
         if (readyToRead_msec >= (player->duration()-70000))
             readyToRead_msec = player->duration();
-        //progressBar->setValue(readyToRead_msec+40000);
-        progressBar->setValue(readyToRead_msec);
+        progressBar->setValue(readyToRead_msec+40000);
+        //progressBar->setValue(readyToRead_msec);
 
         if (!paused) {
             if (slider->value() < readyToRead_msec) {
@@ -665,9 +616,9 @@ void VideoPlayer::update_player()
     player->setPosition(update_msec);
     player->play();
     slider->setStyleSheet (
-                "QSlider::groove:horizontal { background: #141414; border: none; }"
-                "QSlider::sub-page:horizontal { background: white; }"
-                "QSlider::handle:horizontal { background: black; border: 1px solid #ffffff; width: 13px; }"
+                "QSlider::groove:horizontal { background: #141414; border: none }"
+                "QSlider::sub-page:horizontal { background: white }"
+                "QSlider::handle:horizontal { background: black; border: 1px solid #ffffff; width: 13px }"
             );
     skip = false;
 

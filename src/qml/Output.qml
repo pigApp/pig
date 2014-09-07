@@ -81,6 +81,12 @@ Item {
                     }
                 }
             }
+            Desaturate {
+                id: posterDesaturator
+                source: poster
+                desaturation: 1
+                anchors.fill: poster
+            }
             Rectangle {
                 id: translucedLayer
                 width: parent.width
@@ -97,8 +103,9 @@ Item {
                 font.letterSpacing: -10
                 font.pixelSize: parent.height/6.35
                 anchors.left: parent.left
+                anchors.leftMargin: parent.width/960
                 anchors.bottom: cover.top
-                anchors.bottomMargin: -parent.height/83.07
+                anchors.bottomMargin: parent.height/77.14
             }
 
             Image {
@@ -242,12 +249,10 @@ Item {
                 anchors.left: cover.right
                 anchors.leftMargin: parent.width/54.85
                 anchors.verticalCenter: parent.verticalCenter
-                anchors.verticalCenterOffset: -parent.height/25
                 Text {
                     id: castLabel
                     text: "‧ "+cast
                     color: "white"
-                    font.italic: true
                     font.family: pigFont.name
                     font.pixelSize: screen.height/36
                 }
@@ -255,7 +260,6 @@ Item {
                     id: categoryLabel
                     text: "‧ "+categories
                     color: "white"
-                    font.italic: true
                     font.family: pigFont.name
                     font.pixelSize: screen.height/36
                 }
@@ -263,53 +267,47 @@ Item {
                     id: qualityLabel
                     text: "‧ "+quality
                     color: "white"
-                    font.italic: true
                     font.family: pigFont.name
                     font.pixelSize: screen.height/36
                 }
                 Text {
                     id: splitLabel
-                    text: { if (scenes === 1) "&nbsp;&nbsp; SPLIT"; else "‧ SPLIT" }
+                    text: "‧ SPLIT"
                     color: { if (scenes === 1) "black"; else "white" }
-                    font.italic: true
                     font.family: pigFont.name
-                    font.strikeout: { if (scenes === 1) true; else false }
                     font.pixelSize: screen.height/36
                     textFormat: Text.RichText
                 }
                 Text {
                     id: fullLabel
-                    text: { if (full === "NOT") "&nbsp;&nbsp; FULL"; else "‧ FULL" }
+                    text: "‧ FULL"
                     color: { if (full === "NOT") "black"; else "white" }
-                    font.italic: true
                     font.family: pigFont.name
-                    font.strikeout: { if (full === "NOT") true; else false }
                     font.pixelSize: screen.height/36
                     textFormat: Text.RichText
                 }
-            }
-            Row {
-                id: openSceneRow
-                spacing: 1
-                anchors.left: datesColumn.left
-                anchors.top: datesColumn.bottom
-                anchors.topMargin: parent.height/80
-                Component.onCompleted: {
-                    for (var i=1; i<=scenes && i<=8; i++) {
-                        var component = Qt.createComponent("ButtonScene.qml")
-                        var object = component.createObject(openSceneRow)
-                        object.magnet = magnet
-                        object.scene = i
-                        object.fit = fit
+                Row {
+                    id: openSceneRow
+                    spacing: 1
+                    Component.onCompleted: {
+                        for (var i=1; i<=scenes && i<=8; i++) {
+                            var component = Qt.createComponent("ButtonScene.qml")
+                            var object = component.createObject(openSceneRow)
+                            object.magnet = magnet
+                            object.scene = i
+                            object.fit = fit
+                        }
                     }
                 }
             }
+
             Row {
                 id: counterRow
-                spacing: parent.width/960
+                spacing: parent.width/480
                 anchors.right: parent.right
-                anchors.rightMargin: parent.width/192
+                anchors.rightMargin: parent.width/960
                 anchors.bottom: parent.bottom
+                anchors.bottomMargin: -parent.height/135
                 Text {
                     id: currentLabel
                     text: currentFilm
@@ -326,9 +324,11 @@ Item {
                 }
             }
             NumberAnimation { running: recipe.PathView.isCurrentItem; target: poster; property: "opacity"; to: 1; duration: 4000; easing.type: Easing.InOutQuad }
-            NumberAnimation { running: recipe.PathView.isCurrentItem; target: translucedLayer; property: "opacity"; to: 0.9; duration: 4000; easing.type: Easing.InOutQuad }
+            NumberAnimation { running: recipe.PathView.isCurrentItem; target: posterDesaturator; property: "opacity"; to: 1; duration: 1500; easing.type: Easing.InOutQuad }
+            NumberAnimation { running: recipe.PathView.isCurrentItem; target: translucedLayer; property: "opacity"; to: 0.8; duration: 4000; easing.type: Easing.InOutQuad }
             NumberAnimation { running: recipe.PathView.isCurrentItem; target: datesColumn; property: "opacity"; to: 1; duration: 2000; easing.type: Easing.OutElastic }
             PropertyAction  { running: !recipe.PathView.isCurrentItem; target: poster; property: "opacity"; value: 0 }
+            PropertyAction  { running: !recipe.PathView.isCurrentItem; target: posterDesaturator; property: "opacity"; value: 0 }
             PropertyAction  { running: !recipe.PathView.isCurrentItem; target: translucedLayer; property: "opacity"; value: 0 }
             NumberAnimation { running: !recipe.PathView.isCurrentItem; target: datesColumn; property: "opacity"; to: 0; duration: 1; easing.type: Easing.InOutQuad }
 
@@ -441,6 +441,14 @@ Item {
                     root.quitSIGNAL_QML()
                     event.accepted = true;
                 }
+            } else if (playerLayer.height === screen.height && !abortTorrent) {
+                if (event.key === Qt.Key_Escape) {
+                    abortTorrent = true
+                    event.accepted = true;
+                } else if (event.key === Qt.Key_Q && (event.modifiers & Qt.ControlModifier)) {
+                    root.quitSIGNAL_QML()
+                    event.accepted = true;
+                }
             }
         }
 
@@ -461,22 +469,6 @@ Item {
         width: screen.width
         color: "black"
 
-        Button {
-            id: abortTorrentButton
-            width: screen.width/19.2 
-            height: screen.height/43.2 
-            label: "ABORT"
-            labelColor: Qt.rgba(0.1, 0.1, 0.1, 0.5)
-            labelInColor: "white"
-            labelOutColor: Qt.rgba(0.1, 0.1, 0.1, 0.5)
-            labelBold: true
-            labelSize: screen.height/36
-            visible:  { if (playerLayer.height === screen.height && !abortTorrent) true; else false }
-            anchors.centerIn: parent
-            anchors.horizontalCenterOffset: -screen.width/10.66
-            anchors.verticalCenterOffset: screen.height/600
-            onClicked: { abortTorrent = true }
-        }
         NumberAnimation { id: hidePlayerLayer; running: false; target: playerLayer; property: "height"; to: 0; duration: 1000; easing.type: Easing.InOutQuart }
         Timer {
             id: abortTorrentResetDelay
