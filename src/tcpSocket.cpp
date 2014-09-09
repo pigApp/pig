@@ -92,4 +92,3 @@ void TcpSocket::error()
 {
     emit error_socket();
 }
-

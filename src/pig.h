@@ -59,4 +59,5 @@ private slots:
     void cleanUp();
     void error_database();
 };
+
 #endif

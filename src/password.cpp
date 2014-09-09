@@ -1,9 +1,8 @@
-#include <QFile>
-#include <QDir>
-#include <QTextStream>
-#include <QDebug>
-
 #include "password.h"
+
+#include <QTextStream>
+#include <QDir>
+#include <QFile>
 
 Password::Password(QObject *parent) : QObject(parent)
 {

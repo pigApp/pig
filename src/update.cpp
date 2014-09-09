@@ -298,4 +298,3 @@ void Update::abort()
     }
     emit forwardSIGNAL();
 }
-

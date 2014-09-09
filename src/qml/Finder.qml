@@ -9,15 +9,15 @@ Item {
         id: userInput
         color: Qt.rgba(0.1, 0.1, 0.1, 0.2)
         font.family: pigFont.name
-        font.bold: true
         font.capitalization: Font.AllUppercase
         font.pixelSize: parent.height/21.6
         maximumLength: 28
         visible: { if (buttonsFiltersColumn.opacity === 1 && !root.welcome ) true; else false }
         enabled: { if (buttonsFiltersColumn.opacity === 1) true; else false }
         anchors.left: parent.horizontalCenter
-        anchors.leftMargin: -parent.width/12.8
+        anchors.leftMargin: -parent.width/12
         anchors.verticalCenter: parent.verticalCenter
+        anchors.verticalCenterOffset: -parent.width/1700
         onAccepted: { root.input = userInput.text; root.findSIGNAL_QML(root.input, root.pornstar, root.category, root.quality, root.full, 0, true) }
         onCursorPositionChanged: { if (noResultLabel.visible) noResultLabel.visible = false; userInput.visible = true }
         Keys.onPressed: {
@@ -42,10 +42,10 @@ Item {
         text: "NO RESULT"
         color: Qt.rgba(0.1, 0.1, 0.1, 0.1)
         font.family: pigFont.name
-        font.bold: true
         font.pixelSize: parent.height/21.6
         visible: false
         anchors.centerIn: parent
+        anchors.verticalCenterOffset: -parent.width/1700
     }
 
     Column {

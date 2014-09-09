@@ -277,6 +277,7 @@ Item {
                     font.family: pigFont.name
                     font.pixelSize: screen.height/36
                     textFormat: Text.RichText
+                    opacity: { if (scenes === 1) 0.5; else 1 }
                 }
                 Text {
                     id: fullLabel
@@ -285,6 +286,7 @@ Item {
                     font.family: pigFont.name
                     font.pixelSize: screen.height/36
                     textFormat: Text.RichText
+                    opacity: { if (full === "NOT") 0.5; else 1 }
                 }
                 Row {
                     id: openSceneRow

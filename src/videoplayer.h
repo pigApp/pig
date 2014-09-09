@@ -6,7 +6,6 @@
 #include <QProgressBar>
 #include <QSlider>
 #include <QLabel>
-#include <QPushButton>
 #include <QTimer>
 #include <QKeyEvent>
 #include <QMouseEvent>
@@ -52,6 +51,7 @@ private:
     QSlider *sliderStopLoop;
     QSlider *slider;
     QProgressBar *progressBar;
+    QTimer *loadingStateDelay;
     QTimer *hideControlsDelay;
 
     bool onSandbox, buffering, skip, paused, loop;

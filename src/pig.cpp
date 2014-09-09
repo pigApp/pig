@@ -1,11 +1,8 @@
 #include "pig.h"
 
-#include <stdlib.h>
-
-#include <QLayoutItem>
+#include <QTextStream>
 #include <QDir>
 #include <QFile>
-#include <QTextStream>
 
 PIG::PIG(QWidget *parent) : QWidget(parent), mRoot(0)
 {

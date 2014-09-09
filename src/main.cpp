@@ -1,8 +1,8 @@
+#include "pig.h"
+
+#include <QQuickView>
 #include <QQuickItem>
 #include <QQmlContext>
-#include <QQuickView>
-
-#include "pig.h"
 
 int main(int argc, char *argv[])
 {
@@ -24,5 +24,3 @@ int main(int argc, char *argv[])
 
     return app.exec();
 }
-
-

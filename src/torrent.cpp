@@ -237,22 +237,22 @@ void Torrent::stop()
 
 
 
-    /*
-    for (int i=0; i < (totalPieces+1); i++) {
-        if (i < offsetPieces_file) {
-            piecePriority.push_back(0);
-        } else if (i >= offsetPieces_file && i <= lastPiece_file) {
-            if (offsetPiecesLast_file != 0 && offsetPiecesLast_file > offsetPieces_file) { 
-                if (i < offsetPiecesLast_file)
-                    piecePriority.push_back(7);
-                else
-                    piecePriority.push_back(0);
-            } else { 
+/*
+for (int i=0; i < (totalPieces+1); i++) {
+    if (i < offsetPieces_file) {
+        piecePriority.push_back(0);
+    } else if (i >= offsetPieces_file && i <= lastPiece_file) {
+        if (offsetPiecesLast_file != 0 && offsetPiecesLast_file > offsetPieces_file) {
+            if (i < offsetPiecesLast_file)
                 piecePriority.push_back(7);
-            }    
+            else
+                piecePriority.push_back(0);
         } else {
-            piecePriority.push_back(0);
+            piecePriority.push_back(7);
         }
+    } else {
+        piecePriority.push_back(0);
     }
-    offsetPiecesLast_file = offsetPieces_file;   
-    */
+}
+offsetPiecesLast_file = offsetPieces_file;
+*/

@@ -25,7 +25,12 @@ Rectangle {
         hoverEnabled: true
         onEntered: { enter = true }
         onHoveredChanged: { enter = false }
-        onClicked: { onShowPlayerLayer = true; root.torrentHandleSIGNAL_QML(magnet, scene, fit, false) }
+        onClicked: {
+            if (!onShowPlayerLayer) {
+                onShowPlayerLayer = true
+                root.torrentHandleSIGNAL_QML(magnet, scene, fit, false)
+            }
+        }
         anchors.fill: parent
     }
     onEnterChanged: {

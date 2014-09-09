@@ -133,4 +133,3 @@ Item {
         onShowErrorDatabaseSIGNAL: { loader_finder_output.source = ""; loader.source = "ErrorDb.qml"; logo.visible = false; blur.visible = false }
     }
 }
-// TODO: TimeOut's.

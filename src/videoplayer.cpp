@@ -32,7 +32,6 @@ VideoPlayer::VideoPlayer(QVideoWidget *parent) : QVideoWidget(parent)
     box->hide();
 
     pauseLabel = new QLabel();
-    pauseLabel->setAlignment(Qt::AlignLeft|Qt::AlignVCenter);
     pauseLabel->setStyleSheet("color: #181818; background: black; border: none");
     pauseLabel->setFont(font);
     pauseLabel->hide();
@@ -194,11 +193,14 @@ VideoPlayer::VideoPlayer(QVideoWidget *parent) : QVideoWidget(parent)
     connect (player, SIGNAL(mediaStatusChanged(QMediaPlayer::MediaStatus)), this, SLOT(status_change(QMediaPlayer::MediaStatus)));
     connect (player, SIGNAL(error(QMediaPlayer::Error)), this, SLOT(error(QMediaPlayer::Error)));
 
+    loadingStateDelay = new QTimer(this);
+    loadingStateDelay->setSingleShot(true);
+    loadingStateDelay->setInterval(5000);
+    connect (loadingStateDelay, SIGNAL(timeout()), this, SLOT(play_pause_stop()));
+
     hideControlsDelay = new QTimer(this);
     hideControlsDelay->setSingleShot(true);
     connect (hideControlsDelay, SIGNAL(timeout()), this, SLOT(hide_controls()));
-
-    setMouseTracking(true);
 }
 
 VideoPlayer::~VideoPlayer()
@@ -236,7 +238,7 @@ void VideoPlayer::play_pause_stop()
             pauseLabel->hide();
         } else if (player->state() == QMediaPlayer::StoppedState) {
             if (update_msec == 0) {
-                player->setPosition(qint64(0));
+                player->setPosition(0);
                 player->play();
             } else {
                 slider->setEnabled(true);
@@ -569,6 +571,7 @@ void VideoPlayer::slider_released()
     }
     skip_key_value = 0;
     buffering = false;
+    this->setFocus();
 }
 
 void VideoPlayer::progress(qint64 total_kb=0, qint64 downloaded_kb=0, int downloadedSkip_mb=0)
@@ -712,6 +715,7 @@ void VideoPlayer::mousePressEvent(QMouseEvent *event)
         show_controls();
         if (!buffering)
             hideControlsDelay->start();
+        this->setFocus();
         event->accept();
     }
 }
@@ -719,12 +723,13 @@ void VideoPlayer::mousePressEvent(QMouseEvent *event)
 void VideoPlayer::status_change(QMediaPlayer::MediaStatus status)
 {
     qDebug() << "-- STATUS: " << status;
-    //if (status == QMediaPlayer::LoadingMedia) {
-        //if (onSandbox)
-            // TODO: Que se fije si quedo colgado en este estado y llame a play_pause_stop
-    //}
-    if (status == QMediaPlayer::BufferedMedia) { // TODO: Puede que este en Buffered y despues de error.
+
+    if (status == QMediaPlayer::LoadingMedia) {
+        if (onSandbox)
+            loadingStateDelay->start();
+    } else if (status == QMediaPlayer::BufferedMedia) {
         if (onSandbox) {
+            loadingStateDelay->stop();
             onSandbox = false;
             slider->setEnabled(true);
             QMetaObject::invokeMethod (_pig, "player_handle", Qt::QueuedConnection, Q_ARG(QString, ""), Q_ARG(bool, false), Q_ARG(bool, false), Q_ARG(bool, true), Q_ARG(bool, false));
@@ -745,6 +750,7 @@ void VideoPlayer::status_change(QMediaPlayer::MediaStatus status)
         }
     } else if (status == QMediaPlayer::UnknownMediaStatus || status == QMediaPlayer::NoMedia || status == QMediaPlayer::InvalidMedia || status == QMediaPlayer::EndOfMedia) {
         if (update_msec == 0) {
+            loadingStateDelay->stop();
             QTimer::singleShot(5000, this, SLOT(play_pause_stop()));
         } else {
             skip = true;

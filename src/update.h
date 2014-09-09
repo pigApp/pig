@@ -4,8 +4,8 @@
 #include "tcpSocket.h"
 
 #include <QObject>
-#include <QProcess>
 #include <QtSql>
+#include <QProcess>
 
 class Update : public QObject
 {
