@@ -23,16 +23,15 @@ Item {
     Text {
         id: networkErrorLabel
         text: "NETWORK ERROR"
-        color: Qt.rgba(0.1, 0.1, 0.1, 0.2)
+        color: "black"
         font.family: pigFont.name
         font.bold: true
-        font.pixelSize: parent.height/36
+        font.pixelSize: parent.height/23
         visible: { root.networkError }
-        anchors.horizontalCenter: parent.horizontalCenter
-        anchors.horizontalCenterOffset: parent.width/384
-        anchors.verticalCenter: parent.verticalCenter
-        anchors.verticalCenterOffset: parent.height/8
-        onVisibleChanged: { 
+        anchors.horizontalCenter: networkIcon.horizontalCenter
+        anchors.top: networkIcon.bottom
+        anchors.topMargin: -parent.height/14.42
+        onVisibleChanged: {
             if (root.networkError) {
                 networkIcon.source = "qrc:/images/pig/networkError.png"
                 backDelay.start()

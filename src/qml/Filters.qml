@@ -2,9 +2,11 @@ import QtQuick 2.2
 
 Rectangle {
     id: filters
-    color: "transparent"
+    x: xFilters
+    width: screen.width
+    height: screen.height
+    color: "black"
     z: 1
-    anchors.fill: parent
 
     Flickable {
         id: flickAreaFilters
@@ -15,19 +17,19 @@ Rectangle {
         anchors.fill: parent
         Grid {
             id: filtersGrid
-            spacing: parent.width/384
+            spacing: 0
             Repeater {
                 id: categoryRows
                 model: categoryList[0]
                 delegate: ButtonFilter {
                     width: filters.width/4
-                    labelText: categoryList[index+1]
-                    nLabelText: { if (nCategoryList[index] !== '0') nCategoryList[index]; else '' }
+                    labelText: { if (numberCategoryList[index] !== '0') categoryList[index+1]+"∙"; else categoryList[index+1] }
+                    numberLabelText: { if (numberCategoryList[index] !== '0') numberCategoryList[index]; else '' }
                     pornStarsVisible: false
                     visible: { if (enableFilter === 'CATEGORY' ) true; else false }
                     enabled: { if (enableFilter === 'CATEGORY' ) true; else false }
                     onClicked: { 
-                        if (nCategoryList[index] !== '0')
+                        if (numberCategoryList[index] !== '0')
                             filtersManager('categoryFilter', labelText)
                     }
                 }
@@ -44,7 +46,7 @@ Rectangle {
                             "qrc:/images/available/pornstarNotAvailable.png"
                     }
                     labelText: pornstarList[index+1]
-                    nLabelText: ''
+                    numberLabelText: ''
                     pornStarsVisible: true
                     visible: { if (enableFilter === 'PORNSTAR') true; else false }
                     enabled: { if (enableFilter === 'PORNSTAR') true; else false }

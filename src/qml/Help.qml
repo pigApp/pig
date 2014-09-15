@@ -4,57 +4,39 @@ Item {
     id: help
 
     Rectangle {
-      id: backgroundLayer
-      color: Qt.rgba(0.5, 0.5, 0.5, 0.7)
-      anchors.fill: parent
-    }
-
-    Rectangle {
         id: pigLayer
-        width: parent.width/4.10
-        color: Qt.rgba(0, 0, 0, 0.5)
+        width: parent.width/4
+        color: "black"
         anchors.top: parent.top
-        anchors.topMargin: parent.height/108
         anchors.left: parent.left
-        anchors.leftMargin: parent.width/192
         anchors.bottom: parent.bottom
-        anchors.bottomMargin: parent.height/108
         Column {
-            x: parent.width/25
-            y: parent.height/43
+            anchors.left: parent.left
+            anchors.leftMargin: parent.width/12
+            anchors.top: parent.top
+            anchors.topMargin: parent.height/43
             spacing: parent.height/216
             Text {
-                text: "PIG "+binaryVersion+"."+release+" DATABASE "+databaseVersion
+                text: "PIG "+binaryVersion+"."+release+" DATABASE "+databaseVersion+"<br/>"
                 color: "white"
                 font.family: pigFont.name
-                font.bold: true
-                font.pixelSize: screen.height/36
+                font.pixelSize: screen.height/23
             }
-            Text {
-                text: "Is Free Software and free. Made by users for users.<br/>"
-                color: "white"
-                font.family: pigFont.name
-                font.bold: true
-                font.italic: true
-                font.pixelSize: screen.height/54
-            }
-
             Text {
                 text: "COLLABORATE"
                 color: "white"
                 font.family: pigFont.name
-                font.bold: true
-                font.pixelSize: screen.height/36
+                font.pixelSize: screen.height/23
             }
             Text {
-                text: "<style type='text/css'> a:link{color:#757575;font-style:normal;text-decoration:none} </style>"+
+                text: "<style type='text/css'> a:link{color:#1a1a1a;font-style:normal;text-decoration:none} </style>"+
                       "BUGS &nbsp; <a href=\'http://google.com\'>GITHUB.COM/PIGAPP/BUGS <font color='#ffffff'>➟<font/></a><br/>"+
                       "CODE &nbsp; <a href=\'http://google.com\'>GITHUB.COM/PIGAPP <font color='#ffffff'>➟<font/></a><br/>"+
                       "TORRENTS &nbsp; <a href=\'http://clarin.com\'>GITHUB.COM/PIGAPP/TORRENT <font color='#ffffff'>➟<font/></a><br/>"+
                       "TRANSLATIONS &nbsp; <a href=\'http://google.com\'>GITHUB.COM/PIGAPP/TRANSLATE <font color='#ffffff'>➟<font/></a><br/>"+
-                      "BTC &nbsp; <font color='#757575'>1LtU9rMsQ41rCqsJAvMtw89TA5XT2dW7f9</font><br/>"+
+                      "BTC &nbsp; <font color='#1a1a1a'>1LtU9rMsQ41rCqsJAvMtw89TA5XT2dW7f9</font><br/>"+
                       "SHARE &nbsp; <a href=\'http://google.com\'>PIG.NET <font color='#ffffff'>➟<font/></a><br/>"+
-                      "CONTACT &nbsp; <font color='#757575'>PIG@MAIL.COM</font><br/><br/>"
+                      "CONTACT &nbsp; <font color='#1a1a1a'>PIG@MAIL.COM</font><br/><br/>"
                 color: "white"
                 font.family: pigFont.name
                 font.bold: true
@@ -62,16 +44,15 @@ Item {
                 textFormat: Text.RichText
                 onLinkActivated: Qt.openUrlExternally(link)
             }
-
             Text {
                 text: "LICENSE"
                 color: "white"
                 font.family: pigFont.name
-                font.bold: true
-                font.pixelSize: screen.height/36
+                font.pixelSize: screen.height/23
             }
             Text {
-                text: "GPL 2.0"
+                text: "PIG Is Free Software and free. Made by users for users.<br/><br/>"+
+                      "GPL 2.0"
                 color: "white"
                 font.family: pigFont.name
                 font.bold: true
@@ -79,10 +60,10 @@ Item {
                 font.pixelSize: screen.height/54
             }
             Text {
-                text: "<font color='#757575'>This program is distributed in the hope that it will be useful</font><br/>"+
-                      "<font color='#757575'>but WITHOUT ANY WARRANTY; without even the implied warranty of</font><br/>"+
-                      "<font color='#757575'>MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.</font><br/>"+
-                      "<font color='#757575'>See the GNU General Public License for more details.</font>"
+                text: "<font color='#1a1a1a'>This program is distributed in the hope that it will be useful</font><br/>"+
+                      "<font color='#1a1a1a'>but WITHOUT ANY WARRANTY; without even the implied warranty of</font><br/>"+
+                      "<font color='#1a1a1a'>MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.</font><br/>"+
+                      "<font color='#1a1a1a'>See the GNU General Public License for more details.</font>"
                 font.family: pigFont.name
                 font.bold: true
                 font.italic: true
@@ -92,82 +73,66 @@ Item {
     }
     Rectangle {
         id: shortcutsLayer
-        width: parent.width/4.10
-        color: Qt.rgba(0, 0, 0, 0.5)
+        width: parent.width/4
+        color: "black"
         anchors.top: parent.top
-        anchors.topMargin: parent.height/108
         anchors.left: pigLayer.right
-        anchors.leftMargin: parent.width/192
         anchors.bottom: parent.bottom
-        anchors.bottomMargin: parent.height/108
         Column {
-            x: parent.width/25
-            y: parent.height/43
+            anchors.left: parent.left
+            anchors.leftMargin: parent.width/5.3
+            anchors.top: parent.top
+            anchors.topMargin: parent.height/43
             spacing: parent.height/216
             Text {
-                text: "SHORTCUTS"
+                text: "SHORTCUTS<br/>"
                 color: "white"
                 font.family: pigFont.name
-                font.bold: true
-                font.pixelSize: screen.height/36
+                font.pixelSize: screen.height/23
             }
-            Text {
-                text: "PIG is handled mostly with the keyboard.<br/>" 
-                color: "white"
-                font.family: pigFont.name
-                font.bold: true
-                font.italic: true
-                font.pixelSize: screen.height/54
-            }
-
             Text {
                 text: "GENERAL"
                 color: "white"
                 font.family: pigFont.name
-                font.bold: true
-                font.pixelSize: screen.height/36
+                font.pixelSize: screen.height/23
             }
             Text {
-                text: "ESC &nbsp; <font color='#757575'>BACK</font><br/>"+
-                      "CTRL H &nbsp; <font color='#757575'>HELP</font><br/>"+
-                      "CTRL P &nbsp; <font color='#757575'>PASSWORD</font><br/>"+
-                      "CTRL Q &nbsp; <font color='#757575'>CLOSE</font><br/>"+
-                      "ALT TAB &nbsp; <font color='#757575'>PIG DESKTOP</font><br/>"
+                text: "ESC &nbsp; <font color='#1a1a1a'>BACK</font><br/>"+
+                      "CTRL H &nbsp; <font color='#1a1a1a'>HELP</font><br/>"+
+                      "CTRL P &nbsp; <font color='#1a1a1a'>PASSWORD</font><br/>"+
+                      "CTRL Q &nbsp; <font color='#1a1a1a'>CLOSE</font><br/>"+
+                      "ALT TAB &nbsp; <font color='#1a1a1a'>PIG DESKTOP</font><br/>"
                 color: "white"
                 font.family: pigFont.name
                 font.bold: true
                 font.pixelSize: screen.height/54
             }
-
             Text {
                 text: "FINDER"
                 color: "white"
                 font.family: pigFont.name
-                font.bold: true
-                font.pixelSize: screen.height/36
+                font.pixelSize: screen.height/23
             }
             Text {
-                text: "INTRO &nbsp; <font color='#757575'>FIND</font><br/>"+
-                      "UP DOWN &nbsp; <font color='#757575'>OFFSET FIVE MOVIES</font><br/>"+
-                      "LEFT RIGHT &nbsp; <font color='#757575'>CHANGE MOVIE</font><br/>"
+                text: "INTRO &nbsp; <font color='#1a1a1a'>FIND</font><br/>"+
+                      "UP DOWN &nbsp; <font color='#1a1a1a'>OFFSET FIVE MOVIES</font><br/>"+
+                      "LEFT RIGHT &nbsp; <font color='#1a1a1a'>CHANGE MOVIE</font><br/>"
                 color: "white"
                 font.family: pigFont.name
                 font.bold: true
                 font.pixelSize: screen.height/54
             }
-
             Text {
                 text: "PLAYER"
                 color: "white"
                 font.family: pigFont.name
-                font.bold: true
-                font.pixelSize: screen.height/36
+                font.pixelSize: screen.height/23
             }
             Text {
-                text: "SPACE &nbsp; <font color='#757575'>PAUSE</font><br/>"+
-                      "CTRL L &nbsp; <font color='#757575'>LOOP</font><br/>"+
-                      "UP DOWN &nbsp; <font color='#757575'>VOLUME</font><br/>"+
-                      "LEFT RIGHT &nbsp; <font color='#757575'>OFFSET</font>"
+                text: "SPACE &nbsp; <font color='#1a1a1a'>PAUSE</font><br/>"+
+                      "CTRL L &nbsp; <font color='#1a1a1a'>LOOP</font><br/>"+
+                      "UP DOWN &nbsp; <font color='#1a1a1a'>VOLUME</font><br/>"+
+                      "LEFT RIGHT &nbsp; <font color='#1a1a1a'>OFFSET</font>"
                 color: "white"
                 font.family: pigFont.name
                 font.bold: true
@@ -177,39 +142,28 @@ Item {
     }
     Rectangle {
         id: recomendationsLayer
-        width: parent.width/4.10
-        color: Qt.rgba(0, 0, 0, 0.5)
+        width: parent.width/4
+        color: "black"
         anchors.top: parent.top
-        anchors.topMargin: parent.height/108
         anchors.left: shortcutsLayer.right
-        anchors.leftMargin: parent.width/192
         anchors.bottom: parent.bottom
-        anchors.bottomMargin: parent.height/108
         Column {
-            x: parent.width/25
-            y: parent.height/43
+            anchors.left: parent.left
+            anchors.leftMargin: parent.width/25
+            anchors.top: parent.top
+            anchors.topMargin: parent.height/43
             spacing: parent.height/216
             Text {
-                text: "RECOMENDATIONS"
+                text: "RECOMENDATIONS<br/>"
                 color: "white"
                 font.family: pigFont.name
-                font.bold: true
-                font.pixelSize: screen.height/36
-            }
-            Text {
-                text: "Recommendations and misc.<br/>"
-                color: "white"
-                font.family: pigFont.name
-                font.bold: true
-                font.italic: true
-                font.pixelSize: screen.height/54
+                font.pixelSize: screen.height/23
             }
             Text {
                 text: "UPDATES"
                 color: "white"
                 font.family: pigFont.name
-                font.bold: true
-                font.pixelSize: screen.height/36
+                font.pixelSize: screen.height/23
             }
             Text {
                 text: "Accept them. Are fast and mostly of the<br/>"+
@@ -224,13 +178,12 @@ Item {
                 text: "RESOLUTIONS"
                 color: "white"
                 font.family: pigFont.name
-                font.bold: true
-                font.pixelSize: screen.height/36
+                font.pixelSize: screen.height/23
             }
             Text {
-                text: "⍿ &nbsp; <font color='#757575'>1920X1080</font><br/>"+
-                      "⍿ &nbsp; <font color='#757575'>1440X975</font><br/>"+
-                      "⍿ &nbsp; <font color='#757575'>1280X720</font><br/>"
+                text: "⍿ &nbsp; <font color='#1a1a1a'>1920X1080</font><br/>"+
+                      "⍿ &nbsp; <font color='#1a1a1a'>1440X975</font><br/>"+
+                      "⍿ &nbsp; <font color='#1a1a1a'>1280X720</font><br/>"
                 color: "white"
                 font.family: pigFont.name
                 font.bold: true
@@ -240,8 +193,7 @@ Item {
                 text: "TRACKING"
                 color: "white"
                 font.family: pigFont.name
-                font.bold: true
-                font.pixelSize: screen.height/36
+                font.pixelSize: screen.height/23
             }
             Text {
                 text: "Those who create this software agree not to<br/>"+
@@ -259,8 +211,7 @@ Item {
                 text: "TAKE PART"
                 color: "white"
                 font.family: pigFont.name
-                font.bold: true
-                font.pixelSize: screen.height/36
+                font.pixelSize: screen.height/23
             }
             Text {
                 text: "If you use this software, consider collaborate.<br/>"+
@@ -275,45 +226,34 @@ Item {
     }
     Rectangle {
         id: troubleshootingLayer
-        width: parent.width/4.10
-        color: Qt.rgba(0, 0, 0, 0.5)
+        width: parent.width/4
+        color: "black"
         anchors.top: parent.top
-        anchors.topMargin: parent.height/108
         anchors.left: recomendationsLayer.right
-        anchors.leftMargin: parent.width/192
         anchors.bottom: parent.bottom
-        anchors.bottomMargin: parent.height/108
         Column {
-            x: parent.width/25
-            y: parent.height/43
+            anchors.left: parent.left
+            anchors.leftMargin: parent.width/12
+            anchors.top: parent.top
+            anchors.topMargin: parent.height/43
             spacing: parent.height/216
             Text {
-                text: "TROUBLESHOOTING"
+                text: "TROUBLESHOOTING<br/>"
                 color: "white"
                 font.family: pigFont.name
-                font.bold: true
-                font.pixelSize: screen.height/36
-            }
-            Text {
-                text: "Common failures.<br/>"
-                color: "white"
-                font.family: pigFont.name
-                font.bold: true
-                font.italic: true
-                font.pixelSize: screen.height/54
+                font.pixelSize: screen.height/23
             }
             Text {
                 text: "BITTORRENT"
                 color: "white"
                 font.family: pigFont.name
-                font.bold: true
-                font.pixelSize: screen.height/36
+                font.pixelSize: screen.height/23
             }
             Text {
-                text: "<style type='text/css'> a:link{color:#757575;font-style:normal;text-decoration:none} </style>"+
-                      "<font color='#757575'>The movies are not downloaded</font><br/>"+
-                      "You probably have blocked the port used<br/>"+
-                      "by BitTorrent in your firewall or your ISP.<br/>"+
+                text: "<style type='text/css'> a:link{color:#1a1a1a;font-style:normal;text-decoration:none} </style>"+
+                      "<font color='#1a1a1a'>The movies are not downloaded</font><br/>"+
+                      "You probably have blocked the ports used<br/>"+
+                      "by BitTorrent in your firewall or ISP.<br/>"+
                       "Read more &nbsp;<a href=\'http://google.com\'>Here <font color='#ffffff'>➟<font/></a><br/><br/>"
                 color: "white"
                 font.family: pigFont.name
@@ -327,12 +267,11 @@ Item {
                 text: "CODECS"
                 color: "white"
                 font.family: pigFont.name
-                font.bold: true
-                font.pixelSize: screen.height/36
+                font.pixelSize: screen.height/23
             }
             Text {
-                text: "<style type='text/css'> a:link{color:#757575;font-style:normal;text-decoration:none} </style>"+
-                      "<font color='#757575'>The movies do not play</font><br/>"+
+                text: "<style type='text/css'> a:link{color:#1a1a1a;font-style:normal;text-decoration:none} </style>"+
+                      "<font color='#1a1a1a'>The movies do not play</font><br/>"+
                       "You probably do not have installed<br/>"+
                       "the necessary video codecs.<br/>"+
                       "Read more &nbsp;<a href=\'http://google.com\'>Here <font color='#ffffff'>➟<font/></a><br/><br/>"

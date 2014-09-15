@@ -20,9 +20,7 @@ Rectangle {
         font.family: pigFont.name
         font.bold: false
         font.pixelSize: labelSize
-        horizontalAlignment: Text.AlignLeft
-        verticalAlignment: Text.AlignVCenter
-        anchors.fill: parent
+        anchors.verticalCenter: parent.verticalCenter
         ColorAnimation on color { id: inColor; running: false; to: labelInColor; duration: 200 }
         ColorAnimation on color { id: outColor; running: false; to: labelOutColor; duration: 300 }
     }

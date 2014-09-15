@@ -3,6 +3,7 @@ import QtQuick 2.2
 Item {
     id: news
 
+
     Rectangle {
       id: backgroundLayer
       color: Qt.rgba(0.5, 0.5, 0.5, 0.7)
@@ -11,9 +12,9 @@ Item {
 
     Rectangle {
         id: layer
-        width: parent.width/3.85
+        width: parent.width/4
         height: parent.height
-        color: Qt.rgba(0, 0, 0, 0.5)
+        color: "black"
         anchors.centerIn: parent
         Flickable {
             id: flickAreaNews
@@ -24,21 +25,23 @@ Item {
             anchors.fill: parent
             Column {
                 id: newsColumn
-                x: parent.width/10
-                y: parent.height/6
-                spacing: parent.height/540
+                anchors.left: parent.left
+                anchors.leftMargin: parent.width/12
+                anchors.top: parent.top
+                anchors.topMargin: parent.height/43
+                spacing: parent.height/216
                 Text {
                     id: binary
                     text: "NEWS PIG "+binaryVersion+"."+release
                     color: "white"
                     font.family: pigFont.name
-                    font.bold: true
-                    font.pixelSize: screen.height/36
+                    font.pixelSize: screen.height/23
                 }
                 Text {
                     text: binaryNews
                     color: "white"
                     font.family: pigFont.name
+                    font.bold: true
                     font.pixelSize: screen.height/54
                 }
                 Text {
@@ -46,31 +49,30 @@ Item {
                     text: "NEWS DATABASE "+databaseVersion
                     color: "white"
                     font.family: pigFont.name
-                    font.bold: true
-                    font.pixelSize: screen.height/36
+                    font.pixelSize: screen.height/23
                 }
                 Text {
                     text: databaseNews
                     color: "white"
                     font.family: pigFont.name
+                    font.bold: true
                     font.pixelSize: screen.height/54
                 }
             }
         }
         Button {
-            id: ok
-            width: parent.width/13.4
-            height: parent.height/54
-            label: "OK"
+            id: close
+            width: parent.width/22.85
+            height: parent.height/34.2
+            label: "X"
             labelColor: "white"
-            labelBold: true
-            labelSize: parent.height/36
-            labelInColor: "white"
+            labelSize: screen.height/23
+            labelInColor: Qt.rgba(0.1, 0.1, 0.1, 1)
             labelOutColor: "white"
             anchors.right: parent.right
-            anchors.rightMargin: parent.width/24.8
-            anchors.bottom: parent.bottom
-            anchors.bottomMargin: parent.height/133
+            anchors.rightMargin: parent.width/13.71
+            anchors.top: parent.top
+            anchors.topMargin: parent.height/47.57
             onClicked: {
                 root.news = false
                 loader.source = ""

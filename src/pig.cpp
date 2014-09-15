@@ -127,7 +127,7 @@ void PIG::start()
             const int currentBinaryVersion = qry.value(1).toInt();
             const int currentRelease = qry.value(2).toInt();
             QStringList categoryList = qry.value(3).toString().split(",");
-            const QStringList nCategoryList = qry.value(4).toString().split(",");
+            const QStringList numberCategoryList = qry.value(4).toString().split(",");
             QStringList pornstarList = qry.value(5).toString().split(",");
             const QStringList nPornstarList = qry.value(6).toString().split(",");
             db.close();
@@ -143,7 +143,7 @@ void PIG::start()
             mRoot->setProperty("binaryVersion", strCurrentBinaryVersion);
             mRoot->setProperty("release", strCurrentRelease);
             mRoot->setProperty("categoryList", categoryList);
-            mRoot->setProperty("nCategoryList", nCategoryList);
+            mRoot->setProperty("numberCategoryList", numberCategoryList);
             mRoot->setProperty("pornstarList", pornstarList);
             mRoot->setProperty("nPornstarList", nPornstarList);
 

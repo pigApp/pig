@@ -264,7 +264,7 @@ void Update::replace_binary_ready(int exitCode)
     } else {
         _root->setProperty("status", "UPDATE FAILED");
         _root->setProperty("information", "TRY LATER");
-        QTimer::singleShot(3000, this, SLOT(abort())); 
+        QTimer::singleShot(3000, this, SLOT(abort()));
     }
 #endif
 }

@@ -6,30 +6,31 @@ Item {
     Rectangle {
         id: layer
         width: parent.width
-        height: parent.height/5.4
+        height: parent.height/3.5
         color: "black"
         anchors.centerIn: parent
         Column {
             id: errorColumn
-            spacing: parent.width/192
+            spacing: parent.height/216
             anchors.centerIn: parent
             Text {
                 id: errorInformationLabel
-                text: "DATABASE IS CORRUPTED OR NOT EXIST"
+                text: "DATABASE IS CORRUPTED"
                 color: "white"
                 font.family: pigFont.name
-                font.bold: true
-                font.pixelSize: screen.height/36
-                horizontalAlignment: Text.AlignHCenter
+                font.pixelSize: screen.height/23
             }
             Text {
                 id: getDbInformationLabel
-                text: "GET LATEST DATABASE FROM https://sourceforge/pigApp/db" // TODO: Url real db.
+                text:"<style type='text/css'> a:link{color:#1a1a1a;font-style:normal;text-decoration:none} </style>"+
+                     "GET LATEST DATABASE &nbsp;<a href=\'http://google.com\'>DL.BINTRAY.COM/DB <font color='#ffffff'>➟<font/></a>" // TODO: Url real db.
                 color: Qt.rgba(0.1, 0.1, 0.1, 1)
                 font.family: pigFont.name
                 font.bold: true
                 font.pixelSize: screen.height/54
-                horizontalAlignment: Text.AlignHCenter
+                textFormat: Text.RichText
+                onLinkActivated: Qt.openUrlExternally(link)
+                anchors.horizontalCenter: errorInformationLabel.horizontalCenter
             }
         }
     }

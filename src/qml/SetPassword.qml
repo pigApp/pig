@@ -6,20 +6,15 @@ Item {
     Rectangle {
         id: layer
         width: parent.width
-        height: parent.height/30.85
-        color: Qt.rgba(0, 0, 0, 0.5)
-        radius: 2
+        height: parent.height/3.5
+        color: "black"
         anchors.centerIn: parent
         Text {
             id: label
-            text: "NEW PASSWORD"
-            anchors.left: parent.left
-            anchors.leftMargin: 0
+            text: "INTRO PASSWORD"
             color: "white"
             font.family: pigFont.name
-            font.bold: true
-            font.pixelSize: screen.height/36
-            horizontalAlignment: Text.AlignHCenter
+            font.pixelSize: screen.height/23
             anchors.centerIn: parent
         }
         TextInput {
@@ -30,7 +25,6 @@ Item {
             maximumLength: 16
             echoMode: TextInput.Password
             visible: false
-            horizontalAlignment: Text.AlignHCenter
             anchors.centerIn: parent
             anchors.verticalCenterOffset: -screen.height/720
             onCursorPositionChanged: { label.text = ""; input.visible = true }

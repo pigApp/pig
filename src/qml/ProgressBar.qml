@@ -2,7 +2,7 @@ import QtQuick 2.2
 
 Item {
     id: progressBar
-    width: screen.width/7.68 
+    width: screen.width-((screen.width/4)*2)
     height: screen.height/108
     clip: true
 
@@ -13,14 +13,13 @@ Item {
 
     Rectangle {
         id: border
-        width: screen.width/7.68
-        height: screen.height/540 
+        width: progressBar.width
+        height: screen.height/540
         color: "transparent"
         border.width: 1
-        border.color: "white"
+        border.color: Qt.rgba(0.1, 0.1, 0.1, 1)
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.verticalCenter: parent.verticalCenter
-        anchors.verticalCenterOffset: screen.height/540
     }
     Rectangle {
         id: highlight
@@ -29,8 +28,7 @@ Item {
         property int widthDest: ((progressBar.width * (value-minimum))/(maximum-minimum)-4)
         width: highlight.widthDest
         Behavior on width { SmoothedAnimation { velocity: 1200 } }
-        anchors.left: parent.left
+        anchors.horizontalCenter: parent.horizontalCenter
         anchors.verticalCenter: parent.verticalCenter
-        anchors.verticalCenterOffset: screen.height/540
     }
 }

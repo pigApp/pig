@@ -19,13 +19,14 @@ VideoPlayer::VideoPlayer(QVideoWidget *parent) : QVideoWidget(parent)
     screenWidth = rec.width();
     screenHeight = rec.height();
 
-    QFont font(":/images/font/pig.ttf", screenHeight/72);
+    QFont font(":/images/font/pig.ttf", screenHeight/46.95);
+    font.setBold(false);
 
     QVBoxLayout *boxLayout = new QVBoxLayout;
     boxLayout->setAlignment(Qt::AlignHCenter|Qt::AlignVCenter);
     boxLayout->setSpacing(screenHeight/108);
     box = new QWidget();
-    box->setGeometry(screenWidth-(screenWidth/14.77), (screenHeight/2)-(screenHeight/12), screenWidth/14.76, screenHeight/6);
+    box->setGeometry(screenWidth-(screenWidth/8.34), (screenHeight/2)-(screenHeight/7.2), screenWidth/8.31, screenHeight/3.6);
     box->setStyleSheet("background: black; border: none");
     box->setLayout(boxLayout);
     box->setParent(this);
@@ -54,7 +55,7 @@ VideoPlayer::VideoPlayer(QVideoWidget *parent) : QVideoWidget(parent)
     bufferLayout->addWidget(witnessBufferLabel);
 
     skipBar = new QProgressBar();
-    skipBar->setFixedWidth(screenWidth/21.33);
+    skipBar->setFixedWidth(screenWidth/13.71);
     skipBar->setFixedHeight(3);
     skipBar->setStyleSheet (
                  "QProgressBar { background: #181818; border: none }"
@@ -288,7 +289,7 @@ void VideoPlayer::set_loop()
             slider->hide();
             pauseLabel->hide();
             player->pause();
-            box->setGeometry(screenWidth-(screenWidth/14.77), (screenHeight/2)-(screenHeight/9.8), screenWidth/14.76, screenHeight/4.9);
+            box->setGeometry(screenWidth-(screenWidth/8.34), (screenHeight/2)-(screenHeight/6), screenWidth/8.31, screenHeight/3);
             sliderStartLoop->setGeometry(0, screenHeight-23, screenWidth, 5);
             sliderStartLoop->setMaximum(player->duration());
             sliderStartLoop->setValue(0);
@@ -314,7 +315,7 @@ void VideoPlayer::set_loop()
             stopLoopTimeLabel->hide();
             sliderStartLoop->hide();
             sliderStopLoop->hide();
-            box->setGeometry(screenWidth-(screenWidth/14.77), (screenHeight/2)-(screenHeight/12), screenWidth/14.76, screenHeight/6);
+            box->setGeometry(screenWidth-(screenWidth/8.34), (screenHeight/2)-(screenHeight/7.2), screenWidth/8.31, screenHeight/3.6);
             player->play();
         }
     }

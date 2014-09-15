@@ -3,18 +3,18 @@ import QtGraphicalEffects 1.0
 
 Rectangle {
     id: buttonFilter
-    height: screen.height/5.4
-    color: Qt.rgba(0, 0, 0, 0.03)
+    height: screen.height/4//5.4 // TODO: Revisar esto.
+    color: "black"
     radius: 2
 
-    ColorAnimation on color { to: Qt.rgba(0, 0, 0, 0.5); duration: 400 }
+    ColorAnimation on color { to: "black" }
     ColorAnimation on color { id: inColor; running: false; to: "white"; duration: 200 }
-    ColorAnimation on color { id: outColor; running: false; to: Qt.rgba(0, 0, 0, 0.5); duration: 200 }
+    ColorAnimation on color { id: outColor; running: false; to: "black"; duration: 200 }
 
     property bool enter
     property bool pornStarsVisible
     property alias labelText: label.text
-    property alias nLabelText: nLabel.text
+    property alias numberLabelText: numberLabel.text
     property alias sourceImage: starPic.source
 
     signal clicked()
@@ -39,31 +39,31 @@ Rectangle {
     }
 
     Text {
-        id: nLabel
-        color: Qt.rgba(0.1, 0.1, 0.1, 0.6)
+        id: numberLabel
+        color: "black"
         font.family: pigFont.name
-        font.pixelSize: screen.height/21.6
+        font.pixelSize: screen.height/21.5
         visible: false
         opacity: 0
-        anchors.centerIn: parent
-        anchors.verticalCenterOffset: screen.height/19.63
+        anchors.left: label.right
+        anchors.verticalCenter: parent.verticalCenter
+        anchors.verticalCenterOffset: -screen.height/3600
     }
     Text {
         id: label
         color: "white"
         font.family: pigFont.name
         font.capitalization: Font.AllUppercase
-        font.pixelSize: screen.height/21.6
-        visible: false
+        font.pixelSize: screen.height/23
         anchors.centerIn: parent
-        ColorAnimation on color { id: inLabelColor; running: false; to: Qt.rgba(0.1, 0.1, 0.1, 0.6); duration: 200 }
+        ColorAnimation on color { id: inLabelColor; running: false; to: "black"; duration: 200 }
         ColorAnimation on color { id: outLabelColor; running: false; to: "white"; duration: 200 }
     }
     MouseArea {
         id: mousearea
         hoverEnabled: true
-        onEntered: { if (!labelDelay.running) enter = true }
-        onHoveredChanged: { if (!labelDelay.running) enter = false }
+        onEntered: { enter = true }
+        onHoveredChanged: { enter = false }
         onClicked: { buttonFilter.clicked() }
         anchors.fill: parent
     }
@@ -102,28 +102,22 @@ Rectangle {
             }
         }
     }
-    Timer {
-        id: labelDelay
-        running: false
-        repeat: false
-        interval: 450
-        onTriggered: {
-            label.visible = true
-            if (pornStarsVisible)
-                nLabel.visible = false
-            else
-                nLabel.visible = true
-        }
-    }
+
     NumberAnimation { id: inStarPic; target: starPic; properties: "opacity"; to: 1; duration: 1000; easing.type: Easing.InOutQuart }
     NumberAnimation { id: inLabel; target: label; properties: "opacity"; to: 0; duration: 200; easing.type: Easing.InOutQuart }
-    NumberAnimation { id: inNLabel; target: nLabel; properties: "opacity"; to: 1; duration: 200; easing.type: Easing.InOutQuart }
+    NumberAnimation { id: inNLabel; target: numberLabel; properties: "opacity"; to: 1; duration: 200; easing.type: Easing.InOutQuart }
     NumberAnimation { id: inEffect; target: effect; properties: "opacity"; to: 1; duration: 200; easing.type: Easing.InOutQuart }
     NumberAnimation { id: outStarPic; target: starPic; properties: "opacity"; to: 0; duration: 100; easing.type: Easing.InOutQuart }
     NumberAnimation { id: outLabel; target: label; properties: "opacity"; to: 1; duration: 200; easing.type: Easing.InOutQuart }
-    NumberAnimation { id: outNLabel; target: nLabel; properties: "opacity"; to: 0; duration: 200; easing.type: Easing.InOutQuart }
+    NumberAnimation { id: outNLabel; target: numberLabel; properties: "opacity"; to: 0; duration: 200; easing.type: Easing.InOutQuart }
     NumberAnimation { id: outEffect; target: effect; properties: "opacity"; to: 0; duration: 200; easing.type: Easing.InOutQuart }
 
-    Component.onCompleted: { labelDelay.start(); buttonFilter.forceActiveFocus() }
+    Component.onCompleted: {
+        buttonFilter.forceActiveFocus()
+        if (pornStarsVisible)
+            numberLabel.visible = false
+        else
+            numberLabel.visible = true
+    }
 }
 // Espacios hechos.

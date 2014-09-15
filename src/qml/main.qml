@@ -36,7 +36,7 @@ Item {
     property int downloaded: 0
 
     property variant categoryList
-    property variant nCategoryList
+    property variant numberCategoryList
     property variant pornstarList
     property variant nPornstarList
     property variant list

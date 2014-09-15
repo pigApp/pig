@@ -24,7 +24,7 @@ void TcpSocket::doConnect()
     timeOut = new QTimer(this);
     timeOut->setSingleShot(true);
     connect (timeOut, SIGNAL(timeout()), this, SLOT(error()));
-    timeOut->start(15000);
+    timeOut->start(25000);
 }
 
 void TcpSocket::connected()

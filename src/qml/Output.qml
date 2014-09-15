@@ -68,6 +68,8 @@ Item {
                 source: urlPoster
                 sourceSize.width: 1920
                 sourceSize.height: 1080
+                anchors.horizontalCenter: parent.horizontalCenter
+                anchors.top: parent.top
                 onStatusChanged: { 
                     if (poster.source == list[5] && poster.status == Image.Ready) {
                         posterLoaded = true
@@ -80,12 +82,6 @@ Item {
                             imagesStatus.start()
                     }
                 }
-            }
-            Desaturate {
-                id: posterDesaturator
-                source: poster
-                desaturation: 1
-                anchors.fill: poster
             }
             Rectangle {
                 id: translucedLayer
@@ -101,11 +97,10 @@ Item {
                 color: "white"
                 font.family: pigFont.name
                 font.letterSpacing: -10
-                font.pixelSize: parent.height/6.35
+                font.pixelSize: parent.height/5.75
                 anchors.left: parent.left
                 anchors.leftMargin: parent.width/960
                 anchors.bottom: cover.top
-                anchors.bottomMargin: parent.height/77.14
             }
 
             Image {
@@ -126,7 +121,7 @@ Item {
                 source: urlScreens
                 sourceSize.width: 1920
                 sourceSize.height: 1080
-                opacity: 0.1
+                opacity: 0.2
                 smooth: true
                 anchors.left: parent.left
                 anchors.verticalCenter: parent.verticalCenter
@@ -193,7 +188,7 @@ Item {
             NumberAnimation { id: outScreensA; target: screens; properties: "z"; to: 1; duration: 1000; easing.type: Easing.InOutQuart }
             NumberAnimation { id: outScreensB; target: screens; properties: "width"; to: parent.width/3.04; duration: 1000; easing.type: Easing.InOutQuart }
             NumberAnimation { id: outScreensC; target: screens; properties: "height"; to: parent.height/2.51; duration: 1000; easing.type: Easing.InOutQuart }
-            NumberAnimation { id: outScreensD; target: screens; properties: "opacity"; to: 0.1; duration: 1000; easing.type: Easing.InOutQuart }
+            NumberAnimation { id: outScreensD; target: screens; properties: "opacity"; to: 0.2; duration: 1000; easing.type: Easing.InOutQuart }
             
             RectangularGlow {
                 id: coverEffect
@@ -248,57 +243,62 @@ Item {
                 spacing: parent.height/216
                 anchors.left: cover.right
                 anchors.leftMargin: parent.width/54.85
-                anchors.verticalCenter: parent.verticalCenter
+                anchors.top: frame.top
+                anchors.topMargin: parent.height/18
                 Text {
                     id: castLabel
-                    text: "‧ "+cast
+                    text: "∙ "+cast
                     color: "white"
                     font.family: pigFont.name
-                    font.pixelSize: screen.height/36
+                    font.pixelSize: screen.height/35
                 }
                 Text {
                     id: categoryLabel
-                    text: "‧ "+categories
+                    text: "∙ "+categories
                     color: "white"
                     font.family: pigFont.name
-                    font.pixelSize: screen.height/36
+                    font.pixelSize: screen.height/35
                 }
                 Text {
                     id: qualityLabel
-                    text: "‧ "+quality
+                    text: "∙ "+quality
                     color: "white"
                     font.family: pigFont.name
-                    font.pixelSize: screen.height/36
+                    font.pixelSize: screen.height/35
                 }
                 Text {
                     id: splitLabel
-                    text: "‧ SPLIT"
-                    color: { if (scenes === 1) "black"; else "white" }
+                    text: "∙ SPLIT"
+                    color: { if (scenes === 1) Qt.rgba(1, 1, 1, 0.5); else "white" }
                     font.family: pigFont.name
-                    font.pixelSize: screen.height/36
+                    font.pixelSize: screen.height/35
                     textFormat: Text.RichText
                     opacity: { if (scenes === 1) 0.5; else 1 }
                 }
                 Text {
                     id: fullLabel
-                    text: "‧ FULL"
-                    color: { if (full === "NOT") "black"; else "white" }
+                    text: "∙ FULL"
+                    color: { if (full === "NOT") Qt.rgba(1, 1, 1, 0.5); else "white" }
                     font.family: pigFont.name
-                    font.pixelSize: screen.height/36
+                    font.pixelSize: screen.height/35
                     textFormat: Text.RichText
                     opacity: { if (full === "NOT") 0.5; else 1 }
                 }
-                Row {
-                    id: openSceneRow
-                    spacing: 1
-                    Component.onCompleted: {
-                        for (var i=1; i<=scenes && i<=8; i++) {
-                            var component = Qt.createComponent("ButtonScene.qml")
-                            var object = component.createObject(openSceneRow)
-                            object.magnet = magnet
-                            object.scene = i
-                            object.fit = fit
-                        }
+            }
+            Row {
+                id: openSceneRow
+                spacing: 1
+                anchors.left: cover.right
+                anchors.leftMargin: parent.width/64
+                anchors.top: datesColumn.bottom
+                anchors.topMargin: parent.height/28.42
+                Component.onCompleted: {
+                    for (var i=1; i<=scenes && i<=8; i++) {
+                        var component = Qt.createComponent("ButtonScene.qml")
+                        var object = component.createObject(openSceneRow)
+                        object.magnet = magnet
+                        object.scene = i
+                        object.fit = fit
                     }
                 }
             }
@@ -313,25 +313,41 @@ Item {
                 Text {
                     id: currentLabel
                     text: currentFilm
-                    color: Qt.rgba(1, 1, 1, 1)
+                    color: "white"
                     font.family: pigFont.name
-                    font.pixelSize: screen.height/27.69
+                    font.pixelSize: screen.height/23
                 }
                 Text {
                     id: totalLabel
                     text: totalFilms
                     color: Qt.rgba(1, 1, 1, 0.5)
                     font.family: pigFont.name
-                    font.pixelSize: screen.height/27.69
+                    font.pixelSize: screen.height/23
+                }
+                Text {
+                    id: arrowsLabel
+                    text: {
+                        if (currentFilm == 5 && totalFilms > currentFilm)
+                            " ⇈"
+                        else if (currentFilm !=5 && currentFilm == totalFilms)
+                            " ⇊"
+                        else if (currentFilm%5 == 0 && currentFilm !=5 && currentFilm != totalFilms)
+                            " ⇅"
+                        else
+                            " ⇄"
+                    }
+                    color: Qt.rgba(1, 1, 1, 0.5)
+                    font.family: pigFont.name
+                    font.pixelSize: screen.height/54
+                    anchors.verticalCenter: totalLabel.verticalCenter
+                    anchors.verticalCenterOffset: screen.height/360
                 }
             }
             NumberAnimation { running: recipe.PathView.isCurrentItem; target: poster; property: "opacity"; to: 1; duration: 4000; easing.type: Easing.InOutQuad }
-            NumberAnimation { running: recipe.PathView.isCurrentItem; target: posterDesaturator; property: "opacity"; to: 1; duration: 1500; easing.type: Easing.InOutQuad }
-            NumberAnimation { running: recipe.PathView.isCurrentItem; target: translucedLayer; property: "opacity"; to: 0.8; duration: 4000; easing.type: Easing.InOutQuad }
+            NumberAnimation { running: recipe.PathView.isCurrentItem; target: translucedLayer; property: "opacity"; to: 0.87; duration: 4500; easing.type: Easing.InOutQuad }
             NumberAnimation { running: recipe.PathView.isCurrentItem; target: datesColumn; property: "opacity"; to: 1; duration: 2000; easing.type: Easing.OutElastic }
-            PropertyAction  { running: !recipe.PathView.isCurrentItem; target: poster; property: "opacity"; value: 0 }
-            PropertyAction  { running: !recipe.PathView.isCurrentItem; target: posterDesaturator; property: "opacity"; value: 0 }
-            PropertyAction  { running: !recipe.PathView.isCurrentItem; target: translucedLayer; property: "opacity"; value: 0 }
+            PropertyAction { running: !recipe.PathView.isCurrentItem; target: poster; property: "opacity"; value: 0 }
+            PropertyAction { running: !recipe.PathView.isCurrentItem; target: translucedLayer; property: "opacity"; value: 0 }
             NumberAnimation { running: !recipe.PathView.isCurrentItem; target: datesColumn; property: "opacity"; to: 0; duration: 1; easing.type: Easing.InOutQuad }
 
             states: [
@@ -350,7 +366,7 @@ Item {
             transitions: [
                 Transition {
                     to: "showPlayerLayer"
-                        NumberAnimation { target: playerLayer; property: "height"; to: screen.height; duration: 2000; easing.type: Easing.InOutQuart }
+                    NumberAnimation { target: playerLayer; property: "height"; to: screen.height; duration: 2200; easing.type: Easing.InOutQuart }
                 },
                 Transition {
                     to: "showAll"
@@ -434,6 +450,7 @@ Item {
         Keys.onPressed: {
             if (!onShowPlayerLayer) {
                 if (!zoomIn && event.key === Qt.Key_Escape) {
+                    loader.source = ""
                     loader_finder_output.source = "Finder.qml"
                     event.accepted = true;
                 } else if (event.key === Qt.Key_H && (event.modifiers & Qt.ControlModifier)) {
@@ -471,7 +488,8 @@ Item {
         width: screen.width
         color: "black"
 
-        NumberAnimation { id: hidePlayerLayer; running: false; target: playerLayer; property: "height"; to: 0; duration: 1000; easing.type: Easing.InOutQuart }
+        NumberAnimation { id: hidePlayerLayer; running: false; target: playerLayer; property: "height"; to: 0; duration: 1100; easing.type: Easing.InOutQuart }
+
         Timer {
             id: abortTorrentResetDelay
             running: false
@@ -489,31 +507,31 @@ Item {
         ProgressBar {
             id: progressBar
             value: root.downloaded
-            visible: { if (playerLayer.height > 24 && !abortTorrent) true; else false }
+            visible: { if (playerLayer.height === screen.height && !abortTorrent) true; else false }
             anchors.centerIn: parent
         }
         Row {
             id: peerInformationRow
             spacing: screen.width/112.94
             visible: { !abortTorrent }
-            anchors.left: progressBar.right
-            anchors.leftMargin: screen.width/96
-            anchors.verticalCenter: parent.verticalCenter
+            anchors.horizontalCenter: parent.horizontalCenter
+            anchors.bottom: progressBar.top
+            anchors.bottomMargin: screen.height/216
 
             Text {
                 id: bitRateLabel
                 text: {
                     if (root.bitRate !== "" && playerLayer.height === screen.height)
-                        root.bitRate+"kb/s"
+                        root.bitRate+" KB/s"
                     else if (playerLayer.height === screen.height)
-                        "CONNECTING"
+                        "RECOVERING METADATA"
                     else
                         ""
                 }
                 color: "white"
                 font.family: pigFont.name
                 font.bold: true
-                font.pixelSize: screen.height/36
+                font.pixelSize: screen.height/54
             }
             Text {
                 id: peersLabel
@@ -526,30 +544,32 @@ Item {
                 color: "white"
                 font.family: pigFont.name
                 font.bold: true
-                font.pixelSize: screen.height/36
+                font.pixelSize: screen.height/54
             }
         }
-        Text {
-            id: checkingFileLabel
-            text: "CHECKING FILE"
-            color: Qt.rgba(0.1, 0.1, 0.1, 1)
-            font.family: pigFont.name
-            font.pixelSize: screen.height/72
-            visible: { fileNotReady && !abortTorrent }
+        Column {
+            id: checkFileColumn
+            spacing: 0
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.top: progressBar.bottom
-            anchors.topMargin: screen.height/108
-        }
-        Text {
-            id: fileRecheckLabel
-            text: ""
-            color: Qt.rgba(0.1, 0.1, 0.1, 1)
-            font.family: pigFont.name
-            font.pixelSize: screen.height/72
-            visible: { fileNotReady && !abortTorrent }
-            anchors.horizontalCenter: parent.horizontalCenter
-            anchors.top: checkingFileLabel.bottom
-            anchors.topMargin: screen.height/540
+            anchors.topMargin: screen.height/216
+            Text {
+                id: checkingFileLabel
+                text: "CHECKING FILE"
+                color: Qt.rgba(0.1, 0.1, 0.1, 1)
+                font.family: pigFont.name
+                font.pixelSize: screen.height/54
+                visible: { fileNotReady && !abortTorrent }
+            }
+            Text {
+                id: fileRecheckLabel
+                text: ""
+                color: Qt.rgba(0.1, 0.1, 0.1, 1)
+                font.family: pigFont.name
+                font.pixelSize: screen.height/54
+                visible: { fileNotReady && !abortTorrent }
+                anchors.horizontalCenter: checkingFileLabel.horizontalCenter
+            }
         }
         Timer {
             id: fileRecheckDelay
@@ -561,8 +581,8 @@ Item {
                     output.timeLeft -= 1
                 else
                     output.timeLeft = 5
-                checkingFileLabel.text = "FILE NOT READY. PLEASE WAIT"
-                fileRecheckLabel.text = "RECHECK IN "+output.timeLeft
+                checkingFileLabel.text = "FILE NOT READY"
+                fileRecheckLabel.text = "RECHECK ON "+output.timeLeft
             }
         }
     }

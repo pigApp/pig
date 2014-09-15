@@ -7,18 +7,18 @@ Item {
         id: selectorsRow
         spacing: parent.width/384
         anchors.left: parent.left
-        anchors.leftMargin: parent.width/26.66
+        anchors.leftMargin: parent.width/22.32
         anchors.verticalCenter: parent.verticalCenter
-        anchors.verticalCenterOffset: parent.height/33.75
+        anchors.verticalCenterOffset: parent.height/135
         z: 2
 
         Text {
             id: fullMovieLabel
-            text: "FULL MOVIE "
+            text: "FULL"
             color: { if (root.full === "FULL") "white"; else Qt.rgba(0.1, 0.1, 0.1, 1) }
             font.family: pigFont.name
             font.bold: true
-            font.pixelSize: screen.height/72
+            font.pixelSize: screen.height/54
             MouseArea {
                 id: fullMovieMousearea
                 onClicked: {
@@ -36,7 +36,7 @@ Item {
             color: { if (root.quality === "SD") "white"; else Qt.rgba(0.1, 0.1, 0.1, 1) }
             font.family: pigFont.name
             font.bold: true
-            font.pixelSize: screen.height/72
+            font.pixelSize: screen.height/54
             MouseArea {
                 id: standardMousearea
                 onClicked: {
@@ -54,7 +54,7 @@ Item {
             color: { if (root.quality === "720p") "white"; else Qt.rgba(0.1, 0.1, 0.1, 1) }
             font.family: pigFont.name
             font.bold: true
-            font.pixelSize: screen.height/72
+            font.pixelSize: screen.height/54
             MouseArea {
                 id: mediumMousearea
                 onClicked: {
@@ -72,7 +72,7 @@ Item {
             color: { if (root.quality === "1080p") "white"; else Qt.rgba(0.1, 0.1, 0.1, 1) }
             font.family: pigFont.name
             font.bold: true
-            font.pixelSize: screen.height/72
+            font.pixelSize: screen.height/54
             MouseArea {
                 id: highMousearea
                 onClicked: {
