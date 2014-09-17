@@ -37,7 +37,6 @@ private:
     QWidget *box;
     QLabel *pauseLabel;
     QLabel *bufferLabel;
-    QLabel *witnessBufferLabel;
     QProgressBar *skipBar;
     QLabel *startLoopTimeLabel;
     QLabel *stopLoopTimeLabel;

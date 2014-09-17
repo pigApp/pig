@@ -188,7 +188,7 @@ void Torrent::piece_update(qint64 total_msec, qint64 offset_msec)
     std::vector<int> piecePriority;
     skip = true;
 
-    offsetPieces_file = 967; //356;//offsetPieces+(((offset_msec+fit)*totalPieces_file)/total_msec);
+    offsetPieces_file = 278; //356;//offsetPieces+(((offset_msec+fit)*totalPieces_file)/total_msec);
     offset_kb = (offsetPieces+((offset_msec*totalPieces_file)/total_msec))*(pieceLength/1024);
     totalPreSkip_mb = handle.status().total_done/1048576;
 

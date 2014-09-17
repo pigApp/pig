@@ -20,39 +20,30 @@ VideoPlayer::VideoPlayer(QVideoWidget *parent) : QVideoWidget(parent)
     screenHeight = rec.height();
 
     QFont font(":/images/font/pig.ttf", screenHeight/46.95);
-    font.setBold(false);
 
     QVBoxLayout *boxLayout = new QVBoxLayout;
-    boxLayout->setAlignment(Qt::AlignHCenter|Qt::AlignVCenter);
+    boxLayout->setAlignment(Qt::AlignRight|Qt::AlignVCenter);
     boxLayout->setSpacing(screenHeight/108);
-    box = new QWidget();
-    box->setGeometry(screenWidth-(screenWidth/8.34), (screenHeight/2)-(screenHeight/7.2), screenWidth/8.31, screenHeight/3.6);
+    box = new QWidget(this);
+    box->setGeometry(screenWidth-(screenWidth/12.03), (screenHeight/2)-(screenHeight/8.3), screenWidth/12, screenHeight/4.15);
     box->setStyleSheet("background: black; border: none");
     box->setLayout(boxLayout);
-    box->setParent(this);
     box->hide();
 
     pauseLabel = new QLabel();
     pauseLabel->setStyleSheet("color: #181818; background: black; border: none");
     pauseLabel->setFont(font);
     pauseLabel->hide();
-    pauseLabel->setText("||");
+    pauseLabel->setText("PAUSE");
 
     QHBoxLayout *bufferLayout = new QHBoxLayout;
-    bufferLayout->setAlignment(Qt::AlignLeft|Qt::AlignVCenter);
     bufferLayout->setSpacing(screenWidth/384);
     bufferLabel = new QLabel();
-    bufferLabel->setStyleSheet("color: #181818; background: black; border: none");
+    bufferLabel->setStyleSheet("color: black; background: black; border: none");
     bufferLabel->setFont(font);
     bufferLabel->hide();
-    bufferLabel->setText("BUFFER");
-    witnessBufferLabel = new QLabel();
-    witnessBufferLabel->setStyleSheet("color: white; background: black; border: none");
-    witnessBufferLabel->setFont(font);
-    witnessBufferLabel->hide();
-    witnessBufferLabel->setText("‧");
+    bufferLabel->setText("∙");
     bufferLayout->addWidget(bufferLabel);
-    bufferLayout->addWidget(witnessBufferLabel);
 
     skipBar = new QProgressBar();
     skipBar->setFixedWidth(screenWidth/13.71);
@@ -69,11 +60,11 @@ VideoPlayer::VideoPlayer(QVideoWidget *parent) : QVideoWidget(parent)
     QVBoxLayout *loopTimeLayout = new QVBoxLayout;
     loopTimeLayout->setSpacing(0);
     startLoopTimeLabel = new QLabel();
-    startLoopTimeLabel->setStyleSheet("color: #181818; background: black; border: none");
+    startLoopTimeLabel->setStyleSheet("color: black; background: white; border: none");
     startLoopTimeLabel->setFont(font);
     startLoopTimeLabel->hide();
     stopLoopTimeLabel = new QLabel();
-    stopLoopTimeLabel->setStyleSheet("color: #181818; background: black; border: none");
+    stopLoopTimeLabel->setStyleSheet("color: black; background: white; border: none");
     stopLoopTimeLabel->setFont(font);
     stopLoopTimeLabel->hide();
     loopTimeLayout->addWidget(startLoopTimeLabel);
@@ -82,11 +73,11 @@ VideoPlayer::VideoPlayer(QVideoWidget *parent) : QVideoWidget(parent)
     QVBoxLayout *timeLayout = new QVBoxLayout;
     timeLayout->setSpacing(0);
     currentTimeLabel = new QLabel();
-    currentTimeLabel->setStyleSheet("color: white; background: black; border: none");
+    currentTimeLabel->setStyleSheet("color: black; background: white; border: none");
     currentTimeLabel->setFont(font);
     currentTimeLabel->hide();
     totalTimeLabel = new QLabel();
-    totalTimeLabel->setStyleSheet("color: #181818; background: black; border: none");
+    totalTimeLabel->setStyleSheet("color: black; background: white; border: none");
     totalTimeLabel->setFont(font);
     totalTimeLabel->hide();
     timeLayout->addWidget(currentTimeLabel);
@@ -255,9 +246,9 @@ void VideoPlayer::onBuffering()
 {
     static int i = 0;
     if (i%2 == 0)
-        witnessBufferLabel->setStyleSheet("background: black; border: none; color: white");
+        bufferLabel->setStyleSheet("color: white; background: black; border: none");
     else
-        witnessBufferLabel->setStyleSheet("background: black; border: none; color: black");
+        bufferLabel->setStyleSheet("color: black; background: black; border: none");
 
     if (buffering) {
         if (i == 0) {
@@ -265,7 +256,6 @@ void VideoPlayer::onBuffering()
             slider->setEnabled(false);
             show_controls();
             bufferLabel->show();
-            witnessBufferLabel->show();
         }
         ++i;
         QTimer::singleShot(500, this, SLOT(onBuffering()));
@@ -273,7 +263,6 @@ void VideoPlayer::onBuffering()
         i = 0;
         slider->setEnabled(true);
         bufferLabel->hide();
-        witnessBufferLabel->hide();
         hideControlsDelay->start();
         player->play();
     }
@@ -289,7 +278,7 @@ void VideoPlayer::set_loop()
             slider->hide();
             pauseLabel->hide();
             player->pause();
-            box->setGeometry(screenWidth-(screenWidth/8.34), (screenHeight/2)-(screenHeight/6), screenWidth/8.31, screenHeight/3);
+            box->setGeometry(screenWidth-(screenWidth/12.03), (screenHeight/2)-(screenHeight/6.34), screenWidth/12, screenHeight/3.17);
             sliderStartLoop->setGeometry(0, screenHeight-23, screenWidth, 5);
             sliderStartLoop->setMaximum(player->duration());
             sliderStartLoop->setValue(0);
@@ -315,7 +304,7 @@ void VideoPlayer::set_loop()
             stopLoopTimeLabel->hide();
             sliderStartLoop->hide();
             sliderStopLoop->hide();
-            box->setGeometry(screenWidth-(screenWidth/8.34), (screenHeight/2)-(screenHeight/7.2), screenWidth/8.31, screenHeight/3.6);
+            box->setGeometry(screenWidth-(screenWidth/12.03), (screenHeight/2)-(screenHeight/8.3), screenWidth/12, screenHeight/4.15);
             player->play();
         }
     }
@@ -504,8 +493,8 @@ void VideoPlayer::set_volume(int volume_key_value)
 
 void VideoPlayer::download_Information(int bitRate, int peers)
 {
-    bitRateLabel->setText(QString::number(bitRate)+"Kb/s");
-    peersLabel->setText("PEERS "+QString::number(peers));
+    bitRateLabel->setText(QString::number(bitRate)+" KB/s");
+    peersLabel->setText(QString::number(peers)+" PRS");
 }
 
 void VideoPlayer::set_slider_position(qint64 position)
@@ -634,10 +623,8 @@ void VideoPlayer::show_controls()
     hideControlsDelay->stop();
 
     box->show();
-    if (buffering) {
+    if (buffering) 
         bufferLabel->show();
-        witnessBufferLabel->show();
-    }
     if (loop) {
         startLoopTimeLabel->show();
         stopLoopTimeLabel->show();
@@ -660,7 +647,6 @@ void VideoPlayer::hide_controls()
         box->hide();
         pauseLabel->hide();
         bufferLabel->hide();
-        witnessBufferLabel->hide();
         startLoopTimeLabel->hide();
         stopLoopTimeLabel->hide();
         currentTimeLabel->hide();
