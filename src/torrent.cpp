@@ -7,7 +7,6 @@
 #endif
 
 #include <QDir>
-#include <QFileInfo>
 #include <QTimer>
 #include <QDebug>
 
@@ -179,6 +178,9 @@ void Torrent::progress()
 
 bool Torrent::piece_is_available(qint64 total_msec, qint64 offset_msec)
 {
+    //SIZE
+    //qDebug() << "FILE_SIZE_TORRENT: " << handle.get_torrent_info().total_size();
+
     offsetPieces_file = offsetPieces+((offset_msec*totalPieces_file)/total_msec);
     return handle.have_piece(offsetPieces_file);
 }
@@ -188,7 +190,7 @@ void Torrent::piece_update(qint64 total_msec, qint64 offset_msec)
     std::vector<int> piecePriority;
     skip = true;
 
-    offsetPieces_file = 278; //356;//offsetPieces+(((offset_msec+fit)*totalPieces_file)/total_msec);
+    offsetPieces_file = 475;//offsetPieces+(((offset_msec+fit)*totalPieces_file)/total_msec); 
     offset_kb = (offsetPieces+((offset_msec*totalPieces_file)/total_msec))*(pieceLength/1024);
     totalPreSkip_mb = handle.status().total_done/1048576;
 
@@ -231,7 +233,8 @@ void Torrent::stop()
         if (_player != NULL)
             _player->disconnect();
     } else {
-        // TODO: Detener el torrent de una manera que no necesite el handle. Si no se tiene la metadata el handle es invalido y falla. 
+        client->pause();
+        // TODO: Pausa el torrent, pero no descarga ningun otro.
     }
 }
 

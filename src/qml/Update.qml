@@ -12,14 +12,6 @@ Item {
         sourceSize.height: 358
         visible: { root.showNetworkIcon }
         anchors.centerIn: parent
-        SequentialAnimation {
-            running: { root.showNetworkIcon }
-            loops: Animation.Infinite
-            PropertyAction { target: networkIcon; property: "opacity"; value: 1 }
-            PauseAnimation { duration: 500 }
-            PropertyAction { target: networkIcon; property: "opacity"; value: 0.93 }
-            PauseAnimation { duration: 500 }
-        }
     }
 
     Rectangle {
@@ -27,11 +19,11 @@ Item {
       width: parent.width
       height: parent.height/3.5
       color: "black"
-      visible: { !root.showNetworkIcon }
+      visible: { !root.showNetworkIcon && statusLabel.text != ""}
       anchors.centerIn: parent
     }
     Column {
-        spacing: { if (informationLabel.text !="") -parent.height/108; else parent.height/108 }
+        spacing: { if (informationLabel.text !="") -parent.height/72; else parent.height/216 }
         anchors.centerIn: parent
 
         Text {

@@ -8,6 +8,8 @@
 #include <QFont>
 #include <QDebug>
 
+#include <QFile>
+
 VideoPlayer::VideoPlayer(QVideoWidget *parent) : QVideoWidget(parent)
 {    
     player = new QMediaPlayer();
@@ -37,6 +39,7 @@ VideoPlayer::VideoPlayer(QVideoWidget *parent) : QVideoWidget(parent)
     pauseLabel->setText("PAUSE");
 
     QHBoxLayout *bufferLayout = new QHBoxLayout;
+    bufferLayout->setAlignment(Qt::AlignHCenter|Qt::AlignVCenter);
     bufferLayout->setSpacing(screenWidth/384);
     bufferLabel = new QLabel();
     bufferLabel->setStyleSheet("color: black; background: black; border: none");
@@ -533,6 +536,18 @@ void VideoPlayer::slider_released()
     const qint64 total_msec = player->duration();
     const qint64 offset_msec = slider->value()+skip_key_value;
     bool available = false;                               
+
+    /*
+    //SIZE
+    QFile file("/home/lxfb/.pig/tmp/Toy Story 3 (2010) [1080p]/Toy.Story.3.2010.1080p.BRrip.x264.YIFY.mp4");
+    file.open(QIODevice::ReadOnly);
+
+    qint64 offset_bites = (offset_msec*file.size())/total_msec;
+    qDebug() << "-- FILE_SIZE_QFILE: " << file.size();
+    qDebug() << "-- OFFSET_BITES: " << offset_bites;
+
+    file.close();
+    */
 
     if (!loop) {
         QMetaObject::invokeMethod (_torrent, "piece_is_available", Qt::DirectConnection, Q_RETURN_ARG(bool, available), Q_ARG(qint64, total_msec), Q_ARG(qint64, offset_msec));

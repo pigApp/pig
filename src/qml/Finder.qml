@@ -54,9 +54,9 @@ Item {
         enabled: { !root.news && screen.state !== "showSetPassword" && screen.state !== "showHelp" && !root.welcome }
         opacity: 0      
         anchors.left: parent.left
-        anchors.leftMargin: parent.width/24.30
+        anchors.leftMargin: parent.width/24.61
         anchors.bottom: parent.verticalCenter
-        anchors.bottomMargin: parent.height/67.5
+        anchors.bottomMargin: parent.height/1080
         z: 2
         onEnabledChanged: { if (enabled) userInput.forceActiveFocus() }
         Button {

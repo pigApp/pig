@@ -11,14 +11,6 @@ Item {
         sourceSize.width: 358
         sourceSize.height: 358
         anchors.centerIn: parent
-        SequentialAnimation {
-            running: true
-            loops: Animation.Infinite
-            PropertyAction { target: networkIcon; property: "opacity"; value: 1 }
-            PauseAnimation { duration: 500 }
-            PropertyAction { target: networkIcon; property: "opacity"; value: 0.93 }
-            PauseAnimation { duration: 500 }
-        }
     }
     Text {
         id: networkErrorLabel

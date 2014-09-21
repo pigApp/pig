@@ -7,9 +7,9 @@ Item {
         id: selectorsRow
         spacing: parent.width/384
         anchors.left: parent.left
-        anchors.leftMargin: parent.width/22.32
+        anchors.leftMargin: parent.width/22.53
         anchors.verticalCenter: parent.verticalCenter
-        anchors.verticalCenterOffset: parent.height/135
+        anchors.verticalCenterOffset: parent.height/56.84
         z: 2
 
         Text {

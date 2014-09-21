@@ -244,7 +244,7 @@ Item {
                 anchors.left: cover.right
                 anchors.leftMargin: parent.width/54.85
                 anchors.top: frame.top
-                anchors.topMargin: parent.height/18
+                anchors.topMargin: parent.height/12
                 Text {
                     id: castLabel
                     text: "∙ "+cast
@@ -291,7 +291,7 @@ Item {
                 anchors.left: cover.right
                 anchors.leftMargin: parent.width/64
                 anchors.top: datesColumn.bottom
-                anchors.topMargin: parent.height/28.42
+                anchors.topMargin: parent.height/33.75
                 Component.onCompleted: {
                     for (var i=1; i<=scenes && i<=8; i++) {
                         var component = Qt.createComponent("ButtonScene.qml")

@@ -8,7 +8,7 @@
   - Audio.
 - Links para update en la db. Distintos para windows, linux, 32 y 64.
 - Installer, copiarlo desde ID
-- Destacar que en linux es necesario tener instalado gksudo.
+- Destacar que en linux es necesario tener instalado gksu.
 - Agregar archvo .init
 - Cuando este todo terminado, cambiar los links de Help y errorDb por los reales.
 - Tabs.
@@ -18,3 +18,4 @@ sudo pacman -S gstreamer0.10-{{base,good}{,-plugins},ffmpeg}
 - PROXIMA VERSION
 - traducciones.
 - Paso extra en update. Por si es necesario actulizar tambien las librerias.
+- Usar gksuLib en lugar de gksu

@@ -167,7 +167,8 @@ void Update::replace(QString *path, QString *file)
 {
     if (newBinaryAvailable && !newDatabaseAvailable && !newsAvailable) {
         newBinaryAvailable = false;
-        _root->setProperty("status", "UPDATING");
+        _root->setProperty("status", "");
+        _root->setProperty("showNetworkIcon", false);
 #ifdef _WIN32
     const QString target = "C:/pig/bin/pig.exe";
     const QString updater = "C:/pig/bin/updater.exe";
@@ -185,7 +186,7 @@ void Update::replace(QString *path, QString *file)
         replace_binary_ready(0);
     }
 #else
-    updaterProc = new QProcess(this);                                                                    // TODO: Ver si QDir de la linea de abajo funciona.
+    updaterProc = new QProcess(this);
     updaterProc->start("/bin/bash", QStringList() << "-c" << "gksu -u root -m 'PIG authorization to install update' 'mv "+QDir::homePath()+"/.pig/tmp/pig /usr/bin/ ; chmod +x /usr/bin/pig'");
     connect (updaterProc, SIGNAL(finished(int)), this, SLOT(replace_binary_ready(int)));
 #endif
@@ -206,7 +207,6 @@ void Update::replace(QString *path, QString *file)
             if (newBinaryAvailable) {
                 get_files();
             } else {
-                QFile f_backup(target_backup);
                 f.remove();
                 emit forwardSIGNAL();
             }
@@ -230,7 +230,6 @@ void Update::replace(QString *path, QString *file)
 
 void Update::replace_binary_ready(int exitCode)
 {
-    _root->setProperty("showNetworkIcon", false);
 #ifdef _WIN32
     if (!databaseUpdated) {
         if (db->open()) {
@@ -250,17 +249,19 @@ void Update::replace_binary_ready(int exitCode)
         if (!databaseUpdated) {
             if (db->open()) {
                 QSqlQuery qry;
-                qry.prepare("UPDATE PigData SET BinaryVersion='"+QString::number(currentBinaryVersion)+"'"); //TODO: No actualiza la db.
+                qry.prepare("UPDATE PigData SET BinaryVersion='"+QString::number(currentBinaryVersion)+"'");
+                qry.exec();
                 qry.prepare("UPDATE PigData SET Release='"+QString::number(currentRelease)+"'");
                 qry.exec();
                 db->close();
             }
+        } else {
+            const QString target_backup = QDir::homePath()+"/.pig/db.sqlite~";
+            QFile file_backup(target_backup);
+            file_backup.remove();
         }
-        const QString target_backup = QDir::homePath()+"/.pig/db.sqlite~";
-        QFile file_backup(target_backup);
-        file_backup.remove();
         _root->setProperty("status", "UPDATED");
-        _root->setProperty("information", "RESTART PIG TO APPLY CHANGES");
+        _root->setProperty("information", "RESTART PIG");
     } else {
         _root->setProperty("status", "UPDATE FAILED");
         _root->setProperty("information", "TRY LATER");
