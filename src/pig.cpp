@@ -63,7 +63,7 @@ void PIG::set_root_object(QObject *root)
     }
 }
 
-//Password
+//PASSWORD
 void PIG::password_handle(QString plain, bool init, bool write)
 {
     if (!init && !write) {
@@ -90,7 +90,7 @@ void PIG::password_handle(QString plain, bool init, bool write)
     }
 }
 
-//Update
+//UPDATE
 void PIG::update_handle()
 {
     //w
@@ -109,7 +109,7 @@ void PIG::update_handle()
     //QTimer::singleShot(4000, this, SLOT(start())); //w
 }
 
-//Start
+//START
 void PIG::start()
 {
     delete mUpdate;
@@ -198,7 +198,7 @@ void PIG::start()
     emit startSIGNAL();
 }
 
-//Find
+//FIND
 void PIG::find(QString input, QString pornstar, QString category, QString quality, QString full, int offset, bool init)
 {
     QStringList _list;
@@ -253,7 +253,7 @@ void PIG::find(QString input, QString pornstar, QString category, QString qualit
     }
 }
 
-//Torrent
+//TORRENT
 void PIG::torrent_handle(QString magnet, int scene, int fit, bool abort)
 {
     //cleanUp();
@@ -268,7 +268,7 @@ void PIG::torrent_handle(QString magnet, int scene, int fit, bool abort)
     //w
 }
 
-//Player
+//PLAYER
 void PIG::player_handle(const QString absoluteFilePath, bool init, bool sandbox, bool fileReady, bool abort)
 {
     if (!abort) {
@@ -296,7 +296,7 @@ void PIG::player_handle(const QString absoluteFilePath, bool init, bool sandbox,
     }
 }
 
-//CleanUp
+//CLEANUP
 void PIG::cleanUp()
 {
     #ifdef _WIN32
@@ -316,7 +316,7 @@ void PIG::cleanUp()
         }
 }
 
-//ErrorDb
+//ERROR_DB
 void PIG::error_database()
 {
     emit showErrorDatabaseSIGNAL();

@@ -60,10 +60,12 @@ void Torrent::doConnect(QString *magnet)
 
 void Torrent::metadata_ready()
 {
-    if (handle.status(1).state != 2) {
-       filter_files();
-    } else if (!abort) {
-        QTimer::singleShot(1000, this, SLOT(metadata_ready()));
+    if (!abort) {
+        if (handle.status(1).state != 2) {
+           filter_files();
+        } else if (!abort) {
+            QTimer::singleShot(1000, this, SLOT(metadata_ready()));
+        }
     }
 }
 
@@ -190,7 +192,8 @@ void Torrent::piece_update(qint64 total_msec, qint64 offset_msec)
     std::vector<int> piecePriority;
     skip = true;
 
-    offsetPieces_file = 475;//offsetPieces+(((offset_msec+fit)*totalPieces_file)/total_msec); 
+    //offsetPieces_file = 475; //offsetPieces+(((offset_msec+fit)*totalPieces_file)/total_msec);
+    offsetPieces_file = offsetPieces+((99*totalPieces_file)/100);
     offset_kb = (offsetPieces+((offset_msec*totalPieces_file)/total_msec))*(pieceLength/1024);
     totalPreSkip_mb = handle.status().total_done/1048576;
 
@@ -228,15 +231,16 @@ void Torrent::piece_update(qint64 total_msec, qint64 offset_msec)
 void Torrent::stop()
 {
     abort = true;
-    if (handle.status().has_metadata) {
-        client->remove_torrent(handle);
-        if (_player != NULL)
-            _player->disconnect();
-    } else {
-        client->pause();
-        // TODO: Pausa el torrent, pero no descarga ningun otro.
-    }
+    client->remove_torrent(handle);
+    if (_player != NULL)
+        _player->disconnect();
 }
+
+
+
+
+
+
 
 
 
