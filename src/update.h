@@ -42,7 +42,7 @@ private:
 
 private slots:
     void get_version(const QString * const host, const QString * const url);
-    void evaluate(QString version);
+    void evaluate(const QString version);
     void get_files();
     void integrityFile(QString path, QString file);
     void replace(QString *path, QString *file);

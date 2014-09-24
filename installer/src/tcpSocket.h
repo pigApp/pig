@@ -16,15 +16,13 @@ public:
 
     QString host;
     QString url;
-    QString file;
-    QString order;
+    QString path;
 
 public slots:
     void doConnect();
 
 signals:
-    void version_ready(const QString version);
-    void file_ready(QString path, QString file);
+    void file_ready(const QString path);
     void error_socket();
 
 private:

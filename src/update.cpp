@@ -43,15 +43,15 @@ void Update::check()
             const QString host = qry.value(3).toString();
             const QString urls = qry.value(4).toString();
             const QStringList urlList = urls.split(",");
-            const int arch = sizeof(void*);
+            const int byte = sizeof(void*);
             QString url;
 #ifdef _WIN32
-    if (arch != 8) // TODO: Confirmar si distingue arquitectura.
+    if (byte == 4) // TODO: Confirmar si distingue arquitectura.
         url = urlList[2];
     else
         url = urlList[3];
 #else
-    if (arch != 8)
+    if (byte == 4)
         url = urlList[0];
     else
         url = urlList[1];
@@ -73,7 +73,7 @@ void Update::get_version(const QString *const host, const QString *const url)
     mSocket->doConnect();
 }
 
-void Update::evaluate(QString version)
+void Update::evaluate(const QString version)
 {
     const QStringList last = version.split(",");
 

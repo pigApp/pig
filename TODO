@@ -5,7 +5,7 @@
   - Borrar fit de la db y c++-qml si no se usa.
   - Audio.
 - Links para update en la db. Distintos para windows, linux, 32 y 64.
-- Installer, copiarlo desde ID
+- Modificar .pro para que tambien compile el instalador.
 - Destacar que en linux es necesario tener instalado gksu.
 - Agregar archvo .init
 - Cuando este todo terminado, cambiar los links de Help y errorDb por los reales.

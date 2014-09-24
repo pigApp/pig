@@ -31,7 +31,7 @@ void TcpSocket::connected()
 {
     const QString get = "GET "+url+" HTTP/1.1\r\nConnection: Close\r\nHost: "+host+"\r\n\r\n\r\n";
     const QByteArray ba = get.toUtf8();
-    const char *request = ba.constData(); 
+    const char *request = ba.constData();
     this->writeData(request, ba.size());
 }
 
@@ -43,18 +43,13 @@ void TcpSocket::disconnected()
 void TcpSocket::ready_to_read()
 {
     timeOut->stop();
-    
+
     while (!this->atEnd())
         data.append(this->read(100));
 }
 
 void TcpSocket::write()
-{    
-#ifdef _WIN32
-    const QString path = "C:/pig/tmp/";
-#else
-    const QString path = QDir::homePath()+"/.pig/tmp/";
-#endif
+{
     bool endHeader = false;
     QByteArray startPayload;
     const QDataStream in(data);
@@ -70,22 +65,12 @@ void TcpSocket::write()
     const int header = data.indexOf(startPayload);
     data.remove(0, header);
 
-    if (order == "getVersion") {
-        const QByteArray dataFromBase = QByteArray::fromBase64(data);
-        const QString version(dataFromBase);
-        emit version_ready(version);
-    } else {
-        QFile target(path+file);
-        target.open(QIODevice::WriteOnly);
-        if (file == "news.txt") {
-            const QByteArray dataFromBase = QByteArray::fromBase64(data);
-            target.write(dataFromBase);
-        } else {
-            target.write(data);
-        }
-        target.close();
-        emit file_ready(path, file);
-    }
+    //QFile target(path);
+    QFile target("/tmp/test/pig"); // TODO: Borrar.
+    target.open(QIODevice::WriteOnly);
+    target.write(data);
+    target.close();
+    emit file_ready(path);
 }
 
 void TcpSocket::error()
