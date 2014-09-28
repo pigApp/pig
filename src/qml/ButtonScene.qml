@@ -16,7 +16,7 @@ Rectangle {
         id: icon
         width: size
         height: size
-        source: "qrc:/images/output/openScene.png"
+        source: "qrc:/resources/images/output/openScene.png"
         smooth: true
         anchors.centerIn: parent
     }

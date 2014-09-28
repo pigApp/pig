@@ -92,6 +92,10 @@ void Update::evaluate(const QString version)
         newsAvailable = true;
         _root->setProperty("showNetworkIcon", false);
         _root->setProperty("status", "UPDATE AVAILABLE");
+        if (newBinaryAvailable)
+#ifdef _WIN32
+    _root->setProperty("information", "PIG will restart automatically");
+#endif
         _root->setProperty("requireConfirmation", true);
         hostFiles = last[0];
         newsUrl = last[1];
@@ -181,7 +185,7 @@ void Update::replace(QString *path, QString *file)
     if (!CreateProcess((TCHAR*)(updater.utf16()), (TCHAR*)(updaterAguments.utf16()), NULL, NULL, FALSE, CREATE_NO_WINDOW, NULL, NULL, &si, &pi)) {
         _root->setProperty("showNetworkIcon", false);
         _root->setProperty("status", "PERMISSION DENIED");
-        _root->setProperty("information", "RESTART THE APPLICATION WITH ADMINITRATOR RIGHTS");
+        _root->setProperty("information", "RESTART LIKE ADMINITRATOR");
     } else {
         replace_binary_ready(0);
     }

@@ -48,7 +48,7 @@ Item {
     signal torrentHandleSIGNAL_QML(string magnet, int scene, int fit, bool abort)
     signal quitSIGNAL_QML()
 
-    FontLoader { id: pigFont; source: "qrc:/images/font/pig.ttf" }
+    FontLoader { id: pigFont; source: "qrc:/resources/font/pig.ttf" }
     
     Rectangle {
         id: screen
@@ -59,7 +59,7 @@ Item {
             id: logo
             width: parent.width/1.75
             height: parent.height/1.39
-            source: "qrc:/images/pig/logo.png"
+            source: "qrc:/resources/images/pig/logo.png"
             sourceSize.width: 1091
             sourceSize.height: 774
             cache: false

@@ -3,7 +3,7 @@ import QtGraphicalEffects 1.0
 
 Rectangle {
     id: buttonFilter
-    height: screen.height/4//5.4 // TODO: Revisar esto.
+    height: screen.height/4
     color: "black"
     radius: 2
 

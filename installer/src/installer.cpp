@@ -1,7 +1,9 @@
 #include "installer.h"
 
-#include <QFile>
 #include <QDir>
+#include <QFile>
+#include <QStandardPaths>
+
 #include <QDebug>
 
 Installer::Installer(QWidget *parent) : QWidget(parent)
@@ -13,7 +15,7 @@ Installer::Installer(QWidget *parent) : QWidget(parent)
     layout->setAlignment(Qt::AlignCenter);
     setLayout(layout);
 
-    font.setFamily(":/font/pig.ttf");
+    font.setFamily(":/resources/font/pig.ttf");
     font.setPixelSize(20);
     font.setBold(true);
 
@@ -27,96 +29,57 @@ Installer::Installer(QWidget *parent) : QWidget(parent)
     status->hide();
     layout->addWidget(status);
 
-    connect(button, SIGNAL(clicked()), this, SLOT(get()));
+    connect(button, SIGNAL(clicked()), this, SLOT(install()));
 }
 
 Installer::~Installer()
 {
 }
 
-void Installer::get()
+void Installer::install()
 {
-    QString host = "dl.bintray.com";
-    QString url;
-    path = QDir::tempPath()+"/pig";
-
-    const int byte = sizeof(void*);
-    if (byte == 4) {
-        arch = "32";
-    } else {
-        arch = "64";
-    }
-
-#ifdef _WIN32
-    path = "C:/tmp/pig";
-    if (arch == "32") {
-        url = "windows32-url"; //
-    } else {
-        url = "windows64-url"; //
-    }
-#else
-    if (arch == "32") {
-        url = "linusx86-url"; //
-    } else {
-        url = "/test%20bintray/testApp/pig?direct";
-    }
-#endif
+    const int arch = sizeof(void*);
+    const QString path = QDir::currentPath();//
+    QString originBinary;
+    QString targetBinary;
+    QString originLib;
+    QString targetLib;
+    QString originConfig;
+    QString targetConfig;
 
     button->setEnabled(false);
     button->hide();
-
-    status->setText("RECOVERING PIG");
+    status->setText("INSTALLING PIG");
     status->show();
 
-    mSocket = new TcpSocket();
-    mSocket->host = host;
-    mSocket->url = url;
-    mSocket->path = path;
-    mSocket->doConnect();
-
-    connect (mSocket, SIGNAL(file_ready(const QString)), this, SLOT(check(const QString)));
-    connect (mSocket, SIGNAL(error_socket()), this, SLOT(error()));
-}
-
-void Installer::check(const QString path)
-{
-    // TODO: Checkear suma MD5.
-    install(path);
-}
-
-void Installer::install(const QString path)
-{
-    status->setText("INSTALLING PIG");
-
-    bool installed;
 #ifdef _WIN32
-    // TODO: COPIAR pig A C:
-    // TODO: Link.
+    QDir pig;
+    pig.mkdir("C:/pig");
+    originBinary = path+"/bin/"; TODO: Ver las barras en windows.
+    targetBinary = "C:/pig/";
+    originLib = path+"/lib/";
+    targetLib = "C:/pig/lib";
+    originConfig = path+"/.pig/";
+    targetConfig = "C:/pig/.pig";
 #else
-    if (moveFiles(false, path+"/bin/", "/usr/bin/") &&
-        moveFiles(true, path+"/.pig/", "/home/lxfb/.pig")) { // TODO: QDir::homePath() devuelve /root.
-        if (arch == "32") {
-            if (moveFiles(true, path+"/lib/", "/usr/lib/pig"))
-                installed = true;
-        } else {
-            if (moveFiles(true, path+"/lib/", "/usr/lib64/pig"))
-                installed = true;
-        }
-        if (installed) {
-            QFile init("/home/lxfb/.pig/.init");
-            init.open(QIODevice::WriteOnly);
-            init.close();
-
-            // TODO: Permisos.
-
-            status->setText("INSTALLED");
-        } else {
-            status->setText("INSTALL FAIL");
-        }
-    } else {
-        status->setText("INSTALL FAIL");
-    }
+    originBinary = path+"/bin/";
+    targetBinary = "/usr/bin/";
+    originLib = path+"/lib/";
+    if (arch == 4)
+        targetLib = "/usr/lib/pig";
+    else
+        targetLib = "/usr/lib64/pig";
+    originConfig = path+"/.pig/";
+    targetConfig = "/home/lxfb/.pig";//
 #endif
+
+    if (moveFiles(false, originBinary, targetBinary) &&
+        moveFiles(true, originLib, targetLib) &&              // TODO: QDir::homePath() devuelve /root.
+        moveFiles(true, originConfig, targetConfig))
+        status->setText("INSTALLED");
+        // TODO: Label 'Usar accesso direco para iniciar pig'
+    else
+        status->setText("INSTALL FAIL");
 }
 
 bool Installer::moveFiles(bool dir, QString origin, QString target)
@@ -126,14 +89,30 @@ bool Installer::moveFiles(bool dir, QString origin, QString target)
         if (!targetDir.mkdir(target))
             return false;
     }
+
     QDir originDir(origin);
     foreach (QString files, originDir.entryList(QDir::Files))
         if (!QFile::copy(origin+QDir::separator()+files, target+QDir::separator()+files))
             return false;
-    return true;
-}
+    foreach (QString files, originDir.entryList(QDir::Files)) {
+        QFile f(target+QDir::separator()+files);
+        if (!f.setPermissions(QFile::ReadOwner|QFile::WriteOwner|QFile::ExeOwner))
+            return false;
+    }
 
-void Installer::error()
-{
-    qDebug() << "ERROR";
+    if (target.contains(".pig")) {
+#ifdef _WIN32
+        const QString targetInit = "C:/pig/.pig/.init";
+        const QStringList desktop = QStandardPaths::standardLocations(QStandardPaths::DesktopLocation);
+        if(!QFile::link("C:/pig/pig.exe", desktop[0]+"/ pig.lnk"))
+            return false;
+#else
+        const QString targetInit = "/home/lxfb/.pig/.init"; //
+#endif
+        QFile init(targetInit);
+        init.open(QIODevice::WriteOnly);
+        init.close();
+        init.setPermissions(QFile::ReadOwner|QFile::WriteOwner|QFile::ExeOwner); // TODO: Cambiar propietario a User.
+    }
+    return true;
 }

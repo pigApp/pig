@@ -1,5 +1,5 @@
 <RCC>
     <qresource prefix="/">
-        <file>font/pig.ttf</file>
+        <file>resources/font/pig.ttf</file>
     </qresource>
 </RCC>

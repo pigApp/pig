@@ -13,7 +13,7 @@ SOURCES += src/main.cpp\
 	   src/update.cpp\
 	   src/tcpSocket.cpp\
            src/torrent.cpp\#w
-	   src/videoplayer.cpp
+           src/videoplayer.cpp
 
 HEADERS += src/pig.h\
 	   src/password.h\
@@ -26,32 +26,10 @@ HEADERS += src/pig.h\
            /usr/include/libtorrent/session.hpp\
            /usr/include/libtorrent/torrent_info.hpp\
            /usr/include/libtorrent/torrent_handle.hpp\
-           lib\libtorrent-rasterbar-1.0.1\include\entry.hpp\
-           lib\libtorrent-rasterbar-1.0.1\include\bencode.hpp\
-           lib\libtorrent-rasterbar-1.0.1\include\session.hpp\
-           lib\libtorrent-rasterbar-1.0.1\include\torrent_info.hpp\
-           lib\libtorrent-rasterbar-1.0.1\include\torrent_handle.hpp
 
-OTHER_FILES += src/qml/main.qml\
-	       src/qml/AskPassword.qml\
-	       src/qml/Update.qml\
-	       src/qml/Finder.qml\
-	       src/qml/Output.qml\
-	       src/qml/SetPassword.qml\
-	       src/qml/Filters.qml\
-               src/qml/Selectors.qml\
-	       src/qml/Wait.qml\
-	       src/qml/Button.qml\
-	       src/qml/ButtonFilter.qml\
-	       src/qml/ButtonScene.qml\
-	       src/qml/ProgressBar.qml\
-	       src/qml/News.qml\
-	       src/qml/Help.qml\
-	       src/qml/ErrorDb.qml
+RESOURCES += resources.qrc
 
-RC_FILE += images/pig/icon.rc
-
-RESOURCES += qml.qrc
+RC_FILE += resources/images/pig/icon.rc
 
 unix {
     config.files = .pig/db.sqlite

@@ -76,7 +76,7 @@ Item {
                         if (!coverLoaded || !screensLoaded)
                             imagesStatus.start()
                     } else if (poster.status == Image.Error) {
-                        poster.source = "qrc:/images/available/posterNotAvailable.png"
+                        poster.source = "/qrc:resources/images/available/posterNotAvailable.png"
                         posterLoaded = true
                         if (!coverLoaded || !screensLoaded)
                             imagesStatus.start()
@@ -107,7 +107,7 @@ Item {
                 id: frame
                 width: parent.width
                 height: parent.height/2.16
-                source: "qrc:/images/output/frame.png"
+                source: "qrc:/resources/images/output/frame.png"
                 sourceSize.width: 1920
                 sourceSize.height: 500
                 anchors.centerIn: parent
@@ -132,7 +132,7 @@ Item {
                         if (!posterLoaded || !coverLoaded)
                             imagesStatus.start()
                     } else if (screens.status == Image.Error) {
-                        screens.source = "qrc:/images/available/screensNotAvailable.png"
+                        screens.source = "qrc:/resources/images/available/screensNotAvailable.png"
                         screensLoaded = true
                         if (!posterLoaded || !coverLoaded)
                             imagesStatus.start()
@@ -215,7 +215,7 @@ Item {
                         if (!posterLoaded || !screensLoaded)
                             imagesStatus.start()
                     } else if (cover.status == Image.Error) {
-                        cover.source = "qrc:/images/available/coverNotAvailable.png"
+                        cover.source = "qrc:/resources/images/available/coverNotAvailable.png"
                         coverLoaded = true
                         if (!posterLoaded || !screensLoaded)
                             imagesStatus.start()

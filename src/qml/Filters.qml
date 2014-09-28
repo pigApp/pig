@@ -41,9 +41,9 @@ Rectangle {
                     width: filters.width/4
                     sourceImage: {
                         if (nPornstarList[index] !== '0')
-                            "qrc:/images/pornstars/"+pornstarList[index+1]+".jpg"
+                            "qrc:/resources/images/pornstars/"+pornstarList[index+1]+".jpg"
                         else
-                            "qrc:/images/available/pornstarNotAvailable.png"
+                            "qrc:/resources/images/available/pornstarNotAvailable.png"
                     }
                     labelText: pornstarList[index+1]
                     numberLabelText: ''

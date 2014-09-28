@@ -7,7 +7,7 @@ Item {
         id: networkIcon
         width: parent.width/5.36
         height: parent.height/3.01
-        source: "qrc:/images/pig/network.png"
+        source: "qrc:/resources/images/pig/network.png"
         sourceSize.width: 358
         sourceSize.height: 358
         anchors.centerIn: parent
@@ -25,7 +25,7 @@ Item {
         anchors.topMargin: -parent.height/14.42
         onVisibleChanged: {
             if (root.networkError) {
-                networkIcon.source = "qrc:/images/pig/networkError.png"
+                networkIcon.source = "qrc:/resources/images/pig/networkError.png"
                 backDelay.start()
             }
         }
