@@ -1,5 +1,5 @@
+TARGET = pig
 TEMPLATE = app
-TARGET = pig 
 
 CONFIG += link_pkgconfig#w
 PKGCONFIG += libtorrent-rasterbar#w
@@ -31,18 +31,32 @@ RESOURCES += resources.qrc
 
 RC_FILE += resources/images/pig/icon.rc
 
+# CUSTOM PATH SHARED LIBS
 unix {
-    config.files = .pig/db.sqlite
-    config.path  = $$(HOME)/.pig
-    config.extra = mkdir $$(HOME)/.pig -m 744 -p && chown $$(USER).users $$(HOME)/.pig -R
-    update.files = bin/PXupdate
-    update.path  = /usr/bin/
-    target.path  = /usr/bin/
-    INSTALLS += target update config
-    QMAKE_INSTALL_PROGRAM = install -m 755 -p -o $$(USER) -g users
+#QMAKE_HOST.arch = x86                                     #TODO: Determinar arquitectura.
+    #...
+#QMAKE_HOST.arch = x86_64
+    QMAKE_LFLAGS += -Wl,--rpath=/usr/lib64/pig             #comentar
 }
 win32 {
+    QMAKE_LFLAGS += -Wl,--rpath=C:/pig/lib                 #comentar
+}
 
+unix {                                                     #TODO: Cambiar el usuario de .pig y .pig/db.sqlite.
+    target.path = /usr/bin/
+    config.path = $$(HOME)/.pig
+    config.files = .pig/*
+    #config.extra = mkdir $$(HOME)/.pig -m 744 -p && chown $$(USER).users $$(HOME)/.pig -R
+    INSTALLS += target config
+}
+win32 {
+    target.path = C:/pig/
+    config.path = C:/pig/.pig
+    config.files += .pig/*
+    update.path = C:/pig/bin/
+    update.files = src/update_WIN32/bin/update.exe
+    INSTALLS += target config update
+    #QMAKE_INSTALL_PROGRAM = install -m 755 -p -o $$(USER) -g users
 }
 
 

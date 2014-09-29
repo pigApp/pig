@@ -1,0 +1,15 @@
+#!/usr/bin/bash
+
+CURRENTUSER=`who am i | awk '{print $1}'`
+cp -f bin/pig /usr/bin/
+cp -rf .pig /home/$CURRENTUSER/
+if [ `getconf LONG_BIT` = "64" ]
+then
+    mkdir -p /usr/lib64/pig
+    cp -rf lib/* /usr/lib64/pig
+else
+    mkdir -p /usr/lib/pig
+    cp -rf lib/* /usr/lib/pig
+fi
+chown $CURRENTUSER.users /home/$CURRENTUSER/.pig -R 
+chmod +x /usr/bin/pig
