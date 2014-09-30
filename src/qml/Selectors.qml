@@ -9,7 +9,7 @@ Item {
         anchors.left: parent.left
         anchors.leftMargin: parent.width/22.53
         anchors.verticalCenter: parent.verticalCenter
-        anchors.verticalCenterOffset: parent.height/56.84
+        anchors.verticalCenterOffset: parent.height/67.5
         z: 2
 
         Text {

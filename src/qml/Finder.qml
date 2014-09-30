@@ -122,29 +122,28 @@ Item {
         anchors.fill: parent
     }
 
-    Row {
+    Column {
         id: welcomeRow
-        spacing: parent.height/108
+        spacing: -parent.height/54
         visible: { root.welcome && !root.news && buttonsFiltersColumn.opacity === 1 }
-        anchors.centerIn: parent
-        anchors.horizontalCenterOffset: parent.width/27.42 
+        anchors.left: parent.left
+        anchors.leftMargin: parent.width/20.7
+        anchors.verticalCenter: parent.verticalCenter
+        anchors.verticalCenterOffset: -parent.height/13.5
         Text {
             id: welcomeLabel
-            text: "WELCOME TO PIG" 
-            color: "black"
+            text: "WELCOME"
+            color: "white"
             font.family: pigFont.name
-            font.bold: true
-            font.pixelSize: screen.height/23
+            font.pixelSize: screen.height/11.5
         }
         Text {
             id: welcomeHelpLabel
-            text: "CTRL H TO HELP" 
-            color: "black"
+            text: "CTRL H TO HELP"
+            color: Qt.rgba(0.1, 0.1, 0.1, 1)
             font.family: pigFont.name
-            font.bold: true
-            font.pixelSize: screen.height/54
-            anchors.verticalCenter: welcomeLabel.verticalCenter
-            anchors.verticalCenterOffset: screen.height/108
+            font.pixelSize: screen.height/21.5
+            anchors.horizontalCenter: welcomeLabel.horizontalCenter
         }
     }
 

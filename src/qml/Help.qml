@@ -11,11 +11,11 @@ Item {
         anchors.left: parent.left
         anchors.bottom: parent.bottom
         Column {
+            spacing: parent.height/216
             anchors.left: parent.left
             anchors.leftMargin: parent.width/12
             anchors.top: parent.top
             anchors.topMargin: parent.height/43
-            spacing: parent.height/216
             Text {
                 text: "PIG "+binaryVersion+"."+release+" DATABASE "+databaseVersion+"<br/>"
                 color: "white"
@@ -79,11 +79,11 @@ Item {
         anchors.left: pigLayer.right
         anchors.bottom: parent.bottom
         Column {
+            spacing: parent.height/216
             anchors.left: parent.left
             anchors.leftMargin: parent.width/5.3
             anchors.top: parent.top
             anchors.topMargin: parent.height/43
-            spacing: parent.height/216
             Text {
                 text: "SHORTCUTS<br/>"
                 color: "white"
@@ -148,31 +148,16 @@ Item {
         anchors.left: shortcutsLayer.right
         anchors.bottom: parent.bottom
         Column {
+            spacing: parent.height/216
             anchors.left: parent.left
             anchors.leftMargin: parent.width/25
             anchors.top: parent.top
             anchors.topMargin: parent.height/43
-            spacing: parent.height/216
             Text {
                 text: "RECOMENDATIONS<br/>"
                 color: "white"
                 font.family: pigFont.name
                 font.pixelSize: screen.height/23
-            }
-            Text {
-                text: "UPDATES"
-                color: "white"
-                font.family: pigFont.name
-                font.pixelSize: screen.height/23
-            }
-            Text {
-                text: "Accept them. Are fast and mostly of the<br/>"+
-                      "database with new movies.<br/>"
-                color: "white"
-                font.family: pigFont.name
-                font.bold: true
-                font.italic: true
-                font.pixelSize: screen.height/54
             }
             Text {
                 text: "RESOLUTIONS"
@@ -187,6 +172,21 @@ Item {
                 color: "white"
                 font.family: pigFont.name
                 font.bold: true
+                font.pixelSize: screen.height/54
+            }
+            Text {
+                text: "UPDATES"
+                color: "white"
+                font.family: pigFont.name
+                font.pixelSize: screen.height/23
+            }
+            Text {
+                text: "Accept them. Are fast and mostly of the<br/>"+
+                      "database with new movies.<br/>"
+                color: "white"
+                font.family: pigFont.name
+                font.bold: true
+                font.italic: true
                 font.pixelSize: screen.height/54
             }
             Text {
@@ -232,11 +232,11 @@ Item {
         anchors.left: recomendationsLayer.right
         anchors.bottom: parent.bottom
         Column {
+            spacing: parent.height/216
             anchors.left: parent.left
             anchors.leftMargin: parent.width/12
             anchors.top: parent.top
             anchors.topMargin: parent.height/43
-            spacing: parent.height/216
             Text {
                 text: "TROUBLESHOOTING<br/>"
                 color: "white"
@@ -254,7 +254,7 @@ Item {
                       "<font color='#1a1a1a'>The movies are not downloaded</font><br/>"+
                       "You probably have blocked the ports used<br/>"+
                       "by BitTorrent in your firewall or ISP.<br/>"+
-                      "Read more &nbsp;<a href=\'http://google.com\'>Here <font color='#ffffff'>➟<font/></a><br/><br/>"
+                      "<a href=\'http://google.com\'>Read more <font color='#ffffff'>➟<font/></a><br/><br/>"
                 color: "white"
                 font.family: pigFont.name
                 font.bold: true
@@ -274,7 +274,7 @@ Item {
                       "<font color='#1a1a1a'>The movies do not play</font><br/>"+
                       "You probably do not have installed<br/>"+
                       "the necessary video codecs.<br/>"+
-                      "Read more &nbsp;<a href=\'http://google.com\'>Here <font color='#ffffff'>➟<font/></a><br/><br/>"
+                      "<a href=\'http://google.com\'>Read more <font color='#ffffff'>➟<font/></a><br/><br/>"
                 color: "white"
                 font.family: pigFont.name
                 font.bold: true
@@ -284,7 +284,7 @@ Item {
                 onLinkActivated: Qt.openUrlExternally(link)
             }
             Text {
-                text: "If you have some problem. Contact us.<br/>"
+                text: "If you have problems to use PIG, Contact us.<br/>"
                 color: "white"
                 font.family: pigFont.name
                 font.bold: true
