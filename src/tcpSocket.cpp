@@ -51,7 +51,7 @@ void TcpSocket::ready_to_read()
 void TcpSocket::write()
 {    
 #ifdef _WIN32
-    const QString path = "C:/pig/tmp/";
+    const QString path = "C:/PIG/.pig/tmp/";
 #else
     const QString path = QDir::homePath()+"/.pig/tmp/";
 #endif

@@ -1,13 +1,8 @@
 #ifndef TORRENT_H
 #define TORRENT_H
 
-#ifdef _WIN32
-    #include "..\lib\libtorrent-rasterbar-1.0.1\include\libtorrent\session.hpp"
-    #include "..\lib\libtorrent-rasterbar-1.0.1\include\libtorrent\file_storage.hpp"
-#else
-    #include <libtorrent/session.hpp>
-    #include <libtorrent/file_storage.hpp>
-#endif
+#include <libtorrent/session.hpp>
+#include <libtorrent/file_storage.hpp>
 
 #include <stdlib.h>
 

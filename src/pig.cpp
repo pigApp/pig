@@ -8,7 +8,7 @@ PIG::PIG(QWidget *parent) : QWidget(parent), mRoot(0)
 {
     mPassword = NULL;
     mUpdate = NULL;
-    mTorrent = NULL;//w
+    mTorrent = NULL;
 
     layout = new QVBoxLayout;
     layout->setContentsMargins(0, 0, 0, 0);
@@ -23,8 +23,8 @@ PIG::~PIG()
         delete mPassword;
     if (mUpdate != NULL)
         delete mUpdate;
-    if (mTorrent != NULL)//w
-        delete mTorrent;//w
+    if (mTorrent != NULL)
+        delete mTorrent;
     //cleanUp();
     mRoot->disconnect(this);
     exit(0);
@@ -42,8 +42,8 @@ void PIG::set_root_object(QObject *root)
     if (mRoot) connect (mRoot, SIGNAL(quitSIGNAL_QML()), this, SLOT(quit()));
 
 #ifdef _WIN32
-    const QString target = "C:/pig/.pig/db.sqlite";
-    const QString tmp = "C:/pig/.pig/tmp/";
+    const QString target = "C:/PIG/.pig/db.sqlite";
+    const QString tmp = "C:/PIG/.pig/tmp/";
 #else
     const QString target = QDir::homePath()+"/.pig/db.sqlite";
     const QString tmp = QDir::homePath()+"/.pig/tmp/";
@@ -93,7 +93,6 @@ void PIG::password_handle(QString plain, bool init, bool write)
 //UPDATE
 void PIG::update_handle()
 {
-    //w
     emit showUpdateSIGNAL();
 
     mUpdate = new Update();
@@ -105,8 +104,6 @@ void PIG::update_handle()
     connect (mUpdate, SIGNAL(errorDatabaseSIGNAL()), this, SLOT(error_database()));
     connect (mRoot, SIGNAL(skipSIGNAL_QML()), this, SLOT(start()));
     connect (mRoot, SIGNAL(getFilesSIGNAL_QML()), mUpdate, SLOT(get_files()));
-    //w
-    //QTimer::singleShot(4000, this, SLOT(start())); //w
 }
 
 //START
@@ -147,28 +144,26 @@ void PIG::start()
             mRoot->setProperty("pornstarList", pornstarList);
             mRoot->setProperty("nPornstarList", nPornstarList);
 
-            mTorrent = new Torrent();//w
-            mTorrent->_pig = this;//w
-            mTorrent->_root = mRoot;//w
+            mTorrent = new Torrent();
+            mTorrent->_pig = this;
+            mTorrent->_root = mRoot;
         }
     } else {
         error_database();
     }
 
 #ifdef _WIN32
-    const QString init = "C:/pig/.pig/.init";
-    const QString target = "C:/pig/.pig/news.txt";
+    const QString init = "C:/PIG/.pig/.init";
+    const QString target = "C:/PIG/.pig/news.txt";
 #else
     const QString init = QDir::homePath()+"/.pig/.init";
     const QString target = QDir::homePath()+"/.pig/news";
 #endif
     QFile file(init);
     if (file.exists()) {
-        file.close();
         file.remove();
         mRoot->setProperty("welcome", true);
     }
-
     file.setFileName(target);
     if (file.exists()) {
         file.open(QIODevice::ReadOnly | QIODevice::Text);
@@ -187,7 +182,6 @@ void PIG::start()
                     database_news.append(line+"\n");
             }
         }
-        file.close();
         file.remove();
 
         mRoot->setProperty("binaryNews", binary_news);
@@ -257,15 +251,13 @@ void PIG::find(QString input, QString pornstar, QString category, QString qualit
 void PIG::torrent_handle(QString magnet, int scene, int fit, bool abort)
 {
     //cleanUp();
-    //w
     if (!abort) {
         mTorrent->scene = scene;
-        mTorrent->fit = fit; // TODO: Revisar porque al enviarlo como puntero cambia el valor.
+        mTorrent->fit = fit;
         mTorrent->doConnect(&magnet);
     } else {
         mTorrent->stop();
     }
-    //w
 }
 
 //PLAYER
@@ -274,16 +266,16 @@ void PIG::player_handle(const QString absoluteFilePath, bool init, bool sandbox,
     if (!abort) {
         if (init) {
             mPlayer = new VideoPlayer();
-            mPlayer->_torrent = mTorrent;//w
+            mPlayer->_torrent = mTorrent;
             mPlayer->_pig = this;
-            mTorrent->_player = mPlayer;//w
+            mTorrent->_player = mPlayer;
         }
         if (sandbox) {
             mPlayer->sandbox(&absoluteFilePath);
             emit checkingFileSIGNAL();
         }
         if (fileReady) {
-            mTorrent->toPlayer = true;//w
+            mTorrent->toPlayer = true;
             mPlayer->showFullScreen();
             this->hide();
             emit fileReadySIGNAL();
@@ -300,7 +292,7 @@ void PIG::player_handle(const QString absoluteFilePath, bool init, bool sandbox,
 void PIG::cleanUp()
 {
     #ifdef _WIN32
-        const QString target = "C:/tmp/pig/";
+        const QString target = "C:/PIG/.pig/tmp/";
     #else
         const QString target = QDir::homePath()+"/.pig/tmp/";
     #endif

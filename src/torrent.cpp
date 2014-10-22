@@ -1,10 +1,6 @@
 #include "torrent.h"
 
-#ifdef _WIN32
-    #include "..\lib\libtorrent-rasterbar-1.0.1\include\libtorrent\extensions\ut_pex.hpp"
-#else
-    #include <libtorrent/extensions/ut_pex.hpp>
-#endif
+#include <libtorrent/extensions/ut_pex.hpp>
 
 #include <QDir>
 #include <QTimer>
@@ -44,7 +40,7 @@ void Torrent::doConnect(QString *magnet)
     _player = NULL;
 
 #ifdef _WIN32
-    const std::string path = "C:/tmp/pig/";
+    const std::string path = "C:/PIG/.pig/tmp/";
 #else
     const QString home = QDir::homePath();
     const std::string path = home.toStdString()+"/.pig/tmp/";

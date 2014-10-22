@@ -1,45 +1,49 @@
 TARGET = pig
 TEMPLATE = app
 
-CONFIG += link_pkgconfig#w
-PKGCONFIG += libtorrent-rasterbar#w
-DEFINES += BOOST_ASIO_DYN_LINK#w
+DEFINES += BOOST_ASIO_DYN_LINK
+win32 {
+    DEFINE += WIN32_LEAN_AND_MEAN
+}
+
+unix {
+    CONFIG += link_pkgconfig
+    PKGCONFIG += libtorrent-rasterbar
+}
+win32 {
+    load(moc)
+    QMAKE_MOC = $$QMAKE_MOC -DBOOST_TT_HAS_OPERATOR_HPP_INCLUDED
+    LIBS += -LC:/boost/lib -lpsapi\
+            -LC:/libtorrent-rasterbar-1.0.2/bin/msvc-12.0/release/address-model-64/architecture-x86/boost-link-shared/boost-source/resolve-countries-off/threading-multi -ltorrent
+    INCLUDEPATH += C:/boost/include/boost-1_56\
+                   C:/libtorrent-rasterbar-1.0.2/include
+}
 
 QT += qml quick sql network multimediawidgets
 
 SOURCES += src/main.cpp\
-	   src/pig.cpp\
-	   src/password.cpp\
-	   src/update.cpp\
-	   src/tcpSocket.cpp\
-           src/torrent.cpp\#w
+           src/pig.cpp\
+           src/password.cpp\
+           src/update.cpp\
+           src/tcpSocket.cpp\
+           src/torrent.cpp\
            src/videoplayer.cpp
 
 HEADERS += src/pig.h\
-	   src/password.h\
-	   src/update.h\
-	   src/tcpSocket.h\
-           src/torrent.h\#w
-	   src/videoplayer.h\
-           /usr/include/libtorrent/entry.hpp\
-           /usr/include/libtorrent/bencode.hpp\
-           /usr/include/libtorrent/session.hpp\
-           /usr/include/libtorrent/torrent_info.hpp\
-           /usr/include/libtorrent/torrent_handle.hpp\
+           src/password.h\
+           src/update.h\
+           src/tcpSocket.h\
+           src/torrent.h\
+           src/videoplayer.h
 
 RESOURCES += resources.qrc
-
 RC_FILE += resources/images/pig/icon.rc
 
-# CUSTOM PATH SHARED LIBS
 unix {
 #QMAKE_HOST.arch = x86                                     #TODO: Determinar arquitectura.
     #...
 #QMAKE_HOST.arch = x86_64
-    QMAKE_LFLAGS += -Wl,--rpath=/usr/lib64/pig             #comentar
-}
-win32 {
-    QMAKE_LFLAGS += -Wl,--rpath=C:/pig/lib                 #comentar
+    QMAKE_LFLAGS += -Wl,--rpath=/usr/lib64/pig             #comentar   
 }
 
 unix {                                                     #TODO: Cambiar el usuario de .pig y .pig/db.sqlite.
@@ -50,13 +54,10 @@ unix {                                                     #TODO: Cambiar el usu
     INSTALLS += target config
 }
 win32 {
-    target.path = C:/pig/
-    config.path = C:/pig/.pig
-    config.files += .pig/*
-    update.path = C:/pig/bin/
-    update.files = src/update_WIN32/bin/update.exe
+    target.path = C:\PIG
+    config.path = C:\PIG\.pig
+    update.path = C:\PIG\.pig\
+    config.files += .pig\*
+    update.files = src\scripts\update\win32\update.bat
     INSTALLS += target config update
-    #QMAKE_INSTALL_PROGRAM = install -m 755 -p -o $$(USER) -g users
 }
-
-

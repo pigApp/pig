@@ -15,7 +15,7 @@ Password::~Password()
 bool Password::require()
 {
     #ifdef _WIN32
-        QFile file("C:/pig/.pig/pd.txt");
+        QFile file("C:/PIG/.pig/pd.txt");
     #else
         QFile file(QDir::homePath()+"/.pig/.pd");
     #endif
@@ -38,7 +38,7 @@ bool Password::write(QString *plain)
     const QString digest = calculate(&plain);
 
     #ifdef _WIN32
-        QFile file("C:/pig/.pig/pd.txt");
+        QFile file("C:/PIG/.pig/pd.txt");
     #else
         QFile file(QDir::homePath()+"/.pig/.pd");
     #endif
