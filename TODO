@@ -1,4 +1,4 @@
-- Hacer un deploy de prueba con librerias compartidas para linux.
+- Probar compilar libtorrent con encriptacion.
 - Fuente windows
 - Al cambiar resolucion, arreglar centrado de CATEGORY-PORNSTAR
 - PLAYER
@@ -7,10 +7,9 @@
   - Si termino la descarga, mostrar bar completa. ( if(bar->value() >= total_msec-13312) mostrar bar completa).
   - Borrar fit de la db y c++-qml si no se usa.
   - Audio.
+- Probar kdesu.
 - Links para update en la db. Distintos para windows, linux, 32 y 64.
-- Modificar .pro para que tambien compile el instalador.
-- Destacar que en linux es necesario tener instalado gksu.
-- Agregar archvo .init
+- Destacar que en linux es necesario tener instalado gksu/kdesu.
 - Cuando este todo terminado, cambiar los links de Help y errorDb por los reales.
 - Tabs.
 - Metadata.
@@ -18,7 +17,6 @@
 - PROXIMA VERSION
   - traducciones.
   - Paso extra en update. Por si es necesario actulizar tambien las librerias.
-  - Usar gksuLib en lugar de gksu
 
 
 --

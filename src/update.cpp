@@ -168,15 +168,48 @@ void Update::replace(QString *path, QString *file)
         _root->setProperty("status", "");
         _root->setProperty("showNetworkIcon", false);
 #ifdef _WIN32
-    updaterProc = new QProcess(this);
-    if (updaterProc->startDetached("C:\\PIG\\.pig\\update.bat"))
+    updateProc = new QProcess(this);
+    updateProc->startDetached("C:\\PIG\\.pig\\update.bat") //
+    if (updateProc->waitForStarted(1000) == false)
+        replace_binary_ready(1);
+    else
+        replace_binary_ready(0);
+
+    /*
+    if (updateProc->startDetached("C:\\PIG\\.pig\\update.bat"))
         replace_binary_ready(0);
     else
         replace_binary_ready(1);
+    */
 #else
-    updaterProc = new QProcess(this);
-    updaterProc->start("/bin/bash", QStringList() << "-c" << "gksu -u root -m 'PIG authorization to install update' 'mv "+QDir::homePath()+"/.pig/tmp/pig /usr/bin/ ; chmod +x /usr/bin/pig'");
-    connect (updaterProc, SIGNAL(finished(int)), this, SLOT(replace_binary_ready(int)));
+    QString suManager;
+
+    suManagerProc = new QProcess(this);
+    suManagerProc->start("/bin/bash", QStringList() << "-c" << "ls /usr/bin/gksu");
+    suManagerProc->waitForFinished(500);
+    if (suManagerProc->exitCode() != 0) {
+        suManagerProc->close();
+        suManagerProc = new QProcess(this);
+        suManagerProc->start("/bin/bash", QStringList() << "-c" << "ls /usr/bin/kdesu");
+        suManagerProc->waitForFinished(500);
+        if (suManagerProc->exitCode() == 0)
+            suManager = "kdesu";
+        suManagerProc->close();
+    } else {
+        suManagerProc->close();
+        suManager = "gksu";
+    }
+
+    if (!suManager.isEmpty()) {
+        updateProc = new QProcess(this);
+        if (suManager == "gksu")
+            updateProc->start("/bin/bash", QStringList() << "-c" << suManager+" -u root -m 'PIG update' 'mv "+QDir::homePath()+"/.pig/tmp/pig /usr/bin/ ; chmod +x /usr/bin/pig'");
+        else
+            updateProc->start("/bin/bash", QStringList() << "-c" << suManager+" -u root -c 'mv "+QDir::homePath()+"/.pig/tmp/pig /usr/bin/ ; chmod +x /usr/bin/pig'");
+        connect (updateProc, SIGNAL(finished(int)), this, SLOT(replace_binary_ready(int)));
+    } else{
+        replace_binary_ready(5);
+    }
 #endif
     } else if (newDatabaseAvailable && !newsAvailable) {
 #ifdef _WIN32
@@ -218,7 +251,8 @@ void Update::replace(QString *path, QString *file)
 
 void Update::replace_binary_ready(int exitCode)
 {
-    updaterProc->close();
+    if (exitCode != 5)
+        updateProc->close();
 #ifdef _WIN32
     if (exitCode == 0) {
         if (!databaseUpdated) {
@@ -251,6 +285,10 @@ void Update::replace_binary_ready(int exitCode)
         }
         _root->setProperty("status", "UPDATED");
         _root->setProperty("information", "RESTART PIG");
+    } else if (exitCode == 5) {
+        _root->setProperty("status", "UPDATE FAILED");
+        _root->setProperty("information", "Install gksu/kdesu");
+        QTimer::singleShot(10000, this, SLOT(abort()));
     } else {
         _root->setProperty("status", "UPDATE FAILED");
         _root->setProperty("information", "TRY LATER");

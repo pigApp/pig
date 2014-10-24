@@ -35,7 +35,8 @@ private:
     QString binaryHash;
     QString newsUrl;
     QString newsHash;
-    QProcess *updaterProc;
+    QProcess *suManagerProc;
+    QProcess *updateProc;
 
     bool newsAvailable, newDatabaseAvailable, newBinaryAvailable, databaseUpdated;
     int currentDatabaseVersion, currentBinaryVersion, currentRelease;
