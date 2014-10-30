@@ -13,13 +13,10 @@ Rectangle {
     property color labelOutColor
 
     signal clicked()
-    
+
     Text {
         id: label
-        color: "white"
         font.family: pigFont.name
-        font.bold: false
-        font.pixelSize: labelSize
         anchors.verticalCenter: parent.verticalCenter
         ColorAnimation on color { id: inColor; running: false; to: labelInColor; duration: 200 }
         ColorAnimation on color { id: outColor; running: false; to: labelOutColor; duration: 300 }

@@ -50,9 +50,9 @@ void Update::check()
         url = urlList[1];//3------------
 #else
     if (byte == 4)
-        url = urlList[0];//0
+        url = urlList[0];//0------------
     else
-        url = urlList[1];//1
+        url = urlList[1];//1------------
 #endif
             db->close();
             get_version(&host, &url);
@@ -169,21 +169,12 @@ void Update::replace(QString *path, QString *file)
         _root->setProperty("showNetworkIcon", false);
 #ifdef _WIN32
     updateProc = new QProcess(this);
-    updateProc->startDetached("C:\\PIG\\.pig\\update.bat") //
-    if (updateProc->waitForStarted(1000) == false)
-        replace_binary_ready(1);
-    else
-        replace_binary_ready(0);
-
-    /*
     if (updateProc->startDetached("C:\\PIG\\.pig\\update.bat"))
         replace_binary_ready(0);
     else
         replace_binary_ready(1);
-    */
 #else
     QString suManager;
-
     suManagerProc = new QProcess(this);
     suManagerProc->start("/bin/bash", QStringList() << "-c" << "ls /usr/bin/gksu");
     suManagerProc->waitForFinished(500);
@@ -199,7 +190,6 @@ void Update::replace(QString *path, QString *file)
         suManagerProc->close();
         suManager = "gksu";
     }
-
     if (!suManager.isEmpty()) {
         updateProc = new QProcess(this);
         if (suManager == "gksu")

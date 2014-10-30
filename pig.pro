@@ -1,7 +1,12 @@
 TARGET = pig
 TEMPLATE = app
 
-DEFINES = BOOST_ASIO_DYN_LINK
+DEFINES += BOOST_ASIO_DYN_LINK
+win32 {
+    DEFINES += WIN32_LEAN_AND_MEAN
+    load(moc)
+    QMAKE_MOC = $$QMAKE_MOC -DBOOST_TT_HAS_OPERATOR_HPP_INCLUDED
+}
 
 QT += qml quick sql network multimediawidgets
 
@@ -24,7 +29,6 @@ RESOURCES = resources.qrc
 
 RC_FILE = resources/images/pig/icon.rc
 
-
 unix {
     CONFIG += link_pkgconfig
     PKGCONFIG += libtorrent-rasterbar
@@ -38,18 +42,15 @@ unix {
     permission.extra = chown $$(USER).users $$(HOME)/.pig -R
     INSTALLS += target config permission
 }
-win32 {
-    DEFINES = WIN32_LEAN_AND_MEAN #Tal vez sea DEFINES con 'S'
-    load(moc)
-    QMAKE_MOC = $$QMAKE_MOC -DBOOST_TT_HAS_OPERATOR_HPP_INCLUDED
 
+win32 {
     LIBS += -LC:/boost/lib -lpsapi\
             -LC:/libtorrent-rasterbar-1.0.2/bin/msvc-12.0/release/address-model-64/architecture-x86/boost-link-shared/boost-source/resolve-countries-off/threading-multi -ltorrent
     INCLUDEPATH += C:/boost/include/boost-1_56\
                    C:/libtorrent-rasterbar-1.0.2/include
 
     target.path = C:\PIG
-    target.extra = mkdir C:\PIG -m 744 -p #CONFIRMAR SI FUNCIONA
+    target.extra = mkdir C:\PIG -m 744 -p #TODO: CONFIRMAR SI FUNCIONA
     config.path = C:\PIG\.pig
     config.files = .pig\db.sqlite
     config.extra = mkdir C:\PIG\.pig -m 744 -p

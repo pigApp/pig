@@ -17,7 +17,7 @@ Item {
     Rectangle {
       id: backgroundLayer
       width: parent.width
-      height: parent.height/3.5
+      height: parent.height/4.32
       color: "black"
       visible: { !root.showNetworkIcon && statusLabel.text != ""}
       anchors.centerIn: parent
@@ -50,10 +50,10 @@ Item {
                 width: screen.width/25.26
                 height: screen.height/36
                 label: "GET"
-                labelColor: "white"
+                labelColor: Qt.rgba(0.1, 0.1, 0.1, 1)
                 labelSize: screen.height/23
-                labelInColor: Qt.rgba(0.1, 0.1, 0.1, 1)
-                labelOutColor: "white"
+                labelInColor: "white"
+                labelOutColor: Qt.rgba(0.1, 0.1, 0.1, 1)
                 visible: { root.requireConfirmation }
                 enabled: { root.requireConfirmation }
                 onClicked: {
@@ -67,10 +67,10 @@ Item {
                 width: screen.width/22.32
                 height: screen.height/36
                 label: "SKIP"
-                labelColor: "white"
+                labelColor: Qt.rgba(0.1, 0.1, 0.1, 1)
                 labelSize: screen.height/23
-                labelInColor: Qt.rgba(0.1, 0.1, 0.1, 1)
-                labelOutColor: "white"
+                labelInColor: "white"
+                labelOutColor: Qt.rgba(0.1, 0.1, 0.1, 1)
                 visible: { root.requireConfirmation }
                 enabled: { root.requireConfirmation }
                 onClicked: { root.skipSIGNAL_QML() }

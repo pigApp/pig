@@ -12,6 +12,7 @@ Item {
     property bool get
     property bool requireRestart
     property bool news
+    property bool onShowSelectors
     property bool showNetworkIcon
     property bool networkError
 
@@ -29,6 +30,7 @@ Item {
     property string release
     property string bitRate: ""
 
+    property int xAnimation: screen.width
     property int totalFilms
     property int n
     property int peers: 0
@@ -36,7 +38,7 @@ Item {
     property int downloaded: 0
 
     property variant categoryList
-    property variant numberCategoryList
+    property variant nCategoryList
     property variant pornstarList
     property variant nPornstarList
     property variant list
@@ -49,77 +51,65 @@ Item {
     signal quitSIGNAL_QML()
 
     FontLoader { id: pigFont; source: "qrc:/resources/font/pig.ttf" }
-    
+
     Rectangle {
         id: screen
         color: "white"
         anchors.fill: parent
 
-        Image {
-            id: logo
-            width: parent.width/1.75
-            height: parent.height/1.39
-            source: "qrc:/resources/images/pig/logo.png"
-            sourceSize.width: 1091
-            sourceSize.height: 774
-            cache: false
-            anchors.left: parent.left
-            anchors.leftMargin: -parent.width/7.11
-            anchors.verticalCenter: parent.verticalCenter
-            opacity: 0
-        }
-        GaussianBlur {
-            id: blur
-            source: logo
-            radius: 0
-            samples: 32
-            cached: true
-            opacity: 0
-            anchors.fill: logo
-        }
-        
         Loader {
             id: loader
+            z: 2
             asynchronous: true
             focus: true
             visible: { status === Loader.Ready }
             anchors.fill: parent
-            z: 2
         }
-
         Loader {
             id: loader_finder_output
             asynchronous: true
             visible: { status === Loader.Ready }
             anchors.fill: parent
-            onZChanged: {
-                if (z === 0) {
-                    loader_finder_output.forceActiveFocus()
-                    if (loader_finder_output.source === "qrc:/src/qml/Finder.qml") {
-                        logo.visible = true
-                        blur.visible = true
-                    }
-                }
-            }
         }
 
         states: [
             State {
+                name: "showNews"
+                PropertyChanges { target: loader; source: "News.qml" }
+            },
+            State {
+                name: "hideNews"
+                PropertyChanges { target: root; news: false }
+                PropertyChanges { target: loader; source: "" }
+            },
+            State {
                 name: "showSetPassword"
                 PropertyChanges { target: loader; source: "SetPassword.qml" }
-                PropertyChanges { target: logo; visible: false }
-                PropertyChanges { target: blur; visible: false }
-                PropertyChanges { target: loader_finder_output; z: 1 }
+            },
+            State {
+                name: "hideSetPassword"
+                PropertyChanges { target: loader; source: "" }
             },
             State {
                 name: "showHelp"
                 PropertyChanges { target: loader; source: "Help.qml" }
-                PropertyChanges { target: loader_finder_output; z: 1 }
             },
             State {
-                name: "cleanUp"
-                PropertyChanges { target: loader; source: "" } 
-                PropertyChanges { target: loader_finder_output; z: 0 }
+                name: "hideHelp"
+            }
+        ]
+        transitions: [
+            Transition {
+                to: "showHelp"
+                NumberAnimation { target: root; easing.amplitude: 1.7; properties: "xAnimation"; to: 0; duration: 1100; easing.type: Easing.OutQuart }            },
+            Transition {
+                to: "hideHelp"
+                SequentialAnimation {
+                    PropertyAction { target: root; property: "welcome"; value: false }
+                    NumberAnimation { target: root; easing.amplitude: 1.7; properties: "xAnimation"; to: screen.width; duration: 1100; easing.type: Easing.OutQuart }
+                    PropertyAction { target: loader; property: "source"; value: "" }
+                    PropertyAction { target: loader_finder_output; property: "focus"; value: true }
+                }
             }
         ]
     }

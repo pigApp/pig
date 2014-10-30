@@ -6,7 +6,7 @@ Item {
     Rectangle {
         id: layer
         width: parent.width
-        height: parent.height/3.5
+        height: parent.height/4.32
         color: "black"
         anchors.centerIn: parent
         Text {
@@ -24,17 +24,22 @@ Item {
             font.pixelSize: screen.height/43.2
             maximumLength: 16
             echoMode: TextInput.Password
-            visible: false
-            focus: true
+            cursorVisible: false
             anchors.centerIn: parent
             anchors.verticalCenterOffset: -screen.height/720
-            onCursorPositionChanged: { label.text = ""; input.visible = true }
+            onCursorPositionChanged: {
+                if (input.text === "")
+                    label.text = "INTRO PASSWORD"
+                else
+                    label.text = ""
+                input.visible = true
+            }
+            onCursorVisibleChanged: { if (input.cursorVisible) input.cursorVisible = false }
             onAccepted: {
                 if (input.text !== '') {
                     root.passwordHandleSIGNAL_QML(input.text, false, false)
                     if (root.fail_password) {
                         input.visible = false
-                        label.color = Qt.rgba(0.1, 0.1, 0.1, 1)
                         label.text = "WRONG PASSWORD"
                     }
                 }
@@ -47,5 +52,7 @@ Item {
             }
         }
     }
+
+    Component.onCompleted: { input.forceActiveFocus() }
 }
 // Espacios hechos.

@@ -24,11 +24,12 @@ public:
     Q_INVOKABLE void player_handle(const QString absoluteFilePath, bool init, bool sandbox, bool fileReady, bool abort);
     Q_INVOKABLE void quit();
 
-    QWidget *container;
     QVBoxLayout *layout;
+    QWidget *container;
 
 public slots:
     void set_root_object(QObject *root);
+    void init();
 
 signals:
     void showUpdateSIGNAL();

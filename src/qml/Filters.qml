@@ -2,11 +2,10 @@ import QtQuick 2.2
 
 Rectangle {
     id: filters
-    x: xFilters
+    x: root.xAnimation
     width: screen.width
     height: screen.height
     color: "black"
-    z: 1
 
     Flickable {
         id: flickAreaFilters
@@ -23,14 +22,20 @@ Rectangle {
                 model: categoryList[0]
                 delegate: ButtonFilter {
                     width: filters.width/4
-                    labelText: { if (numberCategoryList[index] !== '0') categoryList[index+1]+"∙"; else categoryList[index+1] }
-                    numberLabelText: { if (numberCategoryList[index] !== '0') numberCategoryList[index]; else '' }
-                    pornStarsVisible: false
-                    visible: { if (enableFilter === 'CATEGORY' ) true; else false }
-                    enabled: { if (enableFilter === 'CATEGORY' ) true; else false }
-                    onClicked: { 
-                        if (numberCategoryList[index] !== '0')
-                            filtersManager('categoryFilter', labelText)
+                    labelText: categoryList[index+1]
+                    indicatorLabelvisible: { if (nCategoryList[index] !== "0") true; else false }
+                    numberLabelText: { if (nCategoryList[index] !== "0") nCategoryList[index]; else '' }
+                    sourceImage: {
+                        if (nCategoryList[index] !== "0")
+                            "qrc:/resources/images/category/"+categoryList[index+1]+".jpg"
+                        else
+                            "qrc:/resources/images/category/"+categoryList[index+1]+"_NOT_AVAILABLE.jpg"
+                    }
+                    visible: { if (activeFilter === "CATEGORY" ) true; else false }
+                    enabled: { if (activeFilter === "CATEGORY" ) true; else false }
+                    onClicked: {
+                        if (nCategoryList[index] !== "0")
+                            filtersManager("categoryFilter", labelText)
                     }
                 }
             }
@@ -39,24 +44,28 @@ Rectangle {
                 model: pornstarList[0]
                 delegate: ButtonFilter {
                     width: filters.width/4
+                    labelText: pornstarList[index+1]
+                    indicatorLabelvisible: { if (nPornstarList[index] !== "0") true; else false }
+                    numberLabelText: { if (nPornstarList[index] !== "0") nPornstarList[index]; else '' }
                     sourceImage: {
-                        if (nPornstarList[index] !== '0')
+                        if (nPornstarList[index] !== "0")
                             "qrc:/resources/images/pornstars/"+pornstarList[index+1]+".jpg"
                         else
-                            "qrc:/resources/images/available/pornstarNotAvailable.png"
+                            "qrc:/resources/images/pornstars/"+pornstarList[index+1]+"_NOT_AVAILABLE.jpg"
                     }
-                    labelText: pornstarList[index+1]
-                    numberLabelText: ''
-                    pornStarsVisible: true
-                    visible: { if (enableFilter === 'PORNSTAR') true; else false }
-                    enabled: { if (enableFilter === 'PORNSTAR') true; else false }
-                    onClicked: { 
-                        if (nPornstarList[index] !== '0')
-                        filtersManager('pornstarFilter', labelText)
+                    visible: { if (activeFilter === "PORNSTAR") true; else false }
+                    enabled: { if (activeFilter === "PORNSTAR") true; else false }
+                    onClicked: {
+                        if (nPornstarList[index] !== "0")
+                            filtersManager("pornstarFilter", labelText)
                     }
                 }
             }
         }
     }
+
+    onFocusChanged: { if (!filters.focus) filters.forceActiveFocus() }
+
+    Component.onCompleted: { filters.forceActiveFocus() }
 }
 // Espacios hechos.

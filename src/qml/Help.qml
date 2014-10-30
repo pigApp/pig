@@ -1,7 +1,10 @@
 import QtQuick 2.2
 
-Item {
+Rectangle {
     id: help
+    x: root.xAnimation
+    width: screen.width
+    height: screen.height
 
     Rectangle {
         id: pigLayer
@@ -30,12 +33,12 @@ Item {
             }
             Text {
                 text: "<style type='text/css'> a:link{color:#1a1a1a;font-style:normal;text-decoration:none} </style>"+
-                      "BUGS &nbsp; <a href=\'http://google.com\'>GITHUB.COM/PIGAPP/BUGS <font color='#ffffff'>➟<font/></a><br/>"+
-                      "CODE &nbsp; <a href=\'http://google.com\'>GITHUB.COM/PIGAPP <font color='#ffffff'>➟<font/></a><br/>"+
-                      "TORRENTS &nbsp; <a href=\'http://clarin.com\'>GITHUB.COM/PIGAPP/TORRENT <font color='#ffffff'>➟<font/></a><br/>"+
-                      "TRANSLATIONS &nbsp; <a href=\'http://google.com\'>GITHUB.COM/PIGAPP/TRANSLATE <font color='#ffffff'>➟<font/></a><br/>"+
+                      "BUGS &nbsp; <a href=\'http://google.com\'>GITHUB.COM/PIGAPP/BUGS <font color='#ff0000'>➟<font/></a><br/>"+
+                      "CODE &nbsp; <a href=\'http://google.com\'>GITHUB.COM/PIGAPP <font color='#ff0000'>➟<font/></a><br/>"+
+                      "TORRENTS &nbsp; <a href=\'http://clarin.com\'>GITHUB.COM/PIGAPP/TORRENT <font color='#ff0000'>➟<font/></a><br/>"+
+                      "TRANSLATIONS &nbsp; <a href=\'http://google.com\'>GITHUB.COM/PIGAPP/TRS <font color='#ff0000'>➟<font/></a><br/>"+
                       "BTC &nbsp; <font color='#1a1a1a'>1LtU9rMsQ41rCqsJAvMtw89TA5XT2dW7f9</font><br/>"+
-                      "SHARE &nbsp; <a href=\'http://google.com\'>PIG.NET <font color='#ffffff'>➟<font/></a><br/>"+
+                      "SHARE &nbsp; <a href=\'http://google.com\'>PIG.NET <font color='#ff0000'>➟<font/></a><br/>"+
                       "CONTACT &nbsp; <font color='#1a1a1a'>PIG@MAIL.COM</font><br/><br/>"
                 color: "white"
                 font.family: pigFont.name
@@ -166,9 +169,9 @@ Item {
                 font.pixelSize: screen.height/23
             }
             Text {
-                text: "⍿ &nbsp; <font color='#1a1a1a'>1920X1080</font><br/>"+
-                      "⍿ &nbsp; <font color='#1a1a1a'>1440X975</font><br/>"+
-                      "⍿ &nbsp; <font color='#1a1a1a'>1280X720</font><br/>"
+                text: "◪ &nbsp; <font color='#1a1a1a'>1920X1080</font><br/>"+
+                      "◪ &nbsp; <font color='#1a1a1a'>1440X975</font><br/>"+
+                      "◪ &nbsp; <font color='#1a1a1a'>1280X720</font><br/>"
                 color: "white"
                 font.family: pigFont.name
                 font.bold: true
@@ -254,7 +257,7 @@ Item {
                       "<font color='#1a1a1a'>The movies are not downloaded</font><br/>"+
                       "You probably have blocked the ports used<br/>"+
                       "by BitTorrent in your firewall or ISP.<br/>"+
-                      "<a href=\'http://google.com\'>Read more <font color='#ffffff'>➟<font/></a><br/><br/>"
+                      "<a href=\'http://google.com\'>Read more <font color='#ff0000'>➟<font/></a><br/><br/>"
                 color: "white"
                 font.family: pigFont.name
                 font.bold: true
@@ -274,7 +277,7 @@ Item {
                       "<font color='#1a1a1a'>The movies do not play</font><br/>"+
                       "You probably do not have installed<br/>"+
                       "the necessary video codecs.<br/>"+
-                      "<a href=\'http://google.com\'>Read more <font color='#ffffff'>➟<font/></a><br/><br/>"
+                      "<a href=\'http://google.com\'>Read more <font color='#ff0000'>➟<font/></a><br/><br/>"
                 color: "white"
                 font.family: pigFont.name
                 font.bold: true
@@ -296,7 +299,7 @@ Item {
 
     Keys.onPressed: {
         if (event.key === Qt.Key_Escape) {
-            screen.state = "cleanUp"
+            screen.state = "hideHelp"
             event.accepted = true;
         } else if (event.key === Qt.Key_Q && (event.modifiers & Qt.ControlModifier)) {
             root.quitSIGNAL_QML()

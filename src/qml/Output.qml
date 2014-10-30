@@ -3,7 +3,7 @@ import QtGraphicalEffects 1.0
 
 Item {
     id: output
-    opacity: 0
+    x: screen.width
 
     property bool posterLoaded
     property bool coverLoaded
@@ -37,10 +37,11 @@ Item {
 
         Item {
             id: recipe
+            z: { PathView.recipeZ || 1 }
             width: listView.width
             height: listView.height
+            visible: { recipe.PathView.isCurrentItem }
             opacity: { PathView.recipeOpacity || 1 }
-            z: { PathView.recipeZ || 1 }
 
             Keys.onUpPressed: { if (!output.zoomIn && !onShowPlayerLayer) fiveMoreTimer.start() }
             Timer {
@@ -70,13 +71,13 @@ Item {
                 sourceSize.height: 1080
                 anchors.horizontalCenter: parent.horizontalCenter
                 anchors.top: parent.top
-                onStatusChanged: { 
+                onStatusChanged: {
                     if (poster.source == list[5] && poster.status == Image.Ready) {
                         posterLoaded = true
                         if (!coverLoaded || !screensLoaded)
                             imagesStatus.start()
                     } else if (poster.status == Image.Error) {
-                        poster.source = "/qrc:resources/images/available/posterNotAvailable.png"
+                        poster.source = "/qrc:resources/images/available/poster_NOT_AVAILABLE.png"
                         posterLoaded = true
                         if (!coverLoaded || !screensLoaded)
                             imagesStatus.start()
@@ -132,7 +133,7 @@ Item {
                         if (!posterLoaded || !coverLoaded)
                             imagesStatus.start()
                     } else if (screens.status == Image.Error) {
-                        screens.source = "qrc:/resources/images/available/screensNotAvailable.png"
+                        screens.source = "qrc:/resources/images/available/screens_NOT_AVAILABLE.png"
                         screensLoaded = true
                         if (!posterLoaded || !coverLoaded)
                             imagesStatus.start()
@@ -160,6 +161,7 @@ Item {
                     inScreensB.stop()
                     inScreensC.stop()
                     inScreensD.stop()
+
                     outScreensA.start()
                     outScreensB.start()
                     outScreensC.start()
@@ -189,7 +191,7 @@ Item {
             NumberAnimation { id: outScreensB; target: screens; properties: "width"; to: parent.width/3.04; duration: 1000; easing.type: Easing.InOutQuart }
             NumberAnimation { id: outScreensC; target: screens; properties: "height"; to: parent.height/2.51; duration: 1000; easing.type: Easing.InOutQuart }
             NumberAnimation { id: outScreensD; target: screens; properties: "opacity"; to: 0.2; duration: 1000; easing.type: Easing.InOutQuart }
-            
+
             RectangularGlow {
                 id: coverEffect
                 color: "black"
@@ -215,7 +217,7 @@ Item {
                         if (!posterLoaded || !screensLoaded)
                             imagesStatus.start()
                     } else if (cover.status == Image.Error) {
-                        cover.source = "qrc:/resources/images/available/coverNotAvailable.png"
+                        cover.source = "qrc:/resources/images/available/cover_NOT_AVAILABLE.png"
                         coverLoaded = true
                         if (!posterLoaded || !screensLoaded)
                             imagesStatus.start()
@@ -247,51 +249,42 @@ Item {
                 anchors.topMargin: parent.height/12
                 Text {
                     id: castLabel
-                    text: "∙ "+cast
-                    color: "white"
+                    text: "<font color='#ff0000'>∙<font/> <font color='#ffffff'>"+cast+"<font/>"
                     font.family: pigFont.name
                     font.pixelSize: screen.height/35
                 }
                 Text {
                     id: categoryLabel
-                    text: "∙ "+categories
-                    color: "white"
+                    text: "<font color='#ff0000'>∙<font/> <font color='#ffffff'>"+categories+"<font/>"
                     font.family: pigFont.name
                     font.pixelSize: screen.height/35
                 }
                 Text {
                     id: qualityLabel
-                    text: "∙ "+quality
-                    color: "white"
+                    text: "<font color='#ff0000'>∙<font/> <font color='#ffffff'>"+quality+"<font/>"
                     font.family: pigFont.name
                     font.pixelSize: screen.height/35
                 }
                 Text {
                     id: splitLabel
-                    text: "∙ SPLIT"
-                    color: { if (scenes === 1) Qt.rgba(1, 1, 1, 0.5); else "white" }
+                    text: { if (scenes === 1) "<font color='transparent'>∙<font/> <font color='#ffffff'>SPLIT<font/>"; else "<font color='#ff0000'>∙<font/> <font color='#ffffff'>SPLIT<font/>" }
                     font.family: pigFont.name
                     font.pixelSize: screen.height/35
-                    textFormat: Text.RichText
-                    opacity: { if (scenes === 1) 0.5; else 1 }
                 }
                 Text {
                     id: fullLabel
-                    text: "∙ FULL"
-                    color: { if (full === "NOT") Qt.rgba(1, 1, 1, 0.5); else "white" }
+                    text: { if (full === "NOT") "<font color='transparent'>∙<font/> <font color='#ffffff'>FULL<font/>"; else "<font color='#ff0000'>∙<font/> <font color='#ffffff'>FULL<font/>" }
                     font.family: pigFont.name
                     font.pixelSize: screen.height/35
-                    textFormat: Text.RichText
-                    opacity: { if (full === "NOT") 0.5; else 1 }
                 }
             }
             Row {
                 id: openSceneRow
                 spacing: 1
                 anchors.left: cover.right
-                anchors.leftMargin: parent.width/64
+                anchors.leftMargin: parent.width/42.66
                 anchors.top: datesColumn.bottom
-                anchors.topMargin: parent.height/33.75
+                anchors.topMargin: parent.height/38.57
                 Component.onCompleted: {
                     for (var i=1; i<=scenes && i<=8; i++) {
                         var component = Qt.createComponent("ButtonScene.qml")
@@ -307,7 +300,7 @@ Item {
                 id: counterRow
                 spacing: parent.width/480
                 anchors.right: parent.right
-                anchors.rightMargin: parent.width/960
+                anchors.rightMargin: parent.width/480
                 anchors.bottom: parent.bottom
                 anchors.bottomMargin: -parent.height/135
                 Text {
@@ -320,7 +313,7 @@ Item {
                 Text {
                     id: totalLabel
                     text: totalFilms
-                    color: Qt.rgba(1, 1, 1, 0.5)
+                    color: Qt.rgba(1, 1, 1, 0.6)
                     font.family: pigFont.name
                     font.pixelSize: screen.height/23
                 }
@@ -336,15 +329,15 @@ Item {
                         else
                             " ⇄"
                     }
-                    color: Qt.rgba(1, 1, 1, 0.5)
+                    color: Qt.rgba(1, 1, 1, 0.6)
                     font.family: pigFont.name
                     font.pixelSize: screen.height/54
                     anchors.verticalCenter: totalLabel.verticalCenter
                     anchors.verticalCenterOffset: screen.height/360
                 }
             }
-            NumberAnimation { running: recipe.PathView.isCurrentItem; target: poster; property: "opacity"; to: 1; duration: 4000; easing.type: Easing.InOutQuad }
-            NumberAnimation { running: recipe.PathView.isCurrentItem; target: translucedLayer; property: "opacity"; to: 0.87; duration: 4500; easing.type: Easing.InOutQuad }
+            NumberAnimation { running: recipe.PathView.isCurrentItem && output.x === 0; target: poster; property: "opacity"; to: 1; duration: 1000; easing.type: Easing.InOutQuad }
+            NumberAnimation { running: recipe.PathView.isCurrentItem && output.x === 0; target: translucedLayer; property: "opacity"; to: 0.86; duration: 1500; easing.type: Easing.InOutQuad }
             NumberAnimation { running: recipe.PathView.isCurrentItem; target: datesColumn; property: "opacity"; to: 1; duration: 2000; easing.type: Easing.OutElastic }
             PropertyAction { running: !recipe.PathView.isCurrentItem; target: poster; property: "opacity"; value: 0 }
             PropertyAction { running: !recipe.PathView.isCurrentItem; target: translucedLayer; property: "opacity"; value: 0 }
@@ -370,13 +363,13 @@ Item {
                 },
                 Transition {
                     to: "showAll"
-                    NumberAnimation { target: output; property: "opacity"; to: 1; duration: 1000; easing.type: Easing.InOutQuad }
+                    NumberAnimation { target: output; easing.amplitude: 1.7; properties: "x"; to: 0; duration: 500; easing.type: Easing.OutQuart }
                 },
                 Transition {
                     to: "hideAll"
-                    NumberAnimation { target: output; property: "opacity"; to: 0; duration: 500; easing.type: Easing.InOutQuad }
+                    NumberAnimation { target: output; easing.amplitude: 1.7; properties: "x"; to: screen.width; duration: 500; easing.type: Easing.OutQuart }
                 }
-            ]            
+            ]
         }
     }
 
@@ -386,7 +379,7 @@ Item {
         delegate: delegate
         interactive: false
         anchors.fill: parent
-        
+
         property int offset: 0
         property int counter: 5
 
@@ -394,8 +387,8 @@ Item {
         signal fiveLess()
         signal next()
         signal prior()
-        
-        onFiveMore: {  
+
+        onFiveMore: {
             if(totalFilms > 5 && counter < totalFilms) {
                 offset = offset+5
                 counter = counter+5
@@ -406,7 +399,7 @@ Item {
         onFiveLess: {
             if(totalFilms > 5 && currentFilm-4 > 0) { // FIXME: Si esta en el primero no deberia aceptar ir para abajo.
                 offset = offset-5                     // FIXME: Se rompe si voy hacia arriba o hacia abajo rapido, creo que no llega a crear y destruir los objetos.
-                counter = counter-5                   
+                counter = counter-5
                 currentFilm = counter-4
                 listUpdater(offset)
             }
@@ -417,7 +410,7 @@ Item {
             if (locationOnList === list.length-10) {
                 locationOnList = 0
                 location = 0
-                currentFilm = currentFilm-n+1 
+                currentFilm = currentFilm-n+1
             } else {
                 locationOnList = locationOnList+10
                 ++currentFilm
@@ -431,7 +424,7 @@ Item {
             if (locationOnList === 0) {
                 locationOnList = list.length-10
                 location = n-1
-                currentFilm = currentFilm+n-1 
+                currentFilm = currentFilm+n-1
             } else {
                 locationOnList = locationOnList-10
                 --currentFilm
@@ -447,11 +440,21 @@ Item {
             onTriggered: { focusPath = true }
         }
 
+        path: Path {
+            startX: screen.width/2
+            startY: screen.height/2
+            PathAttribute { name: "recipeOpacity"; value: 1 }
+            PathAttribute { name: "recipeZ"; value: 2 }
+            PathQuad { x: screen.width/2; y: screen.height/2; controlX: screen.width+(screen.width*2.77); controlY: screen.height/2 }
+            PathAttribute { name: "recipeOpacity"; value: 0 }
+            PathAttribute { name: "recipeZ"; value: 0 }
+            PathQuad { x: screen.width/2; y: screen.height/2; controlX: -screen.width*2.77; controlY: screen.height/2 }
+        }
+
         Keys.onPressed: {
             if (!onShowPlayerLayer) {
                 if (!zoomIn && event.key === Qt.Key_Escape) {
-                    loader.source = ""
-                    loader_finder_output.source = "Finder.qml"
+                    pathView.state = "back"
                     event.accepted = true;
                 } else if (event.key === Qt.Key_H && (event.modifiers & Qt.ControlModifier)) {
                     screen.state = "showHelp"
@@ -471,16 +474,24 @@ Item {
             }
         }
 
-        path: Path {
-            startX: screen.width/2
-            startY: screen.height/2
-            PathAttribute { name: "recipeOpacity"; value: 1 }
-            PathAttribute { name: "recipeZ"; value: 2 }
-            PathQuad { x: screen.width/2; y: screen.height/2; controlX: screen.width+(screen.width*2.77); controlY: screen.height/2 }
-            PathAttribute { name: "recipeOpacity"; value: 0 }
-            PathAttribute { name: "recipeZ"; value: 0 }
-            PathQuad { x: screen.width/2; y: screen.height/2; controlX: -screen.width*2.77; controlY: screen.height/2 }
-        }
+        states: [
+            State {
+                name: "back"
+            }
+        ]
+        transitions: [
+            Transition {
+                to: "back"
+                SequentialAnimation {
+                    ParallelAnimation {
+                        NumberAnimation { target: output; property: "opacity"; to: 0; duration: 200; easing.type: Easing.InOutQuad }
+                        NumberAnimation { target: output; easing.amplitude: 1.7; properties: "x"; to: screen.width; duration: 500; easing.type: Easing.OutQuart }
+                    }
+                    PropertyAction { target: loader; property: "source"; value: "" }
+                    PropertyAction { target: loader_finder_output; property: "source"; value: "Finder.qml" }
+                }
+            }
+        ]
     }
 
     Rectangle {
@@ -594,7 +605,7 @@ Item {
             abortTorrentResetDelay.start()
         }
     }
-    
+
     Timer {
         id: timeOutNetwork
         running: false
@@ -602,7 +613,7 @@ Item {
         interval: 60000
         onTriggered: { root.networkError = true }
     }
-    
+
     function listCreator() {
         var torrent
         var row = 0
@@ -616,7 +627,7 @@ Item {
         locationOnList = 0
         pathView.forceActiveFocus()
     }
-    
+
     function listUpdater(offset) {
         hideAll = true
         focusPath = false
@@ -634,7 +645,7 @@ Item {
         interval: 600
         onTriggered: { loader.source = "Wait.qml" }
     }
-    
+
     Connections {
         target: cppSignals
         onListUpdatedSIGNAL: { listCreator() }
@@ -643,5 +654,8 @@ Item {
         onFileReadySIGNAL: { fileNotReady = false; fileRecheckDelay.stop() }
     }
 
-    Component.onCompleted: { listCreator(root.n, root.list); timeOutNetwork.start() }
+    Component.onCompleted: {
+        listCreator(root.n, root.list)
+        timeOutNetwork.start()
+    }
 }

@@ -17,6 +17,7 @@ int main(int argc, char *argv[])
     pig.container = QWidget::createWindowContainer(view);
     pig.container->setFocusPolicy(Qt::TabFocus);
     pig.layout->addWidget(pig.container);
+    pig.init();
 
     view->rootContext()->setContextProperty("cppSignals", &pig);
 

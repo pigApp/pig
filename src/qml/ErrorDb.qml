@@ -6,7 +6,7 @@ Item {
     Rectangle {
         id: layer
         width: parent.width
-        height: parent.height/3.5
+        height: parent.height/4.32
         color: "black"
         anchors.centerIn: parent
         Column {
@@ -23,7 +23,7 @@ Item {
             Text {
                 id: getDbInformationLabel
                 text:"<style type='text/css'> a:link{color:#1a1a1a;font-style:normal;text-decoration:none} </style>"+
-                     "GET LATEST DATABASE &nbsp;<a href=\'http://google.com\'>DL.BINTRAY.COM/DB <font color='#ffffff'>➟<font/></a>" // TODO: Url real db.
+                     "GET LATEST DATABASE &nbsp;<a href=\'http://google.com\'>DL.BINTRAY.COM/DB <font color='#ff0000'>➟<font/></a>" // TODO: Url real db.
                 color: Qt.rgba(0.1, 0.1, 0.1, 1)
                 font.family: pigFont.name
                 font.bold: true

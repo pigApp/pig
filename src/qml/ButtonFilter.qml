@@ -12,13 +12,14 @@ Rectangle {
     ColorAnimation on color { id: outColor; running: false; to: "black"; duration: 200 }
 
     property bool enter
-    property bool pornStarsVisible
+
     property alias labelText: label.text
+    property alias indicatorLabelvisible: indicatorLabel.visible
     property alias numberLabelText: numberLabel.text
-    property alias sourceImage: starPic.source
+    property alias sourceImage: pic.source
 
     signal clicked()
-    
+
     RectangularGlow {
         id: effect
         color: Qt.rgba(1, 1, 1, 0.4)
@@ -28,36 +29,44 @@ Rectangle {
         opacity: 0
         anchors.fill: buttonFilter
     }
+
     Image {
-        id: starPic
-        width: screen.width/11.29
-        height: screen.height/5.4
-        sourceSize.width: 170
-        sourceSize.height: 200
+        id: pic
+        width: screen.width/4
+        height: screen.height/4
+        sourceSize.width: screen.width/4
+        sourceSize.height: screen.height/4
         opacity: 0
         anchors.centerIn: parent
-    }
-
-    Text {
-        id: numberLabel
-        color: "black"
-        font.family: pigFont.name
-        font.pixelSize: screen.height/21.5
-        visible: false
-        opacity: 0
-        anchors.left: label.right
-        anchors.verticalCenter: parent.verticalCenter
-        anchors.verticalCenterOffset: -screen.height/3600
     }
     Text {
         id: label
         color: "white"
         font.family: pigFont.name
-        font.capitalization: Font.AllUppercase
         font.pixelSize: screen.height/23
         anchors.centerIn: parent
-        ColorAnimation on color { id: inLabelColor; running: false; to: "black"; duration: 200 }
-        ColorAnimation on color { id: outLabelColor; running: false; to: "white"; duration: 200 }
+    }
+    Text {
+        id: indicatorLabel
+        text: "∙"
+        color: "red"
+        font.family: pigFont.name
+        font.pixelSize: screen.height/21.5
+        visible: false
+        anchors.left: label.right
+        anchors.verticalCenter: parent.verticalCenter
+        anchors.verticalCenterOffset: -screen.height/3600
+    }
+    Text {
+        id: numberLabel
+        color: "white"
+        font.family: pigFont.name
+        font.pixelSize: screen.height/21.5
+        opacity: 0
+        anchors.right: parent.right
+        anchors.rightMargin: parent.width/48
+        anchors.bottom: parent.bottom
+        anchors.bottomMargin: -parent.height/135
     }
     MouseArea {
         id: mousearea
@@ -69,55 +78,40 @@ Rectangle {
     }
     onEnterChanged: {
         if (enter) {
-            if (pornStarsVisible) {
-                inStarPic.start()
-                inLabel.start()
-                inNLabel.start()
-                inColor.start()
-                inEffect.start()
-            } else {
-                inLabelColor.start()
-                inNLabel.start()
-                inColor.start()
-            }
+            inStarPic.start()
+            inLabel.start()
+            outIndicatorLabel.stop()
+            inIndicatorLabel.start()
+            inNumberLabel.start()
+            inColor.start()
+            inEffect.start()
         } else {
-            if (pornStarsVisible) {
-                inStarPic.stop()
-                inLabel.stop()
-                inNLabel.stop()
-                inColor.stop()
-                inEffect.stop()
-                outStarPic.start()
-                outLabel.start()
-                outNLabel.start()
-                outColor.start()
-                outEffect.start()
-            } else {
-                inLabelColor.stop()
-                inNLabel.start()
-                inColor.stop()
-                outLabelColor.start()
-                outNLabel.start()
-                outColor.start()
-            }
+            inStarPic.stop()
+            inLabel.stop()
+            inIndicatorLabel.stop()
+            inNumberLabel.stop()
+            inColor.stop()
+            inEffect.stop()
+
+            outStarPic.start()
+            outLabel.start()
+            outIndicatorLabel.start()
+            outNumberLabel.start()
+            outColor.start()
+            outEffect.start()
         }
     }
-
-    NumberAnimation { id: inStarPic; target: starPic; properties: "opacity"; to: 1; duration: 1000; easing.type: Easing.InOutQuart }
+    NumberAnimation { id: inStarPic; target: pic; properties: "opacity"; to: 1; duration: 1000; easing.type: Easing.InOutQuart }
     NumberAnimation { id: inLabel; target: label; properties: "opacity"; to: 0; duration: 200; easing.type: Easing.InOutQuart }
-    NumberAnimation { id: inNLabel; target: numberLabel; properties: "opacity"; to: 1; duration: 200; easing.type: Easing.InOutQuart }
+    NumberAnimation { id: inIndicatorLabel; target: indicatorLabel; properties: "opacity"; to: 0; duration: 1; easing.type: Easing.InOutQuart }
+    NumberAnimation { id: inNumberLabel; target: numberLabel; properties: "opacity"; to: 1; duration: 1100; easing.type: Easing.InOutQuart }
     NumberAnimation { id: inEffect; target: effect; properties: "opacity"; to: 1; duration: 200; easing.type: Easing.InOutQuart }
-    NumberAnimation { id: outStarPic; target: starPic; properties: "opacity"; to: 0; duration: 100; easing.type: Easing.InOutQuart }
+    NumberAnimation { id: outStarPic; target: pic; properties: "opacity"; to: 0; duration: 100; easing.type: Easing.InOutQuart }
     NumberAnimation { id: outLabel; target: label; properties: "opacity"; to: 1; duration: 200; easing.type: Easing.InOutQuart }
-    NumberAnimation { id: outNLabel; target: numberLabel; properties: "opacity"; to: 0; duration: 200; easing.type: Easing.InOutQuart }
+    NumberAnimation { id: outIndicatorLabel; target: indicatorLabel; properties: "opacity"; to: 1; duration: 500; easing.type: Easing.InOutQuart }
+    NumberAnimation { id: outNumberLabel; target: numberLabel; properties: "opacity"; to: 0; duration: 100; easing.type: Easing.InOutQuart }
     NumberAnimation { id: outEffect; target: effect; properties: "opacity"; to: 0; duration: 200; easing.type: Easing.InOutQuart }
 
-    Component.onCompleted: {
-        buttonFilter.forceActiveFocus()
-        if (pornStarsVisible)
-            numberLabel.visible = false
-        else
-            numberLabel.visible = true
-    }
+    Component.onCompleted: { buttonFilter.forceActiveFocus() }
 }
 // Espacios hechos.

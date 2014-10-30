@@ -3,13 +3,6 @@ import QtQuick 2.2
 Item {
     id: news
 
-
-    Rectangle {
-      id: backgroundLayer
-      color: Qt.rgba(0.5, 0.5, 0.5, 0.7)
-      anchors.fill: parent
-    }
-
     Rectangle {
         id: layer
         width: parent.width/4
@@ -60,28 +53,13 @@ Item {
                 }
             }
         }
-        Button {
-            id: close
-            width: parent.width/22.85
-            height: parent.height/34.2
-            label: "X"
-            labelColor: "white"
-            labelSize: screen.height/23
-            labelInColor: Qt.rgba(0.1, 0.1, 0.1, 1)
-            labelOutColor: "white"
-            anchors.right: parent.right
-            anchors.rightMargin: parent.width/13.71
-            anchors.top: parent.top
-            anchors.topMargin: parent.height/47.57
-            onClicked: {
-                root.news = false
-                loader.source = ""
-            }
-        }
     }
 
     Keys.onPressed: {
-        if (event.key === Qt.Key_Q && (event.modifiers & Qt.ControlModifier)) {
+        if (event.key === Qt.Key_Escape) {
+            screen.state = "hideNews"
+            event.accepted = true;
+        } else if (event.key === Qt.Key_Q && (event.modifiers & Qt.ControlModifier)) {
             root.quitSIGNAL_QML()
             event.accepted = true;
         }

@@ -11,7 +11,7 @@ Rectangle {
     property int scene
     property int fit
     property int size: screen.height/12.70
-    
+
     Image {
         id: icon
         width: size

@@ -40,18 +40,31 @@ void PIG::set_root_object(QObject *root)
     if (mRoot) connect (mRoot, SIGNAL(findSIGNAL_QML(QString, QString, QString, QString, QString, int, bool)), this, SLOT(find(QString, QString, QString, QString, QString, int, bool)));
     if (mRoot) connect (mRoot, SIGNAL(torrentHandleSIGNAL_QML(QString, int, int, bool)), this, SLOT(torrent_handle(QString, int, int, bool)));
     if (mRoot) connect (mRoot, SIGNAL(quitSIGNAL_QML()), this, SLOT(quit()));
+}
 
+//INIT
+void PIG::init()
+{
 #ifdef _WIN32
     const QString target = "C:/PIG/.pig/db.sqlite";
+    const QString init = "C:/PIG/.pig/.init";
     const QString tmp = "C:/PIG/.pig/tmp/";
 #else
     const QString target = QDir::homePath()+"/.pig/db.sqlite";
+    const QString init = QDir::homePath()+"/.pig/.init";
     const QString tmp = QDir::homePath()+"/.pig/tmp/";
 #endif
-    const QFile file(target);
+    QFile file(target);
     if (file.exists()) {
         db = QSqlDatabase::addDatabase("QSQLITE");
         db.setDatabaseName(target);
+
+        file.setFileName(init);
+        if (file.exists()) {
+            file.remove();
+            mRoot->setProperty("welcome", true);
+        }
+
         const QDir dir(tmp);
         if (!dir.exists())
             dir.mkdir(tmp);
@@ -124,7 +137,7 @@ void PIG::start()
             const int currentBinaryVersion = qry.value(1).toInt();
             const int currentRelease = qry.value(2).toInt();
             QStringList categoryList = qry.value(3).toString().split(",");
-            const QStringList numberCategoryList = qry.value(4).toString().split(",");
+            const QStringList nCategoryList = qry.value(4).toString().split(",");
             QStringList pornstarList = qry.value(5).toString().split(",");
             const QStringList nPornstarList = qry.value(6).toString().split(",");
             db.close();
@@ -140,56 +153,48 @@ void PIG::start()
             mRoot->setProperty("binaryVersion", strCurrentBinaryVersion);
             mRoot->setProperty("release", strCurrentRelease);
             mRoot->setProperty("categoryList", categoryList);
-            mRoot->setProperty("numberCategoryList", numberCategoryList);
+            mRoot->setProperty("nCategoryList", nCategoryList);
             mRoot->setProperty("pornstarList", pornstarList);
             mRoot->setProperty("nPornstarList", nPornstarList);
+
+#ifdef _WIN32
+    const QString target = "C:/PIG/.pig/news.txt";
+#else
+    const QString target = QDir::homePath()+"/.pig/news";
+#endif
+            QFile file(target);
+            if (file.exists()) {
+                file.open(QIODevice::ReadOnly | QIODevice::Text);
+                bool head = true;
+                QString binary_news;
+                QString database_news;
+                QTextStream in(&file);
+                while (!in.atEnd()) {
+                    const QString line = in.readLine();
+                    if (line.isEmpty())
+                        head = false;
+                    if (head) {
+                        binary_news.append(line+"\n");
+                    } else {
+                        if(!line.isEmpty())
+                        database_news.append(line+"\n");
+                    }
+                }
+                file.remove();
+                mRoot->setProperty("binaryNews", binary_news);
+                mRoot->setProperty("databaseNews", database_news);
+                mRoot->setProperty("news", true);
+            }
 
             mTorrent = new Torrent();
             mTorrent->_pig = this;
             mTorrent->_root = mRoot;
+
+            emit startSIGNAL();
         }
     } else {
         error_database();
     }
-
-#ifdef _WIN32
-    const QString init = "C:/PIG/.pig/.init";
-    const QString target = "C:/PIG/.pig/news.txt";
-#else
-    const QString init = QDir::homePath()+"/.pig/.init";
-    const QString target = QDir::homePath()+"/.pig/news";
-#endif
-    QFile file(init);
-    if (file.exists()) {
-        file.remove();
-        mRoot->setProperty("welcome", true);
-    }
-    file.setFileName(target);
-    if (file.exists()) {
-        file.open(QIODevice::ReadOnly | QIODevice::Text);
-        bool head = true;
-        QString binary_news;
-        QString database_news;
-        QTextStream in(&file);
-        while (!in.atEnd()) {
-            const QString line = in.readLine();
-            if (line.isEmpty())
-                head = false;
-            if (head) {
-                binary_news.append(line+"\n");
-            } else {
-                if(!line.isEmpty())
-                    database_news.append(line+"\n");
-            }
-        }
-        file.remove();
-
-        mRoot->setProperty("binaryNews", binary_news);
-        mRoot->setProperty("databaseNews", database_news);
-        mRoot->setProperty("news", true);
-    }
-
-    emit startSIGNAL();
 }
 
 //FIND
@@ -314,6 +319,7 @@ void PIG::error_database()
     emit showErrorDatabaseSIGNAL();
 }
 
+//QUIT
 void PIG::quit()
 {
     this->~PIG();
