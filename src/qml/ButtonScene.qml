@@ -1,4 +1,4 @@
-import QtQuick 2.2
+import QtQuick 2.3
 
 Rectangle {
     id: buttonScenne
@@ -16,7 +16,7 @@ Rectangle {
         id: icon
         width: size
         height: size
-        source: "qrc:/resources/images/output/openScene.png"
+        source: "/resources/images/output/openScene.png"
         smooth: true
         anchors.centerIn: parent
     }

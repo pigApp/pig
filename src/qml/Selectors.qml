@@ -1,7 +1,8 @@
-import QtQuick 2.2
+import QtQuick 2.3
 
 Item {
     id: selectors
+    property bool onShowSelectors
 
     Text {
         id: selectorsLabel
@@ -17,11 +18,11 @@ Item {
         MouseArea {
             id: selectorsMousearea
             onClicked: {
-                if (!root.onShowSelectors) {
-                    root.onShowSelectors = true
-                    selectors.state = "onShowSelectors"
+                if (!onShowSelectors) {
+                    onShowSelectors = true
+                    selectors.state = "showSelectors"
                 } else {
-                    root.onShowSelectors = false
+                    onShowSelectors = false
                     if (root.full !== "" || root.quality !== "")
                         selectors.state = "hideActiveSelectors"
                     else
@@ -117,7 +118,7 @@ Item {
 
     states: [
         State {
-            name: "onShowSelectors"
+            name: "showSelectors"
         },
         State {
             name: "hideSelectors"
@@ -128,7 +129,7 @@ Item {
     ]
     transitions: [
         Transition {
-            to: "onShowSelectors"
+            to: "showSelectors"
             PropertyAction { target: selectorsLabel; property: "color"; value: "red" }
             NumberAnimation { target: selectorsRow; properties: "opacity"; to: 1.0; duration: 200; easing.type: Easing.InOutQuart }
         },
@@ -146,7 +147,9 @@ Item {
     ]
 
     Component.onCompleted: {
-        if (root.onShowSelectors)
-            selectors.state = "onShowSelectors"
+        if (root.full !== "" || root.quality !== "") {
+            onShowSelectors = true
+            selectors.state = "showSelectors"
+        }
     }
 }

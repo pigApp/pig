@@ -1,4 +1,4 @@
-import QtQuick 2.2
+import QtQuick 2.3
 
 Rectangle {
     id: filters
@@ -27,9 +27,9 @@ Rectangle {
                     numberLabelText: { if (nCategoryList[index] !== "0") nCategoryList[index]; else '' }
                     sourceImage: {
                         if (nCategoryList[index] !== "0")
-                            "qrc:/resources/images/category/"+categoryList[index+1]+".jpg"
+                            "/resources/images/category/"+categoryList[index+1]+".jpg"
                         else
-                            "qrc:/resources/images/category/"+categoryList[index+1]+"_NOT_AVAILABLE.jpg"
+                            "/resources/images/category/"+categoryList[index+1]+"_NOT_AVAILABLE.jpg"
                     }
                     visible: { if (activeFilter === "CATEGORY" ) true; else false }
                     enabled: { if (activeFilter === "CATEGORY" ) true; else false }
@@ -49,9 +49,9 @@ Rectangle {
                     numberLabelText: { if (nPornstarList[index] !== "0") nPornstarList[index]; else '' }
                     sourceImage: {
                         if (nPornstarList[index] !== "0")
-                            "qrc:/resources/images/pornstars/"+pornstarList[index+1]+".jpg"
+                            "/resources/images/pornstars/"+pornstarList[index+1]+".jpg"
                         else
-                            "qrc:/resources/images/pornstars/"+pornstarList[index+1]+"_NOT_AVAILABLE.jpg"
+                            "/resources/images/pornstars/"+pornstarList[index+1]+"_NOT_AVAILABLE.jpg"
                     }
                     visible: { if (activeFilter === "PORNSTAR") true; else false }
                     enabled: { if (activeFilter === "PORNSTAR") true; else false }

@@ -1,4 +1,4 @@
-import QtQuick 2.2
+import QtQuick 2.3
 
 Item {
     id: wait
@@ -7,7 +7,7 @@ Item {
         id: networkIcon
         width: parent.width/5.36
         height: parent.height/3.01
-        source: "qrc:/resources/images/pig/network.png"
+        source: "/resources/images/pig/network.png"
         sourceSize.width: 358
         sourceSize.height: 358
         anchors.centerIn: parent
@@ -25,7 +25,7 @@ Item {
         anchors.topMargin: -parent.height/14.42
         onVisibleChanged: {
             if (root.networkError) {
-                networkIcon.source = "qrc:/resources/images/pig/networkError.png"
+                networkIcon.source = "/resources/images/pig/networkError.png"
                 backDelay.start()
             }
         }

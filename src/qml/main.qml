@@ -1,4 +1,4 @@
-import QtQuick 2.2
+import QtQuick 2.3
 import QtGraphicalEffects 1.0
 
 Item {
@@ -12,7 +12,6 @@ Item {
     property bool get
     property bool requireRestart
     property bool news
-    property bool onShowSelectors
     property bool showNetworkIcon
     property bool networkError
 
@@ -50,7 +49,7 @@ Item {
     signal torrentHandleSIGNAL_QML(string magnet, int scene, int fit, bool abort)
     signal quitSIGNAL_QML()
 
-    FontLoader { id: pigFont; source: "qrc:/resources/font/pig.ttf" }
+    FontLoader { id: pigFont; source: "/resources/font/pig.ttf" }
 
     Rectangle {
         id: screen

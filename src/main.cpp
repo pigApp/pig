@@ -10,7 +10,7 @@ int main(int argc, char *argv[])
 
     QQuickView *view = new QQuickView(QUrl("qrc:/src/qml/main.qml"));
     view->setResizeMode(QQuickView::SizeRootObjectToView);
-    view->setIcon(QIcon("qrc:/resources/images/pig/icon.png"));
+    view->setIcon(QIcon("/resources/images/pig/icon.png"));
 
     PIG pig;
     pig.set_root_object(view->rootObject());

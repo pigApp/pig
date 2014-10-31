@@ -1,4 +1,4 @@
-import QtQuick 2.2
+import QtQuick 2.3
 import QtGraphicalEffects 1.0
 
 Item {
@@ -77,7 +77,7 @@ Item {
                         if (!coverLoaded || !screensLoaded)
                             imagesStatus.start()
                     } else if (poster.status == Image.Error) {
-                        poster.source = "/qrc:resources/images/available/poster_NOT_AVAILABLE.png"
+                        poster.source = "qrc:resources/images/available/poster_NOT_AVAILABLE.png"
                         posterLoaded = true
                         if (!coverLoaded || !screensLoaded)
                             imagesStatus.start()
@@ -108,7 +108,7 @@ Item {
                 id: frame
                 width: parent.width
                 height: parent.height/2.16
-                source: "qrc:/resources/images/output/frame.png"
+                source: "/resources/images/output/frame.png"
                 sourceSize.width: 1920
                 sourceSize.height: 500
                 anchors.centerIn: parent
@@ -133,7 +133,7 @@ Item {
                         if (!posterLoaded || !coverLoaded)
                             imagesStatus.start()
                     } else if (screens.status == Image.Error) {
-                        screens.source = "qrc:/resources/images/available/screens_NOT_AVAILABLE.png"
+                        screens.source = "/resources/images/available/screens_NOT_AVAILABLE.png"
                         screensLoaded = true
                         if (!posterLoaded || !coverLoaded)
                             imagesStatus.start()
@@ -217,7 +217,7 @@ Item {
                         if (!posterLoaded || !screensLoaded)
                             imagesStatus.start()
                     } else if (cover.status == Image.Error) {
-                        cover.source = "qrc:/resources/images/available/cover_NOT_AVAILABLE.png"
+                        cover.source = "/resources/images/available/cover_NOT_AVAILABLE.png"
                         coverLoaded = true
                         if (!posterLoaded || !screensLoaded)
                             imagesStatus.start()
