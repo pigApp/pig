@@ -3,37 +3,42 @@
         <file>resources/images/pig/icon.ico</file>
         <file>resources/images/pig/icon.png</file>
         <file>resources/images/pig/icon.rc</file>
-        <file>resources/images/pig/network.png</file>
-        <file>resources/images/pig/networkError.png</file>
+        <file>resources/images/network/icon.png</file>
+        <file>resources/images/network/icon_ERROR.png</file>
         <file>resources/images/output/frame.png</file>
-        <file>resources/images/output/openScene.png</file>
-        <file>resources/images/available/screens_NOT_AVAILABLE.png</file>
-        <file>resources/images/available/poster_NOT_AVAILABLE.png</file>
-        <file>resources/images/available/cover_NOT_AVAILABLE.png</file>
-        <file>resources/images/category/ANAL.jpg</file>
-        <file>resources/images/category/ANAL_NOT_AVAILABLE.jpg</file>
-        <file>resources/images/category/DOUBLE.jpg</file>
-        <file>resources/images/category/DOUBLE_NOT_AVAILABLE.jpg</file>
-        <file>resources/images/category/GANGBANG.jpg</file>
-        <file>resources/images/category/GANGBANG_NOT_AVAILABLE.jpg</file>
-        <file>resources/images/pornstars/BELLADONNA.jpg</file>
-        <file>resources/images/pornstars/BELLADONNA_NOT_AVAILABLE.jpg</file>
+        <file>resources/images/output/open.png</file>
+        <file>resources/images/output/preview/network/icon.png</file>
+        <file>resources/images/output/preview/replay.png</file>
+        <file>resources/images/output/NOT_AVAILABLE/poster_NOT_AVAILABLE.png</file>
+        <file>resources/images/output/NOT_AVAILABLE/cover_NOT_AVAILABLE.png</file>
+        <file>resources/images/finder/category/ANAL.jpg</file>
+        <file>resources/images/finder/category/DOUBLE.jpg</file>
+        <file>resources/images/finder/category/GANGBANG.jpg</file>
+        <file>resources/images/finder/pornstars/BELLADONNA.jpg</file>
+        <file>resources/images/finder/category/NOT_AVAILABLE/ANAL_NOT_AVAILABLE.jpg</file>
+        <file>resources/images/finder/category/NOT_AVAILABLE/DOUBLE_NOT_AVAILABLE.jpg</file>
+        <file>resources/images/finder/category/NOT_AVAILABLE/GANGBANG_NOT_AVAILABLE.jpg</file>
+        <file>resources/images/finder/pornstars/NOT_AVAILABLE/BELLADONNA_NOT_AVAILABLE.jpg</file>
         <file>resources/font/pig.ttf</file>
+    </qresource>
+    <qresource prefix="QML">
         <file>src/qml/main.qml</file>
+        <file>src/qml/Welcome.qml</file>
         <file>src/qml/AskPassword.qml</file>
+        <file>src/qml/Network.qml</file>
         <file>src/qml/Update.qml</file>
-        <file>src/qml/Finder.qml</file>
-        <file>src/qml/Output.qml</file>
+        <file>src/qml/News.qml</file>
+        <file>src/qml/Help.qml</file>
         <file>src/qml/SetPassword.qml</file>
-        <file>src/qml/Filters.qml</file>
+        <file>src/qml/Finder.qml</file>
+        <file>src/qml/Selectors.qml</file>
         <file>src/qml/Button.qml</file>
         <file>src/qml/ButtonFilter.qml</file>
-        <file>src/qml/Help.qml</file>
-        <file>src/qml/News.qml</file>
+        <file>src/qml/Filters.qml</file>
+        <file>src/qml/Output.qml</file>
+        <file>src/qml/Preview.qml</file>
+        <file>src/qml/ButtonScene.qml</file>
         <file>src/qml/ProgressBar.qml</file>
         <file>src/qml/ErrorDb.qml</file>
-        <file>src/qml/Wait.qml</file>
-        <file>src/qml/Selectors.qml</file>
-        <file>src/qml/ButtonScene.qml</file>
     </qresource>
 </RCC>

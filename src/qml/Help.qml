@@ -299,10 +299,16 @@ Rectangle {
 
     Keys.onPressed: {
         if (event.key === Qt.Key_Escape) {
-            screen.state = "hideHelp"
-            event.accepted = true;
+            if (root.welcome) {
+                screen.state = "hideWelcome"
+                root.welcome = false
+                event.accepted = true;
+            } else {
+                screen.state = "hideHelp"
+                event.accepted = true;
+            }
         } else if (event.key === Qt.Key_Q && (event.modifiers & Qt.ControlModifier)) {
-            root.quitSIGNAL_QML()
+            root.quit_qml_signal()
             event.accepted = true;
         }
     }

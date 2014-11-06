@@ -5,15 +5,15 @@ Item {
     id: root
 
     property bool welcome
-    property bool require_password
-    property bool ok_password
-    property bool fail_password
+    property bool forceShowFinder
+    property bool showNetwork
+    property bool errorNetwork
     property bool requireConfirmation
     property bool get
     property bool requireRestart
-    property bool news
-    property bool showNetworkIcon
-    property bool networkError
+    property bool showUserInputLabel
+    property bool hideFinder_showOutput
+    property bool hideFinder_hideFilters_showOutput
 
     property string status
     property string information
@@ -42,12 +42,13 @@ Item {
     property variant nPornstarList
     property variant list
 
-    signal passwordHandleSIGNAL_QML(string plain, bool init, bool write)
-    signal skipSIGNAL_QML()
-    signal getFilesSIGNAL_QML()
-    signal findSIGNAL_QML(string input, string pornstar, string category, string quality, string full, int offset, bool init)
-    signal torrentHandleSIGNAL_QML(string magnet, int scene, int fit, bool abort)
-    signal quitSIGNAL_QML()
+    signal password_handle_qml_signal(string plain, bool write)
+    signal skip_qml_signal()
+    signal get_files_qml_signal()
+    signal find_qml_signal(string input, string pornstar, string category, string quality, string full, int offset, bool init)
+    signal preview_handle_qml_signal(string host, string url, string path, string file, int id, bool success, bool fail)
+    signal torrent_handle_qml_signal(string magnet, int scene, bool abort)
+    signal quit_qml_signal()
 
     FontLoader { id: pigFont; source: "/resources/font/pig.ttf" }
 
@@ -73,13 +74,20 @@ Item {
 
         states: [
             State {
+                name: "showWelcome"
+                PropertyChanges { target: loader; source: "Welcome.qml" }
+            },
+            State {
+                name: "hideWelcome"
+            },
+            State {
                 name: "showNews"
                 PropertyChanges { target: loader; source: "News.qml" }
             },
             State {
                 name: "hideNews"
-                PropertyChanges { target: root; news: false }
                 PropertyChanges { target: loader; source: "" }
+                PropertyChanges { target: root; forceShowFinder: true }
             },
             State {
                 name: "showSetPassword"
@@ -99,12 +107,21 @@ Item {
         ]
         transitions: [
             Transition {
+                to: "hideWelcome"
+                SequentialAnimation {
+                    NumberAnimation { target: root; easing.amplitude: 1.7; properties: "xAnimation"; to: screen.width; duration: 1100; easing.type: Easing.OutQuart }
+                    PropertyAction { target: loader; property: "source"; value: "" }
+                    PropertyAction { target: root; property: "forceShowFinder"; value: "true" }
+                    PropertyAction { target: root; property: "showUserInputLabel"; value: "true" }
+                }
+            },
+            Transition {
                 to: "showHelp"
-                NumberAnimation { target: root; easing.amplitude: 1.7; properties: "xAnimation"; to: 0; duration: 1100; easing.type: Easing.OutQuart }            },
+                NumberAnimation { target: root; easing.amplitude: 1.7; properties: "xAnimation"; to: 0; duration: 1100; easing.type: Easing.OutQuart }
+            },
             Transition {
                 to: "hideHelp"
                 SequentialAnimation {
-                    PropertyAction { target: root; property: "welcome"; value: false }
                     NumberAnimation { target: root; easing.amplitude: 1.7; properties: "xAnimation"; to: screen.width; duration: 1100; easing.type: Easing.OutQuart }
                     PropertyAction { target: loader; property: "source"; value: "" }
                     PropertyAction { target: loader_finder_output; property: "focus"; value: true }
@@ -113,12 +130,32 @@ Item {
         ]
     }
 
-    onRequire_passwordChanged: { loader.source = "AskPassword.qml" }
+    onForceShowFinderChanged: {
+        if (forceShowFinder) {
+            loader_finder_output.source = "Finder.qml"
+            forceShowFinder = false
+       }
+    }
 
     Connections {
         target: cppSignals
-        onShowUpdateSIGNAL: { loader.source = "Update.qml" }
-        onStartSIGNAL: { loader.source = ""; loader_finder_output.source = "Finder.qml" }
-        onShowErrorDatabaseSIGNAL: { loader_finder_output.source = ""; loader.source = "ErrorDb.qml"; logo.visible = false; blur.visible = false }
+        onShow_welcome_signal: { screen.state = "showWelcome"; welcome = true}
+        onRequire_password_signal: { loader.source = "AskPassword.qml" }
+        onShow_update_signal: { loader.source = "Update.qml" }
+        onShow_news_signal: {
+            root.binaryNews = binaryNews
+            root.databaseNews = databaseNews
+            screen.state = "showNews"
+        }
+        onShow_finder_signal: { loader.source = ""; loader_finder_output.source = "Finder.qml" }
+        onShow_output_signal: {
+            root.n = n
+            root.list = list
+            if (pornstar !== "" || category !== "")
+                hideFinder_hideFilters_showOutput = true
+            else
+                hideFinder_showOutput = true
+        }
+        onShow_errorDatabase_signal: { loader_finder_output.source = ""; loader.source = "ErrorDb.qml" }
     }
 }

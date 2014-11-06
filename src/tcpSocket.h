@@ -17,15 +17,17 @@ public:
     QString host;
     QString url;
     QString file;
-    QString order;
+    int id;
+    QString call;
 
 public slots:
-    void doConnect();
+    void start();
 
 signals:
-    void version_ready(const QString version);
-    void file_ready(QString path, QString file);
-    void error_socket();
+    void success_version_signal(const QString version);
+    void success_file_signal(const QString path, const QString file);
+    void ret_preview_signal(const QString, const QString, const QString path, const QString file, const int id, const bool success, const bool fail);
+    void fail_socket_signal();
 
 private:
     QByteArray data;

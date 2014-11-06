@@ -35,17 +35,10 @@ Item {
             }
             onCursorVisibleChanged: { if (input.cursorVisible) input.cursorVisible = false }
             onAccepted: {
-                if (input.text !== '') {
-                    root.passwordHandleSIGNAL_QML(input.text, false, true)
+                if (input.text !== "") {
+                    root.password_handle_qml_signal(input.text, true)
                     input.visible = false
                     input.enabled = false
-                    if (root.ok_password) {
-                        label.text = ""
-                        screen.state = "hideSetPassword"
-                    } else {
-                        label.text = "FAIL. TRY LATER"
-                        back.start()
-                    }
                 }
             }
             Keys.onPressed: {
@@ -53,13 +46,13 @@ Item {
                     screen.state = "hideSetPassword"
                     event.accepted = true
                 } else if (event.key === Qt.Key_Q && (event.modifiers & Qt.ControlModifier)) {
-                    root.quitSIGNAL_QML()
+                    root.quit_qml_signal()
                     event.accepted = true;
                 }
             }
         }
         Timer {
-            id: back
+            id: hide
             running: false
             repeat: false
             interval: 3000
@@ -67,6 +60,18 @@ Item {
         }
     }
 
+    Connections {
+        target: cppSignals
+        onSuccess_password_signal: {
+            label.text = ""
+            screen.state = "hideSetPassword"
+        }
+        onFail_password_signal: {
+            label.text = "FAIL. TRY LATER"
+            hide.start()
+        }
+    }
+
     Component.onCompleted: { input.forceActiveFocus() }
 }
-// Espacios hechos.
+// Tabs hechos.

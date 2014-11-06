@@ -27,9 +27,9 @@ Rectangle {
                     numberLabelText: { if (nCategoryList[index] !== "0") nCategoryList[index]; else '' }
                     sourceImage: {
                         if (nCategoryList[index] !== "0")
-                            "/resources/images/category/"+categoryList[index+1]+".jpg"
+                            "/resources/images/finder/category/"+categoryList[index+1]+".jpg"
                         else
-                            "/resources/images/category/"+categoryList[index+1]+"_NOT_AVAILABLE.jpg"
+                            "/resources/images/finder/category/NOT_AVAILABLE/"+categoryList[index+1]+"_NOT_AVAILABLE.jpg"
                     }
                     visible: { if (activeFilter === "CATEGORY" ) true; else false }
                     enabled: { if (activeFilter === "CATEGORY" ) true; else false }
@@ -49,9 +49,9 @@ Rectangle {
                     numberLabelText: { if (nPornstarList[index] !== "0") nPornstarList[index]; else '' }
                     sourceImage: {
                         if (nPornstarList[index] !== "0")
-                            "/resources/images/pornstars/"+pornstarList[index+1]+".jpg"
+                            "/resources/images/finder/pornstars/"+pornstarList[index+1]+".jpg"
                         else
-                            "/resources/images/pornstars/"+pornstarList[index+1]+"_NOT_AVAILABLE.jpg"
+                            "/resources/images/finder/pornstars/NOT_AVAILABLE/"+pornstarList[index+1]+"_NOT_AVAILABLE.jpg"
                     }
                     visible: { if (activeFilter === "PORNSTAR") true; else false }
                     enabled: { if (activeFilter === "PORNSTAR") true; else false }
@@ -68,4 +68,4 @@ Rectangle {
 
     Component.onCompleted: { filters.forceActiveFocus() }
 }
-// Espacios hechos.
+// Tabs hechos.

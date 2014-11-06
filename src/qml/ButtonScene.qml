@@ -9,26 +9,24 @@ Rectangle {
     property bool enter
     property string magnet
     property int scene
-    property int fit
     property int size: screen.height/12.70
 
     Image {
         id: icon
         width: size
         height: size
-        source: "/resources/images/output/openScene.png"
+        source: "/resources/images/output/open.png"
         smooth: true
         anchors.centerIn: parent
     }
     MouseArea {
-        id: mousearea
         hoverEnabled: true
         onEntered: { enter = true }
         onHoveredChanged: { enter = false }
         onClicked: {
-            if (!onShowPlayerLayer) {
-                onShowPlayerLayer = true
-                root.torrentHandleSIGNAL_QML(magnet, scene, fit, false)
+            if (!showTorrentLayer) {
+                showTorrentLayer = true
+                root.torrent_handle_qml_signal(magnet, scene, false)
             }
         }
         anchors.fill: parent
@@ -44,4 +42,4 @@ Rectangle {
     NumberAnimation { id: inEffect; target: buttonScenne; properties: "size"; to: screen.height/12; duration: 200; easing.type: Easing.InOutQuart }
     NumberAnimation { id: outEffect; target: buttonScenne; properties: "size"; to: screen.height/12.70; duration: 300; easing.type: Easing.InOutQuart }
 }
-// Espacios hechos.
+// Tabs hechos.

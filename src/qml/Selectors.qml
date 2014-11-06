@@ -16,7 +16,6 @@ Item {
         anchors.verticalCenter: parent.verticalCenter
         anchors.verticalCenterOffset: parent.height/30.85
         MouseArea {
-            id: selectorsMousearea
             onClicked: {
                 if (!onShowSelectors) {
                     onShowSelectors = true
@@ -50,7 +49,6 @@ Item {
             font.bold: true
             font.pixelSize: screen.height/54
             MouseArea {
-                id: fullMovieMousearea
                 onClicked: {
                     if (root.full === "FULL")
                         root.full = ""
@@ -68,7 +66,6 @@ Item {
             font.bold: true
             font.pixelSize: screen.height/54
             MouseArea {
-                id: standardMousearea
                 onClicked: {
                     if (root.quality === "SD")
                         root.quality = ""
@@ -86,7 +83,6 @@ Item {
             font.bold: true
             font.pixelSize: screen.height/54
             MouseArea {
-                id: mediumMousearea
                 onClicked: {
                     if (root.quality === "720p")
                         root.quality = ""
@@ -104,7 +100,6 @@ Item {
             font.bold: true
             font.pixelSize: screen.height/54
             MouseArea {
-                id: highMousearea
                 onClicked: {
                     if (root.quality === "1080p")
                         root.quality = ""

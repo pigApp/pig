@@ -22,7 +22,6 @@ public:
     Q_INVOKABLE void progress(qint64 total_kb, qint64 downloaded_kb, int downloadedSkip_mb);
     Q_INVOKABLE void update_player();
 
-    QObject *_pig;
     QObject *_torrent;
 
 protected:
@@ -31,6 +30,11 @@ protected:
 
 public slots:
     void sandbox(const QString *absoluteFilePath);
+
+signals:
+    void file_ready_signal(const QString absoluteFilePath, bool sandbox, bool fileReady, bool abort);
+    void close_player_signal(const QString absoluteFilePath, bool sandbox, bool fileReady, bool abort);
+    void quit_signal();
 
 private:
     QMediaPlayer *player;

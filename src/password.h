@@ -14,14 +14,14 @@ public:
     ~Password();
 
     bool require();
-    bool write(QString *plain);
-    bool right(QString *plain);
+    bool write(const QString *plain);
+    bool success(const QString *plain);
 
 private:
     QString pd;
 
 private slots:
-    const QString calculate(QString **plain);
+    const QString calculate(const QString **plain);
 };
 
 #endif

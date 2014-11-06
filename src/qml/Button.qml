@@ -22,7 +22,6 @@ Rectangle {
         ColorAnimation on color { id: outColor; running: false; to: labelOutColor; duration: 300 }
     }
     MouseArea {
-        id: mousearea
         hoverEnabled: true
         onEntered: { enter = true }
         onHoveredChanged: { enter = false }
@@ -38,4 +37,4 @@ Rectangle {
         }
     }
 }
-// Espacios hechos.
+// Tabs hechos.

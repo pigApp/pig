@@ -16,7 +16,7 @@ TcpSocket::~TcpSocket()
     this->abort();
 }
 
-void TcpSocket::doConnect()
+void TcpSocket::start()
 {
     data.clear();
     this->connectToHost(host, 80);
@@ -24,7 +24,7 @@ void TcpSocket::doConnect()
     timeOut = new QTimer(this);
     timeOut->setSingleShot(true);
     connect (timeOut, SIGNAL(timeout()), this, SLOT(error()));
-    timeOut->start(25000);
+    timeOut->start(15000);
 }
 
 void TcpSocket::connected()
@@ -70,25 +70,35 @@ void TcpSocket::write()
     const int header = data.indexOf(startPayload);
     data.remove(0, header);
 
-    if (order == "getVersion") {
+    QFile target(path+file);
+    target.open(QIODevice::WriteOnly);
+
+    if (call == "VERSION") {
         const QByteArray dataFromBase = QByteArray::fromBase64(data);
         const QString version(dataFromBase);
-        emit version_ready(version);
-    } else {
-        QFile target(path+file);
-        target.open(QIODevice::WriteOnly);
-        if (file == "news.txt") {
+        emit success_version_signal(version);
+    } else if (call == "BIN" || call == "DB" || call == "LIB" || call == "NEWS") {
+        if (call == "NEWS") {
             const QByteArray dataFromBase = QByteArray::fromBase64(data);
             target.write(dataFromBase);
         } else {
             target.write(data);
         }
         target.close();
-        emit file_ready(path, file);
+        emit success_file_signal(path, file);
+    } else if (call == "PREVIEW") {
+        target.write(data);
+        target.close();
+        emit ret_preview_signal("", "", path, file, id, true, false);
+        //si falla
+            //emit ret_preview_signal("", "", "", "", id, false, true);
     }
 }
 
 void TcpSocket::error()
 {
-    emit error_socket();
+    if (call == "PREVIEW")
+        emit ret_preview_signal("", "", "", "", id, false, true);
+    else
+        emit fail_socket_signal();
 }

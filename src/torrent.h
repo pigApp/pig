@@ -19,17 +19,18 @@ public:
     Q_INVOKABLE bool piece_is_available(qint64 total_msec, qint64 offset_msec);
     Q_INVOKABLE void piece_update(qint64 total_msec, qint64 offset_msec);
 
-    QObject *_pig;
     QObject *_player;
     QObject *_root;
 
     bool toPlayer;
     int scene;
-    int fit;
 
 public slots:
-    void doConnect(QString *magnet);
+    void start(const QString *magnet);
     void stop();
+
+signals:
+    void sandbox_signal(const QString absoluteFilePath, bool sandbox, bool fileReady, bool abort);
 
 private:
     libtorrent::session *client;
@@ -46,9 +47,9 @@ private:
            offsetPieces, totalPieces, total_kb, totalPreSkip_mb, offset_kb;
 
 private slots:
-    void metadata_ready();
+    void metadata_success();
     void filter_files();
-    void minimum_ready();
+    void minimum_success();
     void download_Information();
     void call_player();
     void progress();

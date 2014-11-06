@@ -32,7 +32,7 @@ RC_FILE = resources/images/pig/icon.rc
 unix {
     CONFIG += link_pkgconfig
     PKGCONFIG += libtorrent-rasterbar
-    QMAKE_RPATHDIR += /usr/lib/pig
+    QMAKE_RPATHDIR += /usr/lib/pig      #CUSTOM Qt5 libs PATH
 
     target.path = /usr/bin
     config.path = $$(HOME)/.pig

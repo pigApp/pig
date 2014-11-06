@@ -3,15 +3,12 @@ import QtQuick 2.3
 Item {
     id: update
 
-    Image {
-        id: networkIcon
-        width: parent.width/5.36
-        height: parent.height/3.01
-        source: "/resources/images/pig/network.png"
-        sourceSize.width: 358
-        sourceSize.height: 358
-        visible: { root.showNetworkIcon }
-        anchors.centerIn: parent
+    Loader {
+        id: loaderNetwork
+        source: "Network.qml"
+        asynchronous: true
+        active: { root.showNetwork }
+        anchors.fill: parent
     }
 
     Rectangle {
@@ -19,7 +16,7 @@ Item {
       width: parent.width
       height: parent.height/4.32
       color: "black"
-      visible: { !root.showNetworkIcon && statusLabel.text != ""}
+      visible: { !root.showNetwork && statusLabel.text != ""}
       anchors.centerIn: parent
     }
     Column {
@@ -59,7 +56,7 @@ Item {
                 onClicked: {
                     root.status = ""
                     root.information = ""
-                    root.getFilesSIGNAL_QML()
+                    root.get_files_qml_signal()
                 }
             }
             Button {
@@ -73,14 +70,14 @@ Item {
                 labelOutColor: Qt.rgba(0.1, 0.1, 0.1, 1)
                 visible: { root.requireConfirmation }
                 enabled: { root.requireConfirmation }
-                onClicked: { root.skipSIGNAL_QML() }
+                onClicked: { root.skip_qml_signal() }
             }
         }
     }
 
     Keys.onPressed: {
         if (event.key === Qt.Key_Q && (event.modifiers & Qt.ControlModifier)) {
-            root.quitSIGNAL_QML()
+            root.quit_qml_signal()
             event.accepted = true;
         }
     }

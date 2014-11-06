@@ -33,7 +33,7 @@ bool Password::require()
     return false;
 }
 
-bool Password::write(QString *plain)
+bool Password::write(const QString *plain)
 {
     const QString digest = calculate(&plain);
 
@@ -51,7 +51,7 @@ bool Password::write(QString *plain)
     return false;
 }
 
-bool Password::right(QString *plain)
+bool Password::success(const QString *plain)
 {
     const QString digest = calculate(&plain);
     if (digest == pd)
@@ -60,7 +60,7 @@ bool Password::right(QString *plain)
         return false;
 }
 
-const QString Password::calculate(QString **plain)
+const QString Password::calculate(const QString **plain)
 {
     const QByteArray _plain = QString(**plain).toUtf8();
     const QString digest = QString(QCryptographicHash::hash(_plain,QCryptographicHash::Md5).toHex());

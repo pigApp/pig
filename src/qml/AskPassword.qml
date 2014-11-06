@@ -36,23 +36,26 @@ Item {
             }
             onCursorVisibleChanged: { if (input.cursorVisible) input.cursorVisible = false }
             onAccepted: {
-                if (input.text !== '') {
-                    root.passwordHandleSIGNAL_QML(input.text, false, false)
-                    if (root.fail_password) {
-                        input.visible = false
-                        label.text = "WRONG PASSWORD"
-                    }
-                }
+                if (input.text !== "")
+                    root.password_handle_qml_signal(input.text, false)
             }
             Keys.onPressed: {
                 if (event.key === Qt.Key_Q && (event.modifiers & Qt.ControlModifier)) {
-                    root.quitSIGNAL_QML()
+                    root.quit_qml_signal()
                     event.accepted = true;
                 }
             }
         }
     }
 
+    Connections {
+        target: cppSignals
+        onFail_password_signal: {
+            input.visible = false
+            label.text = "WRONG PASSWORD"
+        }
+    }
+
     Component.onCompleted: { input.forceActiveFocus() }
 }
-// Espacios hechos.
+// Tabs hechos.

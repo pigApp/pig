@@ -17,12 +17,12 @@ Torrent::Torrent(QObject *parent) : QObject(parent)
 
 Torrent::~Torrent()
 {
-    _pig->disconnect(this);
     _root->disconnect(this);
 }
 
-void Torrent::doConnect(QString *magnet)
+void Torrent::start(const QString *magnet)
 {
+    _player = NULL;
     abort = false;
     skip = false;
     toPlayer = false;
@@ -37,7 +37,6 @@ void Torrent::doConnect(QString *magnet)
     totalPieces = 0;
     total_kb = 0;
     offset_kb = 0;
-    _player = NULL;
 
 #ifdef _WIN32
     const std::string path = "C:/PIG/.pig/tmp/";
@@ -51,16 +50,16 @@ void Torrent::doConnect(QString *magnet)
     handle.set_sequential_download(true);
     handle.set_priority(255);
 
-    metadata_ready();
+    metadata_success();
 }
 
-void Torrent::metadata_ready()
+void Torrent::metadata_success()
 {
     if (!abort) {
         if (handle.status(1).state != 2) {
            filter_files();
         } else if (!abort) {
-            QTimer::singleShot(1000, this, SLOT(metadata_ready()));
+            QTimer::singleShot(1000, this, SLOT(metadata_success()));
         }
     }
 }
@@ -111,15 +110,15 @@ void Torrent::filter_files()
     for (int i=0; i < (scene-1); i++ )
         offsetPieces = offsetPieces+(file_storage.map_file(i, file_storage.file_size(i), 0).piece - file_storage.map_file(i, 0, 0).piece);
         
-    minimum_ready();
+    minimum_success();
     download_Information();
 }
 
-void Torrent::minimum_ready()
+void Torrent::minimum_success()
 {
     if (!abort) {
         if (((handle.status().total_done/1048576)-totalPreSkip_mb) < minimum_mb)
-            QTimer::singleShot(1000, this, SLOT(minimum_ready()));
+            QTimer::singleShot(1000, this, SLOT(minimum_success()));
         else 
             call_player();
     }
@@ -152,7 +151,8 @@ void Torrent::call_player()
         if (!dir.exists())
             dir.setPath(QString::fromStdString(handle.save_path()));
         const QString absoluteFilePath = dir.absolutePath()+"/"+fileName;
-        QMetaObject::invokeMethod (_pig, "player_handle", Qt::QueuedConnection, Q_ARG(const QString, absoluteFilePath), Q_ARG(bool, true), Q_ARG(bool, true), Q_ARG(bool, false), Q_ARG(bool, false));
+
+        emit sandbox_signal(absoluteFilePath, true, false, false);
         QTimer::singleShot(1000, this, SLOT(progress()));
     } else {
         skip = false;
@@ -188,7 +188,7 @@ void Torrent::piece_update(qint64 total_msec, qint64 offset_msec)
     std::vector<int> piecePriority;
     skip = true;
 
-    //offsetPieces_file = 475; //offsetPieces+(((offset_msec+fit)*totalPieces_file)/total_msec);
+    //offsetPieces_file = 475; //offsetPieces+(((offset_msec)*totalPieces_file)/total_msec);
     offsetPieces_file = offsetPieces+((99*totalPieces_file)/100);
     offset_kb = (offsetPieces+((offset_msec*totalPieces_file)/total_msec))*(pieceLength/1024);
     totalPreSkip_mb = handle.status().total_done/1048576;
@@ -221,7 +221,7 @@ void Torrent::piece_update(qint64 total_msec, qint64 offset_msec)
     */
 
     handle.prioritize_pieces(piecePriority);
-    minimum_ready();
+    minimum_success();
 }
 
 void Torrent::stop()

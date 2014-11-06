@@ -69,7 +69,6 @@ Rectangle {
         anchors.bottomMargin: -parent.height/135
     }
     MouseArea {
-        id: mousearea
         hoverEnabled: true
         onEntered: { enter = true }
         onHoveredChanged: { enter = false }
@@ -114,4 +113,4 @@ Rectangle {
 
     Component.onCompleted: { buttonFilter.forceActiveFocus() }
 }
-// Espacios hechos.
+// Tabs hechos.

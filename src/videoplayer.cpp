@@ -200,7 +200,6 @@ VideoPlayer::VideoPlayer(QVideoWidget *parent) : QVideoWidget(parent)
 
 VideoPlayer::~VideoPlayer()
 {
-    _pig->disconnect(this);
     _torrent->disconnect(this);
     player->stop();
     delete player;
@@ -702,10 +701,10 @@ void VideoPlayer::keyPressEvent(QKeyEvent *event)
     }
     if (!onSandbox) {
         if ((event->key() == (Qt::Key_Escape))) {
-            QMetaObject::invokeMethod (_pig, "player_handle", Qt::QueuedConnection, Q_ARG(QString, ""), Q_ARG(bool, false), Q_ARG(bool, false), Q_ARG(bool, false), Q_ARG(bool, true));
+            emit close_player_signal("", false, false, true);
         } else if ((event->key() == (Qt::Key_Q)) && (event->modifiers() & Qt::ControlModifier)) {
             this->~VideoPlayer();
-            QMetaObject::invokeMethod (_pig, "quit", Qt::QueuedConnection);
+            emit quit_signal();
         }
     }
     event->accept();
@@ -734,8 +733,6 @@ void VideoPlayer::status_change(QMediaPlayer::MediaStatus status)
             loadingStateDelay->stop();
             onSandbox = false;
             slider->setEnabled(true);
-            QMetaObject::invokeMethod (_pig, "player_handle", Qt::QueuedConnection, Q_ARG(QString, ""), Q_ARG(bool, false), Q_ARG(bool, false), Q_ARG(bool, true), Q_ARG(bool, false));
-            this->setFocus();
             box->show();
             currentTimeLabel->show();
             totalTimeLabel->show();
@@ -746,6 +743,8 @@ void VideoPlayer::status_change(QMediaPlayer::MediaStatus status)
             slider->show();
             progressBar->show();
             hideControlsDelay->start(3000);
+            emit file_ready_signal("", false, true, false);
+            this->setFocus();
         } else if (skip) {
             skip = false;
             hideControlsDelay->start();

@@ -3,32 +3,7 @@ import QtQuick 2.3
 Item {
     id: finder
 
-    property bool news: root.news
     property string activeFilter
-
-    Column {
-        id: welcomeRow
-        spacing: -parent.height/36
-        visible: { root.welcome && !root.news && buttonsFiltersColumn.opacity === 1 }
-        anchors.centerIn: parent
-        Text {
-            id: welcomeLabel
-            text: "WELCOME TO PIG"
-            color: "black"
-            font.family: pigFont.name
-            font.bold: true
-            font.pixelSize: screen.height/10
-            anchors.horizontalCenter: parent.horizontalCenter
-        }
-        Text {
-            id: welcomeHelpLabel
-            text: "CTRL H TO HELP"
-            color: Qt.rgba(0.1, 0.1, 0.1, 1)
-            font.family: pigFont.name
-            font.pixelSize: screen.height/23
-            anchors.horizontalCenter: welcomeLabel.horizontalCenter
-        }
-    }
 
     Rectangle {
         id: topRedLine
@@ -36,7 +11,7 @@ Item {
         width: parent.width/58.18
         height: 2
         color: "red"
-        visible: { !root.news && !root.welcome && screen.state !== "showSetPassword" }
+        visible: { screen.state !== "showSetPassword" }
         anchors.verticalCenter: parent.verticalCenter
         anchors.verticalCenterOffset: parent.height/46.95
     }
@@ -46,21 +21,22 @@ Item {
         width: parent.width/1.4
         height: 2
         color: "red"
-        visible: { !root.news && !root.welcome && screen.state !== "showSetPassword" }
+        visible: { screen.state !== "showSetPassword" }
         anchors.verticalCenter: parent.verticalCenter
         anchors.verticalCenterOffset: parent.height/46.95
     }
 
     Text {
         id: userInputLabel
-        text: "TYPE TO FIND"
+        text: "TYPE THE TITLE TO FIND"
         color: "red"
         font.family: pigFont.name
         font.bold: true
-        font.pixelSize: screen.height/54
-        opacity: 0
+        font.italic: true
+        font.pixelSize: screen.height/23
+        opacity: 0.3
+        visible: false
         anchors.centerIn: parent
-        anchors.verticalCenterOffset: parent.height/120
     }
     TextInput {
         id: userInput
@@ -69,15 +45,15 @@ Item {
         font.bold: true
         font.capitalization: Font.AllUppercase
         font.pixelSize: screen.height/23
-        visible: { !root.news && !root.welcome && loaderSelectors.opacity === 1.0 && screen.state !== "showSetPassword" }
-        enabled: { !root.news && !root.welcome && loaderSelectors.opacity === 1.0 && screen.state !== "showSetPassword" }
+        visible: { loaderSelectors.opacity === 1.0 && screen.state !== "showSetPassword" }
+        enabled: { loaderSelectors.opacity === 1.0 && screen.state !== "showSetPassword" }
         maximumLength: 21
         cursorVisible: false
         anchors.centerIn: parent
         anchors.horizontalCenterOffset: -parent.width/112
         onAccepted: {
             root.input = userInput.text
-            root.findSIGNAL_QML(root.input, root.pornstar, root.category, root.quality, root.full, 0, true)
+            root.find_qml_signal(root.input, root.pornstar, root.category, root.quality, root.full, 0, true)
         }
         onCursorPositionChanged: {
             if (noResultLabel.visible)
@@ -95,6 +71,7 @@ Item {
         font.family: pigFont.name
         font.bold: true
         font.pixelSize: screen.height/23
+        opacity: 0.3
         visible: false
         anchors.centerIn: parent
     }
@@ -102,8 +79,8 @@ Item {
     Column {
         id: buttonsFiltersColumn
         spacing: parent.height/54
-        visible: { !root.news && !root.welcome && screen.state !== "showSetPassword" }
-        enabled: { !root.news && !root.welcome && screen.state !== "showSetPassword" }
+        visible: { screen.state !== "showSetPassword" }
+        enabled: { screen.state !== "showSetPassword" }
         opacity: 0
         anchors.left: parent.left
         anchors.leftMargin: parent.width/24.61
@@ -155,7 +132,7 @@ Item {
         else
             root.pornstar = label.toUpperCase()
         noResultLabel.visible = false
-        root.findSIGNAL_QML('', root.pornstar, root.category, root.quality, root.full, 0, true)
+        root.find_qml_signal('', root.pornstar, root.category, root.quality, root.full, 0, true) // FIX: No usar quality ni full
     }
 
     Loader {
@@ -163,8 +140,8 @@ Item {
         source: "Selectors.qml"
         asynchronous: true
         active: true
-        visible: { !root.news && !root.welcome && screen.state !== "showSetPassword" }
-        enabled: { !root.news && !root.welcome && screen.state !== "showSetPassword" }
+        visible: { screen.state !== "showSetPassword" }
+        enabled: { screen.state !== "showSetPassword" }
         opacity: 0
         anchors.fill: parent
     }
@@ -175,6 +152,7 @@ Item {
         },
         State {
             name: "hide"
+            when: root.hideFinder_showOutput
         },
         State {
             name: "showFilter"
@@ -184,6 +162,7 @@ Item {
         },
         State {
             name: "hideAll"
+            when: root.hideFinder_hideFilters_showOutput
         }
     ]
     transitions: [
@@ -197,7 +176,6 @@ Item {
                 NumberAnimation { target: buttonsFiltersColumn; properties: "opacity"; to: 1.0; duration: 60; easing.type: Easing.InOutQuart }
                 ParallelAnimation {
                     NumberAnimation { target: loaderSelectors; properties: "opacity"; to: 1.0; duration: 80; easing.type: Easing.InOutQuart }
-                    NumberAnimation { target: userInputLabel; properties: "opacity"; to: 1.0; duration: 200; easing.type: Easing.InOutQuart }
                     PropertyAction { target: userInput; property: "text"; value: root.input }
                 }
             }
@@ -206,22 +184,23 @@ Item {
             to: "hide"
             SequentialAnimation {
                 ParallelAnimation {
+                    PropertyAction { target: userInputLabel; properties: "visible"; value: false }
                     NumberAnimation { target: userInput; properties: "opacity"; to: 0; duration: 200; easing.type: Easing.InOutQuart }
                     NumberAnimation { target: loaderSelectors; properties: "opacity"; to: 0; duration: 200; easing.type: Easing.InOutQuart }
-                    NumberAnimation { target: userInputLabel; properties: "opacity"; to: 0; duration: 80; easing.type: Easing.InOutQuart }
                 }
                 NumberAnimation { target: buttonsFiltersColumn; properties: "opacity"; to: 0; duration: 60; easing.type: Easing.InOutQuart }
                 ParallelAnimation {
                     NumberAnimation { target: topRedLine; properties: "x"; to: -screen.width/58.18; duration: 400; easing.type: Easing.InOutQuart }
                     NumberAnimation { target: centerRedLine; properties: "x"; to: screen.width; duration: 400; easing.type: Easing.InOutQuart }
                 }
-                NumberAnimation { target: centerRedLine; properties: "x"; to: screen.width; duration: 100}
+                NumberAnimation { target: centerRedLine; properties: "x"; to: screen.width; duration: 100 }
                 PropertyAction { target: loaderFilter; property: "source"; value: "" }
                 PropertyAction { target: loaderFilter; property: "active"; value: false }
                 PropertyAction { target: loaderSelectors; property: "source"; value: "" }
                 PropertyAction { target: loaderSelectors; property: "active"; value: false }
                 PropertyAction { target: loader_finder_output; property: "source"; value: "Output.qml" }
-                PropertyAction { target: loader; property: "source"; value: "Wait.qml" }
+                PropertyAction { target: loader; property: "source"; value: "Network.qml" }
+                PropertyAction { target: root; property: "hideFinder_showOutput"; value: "false" }
             }
         },
         Transition {
@@ -244,7 +223,7 @@ Item {
             SequentialAnimation {
                 PropertyAction { target: userInput; property: "opacity"; value: 0 }
                 PropertyAction { target: noResultLabel; property: "opacity"; value: 0 }
-                NumberAnimation { target: userInputLabel; properties: "opacity"; to: 0 }
+                PropertyAction { target: userInputLabel; properties: "visible"; value: false }
                 PropertyAction { target: buttonsFiltersColumn; property: "opacity"; value: 0 }
                 PropertyAction { target: topRedLine; property: "opacity"; value: 0 }
                 PropertyAction { target: centerRedLine; property: "opacity"; value: 0 }
@@ -254,7 +233,8 @@ Item {
                 PropertyAction { target: loaderFilter; property: "source"; value: "" }
                 PropertyAction { target: loaderFilter; property: "active"; value: false }
                 PropertyAction { target: loader_finder_output; property: "source"; value: "Output.qml" }
-                PropertyAction { target: loader; property: "source"; value: "Wait.qml" }
+                PropertyAction { target: loader; property: "source"; value: "Network.qml" }
+                PropertyAction { target: root; property: "hideFinder_hideFilters_showOutput"; value: "false" }
             }
         }
     ]
@@ -265,30 +245,37 @@ Item {
             event.accepted = true
         } else if (event.key === Qt.Key_H && (event.modifiers & Qt.ControlModifier)) {
             if (!loaderFilter.active) {
+                // root.showUserInputLabel = false POSIBLEMENTE
                 screen.state = "showHelp"
                 event.accepted = true
             }
-        } else if (event.key === Qt.Key_P && (event.modifiers & Qt.ControlModifier) && !root.welcome) {
+        } else if (event.key === Qt.Key_P && (event.modifiers & Qt.ControlModifier)) {
             if (!loaderFilter.active)
                 screen.state = "showSetPassword"
             event.accepted = true
         } else if (event.key === Qt.Key_Q && (event.modifiers & Qt.ControlModifier)) {
-            root.quitSIGNAL_QML()
+            root.quit_qml_signal()
             event.accepted = true
         }
     }
 
-    onNewsChanged: { if (!news) finder.state = "show" }
+    MouseArea {
+        id: mouseArea
+        enabled: { root.showUserInputLabel && loaderSelectors.visible }
+        visible: { root.showUserInputLabel && loaderSelectors.visible }
+        hoverEnabled: true
+        onPositionChanged: {
+            if (userInput.text === "") {
+                userInputLabel.visible = true
+                root.showUserInputLabel = false
+            }
+        }
+        anchors.fill: parent
+    }
 
     Connections {
         target: cppSignals
-        onShowOutputSIGNAL:{
-            if (root.pornstar !== "" || root.category !== "")
-                finder.state = "hideAll"
-            else
-                finder.state = "hide"
-        }
-        onNoResultSIGNAL: {
+        onNo_result_signal: {
             userInput.visible = false
             noResultLabel.visible = true
         }
@@ -297,16 +284,8 @@ Item {
     Component.onCompleted: {
         root.pornstar = ""
         root.category = ""
-
-        if(news)
-            screen.state = "showNews"
-        else
-            finder.state = 'show'
-
-        if (root.welcome)
-            finder.forceActiveFocus()
-        else
-            userInput.forceActiveFocus()
+        userInput.forceActiveFocus()
+        finder.state = 'show'
     }
 }
-// Espacios hechos.
+// Tabs hechos.

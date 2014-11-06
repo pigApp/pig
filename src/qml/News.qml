@@ -56,11 +56,11 @@ Item {
     }
 
     Keys.onPressed: {
-        if (event.key === Qt.Key_Escape) {
+        if (event.key === Qt.Key_Escape || event.key === Qt.Key_Return) {
             screen.state = "hideNews"
             event.accepted = true;
         } else if (event.key === Qt.Key_Q && (event.modifiers & Qt.ControlModifier)) {
-            root.quitSIGNAL_QML()
+            root.quit_qml_signal()
             event.accepted = true;
         }
     }

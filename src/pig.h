@@ -1,6 +1,7 @@
 ﻿#ifndef PIG_H
 #define PIG_H
 
+#include "tcpSocket.h"
 #include "password.h"
 #include "update.h"
 #include "torrent.h"
@@ -21,29 +22,34 @@ public:
     PIG(QWidget *parent=0);
     ~PIG();
 
-    Q_INVOKABLE void player_handle(const QString absoluteFilePath, bool init, bool sandbox, bool fileReady, bool abort);
-    Q_INVOKABLE void quit();
-
     QVBoxLayout *layout;
     QWidget *container;
 
 public slots:
     void set_root_object(QObject *root);
-    void init();
+    void password_handle(const QString pass, const bool write);
 
 signals:
-    void showUpdateSIGNAL();
-    void startSIGNAL();
-    void showOutputSIGNAL();
-    void listUpdatedSIGNAL();
-    void noResultSIGNAL();
-    void abortTorrentSIGNAL();
-    void checkingFileSIGNAL();
-    void fileReadySIGNAL();
-    void showErrorDatabaseSIGNAL();
+    void require_password_signal();
+    void success_password_signal();
+    void fail_password_signal();
+    void show_update_signal();
+    void show_welcome_signal();
+    void show_news_signal(const QString binaryNews, const QString databaseNews);
+    void show_finder_signal();
+    void no_result_signal();
+    void show_output_signal(int n, QStringList list);
+    void success_update_list_signal(int n, QStringList list);
+    void success_preview_signal(const QString path, const QString file, const int id);
+    void fail_preview_signal(const int id);
+    void abort_torrent_signal();
+    void checking_file_signal();
+    void success_file_signal();
+    void show_errorDatabase_signal();
 
 private:
     QObject *mRoot;
+    TcpSocket **mSocket;
     Password *mPassword;
     Update *mUpdate;
     Torrent *mTorrent;
@@ -52,13 +58,15 @@ private:
     QSqlDatabase db;
 
 private slots:
-    void password_handle(QString pass, bool init, bool write);
     void update_handle();
-    void start();
-    void find(QString inputText, QString pornstar, QString category, QString quality, QString full, int offset, bool init);
-    void torrent_handle(QString magnet, int scene, int fit, bool abort);
+    void start_pig();
+    void find(const QString inputText, const QString pornstar, const QString category, const QString quality, const QString full, const int offset, const bool init);
+    void preview_handle(const QString host, const QString url, const QString path, const QString file, const int id, const bool success, const bool fail);
+    void torrent_handle(const QString magnet, int scene, bool abort);
+    void player_handle(const QString absoluteFilePath, bool sandbox, bool fileReady, bool abort);
     void cleanUp();
     void error_database();
+    void quit();
 };
 
 #endif

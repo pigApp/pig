@@ -1,0 +1,138 @@
+import QtQuick 2.3
+import QtMultimedia 5.0
+
+Item {
+    id: preview
+    anchors.fill: parent
+
+    property bool onConnect
+
+    property string host
+    property string url
+    property string file
+    property int id
+    property string path
+
+    Rectangle {
+        id: translucentLayer
+        color: Qt.rgba(0, 0, 0, 0.5)
+        anchors.fill: parent
+        MouseArea {
+            onClicked: {
+                if (!onConnect) {
+                    onConnect = true
+                    previewLabel.visible = false
+                    icon.visible = true
+                    root.preview_handle_qml_signal(host, url, "", file, id, false, false)
+                }
+            }
+            anchors.fill: parent
+        }
+    }
+    Text {
+        id: previewLabel
+        text: "PREVIEW"
+        color: "white"
+        font.family: pigFont.name
+        font.bold: true
+        font.pixelSize: screen.height/24
+        opacity: 0.4
+        anchors.centerIn: parent
+        MouseArea {
+            onClicked: {
+                if (!onConnect) {
+                    onConnect = true
+                    previewLabel.visible = false
+                    icon.visible = true
+                    root.preview_handle_qml_signal(host, url, "", file, id, false, false)
+                }
+            }
+            anchors.fill: parent
+        }
+    }
+
+    Video {
+        id: player
+        visible: false
+        enabled: false
+        fillMode: VideoOutput.Stretch
+        anchors.fill: parent
+        onPlaybackStateChanged: {
+            if (player.playbackState == MediaPlayer.StoppedState) {
+                icon.visible = true
+                icon.enabled = true
+            } else {
+                icon.visible = false
+                icon.enabled = false
+                icon.source = "/resources/images/output/preview/replay.png"
+            }
+        }
+        MouseArea {
+            onClicked: {
+                if (player.playbackState == MediaPlayer.PlayingState)
+                    player.pause()
+                else
+                    player.play()
+            }
+            anchors.fill: parent
+        }
+    }
+    Timer {
+        id: playerDelay
+        running: false
+        repeat: false
+        interval: 10
+        onTriggered: {
+            player.source = "file://"+path+file
+            player.visible = true
+            player.enabled = true
+            player.play()
+        }
+    }
+
+    Image {
+        id: icon
+        width: screen.width/22.58
+        height: screen.height/12.70
+        sourceSize.width: screen.width/22.58
+        sourceSize.height: screen.height/12.70
+        source: "/resources/images/output/preview/network/icon.png"
+        opacity: 0.4
+        visible: false
+        enabled: false
+        anchors.centerIn: parent
+        MouseArea {
+            onClicked: { player.play() }
+            anchors.fill: parent
+        }
+    }
+
+    Timer {
+        id: errorDelay
+        running: false
+        repeat: false
+        interval: 10
+        onTriggered: {
+            icon.visible = false
+            icon.enabled = false
+            previewLabel.text = "PREVIEW ERROR"
+            previewLabel.visible = true
+        }
+    }
+
+    Connections {
+        target: cppSignals
+        onSuccess_preview_signal: {
+            if (onConnect && id == preview.id) {
+                onConnect = false
+                preview.path = path
+                playerDelay.start()
+            }
+        }
+        onFail_preview_signal: {
+            if (onConnect && id == preview.id)
+                errorDelay.start()
+        }
+    }
+}
+// Tabs hechos.

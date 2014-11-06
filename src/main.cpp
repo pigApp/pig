@@ -8,18 +8,20 @@ int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);
 
-    QQuickView *view = new QQuickView(QUrl("qrc:/src/qml/main.qml"));
+    QQuickView *view = new QQuickView();
+
+    PIG pig;
+
+    view->rootContext()->setContextProperty("cppSignals", &pig);
+    view->setSource(QUrl("qrc:/QML/src/qml/main.qml"));
     view->setResizeMode(QQuickView::SizeRootObjectToView);
     view->setIcon(QIcon("/resources/images/pig/icon.png"));
 
-    PIG pig;
     pig.set_root_object(view->rootObject());
     pig.container = QWidget::createWindowContainer(view);
     pig.container->setFocusPolicy(Qt::TabFocus);
     pig.layout->addWidget(pig.container);
-    pig.init();
-
-    view->rootContext()->setContextProperty("cppSignals", &pig);
+    pig.password_handle("", false);
 
     pig.showFullScreen();
 

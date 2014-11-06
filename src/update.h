@@ -15,15 +15,15 @@ public:
     explicit Update(QObject *parent = 0);
     ~Update();
 
-    QSqlDatabase *db;
     QObject *_root;
+    QSqlDatabase *db;
 
 public slots:
-    void check();
+    void start();
 
 signals:
-    void forwardSIGNAL();
-    void errorDatabaseSIGNAL();
+    void forward_signal();
+    void fail_database_signal();
 
 private:
     TcpSocket *mSocket;
@@ -45,10 +45,10 @@ private slots:
     void get_version(const QString * const host, const QString * const url);
     void evaluate(const QString version);
     void get_files();
-    void integrityFile(QString path, QString file);
+    void integrityFile(const QString path, const QString file);
     void replace(QString *path, QString *file);
-    void replace_binary_ready(int exitCode);
-    void abort();
+    void replace_binary_success(int exitCode);
+    void error();
 };
 
 #endif

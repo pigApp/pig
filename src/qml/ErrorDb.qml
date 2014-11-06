@@ -37,10 +37,10 @@ Item {
 
     Keys.onPressed: {
         if (event.key === Qt.Key_Q && (event.modifiers & Qt.ControlModifier)) {
-            root.quitSIGNAL_QML()
+            root.quit_qml_signal()
             event.accepted = true;
         }
     }
 
-    Component.onCompleted: errorDatabaseMessage.forceActiveFocus()
+    Component.onCompleted: { errorDatabaseMessage.forceActiveFocus() }
 }
