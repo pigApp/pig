@@ -5,6 +5,7 @@ Rectangle {
     color: "transparent"
 
     property bool enter
+
     property alias label: label.text
     property alias labelColor: label.color
     property alias labelSize: label.font.pixelSize
@@ -25,7 +26,7 @@ Rectangle {
         hoverEnabled: true
         onEntered: { enter = true }
         onHoveredChanged: { enter = false }
-        onClicked: { button.clicked() }
+        onClicked: button.clicked()
         anchors.fill: parent
     }
     onEnterChanged: {

@@ -38,6 +38,7 @@
         <file>src/qml/Output.qml</file>
         <file>src/qml/Preview.qml</file>
         <file>src/qml/ButtonScene.qml</file>
+        <file>src/qml/TorrentInformation.qml</file>
         <file>src/qml/ProgressBar.qml</file>
         <file>src/qml/ErrorDb.qml</file>
     </qresource>

@@ -65,5 +65,5 @@ Item {
         }
     }
 
-    Component.onCompleted: { news.forceActiveFocus() }
+    Component.onCompleted: news.forceActiveFocus()
 }

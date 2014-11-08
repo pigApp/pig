@@ -14,6 +14,7 @@ Item {
     property bool showUserInputLabel
     property bool hideFinder_showOutput
     property bool hideFinder_hideFilters_showOutput
+    property bool stopPreview
 
     property string status
     property string information
@@ -46,8 +47,8 @@ Item {
     signal skip_qml_signal()
     signal get_files_qml_signal()
     signal find_qml_signal(string input, string pornstar, string category, string quality, string full, int offset, bool init)
-    signal preview_handle_qml_signal(string host, string url, string path, string file, int id, bool success, bool fail)
-    signal torrent_handle_qml_signal(string magnet, int scene, bool abort)
+    signal preview_handle_qml_signal(string host, string url, string path, string file, int id, bool success, bool fail, bool abort)
+    signal torrent_handle_qml_signal(string magnet, int scene, bool stop)
     signal quit_qml_signal()
 
     FontLoader { id: pigFont; source: "/resources/font/pig.ttf" }
@@ -111,8 +112,8 @@ Item {
                 SequentialAnimation {
                     NumberAnimation { target: root; easing.amplitude: 1.7; properties: "xAnimation"; to: screen.width; duration: 1100; easing.type: Easing.OutQuart }
                     PropertyAction { target: loader; property: "source"; value: "" }
-                    PropertyAction { target: root; property: "forceShowFinder"; value: "true" }
-                    PropertyAction { target: root; property: "showUserInputLabel"; value: "true" }
+                    PropertyAction { target: root; property: "forceShowFinder"; value: true }
+                    PropertyAction { target: root; property: "showUserInputLabel"; value: true }
                 }
             },
             Transition {
@@ -139,7 +140,10 @@ Item {
 
     Connections {
         target: cppSignals
-        onShow_welcome_signal: { screen.state = "showWelcome"; welcome = true}
+        onShow_welcome_signal: {
+            screen.state = "showWelcome"
+            welcome = true
+        }
         onRequire_password_signal: { loader.source = "AskPassword.qml" }
         onShow_update_signal: { loader.source = "Update.qml" }
         onShow_news_signal: {
@@ -147,7 +151,10 @@ Item {
             root.databaseNews = databaseNews
             screen.state = "showNews"
         }
-        onShow_finder_signal: { loader.source = ""; loader_finder_output.source = "Finder.qml" }
+        onShow_finder_signal: {
+            loader.source = ""
+            loader_finder_output.source = "Finder.qml"
+        }
         onShow_output_signal: {
             root.n = n
             root.list = list
@@ -156,6 +163,9 @@ Item {
             else
                 hideFinder_showOutput = true
         }
-        onShow_errorDatabase_signal: { loader_finder_output.source = ""; loader.source = "ErrorDb.qml" }
+        onShow_errorDatabase_signal: {
+            loader_finder_output.source = ""
+            loader.source = "ErrorDb.qml"
+        }
     }
 }

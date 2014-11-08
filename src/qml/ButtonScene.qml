@@ -24,8 +24,8 @@ Rectangle {
         onEntered: { enter = true }
         onHoveredChanged: { enter = false }
         onClicked: {
-            if (!showTorrentLayer) {
-                showTorrentLayer = true
+            if (!showTorrentInformation) {
+                showTorrentInformation = true
                 root.torrent_handle_qml_signal(magnet, scene, false)
             }
         }
@@ -39,6 +39,7 @@ Rectangle {
             outEffect.start()
         }
     }
+
     NumberAnimation { id: inEffect; target: buttonScenne; properties: "size"; to: screen.height/12; duration: 200; easing.type: Easing.InOutQuart }
     NumberAnimation { id: outEffect; target: buttonScenne; properties: "size"; to: screen.height/12.70; duration: 300; easing.type: Easing.InOutQuart }
 }

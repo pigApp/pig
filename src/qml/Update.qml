@@ -7,7 +7,7 @@ Item {
         id: loaderNetwork
         source: "Network.qml"
         asynchronous: true
-        active: { root.showNetwork }
+        active: root.showNetwork
         anchors.fill: parent
     }
 
@@ -51,8 +51,8 @@ Item {
                 labelSize: screen.height/23
                 labelInColor: "white"
                 labelOutColor: Qt.rgba(0.1, 0.1, 0.1, 1)
-                visible: { root.requireConfirmation }
-                enabled: { root.requireConfirmation }
+                visible: root.requireConfirmation
+                enabled: root.requireConfirmation
                 onClicked: {
                     root.status = ""
                     root.information = ""
@@ -68,9 +68,9 @@ Item {
                 labelSize: screen.height/23
                 labelInColor: "white"
                 labelOutColor: Qt.rgba(0.1, 0.1, 0.1, 1)
-                visible: { root.requireConfirmation }
-                enabled: { root.requireConfirmation }
-                onClicked: { root.skip_qml_signal() }
+                visible: root.requireConfirmation
+                enabled: root.requireConfirmation
+                onClicked: root.skip_qml_signal()
             }
         }
     }
@@ -82,5 +82,5 @@ Item {
         }
     }
 
-    Component.onCompleted: { update.forceActiveFocus() }
+    Component.onCompleted: update.forceActiveFocus()
 }

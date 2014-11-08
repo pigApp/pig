@@ -132,7 +132,7 @@ Item {
         else
             root.pornstar = label.toUpperCase()
         noResultLabel.visible = false
-        root.find_qml_signal('', root.pornstar, root.category, root.quality, root.full, 0, true) // FIX: No usar quality ni full
+        root.find_qml_signal("", root.pornstar, root.category, "", "", 0, true)
     }
 
     Loader {
@@ -193,14 +193,14 @@ Item {
                     NumberAnimation { target: topRedLine; properties: "x"; to: -screen.width/58.18; duration: 400; easing.type: Easing.InOutQuart }
                     NumberAnimation { target: centerRedLine; properties: "x"; to: screen.width; duration: 400; easing.type: Easing.InOutQuart }
                 }
-                NumberAnimation { target: centerRedLine; properties: "x"; to: screen.width; duration: 100 }
+                NumberAnimation { duration: 100 }
                 PropertyAction { target: loaderFilter; property: "source"; value: "" }
                 PropertyAction { target: loaderFilter; property: "active"; value: false }
                 PropertyAction { target: loaderSelectors; property: "source"; value: "" }
                 PropertyAction { target: loaderSelectors; property: "active"; value: false }
                 PropertyAction { target: loader_finder_output; property: "source"; value: "Output.qml" }
                 PropertyAction { target: loader; property: "source"; value: "Network.qml" }
-                PropertyAction { target: root; property: "hideFinder_showOutput"; value: "false" }
+                PropertyAction { target: root; property: "hideFinder_showOutput"; value: false }
             }
         },
         Transition {
@@ -234,7 +234,7 @@ Item {
                 PropertyAction { target: loaderFilter; property: "active"; value: false }
                 PropertyAction { target: loader_finder_output; property: "source"; value: "Output.qml" }
                 PropertyAction { target: loader; property: "source"; value: "Network.qml" }
-                PropertyAction { target: root; property: "hideFinder_hideFilters_showOutput"; value: "false" }
+                PropertyAction { target: root; property: "hideFinder_hideFilters_showOutput"; value: false }
             }
         }
     ]
@@ -285,7 +285,7 @@ Item {
         root.pornstar = ""
         root.category = ""
         userInput.forceActiveFocus()
-        finder.state = 'show'
+        finder.state = "show"
     }
 }
 // Tabs hechos.

@@ -6,12 +6,14 @@ Item {
     anchors.fill: parent
 
     property bool onConnect
+    property bool stopPlayer: root.stopPreview
 
     property string host
     property string url
     property string file
-    property int id
     property string path
+
+    property int id
 
     Rectangle {
         id: translucentLayer
@@ -23,7 +25,7 @@ Item {
                     onConnect = true
                     previewLabel.visible = false
                     icon.visible = true
-                    root.preview_handle_qml_signal(host, url, "", file, id, false, false)
+                    root.preview_handle_qml_signal(host, url, "", file, id, false, false, false)
                 }
             }
             anchors.fill: parent
@@ -44,7 +46,7 @@ Item {
                     onConnect = true
                     previewLabel.visible = false
                     icon.visible = true
-                    root.preview_handle_qml_signal(host, url, "", file, id, false, false)
+                    root.preview_handle_qml_signal(host, url, "", file, id, false, false, false)
                 }
             }
             anchors.fill: parent
@@ -59,12 +61,14 @@ Item {
         anchors.fill: parent
         onPlaybackStateChanged: {
             if (player.playbackState == MediaPlayer.StoppedState) {
+                player.opacity = 0
                 icon.visible = true
                 icon.enabled = true
             } else {
                 icon.visible = false
                 icon.enabled = false
                 icon.source = "/resources/images/output/preview/replay.png"
+                player.opacity = 1
             }
         }
         MouseArea {
@@ -102,7 +106,7 @@ Item {
         enabled: false
         anchors.centerIn: parent
         MouseArea {
-            onClicked: { player.play() }
+            onClicked: player.play()
             anchors.fill: parent
         }
     }
@@ -120,6 +124,17 @@ Item {
         }
     }
 
+    onStopPlayerChanged: {
+        if (stopPlayer && (player.playbackState == MediaPlayer.PlayingState || player.playbackState == MediaPlayer.PausedState)) {
+            player.stop()
+        } else if (stopPlayer && onConnect) {
+            icon.visible = false
+            previewLabel.visible = true
+            onConnect = false
+            root.preview_handle_qml_signal("", "", "", "", id, false, false, true)
+        }
+    }
+
     Connections {
         target: cppSignals
         onSuccess_preview_signal: {
@@ -130,8 +145,10 @@ Item {
             }
         }
         onFail_preview_signal: {
-            if (onConnect && id == preview.id)
+            if (onConnect && id == preview.id) {
+                onConnect = false
                 errorDelay.start()
+            }
         }
     }
 }

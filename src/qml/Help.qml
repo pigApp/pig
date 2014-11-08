@@ -313,5 +313,5 @@ Rectangle {
         }
     }
 
-    Component.onCompleted: { help.forceActiveFocus() }
+    Component.onCompleted: help.forceActiveFocus()
 }

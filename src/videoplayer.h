@@ -32,8 +32,8 @@ public slots:
     void sandbox(const QString *absoluteFilePath);
 
 signals:
-    void file_ready_signal(const QString absoluteFilePath, bool sandbox, bool fileReady, bool abort);
-    void close_player_signal(const QString absoluteFilePath, bool sandbox, bool fileReady, bool abort);
+    void file_ready_signal(const QString absoluteFilePath, const bool sandbox, const bool fileReady, const bool close);
+    void close_player_signal(const QString absoluteFilePath, const bool sandbox, const bool fileReady, const bool close);
     void quit_signal();
 
 private:

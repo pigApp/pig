@@ -42,9 +42,9 @@ signals:
     void success_update_list_signal(int n, QStringList list);
     void success_preview_signal(const QString path, const QString file, const int id);
     void fail_preview_signal(const int id);
-    void abort_torrent_signal();
     void checking_file_signal();
-    void success_file_signal();
+    void file_ready_signal();
+    void hide_torrent_information_signal();
     void show_errorDatabase_signal();
 
 private:
@@ -61,9 +61,9 @@ private slots:
     void update_handle();
     void start_pig();
     void find(const QString inputText, const QString pornstar, const QString category, const QString quality, const QString full, const int offset, const bool init);
-    void preview_handle(const QString host, const QString url, const QString path, const QString file, const int id, const bool success, const bool fail);
-    void torrent_handle(const QString magnet, int scene, bool abort);
-    void player_handle(const QString absoluteFilePath, bool sandbox, bool fileReady, bool abort);
+    void preview_handle(const QString host, const QString url, const QString path, const QString file, const int id, const bool success, const bool fail, const bool abort);
+    void torrent_handle(const QString magnet, const int scene, const bool stop);
+    void player_handle(const QString absoluteFilePath, const bool sandbox, const bool fileReady, const bool close);
     void cleanUp();
     void error_database();
     void quit();

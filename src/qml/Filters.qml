@@ -66,6 +66,6 @@ Rectangle {
 
     onFocusChanged: { if (!filters.focus) filters.forceActiveFocus() }
 
-    Component.onCompleted: { filters.forceActiveFocus() }
+    Component.onCompleted: filters.forceActiveFocus()
 }
 // Tabs hechos.

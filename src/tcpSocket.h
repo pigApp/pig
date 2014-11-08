@@ -17,19 +17,22 @@ public:
     QString host;
     QString url;
     QString file;
-    int id;
     QString call;
+
+    int id;
 
 public slots:
     void start();
+    void abortPreview();
 
 signals:
     void success_version_signal(const QString version);
     void success_file_signal(const QString path, const QString file);
-    void ret_preview_signal(const QString, const QString, const QString path, const QString file, const int id, const bool success, const bool fail);
+    void ret_preview_signal(const QString, const QString, const QString path, const QString file, const int id, const bool success, const bool fail, const bool abort);
     void fail_socket_signal();
 
 private:
+    bool abortedPreview;
     QByteArray data;
     QTimer *timeOut;
 

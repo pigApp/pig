@@ -37,6 +37,6 @@ Item {
         }
     }
 
-    Component.onCompleted: { welcome.forceActiveFocus() }
+    Component.onCompleted: welcome.forceActiveFocus()
 }
 // Tabs hechos.

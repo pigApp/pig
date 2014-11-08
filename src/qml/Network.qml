@@ -19,7 +19,7 @@ Item {
         font.family: pigFont.name
         font.bold: true
         font.pixelSize: parent.height/23
-        visible: { root.errorNetwork }
+        visible: root.errorNetwork
         anchors.horizontalCenter: icon.horizontalCenter
         anchors.top: icon.bottom
         anchors.topMargin: -parent.height/14.42
@@ -35,6 +35,9 @@ Item {
         running: false
         repeat: false
         interval: 5000
-        onTriggered: { loader_finder_output.source = "Finder.qml"; root.errorNetwork = false; loader.source = "" }
+        onTriggered: {
+            loader_finder_output.source = "Finder.qml"
+            root.errorNetwork = false; loader.source = ""
+        }
     }
 }

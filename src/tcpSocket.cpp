@@ -18,6 +18,8 @@ TcpSocket::~TcpSocket()
 
 void TcpSocket::start()
 {
+    abortedPreview = false;
+
     data.clear();
     this->connectToHost(host, 80);
 
@@ -86,19 +88,26 @@ void TcpSocket::write()
         }
         target.close();
         emit success_file_signal(path, file);
-    } else if (call == "PREVIEW") {
+    } else if (call == "PREVIEW" && !abortedPreview) {
         target.write(data);
         target.close();
-        emit ret_preview_signal("", "", path, file, id, true, false);
-        //si falla
-            //emit ret_preview_signal("", "", "", "", id, false, true);
+        emit ret_preview_signal("", "", path, file, id, true, false, false);
     }
+}
+
+void TcpSocket::abortPreview()
+{
+    abortedPreview = true;
+    timeOut->stop();
+    this->abort();
 }
 
 void TcpSocket::error()
 {
-    if (call == "PREVIEW")
-        emit ret_preview_signal("", "", "", "", id, false, true);
-    else
+    if (call == "PREVIEW" && !abortedPreview) {
+        abortedPreview = true;
+        emit ret_preview_signal("", "", "", "", id, false, true, false);
+    } else {
         emit fail_socket_signal();
+    }
 }

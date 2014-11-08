@@ -42,5 +42,5 @@ Item {
         }
     }
 
-    Component.onCompleted: { errorDatabaseMessage.forceActiveFocus() }
+    Component.onCompleted: errorDatabaseMessage.forceActiveFocus()
 }

@@ -56,11 +56,10 @@ void Torrent::start(const QString *magnet)
 void Torrent::metadata_success()
 {
     if (!abort) {
-        if (handle.status(1).state != 2) {
+        if (handle.status(1).state != 2)
            filter_files();
-        } else if (!abort) {
+        else
             QTimer::singleShot(1000, this, SLOT(metadata_success()));
-        }
     }
 }
 

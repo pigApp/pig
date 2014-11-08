@@ -72,7 +72,7 @@ Rectangle {
         hoverEnabled: true
         onEntered: { enter = true }
         onHoveredChanged: { enter = false }
-        onClicked: { buttonFilter.clicked() }
+        onClicked: buttonFilter.clicked()
         anchors.fill: parent
     }
     onEnterChanged: {
@@ -111,6 +111,6 @@ Rectangle {
     NumberAnimation { id: outNumberLabel; target: numberLabel; properties: "opacity"; to: 0; duration: 100; easing.type: Easing.InOutQuart }
     NumberAnimation { id: outEffect; target: effect; properties: "opacity"; to: 0; duration: 200; easing.type: Easing.InOutQuart }
 
-    Component.onCompleted: { buttonFilter.forceActiveFocus() }
+    Component.onCompleted: buttonFilter.forceActiveFocus()
 }
 // Tabs hechos.

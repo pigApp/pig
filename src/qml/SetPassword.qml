@@ -72,6 +72,6 @@ Item {
         }
     }
 
-    Component.onCompleted: { input.forceActiveFocus() }
+    Component.onCompleted: input.forceActiveFocus()
 }
 // Tabs hechos.

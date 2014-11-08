@@ -30,7 +30,7 @@ public slots:
     void stop();
 
 signals:
-    void sandbox_signal(const QString absoluteFilePath, bool sandbox, bool fileReady, bool abort);
+    void sandbox_signal(const QString absoluteFilePath, bool sandbox, bool fileReady, bool close);
 
 private:
     libtorrent::session *client;

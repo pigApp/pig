@@ -7,17 +7,12 @@ Item {
 
     property bool successPoster
     property bool successCover
-    property bool hide
-    property bool showTorrentLayer
-    property bool hideTorrentLayer
-    property bool abortTorrent
-    property bool fileNotReady
+    property bool showTorrentInformation
 
     property int location: 0
     property int currentFilm: 1
     property int locationOnList
     property int nIndex: 0
-    property int timeLeft: 5
     property int previewId: -1
 
     ListModel {
@@ -39,27 +34,13 @@ Item {
             z: { PathView.recipeZ || 1 }
             width: listView.width
             height: listView.height
-            visible: { recipe.PathView.isCurrentItem }
+            visible: recipe.PathView.isCurrentItem
             opacity: { PathView.recipeOpacity || 1 }
 
-            Keys.onUpPressed: { if (!timeOutNetwork.running && !showTorrentLayer) fiveMoreTimer.start() }
-            Timer {
-                id: fiveMoreTimer
-                running: false
-                repeat: false
-                interval: 500
-                onTriggered: { pathView.fiveMore() }
-            }
-            Keys.onDownPressed: { if (!timeOutNetwork.running && !showTorrentLayer) fiveLessTimer.start() }
-            Timer {
-                id: fiveLessTimer
-                running: false
-                repeat: false
-                interval: 500
-                onTriggered: { pathView.fiveLess() }
-            }
-            Keys.onRightPressed: { if (!timeOutNetwork.running && !showTorrentLayer) pathView.next() }
-            Keys.onLeftPressed: { if (!timeOutNetwork.running && !showTorrentLayer) pathView.prior() }
+            Keys.onUpPressed: { if (!timeOutNetwork.running) handle.fiveMore() }
+            Keys.onDownPressed: { if (!timeOutNetwork.running) handle.fiveLess() }
+            Keys.onRightPressed: { if (!timeOutNetwork.running) handle.next() }
+            Keys.onLeftPressed: { if (!timeOutNetwork.running) handle.prior() }
 
             Image {
                 id: poster
@@ -129,8 +110,6 @@ Item {
                     object.file = filePreview
                     object.id = previewId
                 }
-                    // TODO: ++previewId suma mal
-                    // TODO: Al pedir cinco peliculas mas, detener el video.
             }
 
             RectangularGlow {
@@ -174,7 +153,10 @@ Item {
                     if (successPoster && successCover) {
                         timeOutNetwork.stop()
                         loader.source = ""
-                        recipe.state = "show"
+                        handle.state = "show"
+                        handle.enabled = true
+                        handle.setFocus()
+                        root.stopPreview = false
                     } else {
                         imagesStatus.restart()
                     }
@@ -221,14 +203,24 @@ Item {
                 }
                 Text {
                     id: splitLabel
-                    text: { if (scenes === 1) "<font color='transparent'>∙<font/> <font color='#ffffff'>SPLIT<font/>"; else "<font color='#ff0000'>∙<font/> <font color='#ffffff'>SPLIT<font/>" }
+                    text: {
+                        if (scenes === 1)
+                            "<font color='transparent'>∙<font/> <font color='#ffffff'>SPLIT<font/>"
+                        else
+                            "<font color='#ff0000'>∙<font/> <font color='#ffffff'>SPLIT<font/>"
+                    }
                     font.family: pigFont.name
                     font.bold: true
                     font.pixelSize: screen.height/35
                 }
                 Text {
                     id: fullLabel
-                    text: { if (full === "NOT") "<font color='transparent'>∙<font/> <font color='#ffffff'>FULL<font/>"; else "<font color='#ff0000'>∙<font/> <font color='#ffffff'>FULL<font/>" }
+                    text: { 
+                        if (full === "NOT")
+                            "<font color='transparent'>∙<font/> <font color='#ffffff'>FULL<font/>"
+                        else
+                            "<font color='#ff0000'>∙<font/> <font color='#ffffff'>FULL<font/>"
+                    }
                     font.family: pigFont.name
                     font.bold: true
                     font.pixelSize: screen.height/35
@@ -291,40 +283,24 @@ Item {
                     anchors.verticalCenterOffset: screen.height/360
                 }
             }
+
             NumberAnimation { running: recipe.PathView.isCurrentItem && output.x === 0; target: poster; property: "opacity"; to: 1; duration: 1000; easing.type: Easing.InOutQuad }
             NumberAnimation { running: recipe.PathView.isCurrentItem && output.x === 0; target: translucedLayer; property: "opacity"; to: 0.65; duration: 1500; easing.type: Easing.InOutQuad }
             NumberAnimation { running: recipe.PathView.isCurrentItem; target: datesColumn; property: "opacity"; to: 1; duration: 2000; easing.type: Easing.OutElastic }
-            PropertyAction { running: !recipe.PathView.isCurrentItem; target: poster; property: "opacity"; value: 0 }
-            PropertyAction { running: !recipe.PathView.isCurrentItem; target: translucedLayer; property: "opacity"; value: 0 }
-            NumberAnimation { running: !recipe.PathView.isCurrentItem; target: datesColumn; property: "opacity"; to: 0; duration: 1; easing.type: Easing.InOutQuad }
-            // ACA ERROR AL VOLVER DEL PLAYER
-            states: [
-                State {
-                    name: "show"
-                },
-                State {
-                    name: "hide"
-                    when: hide
-                }
-            ]
-            transitions: [
-                Transition {
-                    to: "show"
-                    NumberAnimation { target: output; easing.amplitude: 1.7; properties: "x"; to: 0; duration: 500; easing.type: Easing.OutQuart }
-                },
-                Transition {
-                    to: "hide"
-                    NumberAnimation { target: output; easing.amplitude: 1.7; properties: "x"; to: screen.width; duration: 500; easing.type: Easing.OutQuart }
-                }
-            ]
+
+            PropertyAction { running: !recipe.PathView.isCurrentItem || handle.state === "hideOutput_showFinder"; target: poster; property: "opacity"; value: 0 }
+            PropertyAction { running: !recipe.PathView.isCurrentItem || handle.state === "hideOutput_showFinder"; target: translucedLayer; property: "opacity"; value: 0 }
+            NumberAnimation { running: !recipe.PathView.isCurrentItem || handle.state === "hideOutput_showFinder"; target: datesColumn; property: "opacity"; to: 0;
+                              duration: 1; easing.type: Easing.InOutQuad }
         }
     }
 
     PathView {
-        id: pathView
+        id: handle
         model: model
         delegate: delegate
         interactive: false
+        enabled: false
         anchors.fill: parent
 
         property int offset: 0
@@ -346,48 +322,24 @@ Item {
             PathQuad { x: screen.width/2; y: screen.height/2; controlX: -screen.width*2.77; controlY: screen.height/2 }
         }
 
+        function setFocus() { handle.forceActiveFocus() }
+
         Keys.onPressed: {
-            if (!showTorrentLayer) {
-                if (event.key === Qt.Key_Escape) {
-                    pathView.state = "hideOutput_showFinder"
-                    event.accepted = true;
-                } else if (event.key === Qt.Key_H && (event.modifiers & Qt.ControlModifier) && !timeOutNetwork.running) {
-                    screen.state = "showHelp"
-                    event.accepted = true
-                }
-            } else if (torrentLayer.height === screen.height && !abortTorrent) {
-                if (event.key === Qt.Key_Escape) {
-                    abortTorrent = true
-                    event.accepted = true;
-                }
-            }
-            if (event.key === Qt.Key_Q && (event.modifiers & Qt.ControlModifier)) {
+            if (event.key === Qt.Key_Escape) {
+                handle.state = "hideOutput_showFinder"
+                event.accepted = true;
+            } else if (event.key === Qt.Key_H && (event.modifiers & Qt.ControlModifier) && !timeOutNetwork.running) {
+                screen.state = "showHelp"
+                event.accepted = true
+            } else if (event.key === Qt.Key_Q && (event.modifiers & Qt.ControlModifier)) {
                 root.quit_qml_signal()
                 event.accepted = true;
             }
         }
 
-        states: [
-            State {
-                name: "hideOutput_showFinder"
-            }
-        ]
-        transitions: [
-            Transition {
-                to: "hideOutput_showFinder"
-                SequentialAnimation {
-                    ParallelAnimation {
-                        NumberAnimation { target: output; property: "opacity"; to: 0; duration: 200; easing.type: Easing.InOutQuad }
-                        NumberAnimation { target: output; easing.amplitude: 1.7; properties: "x"; to: screen.width; duration: 500; easing.type: Easing.OutQuart }
-                    }
-                    PropertyAction { target: loader; property: "source"; value: "" }
-                    PropertyAction { target: loader_finder_output; property: "source"; value: "Finder.qml" }
-                }
-            }
-        ]
-
         onFiveMore: {
             if(totalFilms > 5 && counter < totalFilms) {
+                handle.enabled = false
                 offset = offset+5
                 counter = counter+5
                 currentFilm = counter-4
@@ -395,8 +347,9 @@ Item {
             }
         }
         onFiveLess: {
-            if(totalFilms > 5 && currentFilm-4 > 0) {
-                offset = offset-5                     // FIX: Se rompe si voy hacia arriba o hacia abajo rapido, creo que no llega a crear y destruir los objetos.
+            if(totalFilms > 5 && currentFilm-5 > 0) {
+                handle.enabled = false
+                offset = offset-5
                 counter = counter-5
                 currentFilm = counter-4
                 listUpdater(offset)
@@ -426,121 +379,68 @@ Item {
                 --location
             }
         }
-    }
 
-    Rectangle {
-        id: torrentLayer
-        width: screen.width
-        color: "black"
-
-        NumberAnimation { running: showTorrentLayer; target: torrentLayer; property: "height"; to: screen.height; duration: 2200; easing.type: Easing.InOutQuart }
-        NumberAnimation { running: hideTorrentLayer; target: torrentLayer; property: "height"; to: 0; duration: 1100; easing.type: Easing.InOutQuart }
-
-        ProgressBar {
-            id: progressBar
-            value: root.downloaded
-            visible: { if (torrentLayer.height === screen.height && !abortTorrent) true; else false }
-            anchors.centerIn: parent
-            onVisibleChanged: { if (progressBar.visible) pathView.forceActiveFocus() }
-        }
-        Row {
-            id: peerInformationRow
-            spacing: screen.width/112.94
-            visible: { !abortTorrent }
-            anchors.horizontalCenter: parent.horizontalCenter
-            anchors.bottom: progressBar.top
-            anchors.bottomMargin: screen.height/216
-
-            Text {
-                id: bitRateLabel
-                text: {
-                    if (root.bitRate !== "" && torrentLayer.height === screen.height)
-                        root.bitRate+" KB/s"
-                    else if (torrentLayer.height === screen.height)
-                        "RECOVERING METADATA"
-                    else
-                        ""
+        states: [
+            State {
+                name: "show"
+            },
+            State {
+                name: "hide"
+            },
+            State {
+                name: "showTorrentInformation"
+                when: showTorrentInformation
+            },
+            State {
+                name: "hideTorrentInformation"
+            },
+            State {
+                name: "hideOutput_showFinder"
+            }
+        ]
+        transitions: [
+            Transition {
+                to: "show"
+                NumberAnimation { target: output; easing.amplitude: 1.7; properties: "x"; to: 0; duration: 500; easing.type: Easing.OutQuart }
+            },
+            Transition {
+                to: "hide"
+                SequentialAnimation {
+                    NumberAnimation { duration: 20 }
+                    NumberAnimation { target: output; easing.amplitude: 1.7; properties: "x"; to: screen.width; duration: 500; easing.type: Easing.OutQuart }
                 }
-                color: "white"
-                font.family: pigFont.name
-                font.bold: true
-                font.pixelSize: screen.height/54
-            }
-            Text {
-                id: peersLabel
-                text: {
-                    if (root.peers !== 0 && torrentLayer.height === screen.height)
-                        "PEERS "+root.peers
-                    else
-                        ""
+            },
+            Transition {
+                to: "showTorrentInformation"
+                PropertyAction { target: output; property: "showTorrentInformation"; value: false }
+                PropertyAction { target: handle; property: "enabled"; value: false }
+                PropertyAction { target: loader; property: "source"; value: "TorrentInformation.qml" }
+                SequentialAnimation {
+                    NumberAnimation { duration: 20 }
+                    NumberAnimation { target: output; easing.amplitude: 1.7; properties: "x"; to: -screen.width; duration: 1100; easing.type: Easing.OutQuart }
+                    PropertyAction { target: root; property: "stopPreview"; value: true }
                 }
-                color: "white"
-                font.family: pigFont.name
-                font.bold: true
-                font.pixelSize: screen.height/54
+            },
+            Transition {
+                to: "hideTorrentInformation"
+                SequentialAnimation {                      // TODO: cambiar 1920 por screen
+                    PropertyAction { target: output; property: "x"; value: -1920 }
+                    NumberAnimation { target: output; easing.amplitude: 1.7; properties: "x"; to: 0; duration: 1080; easing.type: Easing.OutQuart }
+                    PropertyAction { target: loader; property: "source"; value: "" }
+                    PropertyAction { target: root; property: "stopPreview"; value: false }
+                }
+            },
+            Transition {
+                to: "hideOutput_showFinder"
+                SequentialAnimation {
+                    PropertyAction { target: root; property: "stopPreview"; value: true }
+                    NumberAnimation { duration: 20 }
+                    NumberAnimation { target: output; easing.amplitude: 1.7; properties: "x"; to: screen.width; duration: 500; easing.type: Easing.OutQuart }
+                    PropertyAction { target: loader; property: "source"; value: "" }
+                    PropertyAction { target: loader_finder_output; property: "source"; value: "Finder.qml" }
+                }
             }
-        }
-        Column {
-            id: checkFileColumn
-            spacing: 0
-            anchors.horizontalCenter: parent.horizontalCenter
-            anchors.top: progressBar.bottom
-            anchors.topMargin: screen.height/216
-            Text {
-                id: checkingFileLabel
-                text: "CHECKING FILE"
-                color: Qt.rgba(0.1, 0.1, 0.1, 1)
-                font.family: pigFont.name
-                font.pixelSize: screen.height/54
-                visible: { fileNotReady && !abortTorrent }
-            }
-            Text {
-                id: fileRecheckLabel
-                text: ""
-                color: Qt.rgba(0.1, 0.1, 0.1, 1)
-                font.family: pigFont.name
-                font.pixelSize: screen.height/54
-                visible: { fileNotReady && !abortTorrent }
-                anchors.horizontalCenter: checkingFileLabel.horizontalCenter
-            }
-        }
-        Timer {
-            id: fileRecheckDelay
-            running: false
-            repeat: true
-            interval: 1000
-            onTriggered: {
-                if (output.timeLeft > 0)
-                    output.timeLeft -= 1
-                else
-                    output.timeLeft = 5
-                checkingFileLabel.text = "FILE NOT READY"
-                fileRecheckLabel.text = "RECHECK ON "+output.timeLeft
-            }
-        }
-    }
-    onAbortTorrentChanged: {
-        if (abortTorrent) {
-            root.torrent_handle_qml_signal("", 0, true)
-            root.downloaded = 0
-            hideTorrentLayer = true
-            abortTorrentResetDelay.start()
-        }
-    }
-    Timer {
-        id: abortTorrentResetDelay
-        running: false
-        repeat: false
-        interval: 1100
-        onTriggered: {
-            root.peers = 0
-            root.required = 0
-            root.bitRate = ""
-            showTorrentLayer = false
-            hideTorrentLayer = false
-            abortTorrent = false
-            fileNotReady = false
-        }
+        ]
     }
 
     Timer {
@@ -555,7 +455,7 @@ Item {
         id: networkDelay
         running: false
         repeat: false
-        interval: 600
+        interval: 500
         onTriggered: { loader.source = "Network.qml" }
     }
 
@@ -571,31 +471,34 @@ Item {
         }
         location = 0
         locationOnList = 0
-        pathView.forceActiveFocus()
     }
 
     function listUpdater(offset) {
-        hide = true
+        root.stopPreview = true
+        handle.state = "hide"
         successPoster = false
         successCover = false
-        root.list = ''
+        root.list = ""
         model.clear()
-        root.find_qml_signal(root.input, root.pornstar, root.category, root.quality, root.full, offset, false)
         timeOutNetwork.start()
-        networkDelay.start();
+        networkDelay.start()
+        root.find_qml_signal(root.input, root.pornstar, root.category, root.quality, root.full, offset, false)
     }
 
     Connections {
         target: cppSignals
         onSuccess_update_list_signal: {
+            root.stopPreview = false
             root.n = n
             root.list = list
             previewId = -1
             listCreator()
         }
-        onAbort_torrent_signal: { abortTorrent = true }
-        onChecking_file_signal: { fileNotReady = true; output.timeLeft = 5; fileRecheckDelay.start() }
-        onSuccess_file_signal: { fileNotReady = false; fileRecheckDelay.stop() }
+        onHide_torrent_information_signal: {
+            handle.state = "hideTorrentInformation"
+            handle.enabled = true
+            handle.setFocus()
+        }
     }
 
     Component.onCompleted: {
