@@ -301,7 +301,6 @@ Rectangle {
         if (event.key === Qt.Key_Escape) {
             if (root.welcome) {
                 screen.state = "hideWelcome"
-                root.welcome = false
                 event.accepted = true;
             } else {
                 screen.state = "hideHelp"

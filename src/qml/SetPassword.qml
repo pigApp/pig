@@ -36,7 +36,7 @@ Item {
             onCursorVisibleChanged: { if (input.cursorVisible) input.cursorVisible = false }
             onAccepted: {
                 if (input.text !== "") {
-                    root.password_handle_qml_signal(input.text, true)
+                    root.password_handler_qml_signal(input.text, true)
                     input.visible = false
                     input.enabled = false
                 }

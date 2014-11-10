@@ -5,15 +5,15 @@ Item {
     id: root
 
     property bool welcome
-    property bool forceShowFinder
     property bool showNetwork
     property bool errorNetwork
     property bool requireConfirmation
     property bool get
     property bool requireRestart
     property bool showUserInputLabel
+    property bool hideHelp
     property bool hideFinder_showOutput
-    property bool hideFinder_hideFilters_showOutput
+    property bool hideFilters_hideFinder_showOutput
     property bool stopPreview
 
     property string status
@@ -33,6 +33,7 @@ Item {
     property int xAnimation: screen.width
     property int totalFilms
     property int n
+    property int screenWidth
     property int peers: 0
     property int required: 0
     property int downloaded: 0
@@ -43,15 +44,16 @@ Item {
     property variant nPornstarList
     property variant list
 
-    signal password_handle_qml_signal(string plain, bool write)
+    signal password_handler_qml_signal(string plain, bool write)
     signal skip_qml_signal()
     signal get_files_qml_signal()
     signal find_qml_signal(string input, string pornstar, string category, string quality, string full, int offset, bool init)
-    signal preview_handle_qml_signal(string host, string url, string path, string file, int id, bool success, bool fail, bool abort)
-    signal torrent_handle_qml_signal(string magnet, int scene, bool stop)
+    signal preview_handler_qml_signal(string host, string url, string path, string file, int id, bool success, bool fail, bool abort)
+    signal torrent_handler_qml_signal(string magnet, int scene, bool stop)
     signal quit_qml_signal()
 
-    FontLoader { id: pigFont; source: "/resources/font/pig.ttf" }
+    FontLoader { id: pigFont; source: "/resources/fonts/pig.ttf" }
+    FontLoader { id: finderFont; source: "/resources/fonts/finder.ttf" }
 
     Rectangle {
         id: screen
@@ -59,7 +61,7 @@ Item {
         anchors.fill: parent
 
         Loader {
-            id: loader
+            id: root_loader_A
             z: 2
             asynchronous: true
             focus: true
@@ -67,7 +69,7 @@ Item {
             anchors.fill: parent
         }
         Loader {
-            id: loader_finder_output
+            id: root_loader_B
             asynchronous: true
             visible: { status === Loader.Ready }
             anchors.fill: parent
@@ -76,31 +78,31 @@ Item {
         states: [
             State {
                 name: "showWelcome"
-                PropertyChanges { target: loader; source: "Welcome.qml" }
+                PropertyChanges { target: root_loader_A; source: "Welcome.qml" }
             },
             State {
                 name: "hideWelcome"
             },
             State {
                 name: "showNews"
-                PropertyChanges { target: loader; source: "News.qml" }
+                PropertyChanges { target: root_loader_A; source: "News.qml" }
             },
             State {
                 name: "hideNews"
-                PropertyChanges { target: loader; source: "" }
-                PropertyChanges { target: root; forceShowFinder: true }
+                PropertyChanges { target: root_loader_A; source: "" }
+                PropertyChanges { target: root_loader_B; source: "Finder.qml" }
             },
             State {
                 name: "showSetPassword"
-                PropertyChanges { target: loader; source: "SetPassword.qml" }
+                PropertyChanges { target: root_loader_A; source: "SetPassword.qml" }
             },
             State {
                 name: "hideSetPassword"
-                PropertyChanges { target: loader; source: "" }
+                PropertyChanges { target: root_loader_A; source: "" }
             },
             State {
                 name: "showHelp"
-                PropertyChanges { target: loader; source: "Help.qml" }
+                PropertyChanges { target: root_loader_A; source: "Help.qml" }
             },
             State {
                 name: "hideHelp"
@@ -110,10 +112,11 @@ Item {
             Transition {
                 to: "hideWelcome"
                 SequentialAnimation {
+                    PropertyAction { target: root_loader_B; property: "source"; value: "Finder.qml" }
                     NumberAnimation { target: root; easing.amplitude: 1.7; properties: "xAnimation"; to: screen.width; duration: 1100; easing.type: Easing.OutQuart }
-                    PropertyAction { target: loader; property: "source"; value: "" }
-                    PropertyAction { target: root; property: "forceShowFinder"; value: true }
+                    PropertyAction { target: root_loader_A; property: "source"; value: "" }
                     PropertyAction { target: root; property: "showUserInputLabel"; value: true }
+                    PropertyAction { target: root; property: "welcome"; value: false }
                 }
             },
             Transition {
@@ -123,19 +126,14 @@ Item {
             Transition {
                 to: "hideHelp"
                 SequentialAnimation {
+                    PropertyAction { target: root; property: "hideHelp"; value: true }
                     NumberAnimation { target: root; easing.amplitude: 1.7; properties: "xAnimation"; to: screen.width; duration: 1100; easing.type: Easing.OutQuart }
-                    PropertyAction { target: loader; property: "source"; value: "" }
-                    PropertyAction { target: loader_finder_output; property: "focus"; value: true }
+                    PropertyAction { target: root_loader_A; property: "source"; value: "" }
+                    PropertyAction { target: root_loader_B; property: "focus"; value: true }
+                    PropertyAction { target: root; property: "hideHelp"; value: false }
                 }
             }
         ]
-    }
-
-    onForceShowFinderChanged: {
-        if (forceShowFinder) {
-            loader_finder_output.source = "Finder.qml"
-            forceShowFinder = false
-       }
     }
 
     Connections {
@@ -144,28 +142,28 @@ Item {
             screen.state = "showWelcome"
             welcome = true
         }
-        onRequire_password_signal: { loader.source = "AskPassword.qml" }
-        onShow_update_signal: { loader.source = "Update.qml" }
+        onRequire_password_signal: { root_loader_A.source = "AskPassword.qml" }
+        onShow_update_signal: { root_loader_A.source = "Update.qml" }
         onShow_news_signal: {
             root.binaryNews = binaryNews
             root.databaseNews = databaseNews
             screen.state = "showNews"
         }
         onShow_finder_signal: {
-            loader.source = ""
-            loader_finder_output.source = "Finder.qml"
+            root_loader_A.source = ""
+            root_loader_B.source = "Finder.qml"
         }
         onShow_output_signal: {
             root.n = n
             root.list = list
             if (pornstar !== "" || category !== "")
-                hideFinder_hideFilters_showOutput = true
+                hideFilters_hideFinder_showOutput = true
             else
                 hideFinder_showOutput = true
         }
         onShow_errorDatabase_signal: {
-            loader_finder_output.source = ""
-            loader.source = "ErrorDb.qml"
+            root_loader_B.source = ""
+            root_loader_A.source = "ErrorDb.qml"
         }
     }
 }

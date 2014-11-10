@@ -2,7 +2,7 @@ import QtQuick 2.3
 
 Rectangle {
     id: filters
-    x: root.xAnimation
+    x: screen.width
     width: screen.width
     height: screen.height
     color: "black"
@@ -63,9 +63,5 @@ Rectangle {
             }
         }
     }
-
-    onFocusChanged: { if (!filters.focus) filters.forceActiveFocus() }
-
-    Component.onCompleted: filters.forceActiveFocus()
 }
 // Tabs hechos.

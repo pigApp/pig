@@ -84,6 +84,7 @@ Rectangle {
             inNumberLabel.start()
             inColor.start()
             inEffect.start()
+            buttonFilter.forceActiveFocus()
         } else {
             inStarPic.stop()
             inLabel.stop()
@@ -100,6 +101,7 @@ Rectangle {
             outEffect.start()
         }
     }
+
     NumberAnimation { id: inStarPic; target: pic; properties: "opacity"; to: 1; duration: 1000; easing.type: Easing.InOutQuart }
     NumberAnimation { id: inLabel; target: label; properties: "opacity"; to: 0; duration: 200; easing.type: Easing.InOutQuart }
     NumberAnimation { id: inIndicatorLabel; target: indicatorLabel; properties: "opacity"; to: 0; duration: 1; easing.type: Easing.InOutQuart }
@@ -110,6 +112,16 @@ Rectangle {
     NumberAnimation { id: outIndicatorLabel; target: indicatorLabel; properties: "opacity"; to: 1; duration: 500; easing.type: Easing.InOutQuart }
     NumberAnimation { id: outNumberLabel; target: numberLabel; properties: "opacity"; to: 0; duration: 100; easing.type: Easing.InOutQuart }
     NumberAnimation { id: outEffect; target: effect; properties: "opacity"; to: 0; duration: 200; easing.type: Easing.InOutQuart }
+
+    Keys.onPressed: {
+        if (event.key === Qt.Key_Escape) {
+            finder.state = "hideFilter"
+            event.accepted = true
+        } else if (event.key === Qt.Key_Q && (event.modifiers & Qt.ControlModifier)) {
+            root.quit_qml_signal()
+            event.accepted = true
+        }
+    }
 
     Component.onCompleted: buttonFilter.forceActiveFocus()
 }

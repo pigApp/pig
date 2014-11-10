@@ -36,8 +36,9 @@ Item {
         repeat: false
         interval: 5000
         onTriggered: {
-            loader_finder_output.source = "Finder.qml"
-            root.errorNetwork = false; loader.source = ""
+            root_loader_B.source = "Finder.qml"
+            root.errorNetwork = false
+            root_loader_A.source = ""
         }
     }
 }

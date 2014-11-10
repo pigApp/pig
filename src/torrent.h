@@ -34,7 +34,7 @@ signals:
 
 private:
     libtorrent::session *client;
-    libtorrent::torrent_handle handle;
+    libtorrent::torrent_handle handler;
     libtorrent::add_torrent_params params;
     libtorrent::file_storage file_storage;
     libtorrent::error_code ec;

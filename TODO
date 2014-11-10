@@ -1,14 +1,8 @@
-- FIX: Cambiar 1920 por screen.widh (TorrentInformation y Output)
-- FIX: ++previewId (output) suma mal
-- FIX: Al pedir cinco peliculas mas, detener el video.
-- FIX: si se muestra welcome, al abrir y cerrar help desde finder, userInput pierde el foco.
-- FIX: Focus en el player.
+- FIX: Al entrar a finder cuando hay news, si abro help, al cerrarlo no vuelve a mostrar finder.
+- FIX: Focus en previewBox (Focus ya resuelto en output y torrentInformation)
 
-- FIX: Volver a poner el delay entre teclas al pasar de una pelicula a otra, sino, pasa mal.
-- FIX: Ver porque falla el path al intentar abrir el video.
 - Ver si es necesario libicu en linux.
 - Agregar todas las imagenes a CATEGORY y PORNSTAR.
-- Probar compilar libtorrent con encriptacion.
 - PLAYER
   - Al adelantar el slider, si es necesario descargar una nueva pieza (descarga la pieza correcta - dos minutos antes - o dos minutos despues) ver por que.
   - Al mover el slider, comprobar que marque correctamente si sobrepasa a bar (rojo - blanco). 

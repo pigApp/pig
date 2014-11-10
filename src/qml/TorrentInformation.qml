@@ -43,6 +43,10 @@ Rectangle {
             font.bold: true
             font.pixelSize: screen.height/54
         }
+        onVisibleChanged: {
+            if (visible)
+                torrentInformation.forceActiveFocus()
+        }
     }
     ProgressBar {
         id: progressBar
@@ -106,14 +110,14 @@ Rectangle {
             }
         },
         Transition {
-            to: "hide"                                                               // TODO: cambiar 1920 por screen
-            NumberAnimation { target: torrentInformation; easing.amplitude: 1.7; properties: "x"; to: 1920; duration: 1100; easing.type: Easing.OutQuart }
+            to: "hide"
+            NumberAnimation { target: torrentInformation; easing.amplitude: 1.7; properties: "x"; to: root.screenWidth; duration: 1100; easing.type: Easing.OutQuart }
         }
     ]
 
     Keys.onPressed: {
         if (event.key === Qt.Key_Escape) {
-                root.torrent_handle_qml_signal("", 0, true)
+                root.torrent_handler_qml_signal("", 0, true)
                 event.accepted = true;
         } else if (event.key === Qt.Key_Q && (event.modifiers & Qt.ControlModifier)) {
             root.quit_qml_signal()
@@ -145,8 +149,5 @@ Rectangle {
         }
     }
 
-    Component.onCompleted: {
-        torrentInformation.state = "show"
-        torrentInformation.forceActiveFocus()
-    }
+    Component.onCompleted: { torrentInformation.state = "show" }
 }

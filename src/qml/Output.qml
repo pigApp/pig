@@ -13,7 +13,6 @@ Item {
     property int currentFilm: 1
     property int locationOnList
     property int nIndex: 0
-    property int previewId: -1
 
     ListModel {
         id: model
@@ -36,11 +35,6 @@ Item {
             height: listView.height
             visible: recipe.PathView.isCurrentItem
             opacity: { PathView.recipeOpacity || 1 }
-
-            Keys.onUpPressed: { if (!timeOutNetwork.running) handle.fiveMore() }
-            Keys.onDownPressed: { if (!timeOutNetwork.running) handle.fiveLess() }
-            Keys.onRightPressed: { if (!timeOutNetwork.running) handle.next() }
-            Keys.onLeftPressed: { if (!timeOutNetwork.running) handle.prior() }
 
             Image {
                 id: poster
@@ -102,13 +96,12 @@ Item {
                 anchors.verticalCenter: parent.verticalCenter
                 anchors.verticalCenterOffset: parent.height/710
                 Component.onCompleted: {
-                    ++previewId
                     var component = Qt.createComponent("Preview.qml")
                     var object = component.createObject(previewBox)
                     object.host = hostPreview
                     object.url = urlPreview
                     object.file = filePreview
-                    object.id = previewId
+                    object.id = idPreview
                 }
             }
 
@@ -152,10 +145,10 @@ Item {
                 onTriggered: {
                     if (successPoster && successCover) {
                         timeOutNetwork.stop()
-                        loader.source = ""
-                        handle.state = "show"
-                        handle.enabled = true
-                        handle.setFocus()
+                        root_loader_A.source = ""
+                        handler.state = "show"
+                        handler.enabled = true
+                        handler.setFocus()
                         root.stopPreview = false
                     } else {
                         imagesStatus.restart()
@@ -288,15 +281,15 @@ Item {
             NumberAnimation { running: recipe.PathView.isCurrentItem && output.x === 0; target: translucedLayer; property: "opacity"; to: 0.65; duration: 1500; easing.type: Easing.InOutQuad }
             NumberAnimation { running: recipe.PathView.isCurrentItem; target: datesColumn; property: "opacity"; to: 1; duration: 2000; easing.type: Easing.OutElastic }
 
-            PropertyAction { running: !recipe.PathView.isCurrentItem || handle.state === "hideOutput_showFinder"; target: poster; property: "opacity"; value: 0 }
-            PropertyAction { running: !recipe.PathView.isCurrentItem || handle.state === "hideOutput_showFinder"; target: translucedLayer; property: "opacity"; value: 0 }
-            NumberAnimation { running: !recipe.PathView.isCurrentItem || handle.state === "hideOutput_showFinder"; target: datesColumn; property: "opacity"; to: 0;
+            PropertyAction { running: !recipe.PathView.isCurrentItem || handler.state === "hideOutput_showFinder"; target: poster; property: "opacity"; value: 0 }
+            PropertyAction { running: !recipe.PathView.isCurrentItem || handler.state === "hideOutput_showFinder"; target: translucedLayer; property: "opacity"; value: 0 }
+            NumberAnimation { running: !recipe.PathView.isCurrentItem || handler.state === "hideOutput_showFinder"; target: datesColumn; property: "opacity"; to: 0;
                               duration: 1; easing.type: Easing.InOutQuad }
         }
     }
 
     PathView {
-        id: handle
+        id: handler
         model: model
         delegate: delegate
         interactive: false
@@ -305,11 +298,6 @@ Item {
 
         property int offset: 0
         property int counter: 5
-
-        signal fiveMore()
-        signal fiveLess()
-        signal next()
-        signal prior()
 
         path: Path {
             startX: screen.width/2
@@ -322,62 +310,9 @@ Item {
             PathQuad { x: screen.width/2; y: screen.height/2; controlX: -screen.width*2.77; controlY: screen.height/2 }
         }
 
-        function setFocus() { handle.forceActiveFocus() }
-
-        Keys.onPressed: {
-            if (event.key === Qt.Key_Escape) {
-                handle.state = "hideOutput_showFinder"
-                event.accepted = true;
-            } else if (event.key === Qt.Key_H && (event.modifiers & Qt.ControlModifier) && !timeOutNetwork.running) {
-                screen.state = "showHelp"
-                event.accepted = true
-            } else if (event.key === Qt.Key_Q && (event.modifiers & Qt.ControlModifier)) {
-                root.quit_qml_signal()
-                event.accepted = true;
-            }
-        }
-
-        onFiveMore: {
-            if(totalFilms > 5 && counter < totalFilms) {
-                handle.enabled = false
-                offset = offset+5
-                counter = counter+5
-                currentFilm = counter-4
-                listUpdater(offset)
-            }
-        }
-        onFiveLess: {
-            if(totalFilms > 5 && currentFilm-5 > 0) {
-                handle.enabled = false
-                offset = offset-5
-                counter = counter-5
-                currentFilm = counter-4
-                listUpdater(offset)
-            }
-        }
-        onNext: {
-            incrementCurrentIndex()
-            if (locationOnList === list.length-12) {
-                locationOnList = 0
-                location = 0
-                currentFilm = currentFilm-n+1
-            } else {
-                locationOnList = locationOnList+12
-                ++currentFilm
-                ++location
-            }
-        }
-        onPrior: {
-            decrementCurrentIndex()
-            if (locationOnList === 0) {
-                locationOnList = list.length-12
-                location = n-1
-                currentFilm = currentFilm+n-1
-            } else {
-                locationOnList = locationOnList-12
-                --currentFilm
-                --location
-            }
+        MouseArea {
+            onClicked: handler.setFocus()
+            anchors.fill: parent
         }
 
         states: [
@@ -388,6 +323,9 @@ Item {
                 name: "hide"
             },
             State {
+                name: "hideOutput_showFinder"
+            },
+            State {
                 name: "showTorrentInformation"
                 when: showTorrentInformation
             },
@@ -395,7 +333,11 @@ Item {
                 name: "hideTorrentInformation"
             },
             State {
-                name: "hideOutput_showFinder"
+                name: "showHelp"
+            },
+            State {
+                name: "hideHelp"
+                when: root.hideHelp
             }
         ]
         transitions: [
@@ -411,10 +353,21 @@ Item {
                 }
             },
             Transition {
+                to: "hideOutput_showFinder"
+                SequentialAnimation {
+                    PropertyAction { target: root; property: "stopPreview"; value: true }
+                    NumberAnimation { duration: 20 }
+                    NumberAnimation { target: output; easing.amplitude: 1.7; properties: "x"; to: screen.width; duration: 500; easing.type: Easing.OutQuart }
+                    PropertyAction { target: root_loader_A; property: "source"; value: "" } //
+                    PropertyAction { target: root_loader_B; property: "source"; value: "Finder.qml" }
+                }
+            },
+            Transition {
                 to: "showTorrentInformation"
+                PropertyAction { target: root; property: "screenWidth"; value: screen.width }
                 PropertyAction { target: output; property: "showTorrentInformation"; value: false }
-                PropertyAction { target: handle; property: "enabled"; value: false }
-                PropertyAction { target: loader; property: "source"; value: "TorrentInformation.qml" }
+                PropertyAction { target: handler; property: "enabled"; value: false }
+                PropertyAction { target: root_loader_A; property: "source"; value: "TorrentInformation.qml" }
                 SequentialAnimation {
                     NumberAnimation { duration: 20 }
                     NumberAnimation { target: output; easing.amplitude: 1.7; properties: "x"; to: -screen.width; duration: 1100; easing.type: Easing.OutQuart }
@@ -423,24 +376,94 @@ Item {
             },
             Transition {
                 to: "hideTorrentInformation"
-                SequentialAnimation {                      // TODO: cambiar 1920 por screen
-                    PropertyAction { target: output; property: "x"; value: -1920 }
+                SequentialAnimation {
+                    PropertyAction { target: output; property: "x"; value: -root.screenWidth }
                     NumberAnimation { target: output; easing.amplitude: 1.7; properties: "x"; to: 0; duration: 1080; easing.type: Easing.OutQuart }
-                    PropertyAction { target: loader; property: "source"; value: "" }
+                    PropertyAction { target: root_loader_A; property: "source"; value: "" }
                     PropertyAction { target: root; property: "stopPreview"; value: false }
                 }
             },
             Transition {
-                to: "hideOutput_showFinder"
-                SequentialAnimation {
-                    PropertyAction { target: root; property: "stopPreview"; value: true }
-                    NumberAnimation { duration: 20 }
-                    NumberAnimation { target: output; easing.amplitude: 1.7; properties: "x"; to: screen.width; duration: 500; easing.type: Easing.OutQuart }
-                    PropertyAction { target: loader; property: "source"; value: "" }
-                    PropertyAction { target: loader_finder_output; property: "source"; value: "Finder.qml" }
-                }
+                to: "showHelp"
+                NumberAnimation { target: output; easing.amplitude: 1.7; properties: "x"; to: -screen.width; duration: 1100; easing.type: Easing.OutQuart }
+            },
+            Transition {
+                to: "hideHelp"
+                NumberAnimation { target: output; easing.amplitude: 1.7; properties: "x"; to: 0; duration: 1080; easing.type: Easing.OutQuart }
             }
         ]
+
+        function setFocus() { handler.forceActiveFocus() }
+
+        Keys.onPressed: {
+            if (event.key === Qt.Key_Escape) {
+                handler.state = "hideOutput_showFinder"
+                event.accepted = true;
+            } else if (event.key === Qt.Key_H && (event.modifiers & Qt.ControlModifier) && !timeOutNetwork.running) {
+                handler.state = "showHelp"
+                screen.state = "showHelp"
+                event.accepted = true
+            } else if (event.key === Qt.Key_Q && (event.modifiers & Qt.ControlModifier)) {
+                root.stopPreview = true
+                root.quit_qml_signal()
+                event.accepted = true;
+            }
+        }
+
+        Keys.onUpPressed: {
+            if(totalFilms > 5 && counter < totalFilms) {
+                handler.enabled = false
+                offset = offset+5
+                counter = counter+5
+                currentFilm = counter-4
+                listUpdater(offset)
+            }
+        }
+        Keys.onDownPressed: {
+            if(totalFilms > 5 && currentFilm-5 > 0) {
+                handler.enabled = false
+                offset = offset-5
+                counter = counter-5
+                currentFilm = counter-4
+                listUpdater(offset)
+            }
+        }
+        Keys.onRightPressed: {
+            handler.enabled = false
+            enabledDelay.start()
+            incrementCurrentIndex()
+            if (locationOnList === list.length-12) {
+                locationOnList = 0
+                location = 0
+                currentFilm = currentFilm-n+1
+            } else {
+                locationOnList = locationOnList+12
+                ++currentFilm
+                ++location
+            }
+
+        }
+        Keys.onLeftPressed: {
+            handler.enabled = false
+            enabledDelay.start()
+            decrementCurrentIndex()
+            if (locationOnList === 0) {
+                locationOnList = list.length-12
+                location = n-1
+                currentFilm = currentFilm+n-1
+            } else {
+                locationOnList = locationOnList-12
+                --currentFilm
+                --location
+            }
+        }
+        Timer {
+            id: enabledDelay
+            running: false
+            repeat: false
+            interval: 500
+            onTriggered: { handler.enabled = true }
+        }
     }
 
     Timer {
@@ -456,7 +479,7 @@ Item {
         running: false
         repeat: false
         interval: 500
-        onTriggered: { loader.source = "Network.qml" }
+        onTriggered: { root_loader_A.source = "Network.qml" }
     }
 
     function listCreator() {
@@ -465,7 +488,7 @@ Item {
         for(var i=0; i<n; i++) {
            torrent = list[row+11].split(",")
            model.append({ "title": list[row], "cast": list[row+1], "categories": list[row+2], "quality": list[row+3], "full": list[row+4],
-                          "hostPreview": list[row+5], "urlPreview": list[row+6], "filePreview": list[row+7], "hostPosterCover": list[row+8],
+                          "hostPreview": list[row+5], "urlPreview": list[row+6], "filePreview": list[row+7], "idPreview": i, "hostPosterCover": list[row+8],
                           "urlPoster": list[row+9], "urlCover": list[row+10], "magnet": torrent[0], "scenes": Number(torrent[1]) })
            row += 12
         }
@@ -475,7 +498,7 @@ Item {
 
     function listUpdater(offset) {
         root.stopPreview = true
-        handle.state = "hide"
+        handler.state = "hide"
         successPoster = false
         successCover = false
         root.list = ""
@@ -491,13 +514,12 @@ Item {
             root.stopPreview = false
             root.n = n
             root.list = list
-            previewId = -1
             listCreator()
         }
         onHide_torrent_information_signal: {
-            handle.state = "hideTorrentInformation"
-            handle.enabled = true
-            handle.setFocus()
+            handler.state = "hideTorrentInformation"
+            handler.enabled = true
+            handler.setFocus()
         }
     }
 

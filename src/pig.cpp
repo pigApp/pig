@@ -43,26 +43,26 @@ void PIG::set_root_object(QObject *root)
         mRoot->disconnect(this);
     mRoot = root;
 
-    if (mRoot) connect (mRoot, SIGNAL(password_handle_qml_signal(const QString, const bool)), this, SLOT(password_handle(const QString, const bool)));
+    if (mRoot) connect (mRoot, SIGNAL(password_handler_qml_signal(const QString, const bool)), this, SLOT(password_handler(const QString, const bool)));
     if (mRoot) connect (mRoot, SIGNAL(find_qml_signal(const QString, const QString, const QString, const QString, const QString, const int, const bool)),
                                       this, SLOT(find(const QString, const QString, const QString, const QString, const QString, const int, const bool)));
-    if (mRoot) connect (mRoot, SIGNAL(preview_handle_qml_signal(const QString, const QString, const QString, const QString, const int, const bool, const bool, const bool)),
-                                      this, SLOT(preview_handle(const QString, const QString, const QString, const QString, const int, const bool, const bool, const bool)));
-    if (mRoot) connect (mRoot, SIGNAL(torrent_handle_qml_signal(const QString, const int, const bool)), this, SLOT(torrent_handle(const QString, const int, const bool)));
+    if (mRoot) connect (mRoot, SIGNAL(preview_handler_qml_signal(const QString, const QString, const QString, const QString, const int, const bool, const bool, const bool)),
+                                      this, SLOT(preview_handler(const QString, const QString, const QString, const QString, const int, const bool, const bool, const bool)));
+    if (mRoot) connect (mRoot, SIGNAL(torrent_handler_qml_signal(const QString, const int, const bool)), this, SLOT(torrent_handler(const QString, const int, const bool)));
     if (mRoot) connect (mRoot, SIGNAL(quit_qml_signal()), this, SLOT(quit()));
 }
 
 //PASSWORD
-void PIG::password_handle(const QString plain, const bool write)
+void PIG::password_handler(const QString plain, const bool write)
 {
     if (plain.isEmpty()) {
         if (mPassword->require())
             emit require_password_signal();
         else
-            QTimer::singleShot(10, this, SLOT(update_handle()));
+            QTimer::singleShot(10, this, SLOT(update_handler()));
     } else if (!plain.isEmpty() && !write) {
         if (mPassword->success(&plain))
-            update_handle();
+            update_handler();
         else
             emit fail_password_signal();
     } else {
@@ -74,7 +74,7 @@ void PIG::password_handle(const QString plain, const bool write)
 }
 
 //UPDATE
-void PIG::update_handle()
+void PIG::update_handler()
 {
     delete mPassword;
     mPassword = NULL;
@@ -201,10 +201,9 @@ void PIG::start_pig()
 }
 
 //PREVIEW
-void PIG::preview_handle(const QString host, const QString url, const QString path, const QString file, const int id, const bool success, const bool fail, const bool abort)
+void PIG::preview_handler(const QString host, const QString url, const QString path, const QString file, const int id, const bool success, const bool fail, const bool abort)
 {
     if (!success && !fail && !abort) {
-        qDebug() << "//// ID: " << id; //
         mSocket[id]->host = host;
         mSocket[id]->url = url;
         mSocket[id]->file = file;
@@ -221,11 +220,11 @@ void PIG::preview_handle(const QString host, const QString url, const QString pa
         mSocket[id]->abortPreview();
     }
     connect (mSocket[id], SIGNAL(ret_preview_signal(const QString, const QString, const QString, const QString, const int, const bool, const bool, const bool)),
-                                 this, SLOT(preview_handle(const QString, const QString, const QString, const QString, const int, const bool, const bool, const bool)));
+                                 this, SLOT(preview_handler(const QString, const QString, const QString, const QString, const int, const bool, const bool, const bool)));
 }
 
 //TORRENT
-void PIG::torrent_handle(const QString magnet, const int scene, const bool stop)
+void PIG::torrent_handler(const QString magnet, const int scene, const bool stop)
 {
     //cleanUp();
 
@@ -236,11 +235,11 @@ void PIG::torrent_handle(const QString magnet, const int scene, const bool stop)
         mTorrent->stop();
         emit hide_torrent_information_signal();
     }
-    connect (mTorrent, SIGNAL(sandbox_signal(const QString, const bool, const bool, const bool)), this, SLOT(player_handle(const QString, const bool, const bool, const bool)));
+    connect (mTorrent, SIGNAL(sandbox_signal(const QString, const bool, const bool, const bool)), this, SLOT(player_handler(const QString, const bool, const bool, const bool)));
 }
 
 //PLAYER
-void PIG::player_handle(const QString absoluteFilePath, const bool sandbox, const bool fileReady, const bool close)
+void PIG::player_handler(const QString absoluteFilePath, const bool sandbox, const bool fileReady, const bool close)
 {
     if (!close) {
         if (sandbox) {
@@ -248,8 +247,8 @@ void PIG::player_handle(const QString absoluteFilePath, const bool sandbox, cons
             mPlayer->_torrent = mTorrent;
             mPlayer->sandbox(&absoluteFilePath);
             mTorrent->_player = mPlayer;
-            connect (mPlayer, SIGNAL(file_ready_signal(const QString, const bool, const bool, const bool)), this, SLOT(player_handle(const QString, const bool, const bool, const bool)));
-            connect (mPlayer, SIGNAL(close_player_signal(const QString, const bool, const bool, const bool)), this, SLOT(player_handle(const QString, const bool, const bool, const bool)));
+            connect (mPlayer, SIGNAL(file_ready_signal(const QString, const bool, const bool, const bool)), this, SLOT(player_handler(const QString, const bool, const bool, const bool)));
+            connect (mPlayer, SIGNAL(close_player_signal(const QString, const bool, const bool, const bool)), this, SLOT(player_handler(const QString, const bool, const bool, const bool)));
             connect (mPlayer, SIGNAL(quit_signal()), this, SLOT(quit()));
 
             emit checking_file_signal();
@@ -262,7 +261,7 @@ void PIG::player_handle(const QString absoluteFilePath, const bool sandbox, cons
         }
     } else {
         this->show();
-        torrent_handle("", 0, true);
+        torrent_handler("", 0, true);
         mPlayer->close();
         delete mPlayer;
     }

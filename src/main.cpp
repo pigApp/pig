@@ -21,7 +21,7 @@ int main(int argc, char *argv[])
     pig.container = QWidget::createWindowContainer(view);
     pig.container->setFocusPolicy(Qt::TabFocus);
     pig.layout->addWidget(pig.container);
-    pig.password_handle("", false);
+    pig.password_handler("", false);
 
     pig.showFullScreen();
 

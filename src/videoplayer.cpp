@@ -21,7 +21,7 @@ VideoPlayer::VideoPlayer(QVideoWidget *parent) : QVideoWidget(parent)
     screenWidth = rec.width();
     screenHeight = rec.height();
 
-    QFont font("/resources/font/pig.ttf", screenHeight/46.95);
+    QFont font("/resources/fonts/pig.ttf", screenHeight/46.95);
 
     QVBoxLayout *boxLayout = new QVBoxLayout;
     boxLayout->setAlignment(Qt::AlignRight|Qt::AlignVCenter);

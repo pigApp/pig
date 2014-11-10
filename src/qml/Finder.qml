@@ -5,52 +5,35 @@ Item {
 
     property string activeFilter
 
-    Rectangle {
-        id: topRedLine
-        x: -parent.width/58.18
-        width: parent.width/58.18
-        height: 2
-        color: "red"
-        visible: { screen.state !== "showSetPassword" }
-        anchors.verticalCenter: parent.verticalCenter
-        anchors.verticalCenterOffset: parent.height/46.95
-    }
-    Rectangle {
-        id: centerRedLine
-        x: parent.width
-        width: parent.width/1.4
-        height: 2
-        color: "red"
-        visible: { screen.state !== "showSetPassword" }
-        anchors.verticalCenter: parent.verticalCenter
-        anchors.verticalCenterOffset: parent.height/46.95
-    }
-
     Text {
         id: userInputLabel
         text: "TYPE THE TITLE TO FIND"
-        color: "red"
-        font.family: pigFont.name
-        font.bold: true
-        font.italic: true
-        font.pixelSize: screen.height/23
+        color: "gray"
+        font.family: finderFont.name
+        font.capitalization: Font.AllUppercase
+        font.letterSpacing: parent.width/480
+        font.wordSpacing: -parent.width/384
+        font.pixelSize: screen.height/18
         opacity: 0.3
         visible: false
         anchors.centerIn: parent
+        anchors.verticalCenterOffset: -parent.height/360
     }
     TextInput {
         id: userInput
-        color: "red"
-        font.family: pigFont.name
-        font.bold: true
+        color: "gray"
+        font.family: finderFont.name
         font.capitalization: Font.AllUppercase
-        font.pixelSize: screen.height/23
+        font.letterSpacing: parent.width/480
+        font.wordSpacing: -parent.width/384
+        font.pixelSize: screen.height/18
         visible: { loaderSelectors.opacity === 1.0 && screen.state !== "showSetPassword" }
         enabled: { loaderSelectors.opacity === 1.0 && screen.state !== "showSetPassword" }
-        maximumLength: 21
+        maximumLength: 28
         cursorVisible: false
         anchors.centerIn: parent
         anchors.horizontalCenterOffset: -parent.width/112
+        anchors.verticalCenterOffset: -parent.height/360
         onAccepted: {
             root.input = userInput.text
             root.find_qml_signal(root.input, root.pornstar, root.category, root.quality, root.full, 0, true)
@@ -67,13 +50,16 @@ Item {
     Text {
         id: noResultLabel
         text: "NO RESULT"
-        color: "red"
-        font.family: pigFont.name
-        font.bold: true
-        font.pixelSize: screen.height/23
+        color: "gray"
+        font.family: finderFont.name
+        font.capitalization: Font.AllUppercase
+        font.letterSpacing: parent.width/480
+        font.wordSpacing: -parent.width/384
+        font.pixelSize: screen.height/18
         opacity: 0.3
         visible: false
         anchors.centerIn: parent
+        anchors.verticalCenterOffset: -parent.height/360
     }
 
     Column {
@@ -146,119 +132,6 @@ Item {
         anchors.fill: parent
     }
 
-    states: [
-        State {
-            name: "show"
-        },
-        State {
-            name: "hide"
-            when: root.hideFinder_showOutput
-        },
-        State {
-            name: "showFilter"
-        },
-        State {
-            name: "hideFilter"
-        },
-        State {
-            name: "hideAll"
-            when: root.hideFinder_hideFilters_showOutput
-        }
-    ]
-    transitions: [
-        Transition {
-            to: "show"
-            SequentialAnimation {
-                ParallelAnimation {
-                    NumberAnimation { target: topRedLine; properties: "x"; to: 0; duration: 500; easing.type: Easing.InOutQuart }
-                    NumberAnimation { target: centerRedLine; properties: "x"; to: screen.width/3.1; duration: 500; easing.type: Easing.InOutQuart }
-                }
-                NumberAnimation { target: buttonsFiltersColumn; properties: "opacity"; to: 1.0; duration: 60; easing.type: Easing.InOutQuart }
-                ParallelAnimation {
-                    NumberAnimation { target: loaderSelectors; properties: "opacity"; to: 1.0; duration: 80; easing.type: Easing.InOutQuart }
-                    PropertyAction { target: userInput; property: "text"; value: root.input }
-                }
-            }
-        },
-        Transition {
-            to: "hide"
-            SequentialAnimation {
-                ParallelAnimation {
-                    PropertyAction { target: userInputLabel; properties: "visible"; value: false }
-                    NumberAnimation { target: userInput; properties: "opacity"; to: 0; duration: 200; easing.type: Easing.InOutQuart }
-                    NumberAnimation { target: loaderSelectors; properties: "opacity"; to: 0; duration: 200; easing.type: Easing.InOutQuart }
-                }
-                NumberAnimation { target: buttonsFiltersColumn; properties: "opacity"; to: 0; duration: 60; easing.type: Easing.InOutQuart }
-                ParallelAnimation {
-                    NumberAnimation { target: topRedLine; properties: "x"; to: -screen.width/58.18; duration: 400; easing.type: Easing.InOutQuart }
-                    NumberAnimation { target: centerRedLine; properties: "x"; to: screen.width; duration: 400; easing.type: Easing.InOutQuart }
-                }
-                NumberAnimation { duration: 100 }
-                PropertyAction { target: loaderFilter; property: "source"; value: "" }
-                PropertyAction { target: loaderFilter; property: "active"; value: false }
-                PropertyAction { target: loaderSelectors; property: "source"; value: "" }
-                PropertyAction { target: loaderSelectors; property: "active"; value: false }
-                PropertyAction { target: loader_finder_output; property: "source"; value: "Output.qml" }
-                PropertyAction { target: loader; property: "source"; value: "Network.qml" }
-                PropertyAction { target: root; property: "hideFinder_showOutput"; value: false }
-            }
-        },
-        Transition {
-            to: "showFilter"
-            SequentialAnimation {
-                PropertyAction { target: loaderFilter; property: "active"; value: true }
-                NumberAnimation { target: root; easing.amplitude: 1.7; properties: "xAnimation"; to: 0; duration: 1100; easing.type: Easing.OutQuart }
-            }
-        },
-        Transition {
-            to: "hideFilter"
-            SequentialAnimation {
-                NumberAnimation { target: root; easing.amplitude: 1.7; properties: "xAnimation"; to: screen.width; duration: 1100; easing.type: Easing.OutQuart }
-                PropertyAction { target: loaderFilter; property: "active"; value: false }
-                PropertyAction { target: userInput; property: "focus"; value: true }
-            }
-        },
-        Transition {
-            to: "hideAll"
-            SequentialAnimation {
-                PropertyAction { target: userInput; property: "opacity"; value: 0 }
-                PropertyAction { target: noResultLabel; property: "opacity"; value: 0 }
-                PropertyAction { target: userInputLabel; properties: "visible"; value: false }
-                PropertyAction { target: buttonsFiltersColumn; property: "opacity"; value: 0 }
-                PropertyAction { target: topRedLine; property: "opacity"; value: 0 }
-                PropertyAction { target: centerRedLine; property: "opacity"; value: 0 }
-                PropertyAction { target: loaderSelectors; property: "source"; value: "" }
-                PropertyAction { target: loaderSelectors; property: "active"; value: false }
-                NumberAnimation { target: root; easing.amplitude: 1.7; properties: "xAnimation"; to: screen.width; duration: 1100; easing.type: Easing.OutQuart }
-                PropertyAction { target: loaderFilter; property: "source"; value: "" }
-                PropertyAction { target: loaderFilter; property: "active"; value: false }
-                PropertyAction { target: loader_finder_output; property: "source"; value: "Output.qml" }
-                PropertyAction { target: loader; property: "source"; value: "Network.qml" }
-                PropertyAction { target: root; property: "hideFinder_hideFilters_showOutput"; value: false }
-            }
-        }
-    ]
-
-    Keys.onPressed: {
-        if (event.key === Qt.Key_Escape && finder.state === "showFilter") {
-            finder.state = "hideFilter"
-            event.accepted = true
-        } else if (event.key === Qt.Key_H && (event.modifiers & Qt.ControlModifier)) {
-            if (!loaderFilter.active) {
-                // root.showUserInputLabel = false POSIBLEMENTE
-                screen.state = "showHelp"
-                event.accepted = true
-            }
-        } else if (event.key === Qt.Key_P && (event.modifiers & Qt.ControlModifier)) {
-            if (!loaderFilter.active)
-                screen.state = "showSetPassword"
-            event.accepted = true
-        } else if (event.key === Qt.Key_Q && (event.modifiers & Qt.ControlModifier)) {
-            root.quit_qml_signal()
-            event.accepted = true
-        }
-    }
-
     MouseArea {
         id: mouseArea
         enabled: { root.showUserInputLabel && loaderSelectors.visible }
@@ -273,6 +146,143 @@ Item {
         anchors.fill: parent
     }
 
+    Timer {
+        id: focusDelay
+        running: false
+        repeat: false
+        interval: 1200
+        onTriggered: userInput.forceActiveFocus()
+    }
+
+    states: [
+        State {
+            name: "show"
+        },
+        State {
+            name: "hide"
+            when: root.hideFinder_showOutput
+        },
+        State {
+            name: "hideWelcome"
+        },
+        State {
+            name: "hideAll"
+            when: root.hideFilters_hideFinder_showOutput
+        },
+        State {
+            name: "showFilter"
+        },
+        State {
+            name: "hideFilter"
+        },
+        State {
+            name: "showHelp"
+        },
+        State {
+            name: "hideHelp"
+            when: root.hideHelp
+        }
+    ]
+    transitions: [
+        Transition {
+            to: "show"
+            SequentialAnimation {
+                NumberAnimation { duration: 100 }
+                NumberAnimation { target: buttonsFiltersColumn; properties: "opacity"; to: 1.0; duration: 200; easing.type: Easing.InOutQuart } 
+                ParallelAnimation {
+                    NumberAnimation { target: loaderSelectors; properties: "opacity"; to: 1.0; duration: 60; easing.type: Easing.InOutQuart }
+                    PropertyAction { target: userInput; property: "text"; value: root.input }
+                }
+            }
+        },
+        Transition {
+            to: "hide"
+            SequentialAnimation {
+                ParallelAnimation {
+                    PropertyAction { target: userInputLabel; properties: "visible"; value: false }
+                    NumberAnimation { target: userInput; properties: "opacity"; to: 0; duration: 200; easing.type: Easing.InOutQuart }
+                    NumberAnimation { target: loaderSelectors; properties: "opacity"; to: 0; duration: 200; easing.type: Easing.InOutQuart }
+                }
+                NumberAnimation { target: buttonsFiltersColumn; properties: "opacity"; to: 0; duration: 60; easing.type: Easing.InOutQuart }
+                NumberAnimation { duration: 100 }
+                PropertyAction { target: loaderFilter; property: "source"; value: "" }
+                PropertyAction { target: loaderFilter; property: "active"; value: false }
+                PropertyAction { target: loaderSelectors; property: "source"; value: "" }
+                PropertyAction { target: loaderSelectors; property: "active"; value: false }
+                PropertyAction { target: root_loader_B; property: "source"; value: "Output.qml" }
+                PropertyAction { target: root_loader_A; property: "source"; value: "Network.qml" }
+                PropertyAction { target: root; property: "hideFinder_showOutput"; value: false }
+            }
+        },
+        Transition {
+            to: "hideWelcome"
+            SequentialAnimation {
+                PropertyAction { target: finder; property: "x"; value: -screen.width }
+                PropertyAction { target: buttonsFiltersColumn; property: "opacity"; value: 1 }
+                PropertyAction { target: loaderSelectors; property: "opacity"; value: 1 }
+                NumberAnimation { target: finder; easing.amplitude: 1.7; properties: "x"; to: 0; duration: 1080; easing.type: Easing.OutQuart }
+            }
+        },
+        Transition {
+            to: "hideAll"
+            SequentialAnimation {
+                PropertyAction { target: userInput; property: "opacity"; value: 0 }
+                PropertyAction { target: noResultLabel; property: "opacity"; value: 0 }
+                PropertyAction { target: userInputLabel; properties: "visible"; value: false }
+                PropertyAction { target: buttonsFiltersColumn; property: "opacity"; value: 0 }
+                PropertyAction { target: loaderSelectors; property: "source"; value: "" }
+                PropertyAction { target: loaderSelectors; property: "active"; value: false }
+                NumberAnimation { target: finder; easing.amplitude: 1.7; properties: "x"; to: 0; duration: 1100; easing.type: Easing.OutQuart }
+                PropertyAction { target: loaderFilter; property: "source"; value: "" }
+                PropertyAction { target: loaderFilter; property: "active"; value: false }
+                PropertyAction { target: root_loader_B; property: "source"; value: "Output.qml" }
+                PropertyAction { target: root_loader_A; property: "source"; value: "Network.qml" }
+                PropertyAction { target: root; property: "hideFilters_hideFinder_showOutput"; value: false }
+            }
+        },
+        Transition {
+            to: "showFilter"
+            SequentialAnimation {
+                PropertyAction { target: loaderFilter; property: "active"; value: true }
+                NumberAnimation { target: finder; easing.amplitude: 1.7; properties: "x"; to: -screen.width; duration: 1100; easing.type: Easing.OutQuart }
+            }
+        },
+        Transition {
+            to: "hideFilter"
+            PropertyAction { target: focusDelay; property: "running"; value: true }
+            SequentialAnimation {
+                NumberAnimation { target: finder; easing.amplitude: 1.7; properties: "x"; to: 0; duration: 1100; easing.type: Easing.OutQuart }
+                PropertyAction { target: loaderFilter; property: "active"; value: false }
+            }
+        },
+        Transition {
+            to: "showHelp"
+            NumberAnimation { target: finder; easing.amplitude: 1.7; properties: "x"; to: -screen.width; duration: 1100; easing.type: Easing.OutQuart }
+        },
+        Transition {
+            to: "hideHelp"
+            PropertyAction { target: focusDelay; property: "running"; value: true }
+            NumberAnimation { target: finder; easing.amplitude: 1.7; properties: "x"; to: 0; duration: 1080; easing.type: Easing.OutQuart }
+        }
+    ]
+
+    Keys.onPressed: {
+        if (event.key === Qt.Key_H && (event.modifiers & Qt.ControlModifier)) {
+            if (!loaderFilter.active) {
+                finder.state = "showHelp"
+                screen.state = "showHelp"
+                event.accepted = true
+            }
+        } else if (event.key === Qt.Key_P && (event.modifiers & Qt.ControlModifier)) {
+            if (!loaderFilter.active)
+                screen.state = "showSetPassword"
+            event.accepted = true
+        } else if (event.key === Qt.Key_Q && (event.modifiers & Qt.ControlModifier)) {
+            root.quit_qml_signal()
+            event.accepted = true
+        }
+    }
+
     Connections {
         target: cppSignals
         onNo_result_signal: {
@@ -284,8 +294,11 @@ Item {
     Component.onCompleted: {
         root.pornstar = ""
         root.category = ""
-        userInput.forceActiveFocus()
-        finder.state = "show"
+        if (root.welcome)
+            finder.state = "hideWelcome"
+        else
+            finder.state = "show"
+        focusDelay.start()
     }
 }
 // Tabs hechos.

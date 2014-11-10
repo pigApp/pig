@@ -25,7 +25,7 @@ Item {
                     onConnect = true
                     previewLabel.visible = false
                     icon.visible = true
-                    root.preview_handle_qml_signal(host, url, "", file, id, false, false, false)
+                    root.preview_handler_qml_signal(host, url, "", file, id, false, false, false)
                 }
             }
             anchors.fill: parent
@@ -46,7 +46,7 @@ Item {
                     onConnect = true
                     previewLabel.visible = false
                     icon.visible = true
-                    root.preview_handle_qml_signal(host, url, "", file, id, false, false, false)
+                    root.preview_handler_qml_signal(host, url, "", file, id, false, false, false)
                 }
             }
             anchors.fill: parent
@@ -131,21 +131,21 @@ Item {
             icon.visible = false
             previewLabel.visible = true
             onConnect = false
-            root.preview_handle_qml_signal("", "", "", "", id, false, false, true)
+            root.preview_handler_qml_signal("", "", "", "", id, false, false, true)
         }
     }
 
     Connections {
         target: cppSignals
         onSuccess_preview_signal: {
-            if (onConnect && id == preview.id) {
+            if (id === preview.id) {
                 onConnect = false
                 preview.path = path
                 playerDelay.start()
             }
         }
         onFail_preview_signal: {
-            if (onConnect && id == preview.id) {
+            if (id === preview.id) {
                 onConnect = false
                 errorDelay.start()
             }
