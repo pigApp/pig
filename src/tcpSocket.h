@@ -14,27 +14,31 @@ public:
     explicit TcpSocket(QTcpSocket *parent = 0);
     ~TcpSocket();
 
+    bool abortedPreview;
+
     QString host;
-    QString url;
-    QString file;
-    QString call;
+    QStringList urls;
+    QString target;
+    QString request;
 
     int id;
 
 public slots:
     void start();
-    void abortPreview();
 
 signals:
-    void success_version_signal(const QString version);
-    void success_file_signal(const QString path, const QString file);
-    void ret_preview_signal(const QString, const QString, const QString path, const QString file, const int id, const bool success, const bool fail, const bool abort);
-    void fail_socket_signal();
+    void signal_ret_str(const QString *const str);
+    void signal_ret_files(const QString *const path, const QStringList *const files);
+    void signal_preview_ret(const QString, const QString, const QString path, const QString file,
+                            const int id, const bool success, const bool fail, const bool abort);
+    void signal_fail_socket();
 
 private:
-    bool abortedPreview;
     QByteArray data;
+    QStringList files;
     QTimer *timeOut;
+
+    int offset;
 
 private slots:
     void connected();

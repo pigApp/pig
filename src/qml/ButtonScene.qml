@@ -26,7 +26,7 @@ Rectangle {
         onClicked: {
             if (!showTorrentInformation) {
                 showTorrentInformation = true
-                root.torrent_handler_qml_signal(magnet, scene, false)
+                root.signal_qml_torrent_handler(magnet, scene, false)
             }
         }
         anchors.fill: parent

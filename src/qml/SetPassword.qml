@@ -36,7 +36,7 @@ Item {
             onCursorVisibleChanged: { if (input.cursorVisible) input.cursorVisible = false }
             onAccepted: {
                 if (input.text !== "") {
-                    root.password_handler_qml_signal(input.text, true)
+                    root.signal_qml_password_handler(input.text, false, false, true)
                     input.visible = false
                     input.enabled = false
                 }
@@ -46,7 +46,7 @@ Item {
                     screen.state = "hideSetPassword"
                     event.accepted = true
                 } else if (event.key === Qt.Key_Q && (event.modifiers & Qt.ControlModifier)) {
-                    root.quit_qml_signal()
+                    root.signal_qml_quit()
                     event.accepted = true;
                 }
             }
@@ -62,11 +62,11 @@ Item {
 
     Connections {
         target: cppSignals
-        onSuccess_password_signal: {
+        onSignal_success_password: {
             label.text = ""
             screen.state = "hideSetPassword"
         }
-        onFail_password_signal: {
+        onSignal_fail_password: {
             label.text = "FAIL. TRY LATER"
             hide.start()
         }

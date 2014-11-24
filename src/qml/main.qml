@@ -7,50 +7,42 @@ Item {
     property bool welcome
     property bool showNetwork
     property bool errorNetwork
-    property bool requireConfirmation
-    property bool get
-    property bool requireRestart
     property bool showUserInputLabel
     property bool hideHelp
     property bool hideFinder_showOutput
     property bool hideFilters_hideFinder_showOutput
     property bool stopPreview
-
     property string status
     property string information
+    property string binary
+    property string release
+    property string database
     property string binaryNews: ""
     property string databaseNews: ""
-    property string binaryVersion
-    property string databaseVersion
     property string input: ""
     property string pornstar: ""
     property string category: ""
     property string quality: ""
     property string full: ""
-    property string release
     property string bitRate: ""
-
-    property int xAnimation: screen.width
+    property int xtransition: screen.width
+    property int nFilms
     property int totalFilms
-    property int n
     property int screenWidth
     property int peers: 0
     property int required: 0
     property int downloaded: 0
+    property variant categories
+    property variant nCategories
+    property variant pornstars
+    property variant nPornstars
+    property variant dataFilms
 
-    property variant categoryList
-    property variant nCategoryList
-    property variant pornstarList
-    property variant nPornstarList
-    property variant list
-
-    signal password_handler_qml_signal(string plain, bool write)
-    signal skip_qml_signal()
-    signal get_files_qml_signal()
-    signal find_qml_signal(string input, string pornstar, string category, string quality, string full, int offset, bool init)
-    signal preview_handler_qml_signal(string host, string url, string path, string file, int id, bool success, bool fail, bool abort)
-    signal torrent_handler_qml_signal(string magnet, int scene, bool stop)
-    signal quit_qml_signal()
+    signal signal_qml_password_handler(string plain, bool require, bool check, bool write)
+    signal signal_qml_find(string input, string pornstar, string category, string quality, string full, int offset, bool init)
+    signal signal_qml_preview_handler(string host, string url, string path, string target, int id, bool success, bool fail, bool abort)
+    signal signal_qml_torrent_handler(string magnet, int scene, bool stop)
+    signal signal_qml_quit()
 
     FontLoader { id: pigFont; source: "/resources/fonts/pig.ttf" }
     FontLoader { id: finderFont; source: "/resources/fonts/finder.ttf" }
@@ -113,7 +105,7 @@ Item {
                 to: "hideWelcome"
                 SequentialAnimation {
                     PropertyAction { target: root_loader_B; property: "source"; value: "Finder.qml" }
-                    NumberAnimation { target: root; easing.amplitude: 1.7; properties: "xAnimation"; to: screen.width; duration: 1100; easing.type: Easing.OutQuart }
+                    NumberAnimation { target: root; easing.amplitude: 1.7; properties: "xtransition"; to: screen.width; duration: 1100; easing.type: Easing.OutQuart }
                     PropertyAction { target: root_loader_A; property: "source"; value: "" }
                     PropertyAction { target: root; property: "showUserInputLabel"; value: true }
                     PropertyAction { target: root; property: "welcome"; value: false }
@@ -121,13 +113,13 @@ Item {
             },
             Transition {
                 to: "showHelp"
-                NumberAnimation { target: root; easing.amplitude: 1.7; properties: "xAnimation"; to: 0; duration: 1100; easing.type: Easing.OutQuart }
+                NumberAnimation { target: root; easing.amplitude: 1.7; properties: "xtransition"; to: 0; duration: 1100; easing.type: Easing.OutQuart }
             },
             Transition {
                 to: "hideHelp"
                 SequentialAnimation {
                     PropertyAction { target: root; property: "hideHelp"; value: true }
-                    NumberAnimation { target: root; easing.amplitude: 1.7; properties: "xAnimation"; to: screen.width; duration: 1100; easing.type: Easing.OutQuart }
+                    NumberAnimation { target: root; easing.amplitude: 1.7; properties: "xtransition"; to: screen.width; duration: 1100; easing.type: Easing.OutQuart }
                     PropertyAction { target: root_loader_A; property: "source"; value: "" }
                     PropertyAction { target: root_loader_B; property: "focus"; value: true }
                     PropertyAction { target: root; property: "hideHelp"; value: false }
@@ -138,30 +130,30 @@ Item {
 
     Connections {
         target: cppSignals
-        onShow_welcome_signal: {
+        onSignal_show_welcome: {
             screen.state = "showWelcome"
             welcome = true
         }
-        onRequire_password_signal: { root_loader_A.source = "AskPassword.qml" }
-        onShow_update_signal: { root_loader_A.source = "Update.qml" }
-        onShow_news_signal: {
+        onSignal_require_password: { root_loader_A.source = "AskPassword.qml" }
+        onSignal_show_update: { root_loader_A.source = "Update.qml" }
+        onSignal_show_news: {
             root.binaryNews = binaryNews
             root.databaseNews = databaseNews
             screen.state = "showNews"
         }
-        onShow_finder_signal: {
+        onSignal_show_finder: {
             root_loader_A.source = ""
             root_loader_B.source = "Finder.qml"
         }
-        onShow_output_signal: {
-            root.n = n
-            root.list = list
+        onSignal_show_output: {
+            root.nFilms = nFilms
+            root.dataFilms = dataFilms
             if (pornstar !== "" || category !== "")
                 hideFilters_hideFinder_showOutput = true
             else
                 hideFinder_showOutput = true
         }
-        onShow_errorDatabase_signal: {
+        onSignal_show_errorDatabase: {
             root_loader_B.source = ""
             root_loader_A.source = "ErrorDb.qml"
         }

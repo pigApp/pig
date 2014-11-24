@@ -1,6 +1,8 @@
+- Intentar uno usar puntero en update. 
+- Cambiar usuario de /usr/bin/pig a root en update.
 - FIX: Al entrar a finder cuando hay news, si abro help, al cerrarlo no vuelve a mostrar finder.
 - FIX: Focus en previewBox (Focus ya resuelto en output y torrentInformation)
-
+- Agregar UNSIGNED SHORT a int
 - Ver si es necesario libicu en linux.
 - Agregar todas las imagenes a CATEGORY y PORNSTAR.
 - PLAYER

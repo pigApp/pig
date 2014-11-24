@@ -5,7 +5,6 @@ Rectangle {
     color: "transparent"
 
     property bool enter
-
     property alias label: label.text
     property alias labelColor: label.color
     property alias labelSize: label.font.pixelSize

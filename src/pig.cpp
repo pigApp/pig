@@ -1,4 +1,5 @@
 #include "pig.h"
+#include "password.h"
 
 #include <QTextStream>
 #include <QDir>
@@ -6,10 +7,11 @@
 
 PIG::PIG(QWidget *parent) : QWidget(parent), mRoot(0)
 {
-    mSocket = NULL;
-    mTorrent = NULL;
     mUpdate = NULL;
-    mPassword = new Password();
+    mTorrent = NULL;
+    mPlayer = NULL;
+    for (int i=0; i<5; i++)
+        mSocket[i] = NULL;
 
     layout = new QVBoxLayout;
     layout->setContentsMargins(0, 0, 0, 0);
@@ -20,85 +22,87 @@ PIG::PIG(QWidget *parent) : QWidget(parent), mRoot(0)
 
 PIG::~PIG()
 {
-    if (mPassword != NULL)
-        delete mPassword;
     if (mUpdate != NULL)
         delete mUpdate;
+    if (mPlayer != NULL)
+        delete mPlayer;
     if (mTorrent != NULL)
         delete mTorrent;
-    if (mSocket !=NULL) {
-        for (int i=0; i<5; i++)
+    for (int i=0; i<5; i++)
+        if (mSocket[i] != NULL)
             delete mSocket[i];
-        delete[] mSocket;
-    }
-
-    //cleanUp();
     mRoot->disconnect(this);
     exit(0);
 }
 
 void PIG::set_root_object(QObject *root)
 {
-    if (mRoot != 0)
+    if (mRoot != NULL)
         mRoot->disconnect(this);
     mRoot = root;
-
-    if (mRoot) connect (mRoot, SIGNAL(password_handler_qml_signal(const QString, const bool)), this, SLOT(password_handler(const QString, const bool)));
-    if (mRoot) connect (mRoot, SIGNAL(find_qml_signal(const QString, const QString, const QString, const QString, const QString, const int, const bool)),
-                                      this, SLOT(find(const QString, const QString, const QString, const QString, const QString, const int, const bool)));
-    if (mRoot) connect (mRoot, SIGNAL(preview_handler_qml_signal(const QString, const QString, const QString, const QString, const int, const bool, const bool, const bool)),
-                                      this, SLOT(preview_handler(const QString, const QString, const QString, const QString, const int, const bool, const bool, const bool)));
-    if (mRoot) connect (mRoot, SIGNAL(torrent_handler_qml_signal(const QString, const int, const bool)), this, SLOT(torrent_handler(const QString, const int, const bool)));
-    if (mRoot) connect (mRoot, SIGNAL(quit_qml_signal()), this, SLOT(quit()));
+    if (mRoot != NULL) {
+        connect (mRoot, SIGNAL(signal_qml_password_handler(const QString, const bool, const bool, const bool)), this,
+                        SLOT(password_handler(const QString, const bool, const bool, const bool)));
+        connect (mRoot, SIGNAL(signal_qml_find(const QString, const QString, const QString, const QString, const QString, const int, const bool)), this,
+                        SLOT(find(const QString, const QString, const QString, const QString, const QString, const int, const bool)));
+        connect (mRoot, SIGNAL(signal_qml_preview_handler(const QString, const QString, const QString, const QString, const int, const bool, const bool, const bool)), this,
+                        SLOT(preview_handler(const QString, const QString, const QString, const QString, const int, const bool, const bool, const bool)));
+        connect (mRoot, SIGNAL(signal_qml_torrent_handler(const QString, const int, const bool)), this, SLOT(torrent_handler(const QString, const int, const bool)));
+        connect (mRoot, SIGNAL(signal_qml_quit()), this, SLOT(quit()));
+    }
 }
 
 //PASSWORD
-void PIG::password_handler(const QString plain, const bool write)
+void PIG::password_handler(const QString plain, const bool require, const bool check, const bool write)
 {
-    if (plain.isEmpty()) {
-        if (mPassword->require())
-            emit require_password_signal();
-        else
-            QTimer::singleShot(10, this, SLOT(update_handler()));
-    } else if (!plain.isEmpty() && !write) {
-        if (mPassword->success(&plain))
+    if (require) {
+#ifdef __linux__
+    const QString target = QDir::homePath()+"/.pig/.pd";
+#else
+    const QString target = "C:/PIG/.pig/.pd";
+#endif
+       QFile file;
+       if (file.exists(target))
+           emit signal_require_password();
+       else
+           update_handler();
+       file.close();
+    } else if (check) {
+        Password mPassword;
+        if (mPassword.check(&plain))
             update_handler();
         else
-            emit fail_password_signal();
-    } else {
-        if (mPassword->write(&plain))
-            emit success_password_signal();
+            emit signal_fail_password();
+    } else if (write) {
+        Password mPassword;
+        if (mPassword.write(&plain))
+            emit signal_success_password();
         else
-            emit fail_password_signal();
+            emit signal_fail_password();
     }
 }
 
 //UPDATE
 void PIG::update_handler()
 {
-    delete mPassword;
-    mPassword = NULL;
+    //cleanUp();
 
-    mUpdate = new Update();
-#ifdef _WIN32
-    const QString target = "C:/PIG/.pig/db.sqlite";
-#else
+#ifdef __linux__
     const QString target = QDir::homePath()+"/.pig/db.sqlite";
+#else
+    const QString target = "C:/PIG/.pig/db.sqlite";
 #endif
-    QFile file(target);
-    if (file.exists()) {
+    QFile file;
+    if (file.exists(target)) {
         db = QSqlDatabase::addDatabase("QSQLITE");
         db.setDatabaseName(target);
-
-        emit show_update_signal();
-
-        mUpdate->_root = mRoot;
+        mUpdate = new Update();
+        mUpdate->_root = &mRoot;
         mUpdate->db = &db;
         mUpdate->start();
-        connect (mUpdate, SIGNAL(forward_signal()), this, SLOT(start_pig()));
-        connect (mUpdate, SIGNAL(fail_database_signal()), this, SLOT(error_database()));
-        connect (mRoot, SIGNAL(skip_qml_signal()), this, SLOT(start_pig()));
-        connect (mRoot, SIGNAL(get_files_qml_signal()), mUpdate, SLOT(get_files()));
+        connect (mUpdate, SIGNAL(signal_continue()), this, SLOT(start_pig()));
+        connect (mUpdate, SIGNAL(signal_fail_database()), this, SLOT(error_database()));
+        emit signal_show_update();
     } else {
         error_database();
     }
@@ -107,93 +111,79 @@ void PIG::update_handler()
 //START
 void PIG::start_pig()
 {
-    delete mUpdate;
+    //delete mUpdate;
+    mUpdate->deleteLater();
     mUpdate = NULL;
 
     if (db.open()) {
         QSqlQuery query;
-        query.prepare("SELECT DatabaseVersion, BinaryVersion, Release, Category, NCategory, Pornstar, NPornstar FROM PigData, FiltersData");
+        query.prepare("SELECT Binary, Release, Database, Categories, NCategories, Pornstars, NPornstars FROM PigData, FiltersData");
         if (!query.exec()) {
             db.close();
             error_database();
         } else {
             query.next();
-            const int currentDatabaseVersion = query.value(0).toInt();
-            const int currentBinaryVersion = query.value(1).toInt();
-            const int currentRelease = query.value(2).toInt();
-            QStringList categoryList = query.value(3).toString().split(",");
-            const QStringList nCategoryList = query.value(4).toString().split(",");
-            QStringList pornstarList = query.value(5).toString().split(",");
-            const QStringList nPornstarList = query.value(6).toString().split(",");
+            const int binary = query.value(0).toInt();
+            const int release = query.value(1).toInt();
+            const int database = query.value(2).toInt();
+            QStringList categories = query.value(3).toString().split(",");
+            const QStringList nCategories = query.value(4).toString().split(",");
+            QStringList pornstars = query.value(5).toString().split(",");
+            const QStringList nPornstars = query.value(6).toString().split(",");
             db.close();
 
-            const QString strCurrentDatabaseVersion = QString::number(currentDatabaseVersion);
-            const QString strCurrentBinaryVersion = QString::number(currentBinaryVersion);
-            const QString strCurrentRelease= QString::number(currentRelease);
+            const QString strBinary = QString::number(binary);
+            const QString strRelease= QString::number(release);
+            const QString strDatabase = QString::number(database);
+            categories.prepend(QString::number(categories.count()));
+            pornstars.prepend(QString::number(pornstars.count()));
 
-            categoryList.prepend(QString::number(categoryList.count()));
-            pornstarList.prepend(QString::number(pornstarList.count()));
+            mRoot->setProperty("binary", strBinary);
+            mRoot->setProperty("release", strRelease);
+            mRoot->setProperty("database", strDatabase);
+            mRoot->setProperty("categories", categories);
+            mRoot->setProperty("nCategories", nCategories);
+            mRoot->setProperty("pornstars", pornstars);
+            mRoot->setProperty("nPornstars", nPornstars);
 
-            mRoot->setProperty("databaseVersion", strCurrentDatabaseVersion);
-            mRoot->setProperty("binaryVersion", strCurrentBinaryVersion);
-            mRoot->setProperty("release", strCurrentRelease);
-            mRoot->setProperty("categoryList", categoryList);
-            mRoot->setProperty("nCategoryList", nCategoryList);
-            mRoot->setProperty("pornstarList", pornstarList);
-            mRoot->setProperty("nPornstarList", nPornstarList);
-
-#ifdef _WIN32
-    const QString init = "C:/PIG/.pig/.init";
-    const QString news = "C:/PIG/.pig/news.txt";
-    const QString tmp = "C:/PIG/.pig/tmp/";
-#else
+#ifdef __linux__
     const QString init = QDir::homePath()+"/.pig/.init";
     const QString news = QDir::homePath()+"/.pig/news";
     const QString tmp = QDir::homePath()+"/.pig/tmp/";
+#else
+    const QString init = "C:/PIG/.pig/.init";
+    const QString news = "C:/PIG/.pig/news.txt";
+    const QString tmp = "C:/PIG/.pig/tmp/";
 #endif
-
-            QFile file(init);
-            if (file.exists()) {
-                file.remove();
-                file.setFileName(news);
-                if (file.exists())
-                    file.remove();
-                emit show_welcome_signal();
+            QFile file;
+            if (file.exists(init)) {
+                file.rename(init, tmp+"init.trash");
+                emit signal_show_welcome();
             } else {
                 file.setFileName(news);
                 if (file.exists()) {
-                    file.open(QIODevice::ReadOnly | QIODevice::Text);
-                    bool head = true;
+                    file.open(QIODevice::ReadOnly|QIODevice::Text);
+                    bool binaryData = true;
                     QString binaryNews;
                     QString databaseNews;
                     QTextStream in(&file);
                     while (!in.atEnd()) {
                         const QString line = in.readLine();
-                        if (line.isEmpty())
-                            head = false;
-                        if (head) {
-                            binaryNews.append(line+"\n");
+                        if (!line.isEmpty()) {
+                            if (binaryData)
+                                binaryNews.append(line+"\n");
+                            else
+                                databaseNews.append(line+"\n");
                         } else {
-                            if(!line.isEmpty())
-                            databaseNews.append(line+"\n");
+                            binaryData = false;
                         }
                     }
-                    file.remove();
-                    emit show_news_signal(binaryNews, databaseNews);
+                    file.rename(tmp+"news.trash");
+                    emit signal_show_news(binaryNews, databaseNews);
                 } else {
-                    emit show_finder_signal();
+                    emit signal_show_finder();
                 }
             }
-            const QDir dir(tmp);
-            if (!dir.exists())
-                dir.mkdir(tmp);
-
-            mSocket = new TcpSocket*[5];
-            for (int i=0; i<5; i++)
-                mSocket[i] = new TcpSocket();
-
-            mTorrent = new Torrent();
-            mTorrent->_root = mRoot;
         }
     } else {
         error_database();
@@ -201,41 +191,48 @@ void PIG::start_pig()
 }
 
 //PREVIEW
-void PIG::preview_handler(const QString host, const QString url, const QString path, const QString file, const int id, const bool success, const bool fail, const bool abort)
+void PIG::preview_handler(const QString host, const QString url, const QString path, const QString target,
+                          const int id, const bool success, const bool fail, const bool abort)
 {
     if (!success && !fail && !abort) {
+        mSocket[id] = new TcpSocket();
         mSocket[id]->host = host;
-        mSocket[id]->url = url;
-        mSocket[id]->file = file;
+        mSocket[id]->urls << url;
+        mSocket[id]->target = target;
         mSocket[id]->id = id;
-        mSocket[id]->call = "PREVIEW";
+        mSocket[id]->request = "PREVIEW";
         mSocket[id]->start();
+        connect (mSocket[id], SIGNAL(signal_preview_ret(const QString, const QString, const QString, const QString, const int, const bool, const bool, const bool)),this,
+                              SLOT(preview_handler(const QString, const QString, const QString, const QString, const int, const bool, const bool, const bool)));
     } else if (success || fail) {
         if (success)
-            emit success_preview_signal(path, file, id);
+            emit signal_success_preview(path, id);
         else if (fail)
-            emit fail_preview_signal(id);
-
+            emit signal_fail_preview(id);
+        mSocket[id]->deleteLater();
+        mSocket[id] = NULL;
     } else if (abort) {
-        mSocket[id]->abortPreview();
+        mSocket[id]->abortedPreview = true;
+        mSocket[id]->deleteLater();
+        mSocket[id] = NULL;
     }
-    connect (mSocket[id], SIGNAL(ret_preview_signal(const QString, const QString, const QString, const QString, const int, const bool, const bool, const bool)),
-                                 this, SLOT(preview_handler(const QString, const QString, const QString, const QString, const int, const bool, const bool, const bool)));
 }
 
 //TORRENT
-void PIG::torrent_handler(const QString magnet, const int scene, const bool stop)
+void PIG::torrent_handler(const QString magnet, const int scene, const bool abort)
 {
     //cleanUp();
-
-    if (!stop) {
+    if (!abort) {
+        mTorrent = new Torrent(NULL, &magnet);
+        mTorrent->_root = &mRoot;
         mTorrent->scene = scene;
-        mTorrent->start(&magnet);
+        connect (mTorrent, SIGNAL(signal_sandbox(const QString, const bool, const bool, const bool)), this,
+                           SLOT(player_handler(const QString, const bool, const bool, const bool)));
     } else {
-        mTorrent->stop();
-        emit hide_torrent_information_signal();
+        mTorrent->deleteLater();
+        mTorrent = NULL;
+        emit signal_hide_torrent_information();
     }
-    connect (mTorrent, SIGNAL(sandbox_signal(const QString, const bool, const bool, const bool)), this, SLOT(player_handler(const QString, const bool, const bool, const bool)));
 }
 
 //PLAYER
@@ -243,43 +240,39 @@ void PIG::player_handler(const QString absoluteFilePath, const bool sandbox, con
 {
     if (!close) {
         if (sandbox) {
-            mPlayer = new VideoPlayer();
+            mPlayer = new VideoPlayer(NULL, &absoluteFilePath);
             mPlayer->_torrent = mTorrent;
-            mPlayer->sandbox(&absoluteFilePath);
-            mTorrent->_player = mPlayer;
-            connect (mPlayer, SIGNAL(file_ready_signal(const QString, const bool, const bool, const bool)), this, SLOT(player_handler(const QString, const bool, const bool, const bool)));
-            connect (mPlayer, SIGNAL(close_player_signal(const QString, const bool, const bool, const bool)), this, SLOT(player_handler(const QString, const bool, const bool, const bool)));
-            connect (mPlayer, SIGNAL(quit_signal()), this, SLOT(quit()));
-
-            emit checking_file_signal();
+            mTorrent->_player = &mPlayer;
+            connect (mPlayer, SIGNAL(signal_file_ready(const QString, const bool, const bool, const bool)), this,
+                              SLOT(player_handler(const QString, const bool, const bool, const bool)));
+            connect (mPlayer, SIGNAL(signal_close_player(const QString, const bool, const bool, const bool)), this,
+                              SLOT(player_handler(const QString, const bool, const bool, const bool)));
+            connect (mPlayer, SIGNAL(signal_quit()), this, SLOT(quit()));
+            emit signal_checking_file();
         }
         if (fileReady) {
             mTorrent->toPlayer = true;
             mPlayer->showFullScreen();
-            this->hide();
-            emit file_ready_signal();
+            hide();
+            emit signal_file_ready();
         }
     } else {
-        this->show();
-        torrent_handler("", 0, true);
-        mPlayer->close();
+        show();
         delete mPlayer;
+        mPlayer = NULL;
+        torrent_handler("", 0, true);
     }
 }
 
 //FIND
-void PIG::find(const QString input, const QString pornstar, const QString category, const QString quality, const QString full, const int offset, const bool init)
+void PIG::find(const QString input, const QString pornstar, const QString category,
+               const QString quality, const QString full, const int offset, const bool init)
 {
-    QStringList _list;
-    int row = 0;
-
-    if (!db.open()) {
-        error_database();
-    } else {
-        _list.clear();
-        const QString strOffset = QString::number(offset);
+    if (db.open()) {
         QSqlQuery query;
-            query.prepare("SELECT Title, Cas, Category, Quality, Full, HostPreview, UrlPreview, FilePreview, HostPosterCover, UrlPoster, UrlCover, Torrent FROM Films WHERE Title LIKE '%"+input+"%' AND Cas LIKE '%"+pornstar+"%' AND Category LIKE '%"+category+"%' AND Quality LIKE '%"+quality+"%' AND Full LIKE '%"+full+"%' ORDER BY Title ASC LIMIT 1000 OFFSET '"+strOffset+"'");
+            query.prepare("SELECT Title, Cas, Category, Quality, Full, HostPreview, UrlPreview, FilePreview, HostPosterCover, UrlPoster, UrlCover, Torrent \
+                           FROM Films WHERE Title LIKE '%"+input+"%' AND Cas LIKE '%"+pornstar+"%' AND Category LIKE '%"+category+"%' \
+                           AND Quality LIKE '%"+quality+"%' AND Full LIKE '%"+full+"%' ORDER BY Title ASC LIMIT 1000 OFFSET '"+QString::number(offset)+"'");
         if (!query.exec()) {
             db.close();
             error_database();
@@ -290,59 +283,67 @@ void PIG::find(const QString input, const QString pornstar, const QString catego
                 query.first();
                 query.previous();
             }
-            for (row=0; query.next() && row<5; row++) {
-                const QString _title = query.value(0).toString();
-                const QString _cast = query.value(1).toString();
-                const QString _category = query.value(2).toString();
-                const QString _quality = query.value(3).toString();
-                const QString _full = query.value(4).toString();
-                const QString _hostPreview = query.value(5).toString();
-                const QString _urlPreview = query.value(6).toString();
-                const QString _filePreview = query.value(7).toString();
-                const QString _hostPosterCover = query.value(8).toString();
-                const QString _urlPoster = query.value(9).toString();
-                const QString _urlCover = query.value(10).toString();
-                const QString _torrent = query.value(11).toString();
-                _list << _title << _cast << _category << _quality << _full << _hostPreview << _urlPreview << _filePreview << _hostPosterCover << _urlPoster << _urlCover << _torrent;
+            int i = 0;
+            QStringList dataFilms;
+            for (i=0; query.next() && i<5; i++) {
+                const QString strTitle = query.value(0).toString();
+                const QString strCast = query.value(1).toString();
+                const QString strCategories = query.value(2).toString();
+                const QString strQuality = query.value(3).toString();
+                const QString strFull = query.value(4).toString();
+                const QString strHostPreview = query.value(5).toString();
+                const QString strUrlPreview = query.value(6).toString();
+                const QString strFilePreview = query.value(7).toString();
+                const QString strHostPosterCover = query.value(8).toString();
+                const QString strUrlPoster = query.value(9).toString();
+                const QString strUrlCover = query.value(10).toString();
+                const QString strTorrent = query.value(11).toString();
+                dataFilms << strTitle << strCast << strCategories << strQuality << strFull << strHostPreview << strUrlPreview << strFilePreview
+                          << strHostPosterCover << strUrlPoster << strUrlCover << strTorrent;
             }
             db.close();
-
             if (!query.last() && init) {
-                emit no_result_signal();
+                emit signal_no_result();
             } else {
                 if (init)
-                    emit show_output_signal(row, _list);
+                    emit signal_show_output(i, dataFilms);
                 else
-                    emit success_update_list_signal(row, _list);
+                    emit signal_success_update_data(i, dataFilms);
             }
         }
+    } else {
+        error_database();
     }
 }
 
 //CLEANUP
 void PIG::cleanUp()
 {
-    #ifdef _WIN32
-        const QString target = "C:/PIG/.pig/tmp/";
-    #else
-        const QString target = QDir::homePath()+"/.pig/tmp/";
-    #endif
-        QDir tmp(target);
-        tmp.setFilter(QDir::NoDotAndDotDot | QDir::Files);
-        foreach(QString tmpItem, tmp.entryList())
-            tmp.remove(tmpItem);
+#ifdef __linux__
+    const QString target = QDir::homePath()+"/.pig/tmp/";
+#else
+    const QString target = "C:/PIG/.pig/tmp/";
+#endif
+    QDir dir(target);
+    if (!dir.exists()) {
+        dir.mkdir(target);
+    } else {
+        dir.setFilter(QDir::NoDotAndDotDot|QDir::Files);
+        foreach(QString dirItem, dir.entryList())
+            dir.remove(dirItem);
 
-        tmp.setFilter(QDir::NoDotAndDotDot | QDir::Dirs);
-        foreach(QString tmpItem, tmp.entryList()) {
-            QDir subDir(tmp.absoluteFilePath(tmpItem));
+        dir.setFilter(QDir::NoDotAndDotDot|QDir::Dirs);
+        foreach(QString dirItem, dir.entryList()) {
+            QDir subDir(dir.absoluteFilePath(dirItem));
             subDir.removeRecursively();
         }
+    }
 }
 
 //ERROR_DB
 void PIG::error_database()
 {
-    emit show_errorDatabase_signal();
+    emit signal_show_errorDatabase();
 }
 
 //QUIT

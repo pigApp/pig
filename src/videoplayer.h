@@ -15,12 +15,8 @@ class VideoPlayer : public QVideoWidget
     Q_OBJECT
 
 public:
-    explicit VideoPlayer(QVideoWidget *parent = 0);
+    explicit VideoPlayer(QVideoWidget *parent=0, const QString *absoluteFilePath=NULL);
     ~VideoPlayer();
-
-    Q_INVOKABLE void download_Information(int bitRate, int peers);
-    Q_INVOKABLE void progress(qint64 total_kb, qint64 downloaded_kb, int downloadedSkip_mb);
-    Q_INVOKABLE void update_player();
 
     QObject *_torrent;
 
@@ -29,37 +25,30 @@ protected:
     void mousePressEvent(QMouseEvent *event);
 
 public slots:
-    void sandbox(const QString *absoluteFilePath);
+    void download_Information(int bitRate, int peers);
+    void progress(qint64 total_kb, qint64 downloaded_kb, int downloadedSkip_mb);
+    void update_player();
 
 signals:
-    void file_ready_signal(const QString absoluteFilePath, const bool sandbox, const bool fileReady, const bool close);
-    void close_player_signal(const QString absoluteFilePath, const bool sandbox, const bool fileReady, const bool close);
-    void quit_signal();
+    void signal_file_ready(const QString absoluteFilePath, const bool sandbox, const bool fileReady, const bool close);
+    void signal_close_player(const QString absoluteFilePath, const bool sandbox, const bool fileReady, const bool close);
+    void signal_quit();
 
 private:
     QMediaPlayer *player;
     QWidget *box;
-    QLabel *pauseLabel;
-    QLabel *bufferLabel;
-    QProgressBar *skipBar;
-    QLabel *startLoopTimeLabel;
-    QLabel *stopLoopTimeLabel;
-    QLabel *currentTimeLabel;
-    QLabel *totalTimeLabel;
-    QLabel *volumeIcon;
-    QLabel *volumeLabel;
-    QLabel *bitRateLabel;
-    QLabel *peersLabel;
-    QSlider *sliderStartLoop;
-    QSlider *sliderStopLoop;
-    QSlider *slider;
-    QProgressBar *progressBar;
-    QTimer *loadingStateDelay;
-    QTimer *hideControlsDelay;
+    QLabel *pauseLabel, *bufferLabel;
+    QLabel *startLoopTimeLabel, *stopLoopTimeLabel;
+    QLabel *currentTimeLabel, *totalTimeLabel;
+    QLabel *volumeIcon, *volumeLabel;
+    QLabel *bitRateLabel, *peersLabel;
+    QSlider *slider, *sliderStartLoop, *sliderStopLoop;
+    QProgressBar *progressBar, *skipBar;
+    QTimer *loadingStateDelay, *hideControlsDelay;
+    qint64 readyToRead_msec, update_msec, startLoop_msec, stopLoop_msec;
 
     bool onSandbox, buffering, skip, paused, loop;
     int skip_key_value, volume, screenWidth, screenHeight;
-    qint64 readyToRead_msec, update_msec, startLoop_msec, stopLoop_msec;
 
 private slots:
     void play_pause_stop();

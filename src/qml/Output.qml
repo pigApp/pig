@@ -8,10 +8,9 @@ Item {
     property bool successPoster
     property bool successCover
     property bool showTorrentInformation
-
     property int location: 0
-    property int currentFilm: 1
     property int locationOnList
+    property int currentFilm: 1
     property int nIndex: 0
 
     ListModel {
@@ -46,7 +45,7 @@ Item {
                 anchors.horizontalCenter: parent.horizontalCenter
                 anchors.top: parent.top
                 onStatusChanged: {
-                    if (poster.source == list[8]+list[9] && poster.status == Image.Ready) {
+                    if (poster.source == dataFilms[8]+dataFilms[9] && poster.status == Image.Ready) {
                         successPoster = true
                         if (!successCover)
                             imagesStatus.start()
@@ -100,7 +99,7 @@ Item {
                     var object = component.createObject(previewBox)
                     object.host = hostPreview
                     object.url = urlPreview
-                    object.file = filePreview
+                    object.target = filePreview
                     object.id = idPreview
                 }
             }
@@ -125,7 +124,7 @@ Item {
                 anchors.verticalCenter: parent.verticalCenter
                 anchors.verticalCenterOffset: -parent.height/270
                 onStatusChanged: {
-                    if (cover.source == list[8]+list[10] && cover.status == Image.Ready) {
+                    if (cover.source == dataFilms[8]+dataFilms[10] && cover.status == Image.Ready) {
                         successCover = true
                         if (!successPoster)
                             imagesStatus.start()
@@ -181,7 +180,7 @@ Item {
                     font.pixelSize: screen.height/35
                 }
                 Text {
-                    id: categoryLabel
+                    id: categoriesLabel
                     text: "<font color='#ff0000'>∙<font/> <font color='#ffffff'>"+categories+"<font/>"
                     font.family: pigFont.name
                     font.bold: true
@@ -405,7 +404,7 @@ Item {
                 event.accepted = true
             } else if (event.key === Qt.Key_Q && (event.modifiers & Qt.ControlModifier)) {
                 root.stopPreview = true
-                root.quit_qml_signal()
+                root.signal_qml_quit()
                 event.accepted = true;
             }
         }
@@ -416,7 +415,7 @@ Item {
                 offset = offset+5
                 counter = counter+5
                 currentFilm = counter-4
-                listUpdater(offset)
+                updateData(offset)
             }
         }
         Keys.onDownPressed: {
@@ -425,17 +424,17 @@ Item {
                 offset = offset-5
                 counter = counter-5
                 currentFilm = counter-4
-                listUpdater(offset)
+                updateData(offset)
             }
         }
         Keys.onRightPressed: {
             handler.enabled = false
             enabledDelay.start()
             incrementCurrentIndex()
-            if (locationOnList === list.length-12) {
+            if (locationOnList === dataFilms.length-12) {
                 locationOnList = 0
                 location = 0
-                currentFilm = currentFilm-n+1
+                currentFilm = currentFilm-nFilms+1
             } else {
                 locationOnList = locationOnList+12
                 ++currentFilm
@@ -448,9 +447,9 @@ Item {
             enabledDelay.start()
             decrementCurrentIndex()
             if (locationOnList === 0) {
-                locationOnList = list.length-12
-                location = n-1
-                currentFilm = currentFilm+n-1
+                locationOnList = dataFilms.length-12
+                location = nFilms-1
+                currentFilm = currentFilm+nFilms-1
             } else {
                 locationOnList = locationOnList-12
                 --currentFilm
@@ -482,41 +481,41 @@ Item {
         onTriggered: { root_loader_A.source = "Network.qml" }
     }
 
-    function listCreator() {
+    function appendData() {
         var torrent
         var row = 0
-        for(var i=0; i<n; i++) {
-           torrent = list[row+11].split(",")
-           model.append({ "title": list[row], "cast": list[row+1], "categories": list[row+2], "quality": list[row+3], "full": list[row+4],
-                          "hostPreview": list[row+5], "urlPreview": list[row+6], "filePreview": list[row+7], "idPreview": i, "hostPosterCover": list[row+8],
-                          "urlPoster": list[row+9], "urlCover": list[row+10], "magnet": torrent[0], "scenes": Number(torrent[1]) })
+        for(var i=0; i<nFilms; i++) {
+           torrent = dataFilms[row+11].split(",")
+           model.append({ "title": dataFilms[row], "cast": dataFilms[row+1], "categories": dataFilms[row+2], "quality": dataFilms[row+3], "full": dataFilms[row+4],
+                          "hostPreview": dataFilms[row+5], "urlPreview": dataFilms[row+6], "filePreview": dataFilms[row+7], "idPreview": i, "hostPosterCover": dataFilms[row+8],
+                          "urlPoster": dataFilms[row+9], "urlCover": dataFilms[row+10], "magnet": torrent[0], "scenes": Number(torrent[1]) })
            row += 12
         }
         location = 0
         locationOnList = 0
     }
 
-    function listUpdater(offset) {
+    function updateData(offset) {
         root.stopPreview = true
         handler.state = "hide"
         successPoster = false
         successCover = false
-        root.list = ""
+        root.dataFilms = ""
         model.clear()
         timeOutNetwork.start()
         networkDelay.start()
-        root.find_qml_signal(root.input, root.pornstar, root.category, root.quality, root.full, offset, false)
+        root.signal_qml_find(root.input, root.pornstar, root.category, root.quality, root.full, offset, false)
     }
 
     Connections {
         target: cppSignals
-        onSuccess_update_list_signal: {
+        onSignal_success_update_data: {
             root.stopPreview = false
-            root.n = n
-            root.list = list
-            listCreator()
+            root.nFilms = nFilms
+            root.dataFilms = dataFilms
+            appendData()
         }
-        onHide_torrent_information_signal: {
+        onSignal_hide_torrent_information: {
             handler.state = "hideTorrentInformation"
             handler.enabled = true
             handler.setFocus()
@@ -524,7 +523,7 @@ Item {
     }
 
     Component.onCompleted: {
-        listCreator(root.n, root.list)
+        appendData()
         timeOutNetwork.start()
     }
 }

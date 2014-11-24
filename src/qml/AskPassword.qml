@@ -37,11 +37,11 @@ Item {
             onCursorVisibleChanged: { if (input.cursorVisible) input.cursorVisible = false }
             onAccepted: {
                 if (input.text !== "")
-                    root.password_handler_qml_signal(input.text, false)
+                    root.signal_qml_password_handler(input.text, false, true, false)
             }
             Keys.onPressed: {
                 if (event.key === Qt.Key_Q && (event.modifiers & Qt.ControlModifier)) {
-                    root.quit_qml_signal()
+                    root.signal_qml_quit()
                     event.accepted = true;
                 }
             }
@@ -50,7 +50,7 @@ Item {
 
     Connections {
         target: cppSignals
-        onFail_password_signal: {
+        onSignal_fail_password: {
             input.visible = false
             label.text = "WRONG PASSWORD"
         }

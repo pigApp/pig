@@ -8,14 +8,22 @@
 #include <QFont>
 #include <QDebug>
 
-#include <QFile>
-
-VideoPlayer::VideoPlayer(QVideoWidget *parent) : QVideoWidget(parent)
+VideoPlayer::VideoPlayer(QVideoWidget *parent, const QString *absoluteFilePath) : QVideoWidget(parent)
 {    
+    onSandbox = true;
+    buffering = false;
+    skip = false;
+    loop = false;
+    paused = false;
+    skip_key_value = 0;
+    update_msec = 0;
+
     player = new QMediaPlayer();
     player->setVideoOutput(this);
     volume = 70;
     player->setVolume(volume);
+    player->setMedia(QUrl::fromLocalFile(*absoluteFilePath));
+    player->play();
 
     QRect rec = QApplication::desktop()->screenGeometry();
     screenWidth = rec.width();
@@ -27,7 +35,8 @@ VideoPlayer::VideoPlayer(QVideoWidget *parent) : QVideoWidget(parent)
     boxLayout->setAlignment(Qt::AlignRight|Qt::AlignVCenter);
     boxLayout->setSpacing(screenHeight/108);
     box = new QWidget(this);
-    box->setGeometry(screenWidth-(screenWidth/12.03), (screenHeight/2)-(screenHeight/8.3), screenWidth/12, screenHeight/4.15);
+    box->setGeometry(screenWidth-(screenWidth/12.03), (screenHeight/2)-(screenHeight/8.3),
+                     screenWidth/12, screenHeight/4.15);
     box->setStyleSheet("background: black; border: none");
     box->setLayout(boxLayout);
     box->hide();
@@ -200,23 +209,9 @@ VideoPlayer::VideoPlayer(QVideoWidget *parent) : QVideoWidget(parent)
 
 VideoPlayer::~VideoPlayer()
 {
-    _torrent->disconnect(this);
     player->stop();
     delete player;
-}
-
-void VideoPlayer::sandbox(const QString *absoluteFilePath)
-{
-    onSandbox = true;
-    buffering = false;
-    skip = false;
-    loop = false;
-    paused = false;
-    skip_key_value = 0;
-    update_msec = 0;
-
-    player->setMedia(QUrl::fromLocalFile(*absoluteFilePath));
-    player->play();
+    _torrent->disconnect(this);
 }
 
 void VideoPlayer::play_pause_stop()
@@ -549,7 +544,8 @@ void VideoPlayer::slider_released()
     */
 
     if (!loop) {
-        QMetaObject::invokeMethod (_torrent, "piece_is_available", Qt::DirectConnection, Q_RETURN_ARG(bool, available), Q_ARG(qint64, total_msec), Q_ARG(qint64, offset_msec));
+        QMetaObject::invokeMethod (_torrent, "piece_is_available", Qt::DirectConnection, Q_RETURN_ARG(bool, available),
+                                   Q_ARG(qint64, total_msec), Q_ARG(qint64, offset_msec));
         if ((slider->value() < progressBar->value()) && (offset_msec < readyToRead_msec) && available) {
             if (skip_key_value != 0) {
                 player->setPosition(offset_msec);
@@ -701,10 +697,10 @@ void VideoPlayer::keyPressEvent(QKeyEvent *event)
     }
     if (!onSandbox) {
         if ((event->key() == (Qt::Key_Escape))) {
-            emit close_player_signal("", false, false, true);
+            emit signal_close_player("", false, false, true);
         } else if ((event->key() == (Qt::Key_Q)) && (event->modifiers() & Qt::ControlModifier)) {
-            this->~VideoPlayer();
-            emit quit_signal();
+            //this->~VideoPlayer();
+            emit signal_quit();
         }
     }
     event->accept();
@@ -743,13 +739,14 @@ void VideoPlayer::status_change(QMediaPlayer::MediaStatus status)
             slider->show();
             progressBar->show();
             hideControlsDelay->start(3000);
-            emit file_ready_signal("", false, true, false);
+            emit signal_file_ready("", false, true, false);
             this->setFocus();
         } else if (skip) {
             skip = false;
             hideControlsDelay->start();
         }
-    } else if (status == QMediaPlayer::UnknownMediaStatus || status == QMediaPlayer::NoMedia || status == QMediaPlayer::InvalidMedia || status == QMediaPlayer::EndOfMedia) {
+    } else if (status == QMediaPlayer::UnknownMediaStatus || status == QMediaPlayer::NoMedia ||
+               status == QMediaPlayer::InvalidMedia || status == QMediaPlayer::EndOfMedia) {
         if (update_msec == 0) {
             loadingStateDelay->stop();
             QTimer::singleShot(5000, this, SLOT(play_pause_stop()));

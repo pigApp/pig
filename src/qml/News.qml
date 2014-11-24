@@ -1,57 +1,46 @@
 import QtQuick 2.3
 
-Item {
+Rectangle {
     id: news
+    color: "black"
+    anchors.fill: parent
 
-    Rectangle {
-        id: layer
-        width: parent.width/4
-        height: parent.height
-        color: "black"
+    Column {
+        id: newsColumn
+        spacing: parent.height/108
         anchors.centerIn: parent
-        Flickable {
-            id: flickAreaNews
-            contentWidth: newsColumn.width
-            contentHeight: newsColumn.height
-            flickableDirection: Flickable.VerticalFlick
-            clip: true
-            anchors.fill: parent
-            Column {
-                id: newsColumn
-                anchors.left: parent.left
-                anchors.leftMargin: parent.width/12
-                anchors.top: parent.top
-                anchors.topMargin: parent.height/43
-                spacing: parent.height/216
-                Text {
-                    id: binary
-                    text: "NEWS PIG "+binaryVersion+"."+release
-                    color: "white"
-                    font.family: pigFont.name
-                    font.pixelSize: screen.height/23
-                }
-                Text {
-                    text: binaryNews
-                    color: "white"
-                    font.family: pigFont.name
-                    font.bold: true
-                    font.pixelSize: screen.height/54
-                }
-                Text {
-                    id: database
-                    text: "NEWS DATABASE "+databaseVersion
-                    color: "white"
-                    font.family: pigFont.name
-                    font.pixelSize: screen.height/23
-                }
-                Text {
-                    text: databaseNews
-                    color: "white"
-                    font.family: pigFont.name
-                    font.bold: true
-                    font.pixelSize: screen.height/54
-                }
-            }
+
+        Text {
+            id: binaryLabel
+            text: "PIG "+root.binary+"."+root.release
+            color: "white"
+            font.family: pigFont.name
+            font.pixelSize: screen.height/23
+        }
+        Text {
+            text: binaryNews
+            color: "white"
+            font.family: pigFont.name
+            font.bold: true
+            font.pixelSize: screen.height/54
+            textFormat: Text.RichText
+            onLinkActivated: Qt.openUrlExternally(link)
+        }
+        Text {
+            id: databaseLabel
+            text: "DB "+root.database
+            color: "white"
+            font.family: pigFont.name
+            font.pixelSize: screen.height/23
+        }
+        Text {
+            text: databaseNews
+            color: "white"
+            font.family: pigFont.name
+            font.bold: true
+            font.pixelSize: screen.height/54
+            textFormat: Text.RichText
+            onLinkActivated: Qt.openUrlExternally(link)
         }
     }
 
@@ -60,10 +49,11 @@ Item {
             screen.state = "hideNews"
             event.accepted = true;
         } else if (event.key === Qt.Key_Q && (event.modifiers & Qt.ControlModifier)) {
-            root.quit_qml_signal()
+            root.signal_qml_quit()
             event.accepted = true;
         }
     }
 
     Component.onCompleted: news.forceActiveFocus()
 }
+// Tabs hechos.

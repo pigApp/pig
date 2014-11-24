@@ -3,6 +3,7 @@
 
 #include <libtorrent/session.hpp>
 #include <libtorrent/file_storage.hpp>
+#include "videoplayer.h"
 
 #include <stdlib.h>
 
@@ -13,24 +14,20 @@ class Torrent : public QObject
     Q_OBJECT
 
 public:
-    explicit Torrent(QObject *parent=0);
+    explicit Torrent(QObject *parent=0, const QString *magnet=NULL);
     ~Torrent();
 
     Q_INVOKABLE bool piece_is_available(qint64 total_msec, qint64 offset_msec);
     Q_INVOKABLE void piece_update(qint64 total_msec, qint64 offset_msec);
 
-    QObject *_player;
-    QObject *_root;
+    QObject **_root;
+    VideoPlayer **_player;
 
     bool toPlayer;
     int scene;
 
-public slots:
-    void start(const QString *magnet);
-    void stop();
-
 signals:
-    void sandbox_signal(const QString absoluteFilePath, bool sandbox, bool fileReady, bool close);
+    void signal_sandbox(const QString absoluteFilePath, bool sandbox, bool fileReady, bool close);
 
 private:
     libtorrent::session *client;
@@ -40,16 +37,18 @@ private:
     libtorrent::error_code ec;
 
     QString fileName;
+    qint64 pieceLength;
+    qint64 firstPiece_file, lastPiece_file, totalPieces_file, offsetPieces_file;
+    qint64 offsetPieces, totalPieces;
+    qint64 total_kb, totalPreSkip_mb, offset_kb;
 
-    bool abort, skip;
+    bool aborted, skip;
     int minimum_mb; 
-    qint64 pieceLength, firstPiece_file, lastPiece_file, totalPieces_file, offsetPieces_file,
-           offsetPieces, totalPieces, total_kb, totalPreSkip_mb, offset_kb;
 
 private slots:
-    void metadata_success();
+    void get_metadata();
     void filter_files();
-    void minimum_success();
+    void required_video_dump();
     void download_Information();
     void call_player();
     void progress();

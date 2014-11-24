@@ -3,7 +3,7 @@
 
 #include <QObject>
 #include <QCryptographicHash>
-#include <QString>
+#include <QFile>
 
 class Password : public QObject
 {
@@ -13,12 +13,12 @@ public:
     explicit Password(QObject *parent = 0);
     ~Password();
 
-    bool require();
+public slots:
+    bool check(const QString *plain);
     bool write(const QString *plain);
-    bool success(const QString *plain);
 
 private:
-    QString pd;
+    QFile file;
 
 private slots:
     const QString calculate(const QString **plain);

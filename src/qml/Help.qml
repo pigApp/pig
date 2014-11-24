@@ -2,7 +2,7 @@ import QtQuick 2.3
 
 Rectangle {
     id: help
-    x: root.xAnimation
+    x: root.xtransition
     width: screen.width
     height: screen.height
 
@@ -20,7 +20,7 @@ Rectangle {
             anchors.top: parent.top
             anchors.topMargin: parent.height/43
             Text {
-                text: "PIG "+binaryVersion+"."+release+" DATABASE "+databaseVersion+"<br/>"
+                text: "PIG "+binary+"."+release+" DATABASE "+database+"<br/>"
                 color: "white"
                 font.family: pigFont.name
                 font.pixelSize: screen.height/23
@@ -307,7 +307,7 @@ Rectangle {
                 event.accepted = true;
             }
         } else if (event.key === Qt.Key_Q && (event.modifiers & Qt.ControlModifier)) {
-            root.quit_qml_signal()
+            root.signal_qml_quit()
             event.accepted = true;
         }
     }

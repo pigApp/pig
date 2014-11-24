@@ -1,11 +1,10 @@
 ﻿#ifndef PIG_H
 #define PIG_H
 
-#include "tcpSocket.h"
-#include "password.h"
 #include "update.h"
 #include "torrent.h"
 #include "videoplayer.h"
+#include "tcpSocket.h"
 
 #include <QObject>
 #include <QWidget>
@@ -27,42 +26,43 @@ public:
 
 public slots:
     void set_root_object(QObject *root);
-    void password_handler(const QString pass, const bool write);
+    void password_handler(const QString pass, const bool require, const bool check, const bool write);
 
 signals:
-    void require_password_signal();
-    void success_password_signal();
-    void fail_password_signal();
-    void show_update_signal();
-    void show_welcome_signal();
-    void show_news_signal(const QString binaryNews, const QString databaseNews);
-    void show_finder_signal();
-    void no_result_signal();
-    void show_output_signal(int n, QStringList list);
-    void success_update_list_signal(int n, QStringList list);
-    void success_preview_signal(const QString path, const QString file, const int id);
-    void fail_preview_signal(const int id);
-    void checking_file_signal();
-    void file_ready_signal();
-    void hide_torrent_information_signal();
-    void show_errorDatabase_signal();
+    void signal_require_password();
+    void signal_success_password();
+    void signal_fail_password();
+    void signal_show_update();
+    void signal_show_welcome();
+    void signal_show_news(const QString binaryNews, const QString databaseNews);
+    void signal_show_finder();
+    void signal_no_result();
+    void signal_show_output(int nFilms, QStringList dataFilms);
+    void signal_success_update_data(int nFilms, QStringList dataFilms);
+    void signal_success_preview(const QString path, const int id);
+    void signal_fail_preview(const int id);
+    void signal_checking_file();
+    void signal_file_ready();
+    void signal_hide_torrent_information();
+    void signal_show_errorDatabase();
 
 private:
     QObject *mRoot;
-    TcpSocket **mSocket;
-    Password *mPassword;
     Update *mUpdate;
     Torrent *mTorrent;
     VideoPlayer *mPlayer;
+    TcpSocket *mSocket[5];
 
     QSqlDatabase db;
 
 private slots:
     void update_handler();
     void start_pig();
-    void find(const QString inputText, const QString pornstar, const QString category, const QString quality, const QString full, const int offset, const bool init);
-    void preview_handler(const QString host, const QString url, const QString path, const QString file, const int id, const bool success, const bool fail, const bool abort);
-    void torrent_handler(const QString magnet, const int scene, const bool stop);
+    void find(const QString inputText, const QString pornstar, const QString category,
+              const QString quality, const QString full, const int offset, const bool init);
+    void preview_handler(const QString host, const QString url, const QString path, const QString target,
+                         const int id, const bool success, const bool fail, const bool abort);
+    void torrent_handler(const QString magnet, const int scene, const bool abort);
     void player_handler(const QString absoluteFilePath, const bool sandbox, const bool fileReady, const bool close);
     void cleanUp();
     void error_database();

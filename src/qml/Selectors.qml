@@ -2,6 +2,7 @@ import QtQuick 2.3
 
 Item {
     id: selectors
+
     property bool onShowSelectors
 
     Text {

@@ -16,14 +16,18 @@ SOURCES += src/main.cpp\
            src/update.cpp\
            src/tcpSocket.cpp\
            src/torrent.cpp\
-           src/videoplayer.cpp
+           src/videoplayer.cpp\
+           src/unzip.cpp \
+           src/su.cpp
 
 HEADERS += src/pig.h\
            src/password.h\
            src/update.h\
            src/tcpSocket.h\
            src/torrent.h\
-           src/videoplayer.h
+           src/videoplayer.h\
+           src/unzip.h \
+           src/su.h
 
 RESOURCES = resources.qrc
 
@@ -32,7 +36,9 @@ RC_FILE = resources/images/pig/icon.rc
 unix {
     CONFIG += link_pkgconfig
     PKGCONFIG += libtorrent-rasterbar
-    QMAKE_RPATHDIR += /usr/lib/pig      #CUSTOM Qt5 libs PATH
+    LIBS += -L/usr/lib/pig -lquazip -lz
+    INCLUDEPATH += /usr/include/pig
+    QMAKE_RPATHDIR += /usr/lib/pig
 
     target.path = /usr/bin
     config.path = $$(HOME)/.pig

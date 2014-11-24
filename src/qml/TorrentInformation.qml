@@ -117,10 +117,10 @@ Rectangle {
 
     Keys.onPressed: {
         if (event.key === Qt.Key_Escape) {
-                root.torrent_handler_qml_signal("", 0, true)
+                root.signal_qml_torrent_handler("", 0, true)
                 event.accepted = true;
         } else if (event.key === Qt.Key_Q && (event.modifiers & Qt.ControlModifier)) {
-            root.quit_qml_signal()
+            root.signal_qml_quit()
             event.accepted = true;
         }
     }
@@ -138,12 +138,12 @@ Rectangle {
 
     Connections {
         target: cppSignals
-        onChecking_file_signal: {
+        onSignal_checking_file: {
             checkFileColumn.visible = true
             recheckDelay.start()
         }
-        onFile_ready_signal: reset()
-        onHide_torrent_information_signal: {
+        onSignal_file_ready: reset()
+        onSignal_hide_torrent_information: {
             reset()
             torrentInformation.state = "hide"
         }

@@ -32,7 +32,7 @@ Item {
             screen.state = "showHelp"
             event.accepted = true
         } else if (event.key === Qt.Key_Q && (event.modifiers & Qt.ControlModifier)) {
-            root.quit_qml_signal()
+            root.signal_qml_quit()
             event.accepted = true
         }
     }

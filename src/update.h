@@ -2,10 +2,10 @@
 #define UPDATE_H
 
 #include "tcpSocket.h"
+#include "su.h"
 
 #include <QObject>
 #include <QtSql>
-#include <QProcess>
 
 class Update : public QObject
 {
@@ -15,39 +15,32 @@ public:
     explicit Update(QObject *parent = 0);
     ~Update();
 
-    QObject *_root;
+    QObject **_root;
     QSqlDatabase *db;
 
 public slots:
     void start();
 
 signals:
-    void forward_signal();
-    void fail_database_signal();
+    void signal_continue();
+    void signal_fail_database();
 
 private:
     TcpSocket *mSocket;
+    Su *mSu;
 
-    QString hostFiles;
-    QString databaseUrl;
-    QString databaseHash;
-    QString binaryUrl;
-    QString binaryHash;
-    QString newsUrl;
-    QString newsHash;
-    QProcess *suManagerProc;
-    QProcess *updateProc;
+    QStringList sums;
 
-    bool newsAvailable, newDatabaseAvailable, newBinaryAvailable, databaseUpdated;
-    int currentDatabaseVersion, currentBinaryVersion, currentRelease;
+    bool binaryAvailable, databaseAvailable, libraryAvailable;
+    int binary, release, database, library;
+    int newBinary, newRelease, newDatabase, newLibrary;
 
 private slots:
-    void get_version(const QString * const host, const QString * const url);
-    void evaluate(const QString version);
-    void get_files();
-    void integrityFile(const QString path, const QString file);
-    void replace(QString *path, QString *file);
-    void replace_binary_success(int exitCode);
+    void get(const QString *const host, const QStringList *const urls, const QString request);
+    void check_versions(const QString *const str);
+    void unzip_files(const QString * const path, const QStringList * const files);
+    void update_files();
+    void check_exit(int exitCode);
     void error();
 };
 

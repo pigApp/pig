@@ -12,7 +12,6 @@ Rectangle {
     ColorAnimation on color { id: outColor; running: false; to: "black"; duration: 200 }
 
     property bool enter
-
     property alias labelText: label.text
     property alias indicatorLabelvisible: indicatorLabel.visible
     property alias numberLabelText: numberLabel.text
@@ -118,7 +117,7 @@ Rectangle {
             finder.state = "hideFilter"
             event.accepted = true
         } else if (event.key === Qt.Key_Q && (event.modifiers & Qt.ControlModifier)) {
-            root.quit_qml_signal()
+            root.signal_qml_quit()
             event.accepted = true
         }
     }

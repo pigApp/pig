@@ -36,7 +36,7 @@ Item {
         anchors.verticalCenterOffset: -parent.height/360
         onAccepted: {
             root.input = userInput.text
-            root.find_qml_signal(root.input, root.pornstar, root.category, root.quality, root.full, 0, true)
+            root.signal_qml_find(root.input, root.pornstar, root.category, root.quality, root.full, 0, true)
         }
         onCursorPositionChanged: {
             if (noResultLabel.visible)
@@ -118,7 +118,7 @@ Item {
         else
             root.pornstar = label.toUpperCase()
         noResultLabel.visible = false
-        root.find_qml_signal("", root.pornstar, root.category, "", "", 0, true)
+        root.signal_qml_find("", root.pornstar, root.category, "", "", 0, true)
     }
 
     Loader {
@@ -278,14 +278,14 @@ Item {
                 screen.state = "showSetPassword"
             event.accepted = true
         } else if (event.key === Qt.Key_Q && (event.modifiers & Qt.ControlModifier)) {
-            root.quit_qml_signal()
+            root.signal_qml_quit()
             event.accepted = true
         }
     }
 
     Connections {
         target: cppSignals
-        onNo_result_signal: {
+        onSignal_no_result: {
             userInput.visible = false
             noResultLabel.visible = true
         }

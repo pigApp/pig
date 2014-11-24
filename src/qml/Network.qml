@@ -18,11 +18,10 @@ Item {
         color: "black"
         font.family: pigFont.name
         font.bold: true
-        font.pixelSize: parent.height/23
+        font.pixelSize: screen.height/54
         visible: root.errorNetwork
-        anchors.horizontalCenter: icon.horizontalCenter
-        anchors.top: icon.bottom
-        anchors.topMargin: -parent.height/14.42
+        anchors.centerIn: parent
+        anchors.verticalCenterOffset: screen.height/8.3
         onVisibleChanged: {
             if (root.errorNetwork) {
                 icon.source = "/resources/images/network/icon_ERROR.png"

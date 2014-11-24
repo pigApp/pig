@@ -2,67 +2,48 @@
 
 #include <QTextStream>
 #include <QDir>
-#include <QFile>
 
 Password::Password(QObject *parent) : QObject(parent)
 {
+#ifdef __linux__
+    const QString target = QDir::homePath()+"/.pig/.pd";
+#else
+    const QString target = "C:/PIG/.pig/.pd";
+#endif
+    file.setFileName(target);
 }
 
 Password::~Password()
 {
 }
 
-bool Password::require()
+bool Password::check(const QString *plain)
 {
-    #ifdef _WIN32
-        QFile file("C:/PIG/.pig/pd.txt");
-    #else
-        QFile file(QDir::homePath()+"/.pig/.pd");
-    #endif
+    QString digest;
     if (file.open(QIODevice::ReadOnly|QIODevice::Text)) {
         while (!file.atEnd()) {
-            const QByteArray line = file.readLine();
-            pd = QString(line).toUtf8();
-            if (pd != "") {
-                file.close();
-                return true;
-                break;
-            }
+            digest = QString(file.readLine()).toUtf8();
         }
     }
+    file.close();
+
+    if (calculate(&plain) == digest)
+        return true;
     return false;
 }
 
 bool Password::write(const QString *plain)
 {
-    const QString digest = calculate(&plain);
-
-    #ifdef _WIN32
-        QFile file("C:/PIG/.pig/pd.txt");
-    #else
-        QFile file(QDir::homePath()+"/.pig/.pd");
-    #endif
     if (file.open(QIODevice::WriteOnly)) {
         QTextStream write(&file);
-        write << digest;
+        write << calculate(&plain);
         file.close();
         return true;
     }
     return false;
 }
 
-bool Password::success(const QString *plain)
-{
-    const QString digest = calculate(&plain);
-    if (digest == pd)
-        return true;
-    else
-        return false;
-}
-
 const QString Password::calculate(const QString **plain)
 {
-    const QByteArray _plain = QString(**plain).toUtf8();
-    const QString digest = QString(QCryptographicHash::hash(_plain,QCryptographicHash::Md5).toHex());
-    return digest;
+    return QString(QCryptographicHash::hash(QString(**plain).toUtf8(),QCryptographicHash::Md5).toHex());
 }

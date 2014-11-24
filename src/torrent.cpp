@@ -6,24 +6,9 @@
 #include <QTimer>
 #include <QDebug>
 
-Torrent::Torrent(QObject *parent) : QObject(parent)
+Torrent::Torrent(QObject *parent, const QString *magnet) : QObject(parent)
 {
-    client = new libtorrent::session;
-    client->listen_on(std::make_pair(6881, 6889), ec);
-    client->start_dht();
-    client->start_upnp();
-    client->add_extension(&libtorrent::create_ut_pex_plugin);
-}
-
-Torrent::~Torrent()
-{
-    _root->disconnect(this);
-}
-
-void Torrent::start(const QString *magnet)
-{
-    _player = NULL;
-    abort = false;
+    aborted = false;
     skip = false;
     toPlayer = false;
     minimum_mb = 15;
@@ -38,11 +23,17 @@ void Torrent::start(const QString *magnet)
     total_kb = 0;
     offset_kb = 0;
 
-#ifdef _WIN32
-    const std::string path = "C:/PIG/.pig/tmp/";
-#else
+    client = new libtorrent::session;
+    client->listen_on(std::make_pair(6881, 6889), ec);
+    client->start_dht();
+    client->start_upnp();
+    client->add_extension(&libtorrent::create_ut_pex_plugin);
+
+#ifdef __linux__
     const QString home = QDir::homePath();
     const std::string path = home.toStdString()+"/.pig/tmp/";
+#else
+    const std::string path = "C:/PIG/.pig/tmp/";
 #endif
     params.save_path = path;
     params.url = magnet->toStdString();
@@ -50,22 +41,30 @@ void Torrent::start(const QString *magnet)
     handler.set_sequential_download(true);
     handler.set_priority(255);
 
-    metadata_success();
+    get_metadata();
 }
 
-void Torrent::metadata_success()
+Torrent::~Torrent()
 {
-    if (!abort) {
+    aborted = true;
+    client->remove_torrent(handler);
+    (*_root)->disconnect(this);
+}
+
+void Torrent::get_metadata()
+{
+    if (!aborted) {
         if (handler.status(1).state != 2)
            filter_files();
         else
-            QTimer::singleShot(1000, this, SLOT(metadata_success()));
+            QTimer::singleShot(1000, this, SLOT(get_metadata()));
     }
 }
 
 void Torrent::filter_files()
 {
-    QStringList formats; formats << ".avi" << ".divx" << ".flv" << ".h264" << ".mkv" << ".mp4" << ".mpg" << ".mpeg" << ".ogm"<< ".ogv" << ".wmv";
+    QStringList formats; formats << ".avi" << ".divx" << ".flv" << ".h264" << ".mkv" << ".mp4"
+                                 << ".mpg" << ".mpeg" << ".ogm"<< ".ogv" << ".wmv";
     std::vector<int> filePriority;
     file_storage = handler.get_torrent_info().orig_files();
     bool checkFile = true;
@@ -109,35 +108,34 @@ void Torrent::filter_files()
     for (int i=0; i < (scene-1); i++ )
         offsetPieces = offsetPieces+(file_storage.map_file(i, file_storage.file_size(i), 0).piece - file_storage.map_file(i, 0, 0).piece);
         
-    minimum_success();
+    required_video_dump();
     download_Information();
 }
 
-void Torrent::minimum_success()
+void Torrent::required_video_dump()
 {
-    if (!abort) {
+    if (!aborted) {
         if (((handler.status().total_done/1048576)-totalPreSkip_mb) < minimum_mb)
-            QTimer::singleShot(1000, this, SLOT(minimum_success()));
+            QTimer::singleShot(1000, this, SLOT(required_video_dump()));
         else 
             call_player();
     }
-
     qDebug() << "DOWNLOADED: " << (handler.status().total_done/1048576)-totalPreSkip_mb << " MB";
 }
 
 void Torrent::download_Information()
 {
-    if (!abort) {
+    if (!aborted) {
         const int bitRate = handler.status().download_rate/1024;
         const int peers = handler.status().num_peers;
         if (toPlayer) {
-            QMetaObject::invokeMethod (_player, "download_Information", Qt::QueuedConnection, Q_ARG(int, bitRate), Q_ARG(int, peers));
+            (*_player)->download_Information(bitRate, peers);
         } else {
             const int downloaded_mb = handler.status().total_wanted_done/1048576;
-            _root->setProperty("required", 15);
-            _root->setProperty("downloaded", downloaded_mb);
-            _root->setProperty("bitRate", QString::number(bitRate));
-            _root->setProperty("peers", peers);
+            (*_root)->setProperty("required", 15);
+            (*_root)->setProperty("downloaded", downloaded_mb);
+            (*_root)->setProperty("bitRate", QString::number(bitRate));
+            (*_root)->setProperty("peers", peers);
         }
         QTimer::singleShot(1000, this, SLOT(download_Information()));
     }
@@ -151,23 +149,23 @@ void Torrent::call_player()
             dir.setPath(QString::fromStdString(handler.save_path()));
         const QString absoluteFilePath = dir.absolutePath()+"/"+fileName;
 
-        emit sandbox_signal(absoluteFilePath, true, false, false);
+        emit signal_sandbox(absoluteFilePath, true, false, false);
         QTimer::singleShot(1000, this, SLOT(progress()));
     } else {
         skip = false;
-        QMetaObject::invokeMethod (_player, "update_player", Qt::DirectConnection);
+        (*_player)->update_player();
     }
 }
 
 void Torrent::progress()
 {
-    if (!abort) {
+    if (!aborted) {
         if (!skip) {
             const qint64 downloaded_kb = offset_kb+(handler.status().total_wanted_done/1024);
-            QMetaObject::invokeMethod (_player, "progress", Qt::QueuedConnection, Q_ARG(qint64, total_kb), Q_ARG(qint64, downloaded_kb), Q_ARG(int, 220));
+            (*_player)->progress(total_kb, downloaded_kb, 220);
         } else {
             const int downloadedSkip_mb = (handler.status().total_done/1048576)-totalPreSkip_mb;
-            QMetaObject::invokeMethod (_player, "progress", Qt::QueuedConnection, Q_ARG(qint64, 0), Q_ARG(qint64, 0), Q_ARG(int, downloadedSkip_mb));
+            (*_player)->progress(0, 0, downloadedSkip_mb);
         }
         QTimer::singleShot(1000, this, SLOT(progress()));
     }
@@ -220,21 +218,8 @@ void Torrent::piece_update(qint64 total_msec, qint64 offset_msec)
     */
 
     handler.prioritize_pieces(piecePriority);
-    minimum_success();
+    required_video_dump();
 }
-
-void Torrent::stop()
-{
-    abort = true;
-    client->remove_torrent(handler);
-    if (_player != NULL)
-        _player->disconnect();
-}
-
-
-
-
-
 
 
 
