@@ -5,10 +5,8 @@ Item {
 
     Rectangle {
         id: layer
-        width: parent.width
-        height: parent.height/4.32
         color: "black"
-        anchors.centerIn: parent
+        anchors.fill: parent
         Text {
             id: label
             text: "INTRO PASSWORD"
@@ -28,10 +26,12 @@ Item {
             anchors.centerIn: parent
             anchors.verticalCenterOffset: -screen.height/720
             onCursorPositionChanged: {
-                if (input.text === "")
+                if (input.text === "") {
+                    label.color = "white"
                     label.text = "INTRO PASSWORD"
-                else
+                } else {
                     label.text = ""
+                }
                 input.visible = true
             }
             onCursorVisibleChanged: { if (input.cursorVisible) input.cursorVisible = false }
@@ -52,7 +52,8 @@ Item {
         target: cppSignals
         onSignal_fail_password: {
             input.visible = false
-            label.text = "WRONG PASSWORD"
+            label.color = Qt.rgba(0.1, 0.1, 0.1, 1)
+            label.text = "WRONG"
         }
     }
 

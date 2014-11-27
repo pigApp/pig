@@ -31,7 +31,7 @@ HEADERS += src/pig.h\
 
 RESOURCES = resources.qrc
 
-RC_FILE = resources/images/pig/icon.rc
+RC_FILE = resources/images/general/icon.rc
 
 unix {
     CONFIG += link_pkgconfig

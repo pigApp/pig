@@ -9,7 +9,6 @@ Rectangle {
         id: newsColumn
         spacing: parent.height/108
         anchors.centerIn: parent
-
         Text {
             id: binaryLabel
             text: "PIG "+root.binary+"."+root.release

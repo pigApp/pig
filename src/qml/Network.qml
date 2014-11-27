@@ -5,30 +5,27 @@ Item {
 
     Image {
         id: icon
-        width: parent.width/5.36
-        height: parent.height/3.01
-        source: "/resources/images/network/icon.png"
-        sourceSize.width: 358
-        sourceSize.height: 358
-        anchors.centerIn: parent
-    }
-    Text {
-        id: errorLabel
-        text: "NETWORK ERROR"
-        color: "black"
-        font.family: pigFont.name
-        font.bold: true
-        font.pixelSize: screen.height/54
-        visible: root.errorNetwork
-        anchors.centerIn: parent
-        anchors.verticalCenterOffset: screen.height/8.3
-        onVisibleChanged: {
-            if (root.errorNetwork) {
-                icon.source = "/resources/images/network/icon_ERROR.png"
+        width: parent.width/30
+        height: parent.height/16.87
+        sourceSize.width: parent.width/30
+        sourceSize.height: parent.height/16.87
+        source:  {
+            if (root.downloadNetwork)
+                "/resources/images/network/icon_download.svg"
+            else if (root.errorNetwork)
+                "/resources/images/network/icon_ERROR.svg"
+            else
+                "/resources/images/network/icon_default.svg"
+        }
+        anchors.right: parent.right
+        anchors.rightMargin: parent.width/128
+        anchors.bottom: parent.bottom
+        onSourceChanged: {
+            if (root.errorNetwork)
                 backDelay.start()
-            }
         }
     }
+
     Timer {
         id: backDelay
         running: false

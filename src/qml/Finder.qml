@@ -21,7 +21,7 @@ Item {
     }
     TextInput {
         id: userInput
-        color: "gray"
+        color: "white"
         font.family: finderFont.name
         font.capitalization: Font.AllUppercase
         font.letterSpacing: parent.width/480
@@ -33,7 +33,6 @@ Item {
         cursorVisible: false
         anchors.centerIn: parent
         anchors.horizontalCenterOffset: -parent.width/112
-        anchors.verticalCenterOffset: -parent.height/360
         onAccepted: {
             root.input = userInput.text
             root.signal_qml_find(root.input, root.pornstar, root.category, root.quality, root.full, 0, true)
@@ -46,7 +45,6 @@ Item {
         }
         onCursorVisibleChanged: { if (userInput.cursorVisible) userInput.cursorVisible = false }
     }
-
     Text {
         id: noResultLabel
         text: "NO RESULT"
@@ -59,7 +57,6 @@ Item {
         opacity: 0.3
         visible: false
         anchors.centerIn: parent
-        anchors.verticalCenterOffset: -parent.height/360
     }
 
     Column {
@@ -69,20 +66,17 @@ Item {
         enabled: { screen.state !== "showSetPassword" }
         opacity: 0
         anchors.left: parent.left
-        anchors.leftMargin: parent.width/24.61
+        anchors.leftMargin: parent.width/48.3
         anchors.bottom: parent.verticalCenter
-        anchors.bottomMargin: -parent.height/60
+        anchors.bottomMargin: -parent.height/44
         onEnabledChanged: { if (enabled) userInput.forceActiveFocus() }
         Button {
             id: categoryFilter
             width: screen.width/4.06
             height: screen.height/13.67
             label: "CATEGORY"
+            labelColor: "white"
             labelSize: screen.height/10
-            labelColor: "black"
-            labelBold: true
-            labelInColor: "red"
-            labelOutColor: "black"
             onClicked: {
                 finder.state = "showFilter"
                 activeFilter = "CATEGORY"
@@ -93,11 +87,8 @@ Item {
             width: screen.width/3.92
             height: screen.height/13.67
             label: "PORNSTAR"
+            labelColor: "white"
             labelSize: screen.height/10
-            labelColor: "black"
-            labelBold: true
-            labelInColor: "red"
-            labelOutColor: "black"
             onClicked: {
                 finder.state = "showFilter"
                 activeFilter = "PORNSTAR"
@@ -188,7 +179,10 @@ Item {
             to: "show"
             SequentialAnimation {
                 NumberAnimation { duration: 100 }
-                NumberAnimation { target: buttonsFiltersColumn; properties: "opacity"; to: 1.0; duration: 200; easing.type: Easing.InOutQuart } 
+                ParallelAnimation {
+                    NumberAnimation { target: buttonsFiltersColumn; properties: "opacity"; to: 1; duration: 200; easing.type: Easing.InOutQuart }
+                    NumberAnimation { target: backgroundBlur; easing.amplitude: 1.7; properties: "radius"; to: 0; duration: 1100; easing.type: Easing.OutQuart }
+                }
                 ParallelAnimation {
                     NumberAnimation { target: loaderSelectors; properties: "opacity"; to: 1.0; duration: 60; easing.type: Easing.InOutQuart }
                     PropertyAction { target: userInput; property: "text"; value: root.input }
@@ -201,10 +195,12 @@ Item {
                 ParallelAnimation {
                     PropertyAction { target: userInputLabel; properties: "visible"; value: false }
                     NumberAnimation { target: userInput; properties: "opacity"; to: 0; duration: 200; easing.type: Easing.InOutQuart }
-                    NumberAnimation { target: loaderSelectors; properties: "opacity"; to: 0; duration: 200; easing.type: Easing.InOutQuart }
+                    NumberAnimation { target: loaderSelectors; properties: "opacity"; to: 0; duration: 200; easing.type: Easing.InOutQuart }       
                 }
-                NumberAnimation { target: buttonsFiltersColumn; properties: "opacity"; to: 0; duration: 60; easing.type: Easing.InOutQuart }
-                NumberAnimation { duration: 100 }
+                ParallelAnimation {
+                    NumberAnimation { target: buttonsFiltersColumn; properties: "opacity"; to: 0; duration: 60; easing.type: Easing.InOutQuart }
+                    NumberAnimation { target: backgroundBlur; easing.amplitude: 1.7; properties: "radius"; to: 32; duration: 1100; easing.type: Easing.OutQuart }
+                }
                 PropertyAction { target: loaderFilter; property: "source"; value: "" }
                 PropertyAction { target: loaderFilter; property: "active"; value: false }
                 PropertyAction { target: loaderSelectors; property: "source"; value: "" }
@@ -232,7 +228,10 @@ Item {
                 PropertyAction { target: buttonsFiltersColumn; property: "opacity"; value: 0 }
                 PropertyAction { target: loaderSelectors; property: "source"; value: "" }
                 PropertyAction { target: loaderSelectors; property: "active"; value: false }
-                NumberAnimation { target: finder; easing.amplitude: 1.7; properties: "x"; to: 0; duration: 1100; easing.type: Easing.OutQuart }
+                ParallelAnimation {
+                    NumberAnimation { target: finder; easing.amplitude: 1.7; properties: "x"; to: 0; duration: 1100; easing.type: Easing.OutQuart }
+                    NumberAnimation { target: backgroundBlur; easing.amplitude: 1.7; properties: "radius"; to: 32; duration: 1100; easing.type: Easing.OutQuart }
+                }
                 PropertyAction { target: loaderFilter; property: "source"; value: "" }
                 PropertyAction { target: loaderFilter; property: "active"; value: false }
                 PropertyAction { target: root_loader_B; property: "source"; value: "Output.qml" }
@@ -244,14 +243,20 @@ Item {
             to: "showFilter"
             SequentialAnimation {
                 PropertyAction { target: loaderFilter; property: "active"; value: true }
-                NumberAnimation { target: finder; easing.amplitude: 1.7; properties: "x"; to: -screen.width; duration: 1100; easing.type: Easing.OutQuart }
+                ParallelAnimation {
+                    NumberAnimation { target: finder; easing.amplitude: 1.7; properties: "x"; to: -screen.width; duration: 1100; easing.type: Easing.OutQuart }
+                    NumberAnimation { target: backgroundBlur; easing.amplitude: 1.7; properties: "radius"; to: 96; duration: 2000; easing.type: Easing.OutQuart }
+                }
             }
         },
         Transition {
             to: "hideFilter"
             PropertyAction { target: focusDelay; property: "running"; value: true }
             SequentialAnimation {
-                NumberAnimation { target: finder; easing.amplitude: 1.7; properties: "x"; to: 0; duration: 1100; easing.type: Easing.OutQuart }
+                ParallelAnimation {
+                    NumberAnimation { target: finder; easing.amplitude: 1.7; properties: "x"; to: 0; duration: 1100; easing.type: Easing.OutQuart }
+                    NumberAnimation { target: backgroundBlur; easing.amplitude: 1.7; properties: "radius"; to: 0; duration: 2100; easing.type: Easing.OutQuart }
+                }
                 PropertyAction { target: loaderFilter; property: "active"; value: false }
             }
         },

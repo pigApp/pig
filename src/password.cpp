@@ -20,11 +20,9 @@ Password::~Password()
 bool Password::check(const QString *plain)
 {
     QString digest;
-    if (file.open(QIODevice::ReadOnly|QIODevice::Text)) {
-        while (!file.atEnd()) {
+    if (file.open(QIODevice::ReadOnly|QIODevice::Text))
+        while (!file.atEnd())
             digest = QString(file.readLine()).toUtf8();
-        }
-    }
     file.close();
 
     if (calculate(&plain) == digest)

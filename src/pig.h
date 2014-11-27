@@ -64,7 +64,7 @@ private slots:
                          const int id, const bool success, const bool fail, const bool abort);
     void torrent_handler(const QString magnet, const int scene, const bool abort);
     void player_handler(const QString absoluteFilePath, const bool sandbox, const bool fileReady, const bool close);
-    void cleanUp();
+    void cleanup();
     void error_database();
     void quit();
 };

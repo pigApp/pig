@@ -5,7 +5,7 @@ Rectangle {
     x: screen.width
     width: screen.width
     height: screen.height
-    color: "black"
+    color: Qt.rgba(0, 0, 0, 0.05)
 
     property int timeLeft: 5
 
@@ -16,7 +16,6 @@ Rectangle {
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.bottom: progressBar.top
         anchors.bottomMargin: screen.height/216
-
         Text {
             id: bitRateLabel
             text: {
@@ -48,12 +47,14 @@ Rectangle {
                 torrentInformation.forceActiveFocus()
         }
     }
+
     ProgressBar {
         id: progressBar
         value: root.downloaded
         visible: false
         anchors.centerIn: parent
     }
+
     Column {
         id: checkFileColumn
         spacing: 0
@@ -64,19 +65,20 @@ Rectangle {
         Text {
             id: checkLabel
             text: "CHECKING FILE"
-            color: Qt.rgba(0.1, 0.1, 0.1, 1)
+            color: "gray"
             font.family: pigFont.name
             font.pixelSize: screen.height/54
         }
         Text {
             id: recheckLabel
             text: ""
-            color: Qt.rgba(0.1, 0.1, 0.1, 1)
+            color: "gray"
             font.family: pigFont.name
             font.pixelSize: screen.height/54
             anchors.horizontalCenter: checkLabel.horizontalCenter
         }
     }
+
     Timer {
         id: recheckDelay
         running: false

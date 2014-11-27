@@ -5,7 +5,6 @@ Item {
     id: output
     x: screen.width
 
-    property bool successPoster
     property bool successCover
     property bool showTorrentInformation
     property int location: 0
@@ -26,42 +25,21 @@ Item {
     }
     Component {
         id: delegate
-
         Item {
             id: recipe
             z: { PathView.recipeZ || 1 }
             width: listView.width
             height: listView.height
-            visible: recipe.PathView.isCurrentItem
+            //visible: recipe.PathView.isCurrentItem
             opacity: { PathView.recipeOpacity || 1 }
+            scale: { PathView.recipeScale || 1 }
 
-            Image {
-                id: poster
-                width: parent.width
-                height: parent.height
-                source: hostPosterCover+urlPoster
-                sourceSize.width: 1920
-                sourceSize.height: 1080
-                anchors.horizontalCenter: parent.horizontalCenter
-                anchors.top: parent.top
-                onStatusChanged: {
-                    if (poster.source == dataFilms[8]+dataFilms[9] && poster.status == Image.Ready) {
-                        successPoster = true
-                        if (!successCover)
-                            imagesStatus.start()
-                    } else if (poster.status == Image.Error) {
-                        poster.source = "qrc:resources/images/output/NOT_AVAILABLE/poster_NOT_AVAILABLE.png"
-                        successPoster = true
-                        if (!successCover)
-                            imagesStatus.start()
-                    }
-                }
-            }
             Rectangle {
-                id: translucedLayer
+                id: translucentLayer
                 width: parent.width
                 height: parent.height
                 color: "black"
+                visible: false
                 anchors.centerIn: parent
             }
 
@@ -72,11 +50,14 @@ Item {
                 font.family: pigFont.name
                 font.letterSpacing: -parent.width/192
                 font.pixelSize: parent.height/5.75
+                visible: false
+                //visible: recipe.PathView.isCurrentItem//
                 anchors.left: parent.left
                 anchors.leftMargin: parent.width/960
                 anchors.bottom: cover.top
             }
 
+            /*
             Image {
                 id: frame
                 width: parent.width
@@ -87,10 +68,22 @@ Item {
                 anchors.centerIn: parent
             }
 
+            Rectangle { // TODO: NO IRIA
+                id: frame
+                width: parent.width
+                height: parent.height/2.16
+                color: Qt.rgba(0, 0, 0, 0)
+                visible: false
+                anchors.centerIn: parent
+            }
+            */
+
             Item {
                 id: previewBox
                 width: screen.width/3.04
                 height: screen.height/2.51
+                visible: recipe.PathView.isCurrentItem//
+                //visible: false//
                 anchors.left: parent.left
                 anchors.verticalCenter: parent.verticalCenter
                 anchors.verticalCenterOffset: parent.height/710
@@ -126,29 +119,29 @@ Item {
                 onStatusChanged: {
                     if (cover.source == dataFilms[8]+dataFilms[10] && cover.status == Image.Ready) {
                         successCover = true
-                        if (!successPoster)
-                            imagesStatus.start()
+                        imagesStatus.start()
                     } else if (cover.status == Image.Error) {
                         cover.source = "/resources/images/output/NOT_AVAILABLE/cover_NOT_AVAILABLE.png"
                         successCover = true
-                        if (!successPoster)
-                            imagesStatus.start()
+                        imagesStatus.start()
                     }
                 }
             }
+
             Timer {
                 id: imagesStatus
                 running: false
                 repeat: false
                 interval: 100
                 onTriggered: {
-                    if (successPoster && successCover) {
+                    if (successCover) {
                         timeOutNetwork.stop()
+                        root.downloadNetwork = false
+                        root.stopPreview = false
                         root_loader_A.source = ""
                         handler.state = "show"
                         handler.enabled = true
                         handler.setFocus()
-                        root.stopPreview = false
                     } else {
                         imagesStatus.restart()
                     }
@@ -157,38 +150,45 @@ Item {
 
             Rectangle {
                 id: dateLayer
-                color: Qt.rgba(0, 0, 0, 0.4)
+                color: Qt.rgba(1, 1, 1, 0.02)
+                //visible: false
+                visible: recipe.PathView.isCurrentItem//
                 anchors.left: cover.right
                 anchors.right: parent.right
-                anchors.top: frame.top
-                anchors.topMargin: parent.height/30
-                anchors.bottom: frame.bottom
-                anchors.bottomMargin: parent.height/36
+                anchors.top: cover.top
+                //anchors.topMargin: 50//parent.height/30
+                anchors.bottom: cover.bottom
+                //anchors.bottomMargin: 50//parent.height/36
             }
             Column {
                 id: datesColumn
                 spacing: parent.height/216
+                //visible: false
+                visible: recipe.PathView.isCurrentItem//
                 anchors.left: cover.right
                 anchors.leftMargin: parent.width/54.85
-                anchors.top: frame.top
+                anchors.top: cover.top
                 anchors.topMargin: parent.height/12
                 Text {
                     id: castLabel
-                    text: "<font color='#ff0000'>∙<font/> <font color='#ffffff'>"+cast+"<font/>"
+                    //text: "<font color='#ff0000'>∙<font/> <font color='#ffffff'>"+cast+"<font/>"
+                    text: "<font color='transparent'>∙<font/> <font color='#ffffff'>"+cast+"<font/>"
                     font.family: pigFont.name
                     font.bold: true
                     font.pixelSize: screen.height/35
                 }
                 Text {
                     id: categoriesLabel
-                    text: "<font color='#ff0000'>∙<font/> <font color='#ffffff'>"+categories+"<font/>"
+                    //text: "<font color='#ff0000'>∙<font/> <font color='#ffffff'>"+categories+"<font/>"
+                    text: "<font color='transparent'>∙<font/> <font color='#ffffff'>"+categories+"<font/>"
                     font.family: pigFont.name
                     font.bold: true
                     font.pixelSize: screen.height/35
                 }
                 Text {
                     id: qualityLabel
-                    text: "<font color='#ff0000'>∙<font/> <font color='#ffffff'>"+quality+"<font/>"
+                    //text: "<font color='#ff0000'>∙<font/> <font color='#ffffff'>"+quality+"<font/>"
+                    text: "<font color='transparent'>∙<font/> <font color='#ffffff'>"+quality+"<font/>"
                     font.family: pigFont.name
                     font.bold: true
                     font.pixelSize: screen.height/35
@@ -196,10 +196,10 @@ Item {
                 Text {
                     id: splitLabel
                     text: {
-                        if (scenes === 1)
+                        //if (scenes === 1)
                             "<font color='transparent'>∙<font/> <font color='#ffffff'>SPLIT<font/>"
-                        else
-                            "<font color='#ff0000'>∙<font/> <font color='#ffffff'>SPLIT<font/>"
+                        //else
+                            //"<font color='#ff0000'>∙<font/> <font color='#ffffff'>SPLIT<font/>"
                     }
                     font.family: pigFont.name
                     font.bold: true
@@ -208,19 +208,22 @@ Item {
                 Text {
                     id: fullLabel
                     text: { 
-                        if (full === "NOT")
+                        //if (full === "NOT")
                             "<font color='transparent'>∙<font/> <font color='#ffffff'>FULL<font/>"
-                        else
-                            "<font color='#ff0000'>∙<font/> <font color='#ffffff'>FULL<font/>"
+                        //else
+                            //"<font color='#ff0000'>∙<font/> <font color='#ffffff'>FULL<font/>"
                     }
                     font.family: pigFont.name
                     font.bold: true
                     font.pixelSize: screen.height/35
                 }
             }
+
             Row {
                 id: openSceneRow
                 spacing: 1
+                visible: false
+                //visible: recipe.PathView.isCurrentItem//
                 anchors.left: cover.right
                 anchors.leftMargin: parent.width/42.66
                 anchors.top: datesColumn.bottom
@@ -238,6 +241,7 @@ Item {
             Row {
                 id: counterRow
                 spacing: parent.width/480
+                visible: false//
                 anchors.right: parent.right
                 anchors.rightMargin: parent.width/480
                 anchors.bottom: parent.bottom
@@ -276,12 +280,12 @@ Item {
                 }
             }
 
-            NumberAnimation { running: recipe.PathView.isCurrentItem && output.x === 0; target: poster; property: "opacity"; to: 1; duration: 1000; easing.type: Easing.InOutQuad }
-            NumberAnimation { running: recipe.PathView.isCurrentItem && output.x === 0; target: translucedLayer; property: "opacity"; to: 0.65; duration: 1500; easing.type: Easing.InOutQuad }
+            //NumberAnimation { running: recipe.PathView.isCurrentItem && output.x === 0; target: poster; property: "opacity"; to: 0.3; duration: 1000; easing.type: Easing.InOutQuad }
+            NumberAnimation { running: recipe.PathView.isCurrentItem && output.x === 0; target: translucentLayer; property: "opacity"; to: 0.6; duration: 1500; easing.type: Easing.InOutQuad }
             NumberAnimation { running: recipe.PathView.isCurrentItem; target: datesColumn; property: "opacity"; to: 1; duration: 2000; easing.type: Easing.OutElastic }
 
-            PropertyAction { running: !recipe.PathView.isCurrentItem || handler.state === "hideOutput_showFinder"; target: poster; property: "opacity"; value: 0 }
-            PropertyAction { running: !recipe.PathView.isCurrentItem || handler.state === "hideOutput_showFinder"; target: translucedLayer; property: "opacity"; value: 0 }
+            //PropertyAction { running: !recipe.PathView.isCurrentItem || handler.state === "hideOutput_showFinder"; target: poster; property: "opacity"; value: 0 }
+            PropertyAction { running: !recipe.PathView.isCurrentItem || handler.state === "hideOutput_showFinder"; target: translucentLayer; property: "opacity"; value: 0 }
             NumberAnimation { running: !recipe.PathView.isCurrentItem || handler.state === "hideOutput_showFinder"; target: datesColumn; property: "opacity"; to: 0;
                               duration: 1; easing.type: Easing.InOutQuad }
         }
@@ -301,13 +305,26 @@ Item {
         path: Path {
             startX: screen.width/2
             startY: screen.height/2
-            PathAttribute { name: "recipeOpacity"; value: 1 }
+            //startX: 120
+            //startY: 100
+
             PathAttribute { name: "recipeZ"; value: 2 }
-            PathQuad { x: screen.width/2; y: screen.height/2; controlX: screen.width+(screen.width*2.77); controlY: screen.height/2 }
-            PathAttribute { name: "recipeOpacity"; value: 0 }
+            PathAttribute { name: "recipeOpacity"; value: 1 }
+            PathAttribute { name: "recipeScale"; value: 1.0 }
+
+            //PathQuad { x: 120; y: 25; controlX: 260; controlY: 75 }
+            PathQuad { x: screen.width/2; y: 360; controlX: screen.width*1.3; controlY: screen.height/2 } //1.3
+
             PathAttribute { name: "recipeZ"; value: 0 }
-            PathQuad { x: screen.width/2; y: screen.height/2; controlX: -screen.width*2.77; controlY: screen.height/2 }
+            PathAttribute { name: "recipeOpacity"; value: 0 }
+            PathAttribute { name: "recipeScale"; value: 0.3 }
+
+            //PathQuad { x: 120; y: 100; controlX: -20; controlY: 75 }
+            PathQuad { x: screen.width/2; y: screen.height/2; controlX: -screen.width/3.4; controlY: screen.height/2.05 } //3.4
         }
+
+        //PathQuad { x: screen.width/2; y: screen.height/2; controlX: screen.width+(screen.width*2.77); controlY: screen.height/2 }
+        //PathQuad { x: screen.width/2; y: screen.height/2; controlX: -screen.width*2.77; controlY: screen.height/2 }
 
         MouseArea {
             onClicked: handler.setFocus()
@@ -357,7 +374,7 @@ Item {
                     PropertyAction { target: root; property: "stopPreview"; value: true }
                     NumberAnimation { duration: 20 }
                     NumberAnimation { target: output; easing.amplitude: 1.7; properties: "x"; to: screen.width; duration: 500; easing.type: Easing.OutQuart }
-                    PropertyAction { target: root_loader_A; property: "source"; value: "" } //
+                    PropertyAction { target: root_loader_A; property: "source"; value: "" }
                     PropertyAction { target: root_loader_B; property: "source"; value: "Finder.qml" }
                 }
             },
@@ -470,7 +487,10 @@ Item {
         running: false
         repeat: false
         interval: 60000
-        onTriggered: { root.errorNetwork = true }
+        onTriggered: {
+            root.downloadNetwork = false
+            root.errorNetwork = true
+        }
     }
 
     Timer {
@@ -498,7 +518,6 @@ Item {
     function updateData(offset) {
         root.stopPreview = true
         handler.state = "hide"
-        successPoster = false
         successCover = false
         root.dataFilms = ""
         model.clear()
@@ -525,5 +544,6 @@ Item {
     Component.onCompleted: {
         appendData()
         timeOutNetwork.start()
+        root.downloadNetwork = true
     }
 }

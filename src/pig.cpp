@@ -85,8 +85,7 @@ void PIG::password_handler(const QString plain, const bool require, const bool c
 //UPDATE
 void PIG::update_handler()
 {
-    //cleanUp();
-
+    //cleanup();
 #ifdef __linux__
     const QString target = QDir::homePath()+"/.pig/db.sqlite";
 #else
@@ -111,7 +110,6 @@ void PIG::update_handler()
 //START
 void PIG::start_pig()
 {
-    //delete mUpdate;
     mUpdate->deleteLater();
     mUpdate = NULL;
 
@@ -221,7 +219,7 @@ void PIG::preview_handler(const QString host, const QString url, const QString p
 //TORRENT
 void PIG::torrent_handler(const QString magnet, const int scene, const bool abort)
 {
-    //cleanUp();
+    //cleanup();
     if (!abort) {
         mTorrent = new Torrent(NULL, &magnet);
         mTorrent->_root = &mRoot;
@@ -317,7 +315,7 @@ void PIG::find(const QString input, const QString pornstar, const QString catego
 }
 
 //CLEANUP
-void PIG::cleanUp()
+void PIG::cleanup()
 {
 #ifdef __linux__
     const QString target = QDir::homePath()+"/.pig/tmp/";

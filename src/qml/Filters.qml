@@ -1,11 +1,10 @@
 import QtQuick 2.3
 
-Rectangle {
+Item {
     id: filters
     x: screen.width
     width: screen.width
     height: screen.height
-    color: "black"
 
     Flickable {
         id: flickAreaFilters
@@ -13,52 +12,45 @@ Rectangle {
         contentHeight: filtersGrid.height
         flickableDirection: Flickable.VerticalFlick
         clip: true
+        anchors.margins: parent.width/640
         anchors.fill: parent
         Grid {
             id: filtersGrid
-            spacing: 0
+            spacing: 3
             Repeater {
-                id: categoryRows
+                id: categoriesRepeater
                 model: categories[0]
                 delegate: ButtonFilter {
                     width: filters.width/4
                     labelText: categories[index+1]
-                    indicatorLabelvisible: { if (nCategories[index] !== "0") true; else false }
-                    numberLabelText: { if (nCategories[index] !== "0") nCategories[index]; else '' }
+                    numberLabelText: nCategories[index]
                     sourceImage: {
-                        if (nCategories[index] !== "0")
-                            "/resources/images/finder/categories/"+categories[index+1]+".jpg"
+                        if (nCategories[index] !== "0") // TODO: Borrar
+                            "/resources/images/finder/filters/categories/"+categories[index+1]+".jpg"
                         else
-                            "/resources/images/finder/categories/NOT_AVAILABLE/"+categories[index+1]+"_NOT_AVAILABLE.jpg"
+                            ""
                     }
                     visible: { if (activeFilter === "CATEGORY" ) true; else false }
                     enabled: { if (activeFilter === "CATEGORY" ) true; else false }
-                    onClicked: {
-                        if (nCategories[index] !== "0")
-                            filtersManager("categoryFilter", labelText)
-                    }
+                    onClicked: filtersManager("categoryFilter", labelText)
                 }
             }
             Repeater {
-                id: pornstarRows
+                id: pornstarsRepeater
                 model: pornstars[0]
                 delegate: ButtonFilter {
                     width: filters.width/4
                     labelText: pornstars[index+1]
-                    indicatorLabelvisible: { if (nPornstars[index] !== "0") true; else false }
-                    numberLabelText: { if (nPornstars[index] !== "0") nPornstars[index]; else '' }
+                    numberLabelText: nPornstars[index]
                     sourceImage: {
-                        if (nPornstars[index] !== "0")
-                            "/resources/images/finder/pornstars/"+pornstars[index+1]+".jpg"
+                        if (nPornstars[index] !== "0") // TODO: Borrar
+                            "/resources/images/finder/filters/pornstars/"+pornstars[index+1]+".jpg"
                         else
-                            "/resources/images/finder/pornstars/NOT_AVAILABLE/"+pornstars[index+1]+"_NOT_AVAILABLE.jpg"
+                            ""
                     }
                     visible: { if (activeFilter === "PORNSTAR") true; else false }
                     enabled: { if (activeFilter === "PORNSTAR") true; else false }
-                    onClicked: {
-                        if (nPornstars[index] !== "0")
-                            filtersManager("pornstarFilter", labelText)
-                    }
+                    onClicked: filtersManager("pornstarFilter", labelText)
                 }
             }
         }

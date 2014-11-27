@@ -1,29 +1,39 @@
 import QtQuick 2.3
+import QtGraphicalEffects 1.0
 
 Item {
     id: selectors
 
     property bool onShowSelectors
 
-    Text {
-        id: selectorsLabel
-        text: "FILTERS"
-        color: Qt.rgba(0.1, 0.1, 0.1, 1)
-        font.family: pigFont.name
-        font.bold: true
-        font.pixelSize: screen.height/54
+    Image {
+        id: more
+        width: 56 // TODO: ver el tamaño y pasarlo a parent.width/...
+        height: 56
+        sourceSize.width: 56
+        sourceSize.height: 56
+        source: "/resources/images/finder/selectors/more.svg"
         anchors.left: parent.left
-        anchors.leftMargin: parent.width/22.27
+        anchors.leftMargin: parent.width/40.27
         anchors.verticalCenter: parent.verticalCenter
-        anchors.verticalCenterOffset: parent.height/30.85
+        anchors.verticalCenterOffset: parent.height/23.85
         MouseArea {
+            hoverEnabled: true
+            onEntered: {
+                if (!onShowSelectors)
+                    selectors.state = "in"
+            }
+            onHoveredChanged: {
+                if (!onShowSelectors)
+                    selectors.state = "out"
+            }
             onClicked: {
                 if (!onShowSelectors) {
                     onShowSelectors = true
                     selectors.state = "showSelectors"
                 } else {
                     onShowSelectors = false
-                    if (root.full !== "" || root.quality !== "")
+                    if (root.full === "FULL" || root.quality !== "")
                         selectors.state = "hideActiveSelectors"
                     else
                         selectors.state = "hideSelectors"
@@ -32,23 +42,32 @@ Item {
             anchors.fill: parent
         }
     }
+    DropShadow {
+        id: moreShadow
+        color: "white"
+        source: more
+        radius: 8
+        samples: 32
+        opacity: 0
+        anchors.fill: more
+    }
 
     Row {
         id: selectorsRow
         spacing: parent.width/384
         opacity: 0
         anchors.left: parent.left
-        anchors.leftMargin: parent.width/22.27
+        anchors.leftMargin: parent.width/40.27
         anchors.verticalCenter: parent.verticalCenter
-        anchors.verticalCenterOffset: parent.height/19.63
-
-        Text {
-            id: fullMovieLabel
-            text: "FULL"
-            color: { if (root.full === "FULL") "red"; else Qt.rgba(0.1, 0.1, 0.1, 1) }
-            font.family: pigFont.name
-            font.bold: true
-            font.pixelSize: screen.height/54
+        anchors.verticalCenterOffset: 93//parent.height/14.63
+        Image {
+            id: fullMovie
+            width: 64
+            height: 64
+            sourceSize.width: 64
+            sourceSize.height: 64
+            source: "/resources/images/finder/selectors/sd.svg"
+            opacity: { if (root.full === "FULL") 1; else 0.7 }
             MouseArea {
                 onClicked: {
                     if (root.full === "FULL")
@@ -59,13 +78,14 @@ Item {
                 anchors.fill: parent
             }
         }
-        Text {
-            id: standardLabel
-            text: " SD"
-            color: { if (root.quality === "SD") "red"; else Qt.rgba(0.1, 0.1, 0.1, 1) }
-            font.family: pigFont.name
-            font.bold: true
-            font.pixelSize: screen.height/54
+        Image {
+            id: standard
+            width: 64
+            height: 64
+            sourceSize.width: 64
+            sourceSize.height: 64
+            source: "/resources/images/finder/selectors/sd.svg"
+            opacity: { if (root.quality === "SD") 1; else 0.7 }
             MouseArea {
                 onClicked: {
                     if (root.quality === "SD")
@@ -76,13 +96,14 @@ Item {
                 anchors.fill: parent
             }
         }
-        Text {
-            id: mediumLabel
-            text: "720p"
-            color: { if (root.quality === "720p") "red"; else Qt.rgba(0.1, 0.1, 0.1, 1) }
-            font.family: pigFont.name
-            font.bold: true
-            font.pixelSize: screen.height/54
+        Image {
+            id: hd
+            width: 64
+            height: 64
+            sourceSize.width: 64
+            sourceSize.height: 64
+            source: "/resources/images/finder/selectors/1080.svg"
+            opacity: { if (root.quality === "720p") 1; else 0.7 }
             MouseArea {
                 onClicked: {
                     if (root.quality === "720p")
@@ -93,13 +114,14 @@ Item {
                 anchors.fill: parent
             }
         }
-        Text {
-            id: highLabel
-            text: "1080p"
-            color: { if (root.quality === "1080p") "red"; else Qt.rgba(0.1, 0.1, 0.1, 1) }
-            font.family: pigFont.name
-            font.bold: true
-            font.pixelSize: screen.height/54
+        Image {
+            id: fullHd
+            width: 64
+            height: 64
+            sourceSize.width: 64
+            sourceSize.height: 64
+            source: "/resources/images/finder/selectors/1080.svg"
+            opacity: { if (root.quality === "1080p") 1; else 0.7 }
             MouseArea {
                 onClicked: {
                     if (root.quality === "1080p")
@@ -112,7 +134,15 @@ Item {
         }
     }
 
+
+
     states: [
+        State {
+            name: "in"
+        },
+        State {
+            name: "out"
+        },
         State {
             name: "showSelectors"
         },
@@ -125,15 +155,25 @@ Item {
     ]
     transitions: [
         Transition {
+            to: "in"
+            NumberAnimation { target: moreShadow; easing.amplitude: 1.7; properties: "opacity"; to: 0.5; duration: 100; easing.type: Easing.OutQuart }
+        },
+        Transition {
+            to: "out"
+            NumberAnimation { target: moreShadow; easing.amplitude: 1.7; properties: "opacity"; to: 0; duration: 100; easing.type: Easing.OutQuart }
+        },
+        Transition {
             to: "showSelectors"
-            PropertyAction { target: selectorsLabel; property: "color"; value: "red" }
-            NumberAnimation { target: selectorsRow; properties: "opacity"; to: 1.0; duration: 200; easing.type: Easing.InOutQuart }
+            SequentialAnimation {
+                NumberAnimation { target: moreShadow; easing.amplitude: 1.7; properties: "opacity"; to: 0.5; duration: 100; easing.type: Easing.OutQuart }
+                NumberAnimation { target: selectorsRow; properties: "opacity"; to: 1.0; duration: 200; easing.type: Easing.InOutQuart }
+            }
         },
         Transition {
             to: "hideSelectors"
             SequentialAnimation {
                 NumberAnimation { target: selectorsRow; properties: "opacity"; to: 0; duration: 200; easing.type: Easing.InOutQuart }
-                PropertyAction { target: selectorsLabel; property: "color"; value: Qt.rgba(0.1, 0.1, 0.1, 1) }
+                NumberAnimation { target: moreShadow; easing.amplitude: 1.7; properties: "opacity"; to: 0.5; duration: 100; easing.type: Easing.OutQuart }
             }
         },
         Transition {
@@ -143,7 +183,7 @@ Item {
     ]
 
     Component.onCompleted: {
-        if (root.full !== "" || root.quality !== "") {
+        if (root.full === "FULL" || root.quality !== "") {
             onShowSelectors = true
             selectors.state = "showSelectors"
         }

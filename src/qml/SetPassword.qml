@@ -5,13 +5,11 @@ Item {
 
     Rectangle {
         id: layer
-        width: parent.width
-        height: parent.height/4.32
         color: "black"
-        anchors.centerIn: parent
+        anchors.fill: parent
         Text {
             id: label
-            text: "INTRO NEW PASSWORD"
+            text: "INTRO PASSWORD"
             color: "white"
             font.family: pigFont.name
             font.pixelSize: screen.height/23
@@ -29,7 +27,7 @@ Item {
             anchors.verticalCenterOffset: -screen.height/720
             onCursorPositionChanged: {
                 if (input.text === "")
-                    label.text = "INTRO NEW PASSWORD"
+                    label.text = "INTRO PASSWORD"
                 else
                     label.text = ""
             }
@@ -67,7 +65,8 @@ Item {
             screen.state = "hideSetPassword"
         }
         onSignal_fail_password: {
-            label.text = "FAIL. TRY LATER"
+            label.color = Qt.rgba(0.1, 0.1, 0.1, 1)
+            label.text = "FAIL TRY LATER"
             hide.start()
         }
     }

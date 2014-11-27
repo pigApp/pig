@@ -9,13 +9,13 @@ Item {
     property bool stopPlayer: root.stopPreview
     property string host
     property string url
-    property string path
     property string target
+    property string path
     property int id
 
     Rectangle {
         id: translucentLayer
-        color: Qt.rgba(0, 0, 0, 0.5)
+        color: Qt.rgba(1, 1, 1, 0)
         anchors.fill: parent
         MouseArea {
             onClicked: {
@@ -31,7 +31,7 @@ Item {
     }
     Text {
         id: previewLabel
-        text: "PREVIEW"
+        text: ""//"PREVIEW"
         color: "white"
         font.family: pigFont.name
         font.bold: true

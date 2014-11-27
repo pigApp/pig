@@ -1,26 +1,26 @@
 <RCC>
     <qresource prefix="/">
-        <file>resources/images/pig/icon.ico</file>
-        <file>resources/images/pig/icon.png</file>
-        <file>resources/images/pig/icon.rc</file>
-        <file>resources/images/network/icon.png</file>
-        <file>resources/images/network/icon_ERROR.png</file>
-        <file>resources/images/output/frame.png</file>
+        <file>resources/images/general/icon.ico</file>
+        <file>resources/images/general/icon.png</file>
+        <file>resources/images/general/icon.rc</file>
+        <file>resources/images/general/background.jpg</file>
+        <file>resources/images/network/icon_default.svg</file>
+        <file>resources/images/network/icon_download.svg</file>
+        <file>resources/images/network/icon_ERROR.svg</file>
+        <file>resources/images/finder/selectors/more.svg</file>
+        <file>resources/images/finder/selectors/sd.svg</file>
+        <file>resources/images/finder/selectors/1080.svg</file>
+        <file>resources/images/finder/filters/icons/number.svg</file>
+        <file>resources/images/finder/filters/categories/ANAL.jpg</file>
+        <file>resources/images/finder/filters/categories/ASIAN.jpg</file>
+        <file>resources/images/finder/filters/categories/DOUBLE.jpg</file>
+        <file>resources/images/finder/filters/categories/GANGBANG.jpg</file>
+        <file>resources/images/finder/filters/pornstars/BELLADONNA.jpg</file>
         <file>resources/images/output/open.png</file>
         <file>resources/images/output/preview/network/icon.png</file>
         <file>resources/images/output/preview/replay.png</file>
         <file>resources/images/output/NOT_AVAILABLE/poster_NOT_AVAILABLE.png</file>
         <file>resources/images/output/NOT_AVAILABLE/cover_NOT_AVAILABLE.png</file>
-        <file>resources/images/finder/categories/ANAL.jpg</file>
-        <file>resources/images/finder/categories/ASIAN.jpg</file>
-        <file>resources/images/finder/categories/DOUBLE.jpg</file>
-        <file>resources/images/finder/categories/GANGBANG.jpg</file>
-        <file>resources/images/finder/categories/NOT_AVAILABLE/ANAL_NOT_AVAILABLE.jpg</file>
-        <file>resources/images/finder/categories/NOT_AVAILABLE/ASIAN_NOT_AVAILABLE.jpg</file>
-        <file>resources/images/finder/categories/NOT_AVAILABLE/DOUBLE_NOT_AVAILABLE.jpg</file>
-        <file>resources/images/finder/categories/NOT_AVAILABLE/GANGBANG_NOT_AVAILABLE.jpg</file>
-        <file>resources/images/finder/pornstars/BELLADONNA.jpg</file>
-        <file>resources/images/finder/pornstars/NOT_AVAILABLE/BELLADONNA_NOT_AVAILABLE.jpg</file>
         <file>resources/fonts/pig.ttf</file>
         <file>resources/fonts/finder.ttf</file>
     </qresource>

@@ -1,16 +1,14 @@
 import QtQuick 2.3
+import QtGraphicalEffects 1.0
 
 Rectangle {
     id: button
     color: "transparent"
 
-    property bool enter
     property alias label: label.text
     property alias labelColor: label.color
-    property alias labelSize: label.font.pixelSize
     property alias labelBold: label.font.bold
-    property color labelInColor
-    property color labelOutColor
+    property alias labelSize: label.font.pixelSize
 
     signal clicked()
 
@@ -18,23 +16,41 @@ Rectangle {
         id: label
         font.family: pigFont.name
         anchors.verticalCenter: parent.verticalCenter
-        ColorAnimation on color { id: inColor; running: false; to: labelInColor; duration: 200 }
-        ColorAnimation on color { id: outColor; running: false; to: labelOutColor; duration: 300 }
+    }
+    DropShadow {
+        id: shadow
+        color: "white"
+        source: label
+        radius: 8
+        samples: 32
+        opacity: 0
+        anchors.fill: label
     }
     MouseArea {
         hoverEnabled: true
-        onEntered: { enter = true }
-        onHoveredChanged: { enter = false }
+        onEntered: { button.state = "in" }
+        onHoveredChanged: { button.state = "out" }
         onClicked: button.clicked()
         anchors.fill: parent
     }
-    onEnterChanged: {
-        if (enter) {
-            inColor.start()
-        } else {
-            inColor.stop()
-            outColor.start()
+
+    states: [
+        State {
+            name: "in"
+        },
+        State {
+            name: "out"
         }
-    }
+    ]
+    transitions: [
+        Transition {
+            to: "in"
+            NumberAnimation { target: shadow; easing.amplitude: 1.7; properties: "opacity"; to: 0.5; duration: 100; easing.type: Easing.OutQuart }
+        },
+        Transition {
+            to: "out"
+            NumberAnimation { target: shadow; easing.amplitude: 1.7; properties: "opacity"; to: 0; duration: 100; easing.type: Easing.OutQuart }
+        }
+    ]
 }
 // Tabs hechos.

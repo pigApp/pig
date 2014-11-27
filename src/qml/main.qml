@@ -6,6 +6,7 @@ Item {
 
     property bool welcome
     property bool showNetwork
+    property bool downloadNetwork
     property bool errorNetwork
     property bool showUserInputLabel
     property bool hideHelp
@@ -41,15 +42,29 @@ Item {
     signal signal_qml_password_handler(string plain, bool require, bool check, bool write)
     signal signal_qml_find(string input, string pornstar, string category, string quality, string full, int offset, bool init)
     signal signal_qml_preview_handler(string host, string url, string path, string target, int id, bool success, bool fail, bool abort)
-    signal signal_qml_torrent_handler(string magnet, int scene, bool stop)
+    signal signal_qml_torrent_handler(string magnet, int scene, bool abort)
     signal signal_qml_quit()
 
     FontLoader { id: pigFont; source: "/resources/fonts/pig.ttf" }
     FontLoader { id: finderFont; source: "/resources/fonts/finder.ttf" }
 
+    Image {
+        id: background
+        source: "/resources/images/general/background.jpg"
+        visible: false
+        anchors.fill: parent
+    }
+    FastBlur {
+        id: backgroundBlur
+        source: background
+        radius: 32
+        visible: false
+        anchors.fill: background
+    }
+
     Rectangle {
         id: screen
-        color: "white"
+        color: Qt.rgba(0, 0, 0, 0.6)
         anchors.fill: parent
 
         Loader {
@@ -113,13 +128,19 @@ Item {
             },
             Transition {
                 to: "showHelp"
-                NumberAnimation { target: root; easing.amplitude: 1.7; properties: "xtransition"; to: 0; duration: 1100; easing.type: Easing.OutQuart }
+                ParallelAnimation {
+                    NumberAnimation { target: root; easing.amplitude: 1.7; properties: "xtransition"; to: 0; duration: 1100; easing.type: Easing.OutQuart }
+                    NumberAnimation { target: backgroundBlur; easing.amplitude: 1.7; properties: "radius"; to: 96; duration: 2000; easing.type: Easing.OutQuart }
+                }
             },
             Transition {
                 to: "hideHelp"
                 SequentialAnimation {
                     PropertyAction { target: root; property: "hideHelp"; value: true }
-                    NumberAnimation { target: root; easing.amplitude: 1.7; properties: "xtransition"; to: screen.width; duration: 1100; easing.type: Easing.OutQuart }
+                    ParallelAnimation {
+                        NumberAnimation { target: root; easing.amplitude: 1.7; properties: "xtransition"; to: screen.width; duration: 1100; easing.type: Easing.OutQuart }
+                        NumberAnimation { target: backgroundBlur; easing.amplitude: 1.7; properties: "radius"; to: 0; duration: 2100; easing.type: Easing.OutQuart }
+                    }
                     PropertyAction { target: root_loader_A; property: "source"; value: "" }
                     PropertyAction { target: root_loader_B; property: "focus"; value: true }
                     PropertyAction { target: root; property: "hideHelp"; value: false }
@@ -135,7 +156,11 @@ Item {
             welcome = true
         }
         onSignal_require_password: { root_loader_A.source = "AskPassword.qml" }
-        onSignal_show_update: { root_loader_A.source = "Update.qml" }
+        onSignal_show_update: {
+            background.visible = true
+            backgroundBlur.visible = true
+            root_loader_A.source = "Update.qml"
+        }
         onSignal_show_news: {
             root.binaryNews = binaryNews
             root.databaseNews = databaseNews
