@@ -60,11 +60,11 @@ Rectangle {
     states: [
         State {
             name: "in"
-            PropertyChanges {target: inColor; running: true}
+            PropertyChanges { target: inColor; running: true }
         },
         State {
             name: "out"
-            PropertyChanges {target: outColor; running: true}
+            PropertyChanges { target: outColor; running: true }
         }
     ]
     transitions: [
@@ -90,7 +90,7 @@ Rectangle {
 
     Keys.onPressed: {
         if (event.key === Qt.Key_Escape) {
-            finder.state = "hideFilter"
+            finder.state = "hide_filter"
             event.accepted = true
         } else if (event.key === Qt.Key_Q && (event.modifiers & Qt.ControlModifier)) {
             root.signal_qml_quit()

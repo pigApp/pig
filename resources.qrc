@@ -4,8 +4,7 @@
         <file>resources/images/general/icon.png</file>
         <file>resources/images/general/icon.rc</file>
         <file>resources/images/general/background.jpg</file>
-        <file>resources/images/network/icon_default.svg</file>
-        <file>resources/images/network/icon_download.svg</file>
+        <file>resources/images/network/icon.svg</file>
         <file>resources/images/network/icon_ERROR.svg</file>
         <file>resources/images/finder/selectors/more.svg</file>
         <file>resources/images/finder/selectors/sd.svg</file>
@@ -16,17 +15,16 @@
         <file>resources/images/finder/filters/categories/DOUBLE.jpg</file>
         <file>resources/images/finder/filters/categories/GANGBANG.jpg</file>
         <file>resources/images/finder/filters/pornstars/BELLADONNA.jpg</file>
-        <file>resources/images/output/open.png</file>
-        <file>resources/images/output/preview/network/icon.png</file>
-        <file>resources/images/output/preview/replay.png</file>
-        <file>resources/images/output/NOT_AVAILABLE/poster_NOT_AVAILABLE.png</file>
-        <file>resources/images/output/NOT_AVAILABLE/cover_NOT_AVAILABLE.png</file>
+        <file>resources/images/viewer/open.png</file>
+        <file>resources/images/viewer/preview/network/icon.png</file>
+        <file>resources/images/viewer/preview/replay.png</file>
+        <file>resources/images/viewer/NOT_AVAILABLE/poster_NOT_AVAILABLE.png</file>
+        <file>resources/images/viewer/NOT_AVAILABLE/cover_NOT_AVAILABLE.png</file>
         <file>resources/fonts/pig.ttf</file>
         <file>resources/fonts/finder.ttf</file>
     </qresource>
     <qresource prefix="QML">
         <file>src/qml/main.qml</file>
-        <file>src/qml/Welcome.qml</file>
         <file>src/qml/AskPassword.qml</file>
         <file>src/qml/Network.qml</file>
         <file>src/qml/Update.qml</file>
@@ -38,7 +36,7 @@
         <file>src/qml/Button.qml</file>
         <file>src/qml/ButtonFilter.qml</file>
         <file>src/qml/Filters.qml</file>
-        <file>src/qml/Output.qml</file>
+        <file>src/qml/Viewer.qml</file>
         <file>src/qml/Preview.qml</file>
         <file>src/qml/ButtonScene.qml</file>
         <file>src/qml/TorrentInformation.qml</file>

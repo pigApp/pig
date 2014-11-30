@@ -70,8 +70,6 @@ void Update::get(const QString *const host, const QStringList *const urls, const
         connect (mSocket, SIGNAL(signal_ret_files(const QString *const, const QStringList *const)), this,
                           SLOT(unzip_files(const QString *const, const QStringList *const)));
         connect (mSocket, SIGNAL(signal_fail_socket()), this, SLOT(error()));
-    } else if (request == "UPDATE") {
-        (*_root)->setProperty("downloadNetwork", true);
     }
     mSocket->host = *host;
     mSocket->urls = *urls;
@@ -113,7 +111,6 @@ void Update::check_versions(const QString *const str)
 void Update::unzip_files(const QString *const path, const QStringList *const files)
 {
     (*_root)->setProperty("showNetwork", false);
-    (*_root)->setProperty("downloadNetwork", false);
 
     Unzip mUnzip;
     if (mUnzip.unzip(&path, &files, &sums)) {
@@ -155,10 +152,8 @@ void Update::update_files()
         if (file.exists(target))
             file.rename(target, target_backup);
         if (file.copy(origin, target)) {
-            if (!binaryAvailable && !libraryAvailable) {
-                (*_root)->setProperty("downloadNetwork", false);
+            if (!binaryAvailable && !libraryAvailable)
                 emit signal_continue();
-            }
         } else {
             (*_root)->setProperty("status", "FAIL");
             (*_root)->setProperty("information", "TRY LATER");
@@ -218,7 +213,7 @@ void Update::check_exit(int exitCode)
         (*_root)->setProperty("information", "RESTART PIG");
     } else if (exitCode == -1) {
         (*_root)->setProperty("status", "FAIL");
-        (*_root)->setProperty("information", "INSTALL GKSU/KDESU");
+        (*_root)->setProperty("information", "GKSU_KDESU NEEDED");
         QTimer::singleShot(10000, this, SLOT(error()));
     } else {
         (*_root)->setProperty("status", "FAIL");
@@ -256,8 +251,6 @@ void Update::check_exit(int exitCode)
 
 void Update::error()
 {
-    (*_root)->setProperty("downloadNetwork", false);
-
     QFile file;
     QString target;
 

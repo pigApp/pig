@@ -53,7 +53,7 @@ Item {
         onSignal_fail_password: {
             input.visible = false
             label.color = Qt.rgba(0.1, 0.1, 0.1, 1)
-            label.text = "WRONG"
+            label.text = "WRONG PASSWORD"
         }
     }
 

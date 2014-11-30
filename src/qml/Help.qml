@@ -2,7 +2,7 @@ import QtQuick 2.3
 
 Item {
     id: help
-    x: root.xtransition
+    x: root.xA
     width: screen.width
     height: screen.height
 
@@ -28,7 +28,6 @@ Item {
         anchors.margins: parent.width/640
         anchors.topMargin: 90
         anchors.fill: parent
-
         Item {
             id: helpPig
             width: parent.width/4
@@ -53,12 +52,12 @@ Item {
                 }
                 Text {
                     text: "<style type='text/css'> a:link{color:#808080;font-style:normal;text-decoration:none} </style>"+
-                          "CODE &nbsp; <a href=\'http://google.com\'>GITHUB.COM/PIGAPP <font color='#ff0000'>➟<font/></a><br/>"+
-                          "TORRENTS &nbsp; <a href=\'http://clarin.com\'>GITHUB.COM/PIGAPP/TORRENT <font color='#ff0000'>➟<font/></a><br/>"+
-                          "TRANSLATIONS &nbsp; <a href=\'http://google.com\'>GITHUB.COM/PIGAPP/TRS <font color='#ff0000'>➟<font/></a><br/>"+
+                          "CODE &nbsp; <a href=\'http://google.com\'>GITHUB.COM/PIGAPP <font color='#ff0000'>➟</font></a><br/>"+
+                          "TORRENTS &nbsp; <a href=\'http://clarin.com\'>GITHUB.COM/PIGAPP/TORRENT <font color='#ff0000'>➟</font></a><br/>"+
+                          "TRANSLATIONS &nbsp; <a href=\'http://google.com\'>GITHUB.COM/PIGAPP/TRS <font color='#ff0000'>➟</font></a><br/>"+
                           "BTC &nbsp; <font color='#808080'>1LtU9rMsQ41rCqsJAvMtw89TA5XT2dW7f9</font><br/>"+
-                          "BUGS &nbsp; <a href=\'http://google.com\'>GITHUB.COM/PIGAPP/BUGS <font color='#ff0000'>➟<font/></a><br/>"+
-                          "SHARE &nbsp; <a href=\'http://google.com\'>PIG.NET <font color='#ff0000'>➟<font/></a><br/>"+
+                          "BUGS &nbsp; <a href=\'http://google.com\'>GITHUB.COM/PIGAPP/BUGS <font color='#ff0000'>➟</font></a><br/>"+
+                          "SHARE &nbsp; <a href=\'http://google.com\'>PIG.NET <font color='#ff0000'>➟</font></a><br/>"+
                           "CONTACT &nbsp; <font color='#808080'>PIG@MAIL.COM</font><br/><br/>"
                     color: "white"
                     font.family: pigFont.name
@@ -269,7 +268,7 @@ Item {
                           "<font color='#808080'>The movies are not downloaded</font><br/>"+
                           "You probably have blocked the ports used<br/>"+
                           "by BitTorrent in your firewall or ISP.<br/>"+
-                          "<a href=\'http://google.com\'>Read more <font color='#ff0000'>➟<font/></a><br/><br/>"
+                          "<a href=\'http://google.com\'>Read more <font color='#ff0000'>➟</font></a><br/><br/>"
                     color: "white"
                     font.family: pigFont.name
                     font.bold: true
@@ -289,7 +288,7 @@ Item {
                           "<font color='#808080'>The movies do not play</font><br/>"+
                           "You probably do not have installed<br/>"+
                           "the necessary video codecs.<br/>"+
-                          "<a href=\'http://google.com\'>Read more <font color='#ff0000'>➟<font/></a><br/><br/>"
+                          "<a href=\'http://google.com\'>Read more <font color='#ff0000'>➟</font></a><br/><br/>"
                     color: "white"
                     font.family: pigFont.name
                     font.bold: true
@@ -312,13 +311,8 @@ Item {
 
     Keys.onPressed: {
         if (event.key === Qt.Key_Escape) {
-            if (root.welcome) {
-                screen.state = "hideWelcome"
-                event.accepted = true;
-            } else {
-                screen.state = "hideHelp"
-                event.accepted = true;
-            }
+            screen.state = "hide_help"
+            event.accepted = true;
         } else if (event.key === Qt.Key_Q && (event.modifiers & Qt.ControlModifier)) {
             root.signal_qml_quit()
             event.accepted = true;

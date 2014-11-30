@@ -25,11 +25,11 @@ VideoPlayer::VideoPlayer(QVideoWidget *parent, const QString *absoluteFilePath) 
     player->setMedia(QUrl::fromLocalFile(*absoluteFilePath));
     player->play();
 
-    QRect rec = QApplication::desktop()->screenGeometry();
+    QRect rec = QApplication::desktop()->screenGeometry();// FIX: Ver si Desktop funciona en tv.
     screenWidth = rec.width();
     screenHeight = rec.height();
 
-    QFont font("/resources/fonts/pig.ttf", screenHeight/46.95);
+    QFont font("/resources/fonts/pig.ttf", screenHeight/46.95); // FIX: Revisar. En tv se ve mal.
 
     QVBoxLayout *boxLayout = new QVBoxLayout;
     boxLayout->setAlignment(Qt::AlignRight|Qt::AlignVCenter);

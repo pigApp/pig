@@ -155,32 +155,30 @@ void PIG::start_pig()
 #endif
             QFile file;
             if (file.exists(init)) {
-                file.rename(init, tmp+"init.trash");
-                emit signal_show_welcome();
-            } else {
-                file.setFileName(news);
-                if (file.exists()) {
-                    file.open(QIODevice::ReadOnly|QIODevice::Text);
-                    bool binaryData = true;
-                    QString binaryNews;
-                    QString databaseNews;
-                    QTextStream in(&file);
-                    while (!in.atEnd()) {
-                        const QString line = in.readLine();
-                        if (!line.isEmpty()) {
-                            if (binaryData)
-                                binaryNews.append(line+"\n");
-                            else
-                                databaseNews.append(line+"\n");
-                        } else {
-                            binaryData = false;
-                        }
-                    }
-                    file.rename(tmp+"news.trash");
-                    emit signal_show_news(binaryNews, databaseNews);
-                } else {
-                    emit signal_show_finder();
+                //file.rename(init, tmp+"init.trash");
+                mRoot->setProperty("init", true);
+            }
+            file.setFileName(news);
+            if (file.exists()) {
+                file.open(QIODevice::ReadOnly|QIODevice::Text);
+                bool binaryData = true;
+                QString binaryNews;
+                QString databaseNews;
+                QTextStream in(&file);
+                while (!in.atEnd()) {
+                    const QString line = in.readLine();
+                    if (!line.isEmpty())
+                        if (binaryData)
+                            binaryNews.append(line+"\n");
+                        else
+                            databaseNews.append(line+"\n");
+                    else
+                        binaryData = false;
                 }
+                file.rename(tmp+"news.trash");
+                emit signal_show_news(binaryNews, databaseNews);
+            } else {
+                emit signal_show_finder();
             }
         }
     } else {
@@ -301,12 +299,12 @@ void PIG::find(const QString input, const QString pornstar, const QString catego
             }
             db.close();
             if (!query.last() && init) {
-                emit signal_no_result();
+                emit signal_ret_db(0, dataFilms, false);
             } else {
                 if (init)
-                    emit signal_show_output(i, dataFilms);
+                    emit signal_ret_db(i, dataFilms, false);
                 else
-                    emit signal_success_update_data(i, dataFilms);
+                    emit signal_ret_db(i, dataFilms, true);
             }
         }
     } else {

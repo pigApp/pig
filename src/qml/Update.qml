@@ -4,7 +4,7 @@ Item {
     id: update
 
     Loader {
-        id: loaderNetwork
+        id: network_loader
         source: "Network.qml"
         asynchronous: true
         active: root.showNetwork
@@ -25,12 +25,7 @@ Item {
         Text {
             id: informationLabel
             text: root.information
-            color: {
-                if (statusLabel.text !== "FAIL")
-                    "white"
-                else
-                    Qt.rgba(0.1, 0.1, 0.1, 1)
-            }
+            color: "white"
             font.family: pigFont.name
             font.pixelSize: screen.height/23
         }

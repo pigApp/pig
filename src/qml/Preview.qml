@@ -15,7 +15,7 @@ Item {
 
     Rectangle {
         id: translucentLayer
-        color: Qt.rgba(1, 1, 1, 0)
+        color: Qt.rgba(1, 1, 1, 0.5)
         anchors.fill: parent
         MouseArea {
             onClicked: {
@@ -65,7 +65,7 @@ Item {
             } else {
                 icon.visible = false
                 icon.enabled = false
-                icon.source = "/resources/images/output/preview/replay.png"
+                icon.source = "/resources/images/viewer/preview/replay.png"
                 player.opacity = 1
             }
         }
@@ -98,7 +98,7 @@ Item {
         height: screen.height/12.70
         sourceSize.width: screen.width/22.58
         sourceSize.height: screen.height/12.70
-        source: "/resources/images/output/preview/network/icon.png"
+        source: "/resources/images/viewer/preview/network/icon.png"
         opacity: 0.4
         visible: false
         enabled: false

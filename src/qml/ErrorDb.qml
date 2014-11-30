@@ -1,38 +1,31 @@
 import QtQuick 2.3
 
-Item {
-    id: errorDatabaseMessage
+Rectangle {
+    id: errorDatabase
+    color: "black"
+    anchors.fill: parent
 
-    Rectangle {
-        id: layer
-        width: parent.width
-        height: parent.height/4
-        color: "black"
+    Text {
+        id: errorDatabaseLabel
+        text: "DATABASE CORRUPTED"
+        color: Qt.rgba(0.1, 0.1, 0.1, 1)
+        font.family: pigFont.name
+        font.pixelSize: screen.height/23
         anchors.centerIn: parent
-        Column {
-            id: errorColumn
-            spacing: parent.height/216
-            anchors.centerIn: parent
-            Text {
-                id: errorInformationLabel
-                text: "DATABASE IS CORRUPTED"
-                color: "white"
-                font.family: pigFont.name
-                font.pixelSize: screen.height/23
-            }
-            Text {
-                id: getDbInformationLabel
-                text:"<style type='text/css'> a:link{color:#808080;font-style:normal;text-decoration:none} </style>"+
-                     "GET LATEST DATABASE &nbsp;<a href=\'http://google.com\'>DL.BINTRAY.COM/DB <font color='#ff0000'>➟<font/></a>" // TODO: Url real db.
-                color: "gray"
-                font.family: pigFont.name
-                font.bold: true
-                font.pixelSize: screen.height/54
-                textFormat: Text.RichText
-                onLinkActivated: Qt.openUrlExternally(link)
-                anchors.horizontalCenter: errorInformationLabel.horizontalCenter
-            }
-        }
+    }
+    Text {
+        id: getDatabase
+        text: "<style type='text/css'> a:link{color:#161616;font-style:normal;text-decoration:none} </style>"+
+              "GET LATEST DATABASE &nbsp; <a href=\'http://google.com\'>DL.BINTRAY.COM/DB <font color='#007f00'>➟</font></a>"
+        color: "white"
+        font.family: pigFont.name
+        font.bold: true
+        font.pixelSize: screen.height/54
+        textFormat: Text.RichText
+        onLinkActivated: Qt.openUrlExternally(link)
+        anchors.horizontalCenter: parent.horizontalCenter
+        anchors.bottom: parent.bottom
+        anchors.bottomMargin: parent.height/54
     }
 
     Keys.onPressed: {
@@ -42,5 +35,5 @@ Item {
         }
     }
 
-    Component.onCompleted: errorDatabaseMessage.forceActiveFocus()
+    Component.onCompleted: errorDatabase.forceActiveFocus()
 }

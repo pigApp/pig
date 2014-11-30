@@ -4,14 +4,9 @@ import QtGraphicalEffects 1.0
 Item {
     id: root
 
-    property bool welcome
+    property bool init
     property bool showNetwork
-    property bool downloadNetwork
     property bool errorNetwork
-    property bool showUserInputLabel
-    property bool hideHelp
-    property bool hideFinder_showOutput
-    property bool hideFilters_hideFinder_showOutput
     property bool stopPreview
     property string status
     property string information
@@ -26,7 +21,8 @@ Item {
     property string quality: ""
     property string full: ""
     property string bitRate: ""
-    property int xtransition: screen.width
+    property int xA: screen.width
+    property int xB: 0
     property int nFilms
     property int totalFilms
     property int screenWidth
@@ -84,66 +80,78 @@ Item {
 
         states: [
             State {
-                name: "showWelcome"
-                PropertyChanges { target: root_loader_A; source: "Welcome.qml" }
+                name: "show_askPassword"
+                PropertyChanges { target: root_loader_A; source: "AskPassword.qml"; restoreEntryValues: false }
             },
             State {
-                name: "hideWelcome"
+                name: "show_update"
+                PropertyChanges { target: background; visible: true; restoreEntryValues: false }
+                PropertyChanges { target: backgroundBlur; visible: true; restoreEntryValues: false }
+                PropertyChanges { target: root_loader_A; source: "Update.qml"; restoreEntryValues: false }
             },
             State {
-                name: "showNews"
-                PropertyChanges { target: root_loader_A; source: "News.qml" }
+                name: "show_news"
+                PropertyChanges { target: backgroundBlur; radius: 64; restoreEntryValues: false }
+                PropertyChanges { target: root_loader_A; source: "News.qml"; restoreEntryValues: false }
             },
             State {
-                name: "hideNews"
-                PropertyChanges { target: root_loader_A; source: "" }
-                PropertyChanges { target: root_loader_B; source: "Finder.qml" }
+                name: "hide_news"
+                PropertyChanges { target: root_loader_A; source: ""; restoreEntryValues: false }
+                PropertyChanges { target: root_loader_B; source: "Finder.qml"; restoreEntryValues: false }
             },
             State {
-                name: "showSetPassword"
-                PropertyChanges { target: root_loader_A; source: "SetPassword.qml" }
+                name: "show_finder"
+                PropertyChanges { target: root; pornstar: ""; restoreEntryValues: false }
+                PropertyChanges { target: root; category: ""; restoreEntryValues: false }
+                PropertyChanges { target: root_loader_A; source: ""; restoreEntryValues: false }
+                PropertyChanges { target: root_loader_B; source: "Finder.qml"; restoreEntryValues: false }
+                PropertyChanges { target: root; xB: 0; restoreEntryValues: false }
             },
             State {
-                name: "hideSetPassword"
-                PropertyChanges { target: root_loader_A; source: "" }
+                name: "show_help"
+                PropertyChanges { target: root_loader_A; source: "Help.qml"; restoreEntryValues: false }
             },
             State {
-                name: "showHelp"
-                PropertyChanges { target: root_loader_A; source: "Help.qml" }
+                name: "hide_help"
             },
             State {
-                name: "hideHelp"
+                name: "show_setPassword"
+                PropertyChanges { target: root_loader_A; source: "SetPassword.qml"; restoreEntryValues: false }
+            },
+            State {
+                name: "hide_setPassword"
+                PropertyChanges { target: root_loader_A; source: ""; restoreEntryValues: false }
+            },
+            State {
+                name: "show_viewer"
+                PropertyChanges { target: root; xB: screen.width+50 }
+                PropertyChanges { target: root_loader_B; source: "Viewer.qml"; restoreEntryValues: false }
+            },
+            State {
+                name: "show_errorDb"
+                PropertyChanges { target: root_loader_B; source: ""; restoreEntryValues: false }
+                PropertyChanges { target: root_loader_A; source: "ErrorDb.qml"; restoreEntryValues: false }
             }
         ]
         transitions: [
             Transition {
-                to: "hideWelcome"
-                SequentialAnimation {
-                    PropertyAction { target: root_loader_B; property: "source"; value: "Finder.qml" }
-                    NumberAnimation { target: root; easing.amplitude: 1.7; properties: "xtransition"; to: screen.width; duration: 1100; easing.type: Easing.OutQuart }
-                    PropertyAction { target: root_loader_A; property: "source"; value: "" }
-                    PropertyAction { target: root; property: "showUserInputLabel"; value: true }
-                    PropertyAction { target: root; property: "welcome"; value: false }
-                }
-            },
-            Transition {
-                to: "showHelp"
+                to: "show_help"
                 ParallelAnimation {
-                    NumberAnimation { target: root; easing.amplitude: 1.7; properties: "xtransition"; to: 0; duration: 1100; easing.type: Easing.OutQuart }
+                    NumberAnimation { target: root; easing.amplitude: 1.7; properties: "xA"; to: 0; duration: 1100; easing.type: Easing.OutQuart }
+                    NumberAnimation { target: root; easing.amplitude: 1.7; properties: "xB"; to: -screen.width; duration: 1100; easing.type: Easing.OutQuart }
                     NumberAnimation { target: backgroundBlur; easing.amplitude: 1.7; properties: "radius"; to: 96; duration: 2000; easing.type: Easing.OutQuart }
                 }
             },
             Transition {
-                to: "hideHelp"
+                to: "hide_help"
                 SequentialAnimation {
-                    PropertyAction { target: root; property: "hideHelp"; value: true }
                     ParallelAnimation {
-                        NumberAnimation { target: root; easing.amplitude: 1.7; properties: "xtransition"; to: screen.width; duration: 1100; easing.type: Easing.OutQuart }
+                        NumberAnimation { target: root; easing.amplitude: 1.7; properties: "xA"; to: screen.width; duration: 1100; easing.type: Easing.OutQuart }
+                        NumberAnimation { target: root; easing.amplitude: 1.7; properties: "xB"; to: 0; duration: 1100; easing.type: Easing.OutQuart }
                         NumberAnimation { target: backgroundBlur; easing.amplitude: 1.7; properties: "radius"; to: 0; duration: 2100; easing.type: Easing.OutQuart }
                     }
                     PropertyAction { target: root_loader_A; property: "source"; value: "" }
                     PropertyAction { target: root_loader_B; property: "focus"; value: true }
-                    PropertyAction { target: root; property: "hideHelp"; value: false }
                 }
             }
         ]
@@ -151,36 +159,33 @@ Item {
 
     Connections {
         target: cppSignals
-        onSignal_show_welcome: {
-            screen.state = "showWelcome"
-            welcome = true
+        onSignal_require_password: {
+            screen.state = "show_askPassword"
         }
-        onSignal_require_password: { root_loader_A.source = "AskPassword.qml" }
         onSignal_show_update: {
-            background.visible = true
-            backgroundBlur.visible = true
-            root_loader_A.source = "Update.qml"
+            screen.state = "show_update"
         }
         onSignal_show_news: {
             root.binaryNews = binaryNews
             root.databaseNews = databaseNews
-            screen.state = "showNews"
+            screen.state = "show_news"
         }
         onSignal_show_finder: {
-            root_loader_A.source = ""
-            root_loader_B.source = "Finder.qml"
+            screen.state = "show_finder"
         }
-        onSignal_show_output: {
+        onSignal_ret_db: {
             root.nFilms = nFilms
             root.dataFilms = dataFilms
-            if (pornstar !== "" || category !== "")
-                hideFilters_hideFinder_showOutput = true
-            else
-                hideFinder_showOutput = true
+            if (nFilms !== 0 && !updateData)
+                if (pornstar !== "" || category !== "")
+                    root_loader_B.item.state = "hide_filter_finder"
+                else
+                   root_loader_B.item.state = "hide"
+            else if (updateData)
+                root_loader_B.item.appendData()
         }
         onSignal_show_errorDatabase: {
-            root_loader_B.source = ""
-            root_loader_A.source = "ErrorDb.qml"
+            screen.state = "show_errorDb"
         }
     }
 }

@@ -30,17 +30,14 @@ public slots:
 
 signals:
     void signal_require_password();
-    void signal_success_password();
     void signal_fail_password();
+    void signal_success_password();
     void signal_show_update();
-    void signal_show_welcome();
     void signal_show_news(const QString binaryNews, const QString databaseNews);
     void signal_show_finder();
-    void signal_no_result();
-    void signal_show_output(int nFilms, QStringList dataFilms);
-    void signal_success_update_data(int nFilms, QStringList dataFilms);
-    void signal_success_preview(const QString path, const int id);
+    void signal_ret_db(int nFilms, QStringList dataFilms, bool updateData);
     void signal_fail_preview(const int id);
+    void signal_success_preview(const QString path, const int id);
     void signal_checking_file();
     void signal_file_ready();
     void signal_hide_torrent_information();

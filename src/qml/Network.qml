@@ -6,20 +6,19 @@ Item {
     Image {
         id: icon
         width: parent.width/30
-        height: parent.height/16.87
+        height: parent.height/25.35
         sourceSize.width: parent.width/30
-        sourceSize.height: parent.height/16.87
+        sourceSize.height: parent.height/25.35
         source:  {
-            if (root.downloadNetwork)
-                "/resources/images/network/icon_download.svg"
-            else if (root.errorNetwork)
-                "/resources/images/network/icon_ERROR.svg"
+            if (!root.errorNetwork)
+                "/resources/images/network/icon.svg"
             else
-                "/resources/images/network/icon_default.svg"
+                "/resources/images/network/icon_ERROR.svg"
         }
         anchors.right: parent.right
         anchors.rightMargin: parent.width/128
         anchors.bottom: parent.bottom
+        anchors.bottomMargin: parent.height/108
         onSourceChanged: {
             if (root.errorNetwork)
                 backDelay.start()
@@ -32,9 +31,8 @@ Item {
         repeat: false
         interval: 5000
         onTriggered: {
-            root_loader_B.source = "Finder.qml"
             root.errorNetwork = false
-            root_loader_A.source = ""
+            screen.state = "show_finder"
         }
     }
 }

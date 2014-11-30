@@ -1,3 +1,4 @@
+- Agregar boton ok-skip update.
 - FIX: Al entrar a finder cuando hay news, si abro help, al cerrarlo no vuelve a mostrar finder.
 - FIX: Focus en previewBox (Focus ya resuelto en output y torrentInformation)
 - Agregar UNSIGNED SHORT a int

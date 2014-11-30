@@ -30,13 +30,13 @@ Item {
             onClicked: {
                 if (!onShowSelectors) {
                     onShowSelectors = true
-                    selectors.state = "showSelectors"
+                    selectors.state = "show_selectors"
                 } else {
                     onShowSelectors = false
                     if (root.full === "FULL" || root.quality !== "")
-                        selectors.state = "hideActiveSelectors"
+                        selectors.state = "hide_active_selectors"
                     else
-                        selectors.state = "hideSelectors"
+                        selectors.state = "hide_selectors"
                 }
             }
             anchors.fill: parent
@@ -134,8 +134,6 @@ Item {
         }
     }
 
-
-
     states: [
         State {
             name: "in"
@@ -144,13 +142,13 @@ Item {
             name: "out"
         },
         State {
-            name: "showSelectors"
+            name: "show_selectors"
         },
         State {
-            name: "hideSelectors"
+            name: "hide_selectors"
         },
         State {
-            name: "hideActiveSelectors"
+            name: "hide_active_selectors"
         }
     ]
     transitions: [
@@ -163,21 +161,21 @@ Item {
             NumberAnimation { target: moreShadow; easing.amplitude: 1.7; properties: "opacity"; to: 0; duration: 100; easing.type: Easing.OutQuart }
         },
         Transition {
-            to: "showSelectors"
+            to: "show_selectors"
             SequentialAnimation {
                 NumberAnimation { target: moreShadow; easing.amplitude: 1.7; properties: "opacity"; to: 0.5; duration: 100; easing.type: Easing.OutQuart }
                 NumberAnimation { target: selectorsRow; properties: "opacity"; to: 1.0; duration: 200; easing.type: Easing.InOutQuart }
             }
         },
         Transition {
-            to: "hideSelectors"
+            to: "hide_selectors"
             SequentialAnimation {
                 NumberAnimation { target: selectorsRow; properties: "opacity"; to: 0; duration: 200; easing.type: Easing.InOutQuart }
                 NumberAnimation { target: moreShadow; easing.amplitude: 1.7; properties: "opacity"; to: 0.5; duration: 100; easing.type: Easing.OutQuart }
             }
         },
         Transition {
-            to: "hideActiveSelectors"
+            to: "hide_active_selectors"
             NumberAnimation { target: selectorsRow; properties: "opacity"; to: 0; duration: 200; easing.type: Easing.InOutQuart }
         }
     ]
@@ -185,7 +183,7 @@ Item {
     Component.onCompleted: {
         if (root.full === "FULL" || root.quality !== "") {
             onShowSelectors = true
-            selectors.state = "showSelectors"
+            selectors.state = "show_selectors"
         }
     }
 }

@@ -6,7 +6,6 @@ Rectangle {
     height: screen.height/12.70
     color: "transparent"
 
-    property bool enter
     property string magnet
     property int scene
     property int size: screen.height/12.70
@@ -15,14 +14,14 @@ Rectangle {
         id: icon
         width: size
         height: size
-        source: "/resources/images/output/open.png"
+        source: "/resources/images/viewer/open.png"
         smooth: true
         anchors.centerIn: parent
     }
     MouseArea {
         hoverEnabled: true
-        onEntered: { enter = true }
-        onHoveredChanged: { enter = false }
+        onEntered: inEffect.start()
+        onHoveredChanged: outEffect.start()
         onClicked: {
             if (!showTorrentInformation) {
                 showTorrentInformation = true
@@ -30,14 +29,6 @@ Rectangle {
             }
         }
         anchors.fill: parent
-    }
-    onEnterChanged: {
-        if (enter) {
-            inEffect.start()
-        } else {
-            inEffect.stop()
-            outEffect.start()
-        }
     }
 
     NumberAnimation { id: inEffect; target: buttonScenne; properties: "size"; to: screen.height/12; duration: 200; easing.type: Easing.InOutQuart }

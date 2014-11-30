@@ -41,7 +41,7 @@ Item {
             }
             Keys.onPressed: {
                 if (event.key === Qt.Key_Escape) {
-                    screen.state = "hideSetPassword"
+                    screen.state = "hide_setPassword"
                     event.accepted = true
                 } else if (event.key === Qt.Key_Q && (event.modifiers & Qt.ControlModifier)) {
                     root.signal_qml_quit()
@@ -54,7 +54,7 @@ Item {
             running: false
             repeat: false
             interval: 3000
-            onTriggered: { screen.state = "hideSetPassword" }
+            onTriggered: { screen.state = "hide_setPassword" }
         }
     }
 
@@ -62,11 +62,11 @@ Item {
         target: cppSignals
         onSignal_success_password: {
             label.text = ""
-            screen.state = "hideSetPassword"
+            screen.state = "hide_setPassword"
         }
         onSignal_fail_password: {
             label.color = Qt.rgba(0.1, 0.1, 0.1, 1)
-            label.text = "FAIL TRY LATER"
+            label.text = "FAIL CHECK PERMISSIONS"
             hide.start()
         }
     }
