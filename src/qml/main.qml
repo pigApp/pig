@@ -5,6 +5,7 @@ Item {
     id: root
 
     property bool init
+    property bool askPassword
     property bool showNetwork
     property bool errorNetwork
     property bool stopPreview
@@ -80,11 +81,17 @@ Item {
 
         states: [
             State {
-                name: "show_askPassword"
-                PropertyChanges { target: root_loader_A; source: "AskPassword.qml"; restoreEntryValues: false }
+                name: "show_password"
+                PropertyChanges { target: root_loader_A; source: "Password.qml"; restoreEntryValues: false }
+            },
+            State {
+                name: "hide_password"
+                PropertyChanges { target: root_loader_A; source: ""; restoreEntryValues: false }
+                PropertyChanges { target: root_loader_B; focus: true; restoreEntryValues: false }
             },
             State {
                 name: "show_update"
+                PropertyChanges { target: root; askPassword: false; restoreEntryValues: false }
                 PropertyChanges { target: background; visible: true; restoreEntryValues: false }
                 PropertyChanges { target: backgroundBlur; visible: true; restoreEntryValues: false }
                 PropertyChanges { target: root_loader_A; source: "Update.qml"; restoreEntryValues: false }
@@ -113,14 +120,6 @@ Item {
             },
             State {
                 name: "hide_help"
-            },
-            State {
-                name: "show_setPassword"
-                PropertyChanges { target: root_loader_A; source: "SetPassword.qml"; restoreEntryValues: false }
-            },
-            State {
-                name: "hide_setPassword"
-                PropertyChanges { target: root_loader_A; source: ""; restoreEntryValues: false }
             },
             State {
                 name: "show_viewer"
@@ -160,7 +159,8 @@ Item {
     Connections {
         target: cppSignals
         onSignal_require_password: {
-            screen.state = "show_askPassword"
+            askPassword = true
+            screen.state = "show_password"
         }
         onSignal_show_update: {
             screen.state = "show_update"

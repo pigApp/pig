@@ -8,23 +8,23 @@ Item {
 
     Image {
         id: more
-        width: 56 // TODO: ver el tamaño y pasarlo a parent.width/...
-        height: 56
-        sourceSize.width: 56
-        sourceSize.height: 56
+        width: parent.width/45.71
+        height: parent.height/60
+        sourceSize.width: parent.width/45.71
+        sourceSize.height: parent.height/60
         source: "/resources/images/finder/selectors/more.svg"
         anchors.left: parent.left
-        anchors.leftMargin: parent.width/40.27
+        anchors.leftMargin: parent.width/42.47
         anchors.verticalCenter: parent.verticalCenter
-        anchors.verticalCenterOffset: parent.height/23.85
+        anchors.verticalCenterOffset: parent.height/19.63
         MouseArea {
             hoverEnabled: true
             onEntered: {
-                if (!onShowSelectors)
+                if (!onShowSelectors && root.full === "" && root.quality === "")
                     selectors.state = "in"
             }
             onHoveredChanged: {
-                if (!onShowSelectors)
+                if (!onShowSelectors && root.full === "" && root.quality === "")
                     selectors.state = "out"
             }
             onClicked: {
@@ -32,8 +32,7 @@ Item {
                     onShowSelectors = true
                     selectors.state = "show_selectors"
                 } else {
-                    onShowSelectors = false
-                    if (root.full === "FULL" || root.quality !== "")
+                    if (root.full !== "" || root.quality !== "")
                         selectors.state = "hide_active_selectors"
                     else
                         selectors.state = "hide_selectors"
@@ -56,18 +55,22 @@ Item {
         id: selectorsRow
         spacing: parent.width/384
         opacity: 0
-        anchors.left: parent.left
-        anchors.leftMargin: parent.width/40.27
-        anchors.verticalCenter: parent.verticalCenter
-        anchors.verticalCenterOffset: 93//parent.height/14.63
+        anchors.left: more.right
+        anchors.leftMargin: parent.width/384
+        anchors.top: more.bottom
+        anchors.topMargin: -screen.height/67.5
         Image {
             id: fullMovie
-            width: 64
-            height: 64
-            sourceSize.width: 64
-            sourceSize.height: 64
-            source: "/resources/images/finder/selectors/sd.svg"
-            opacity: { if (root.full === "FULL") 1; else 0.7 }
+            width: screen.width/35.55
+            height: screen.height/41.65
+            sourceSize.width: screen.width/35.55
+            sourceSize.height: screen.height/41.65
+            source: {
+                if (root.full === "FULL")
+                    "/resources/images/finder/selectors/full_ON.svg"
+                else
+                    "/resources/images/finder/selectors/full.svg"
+            }
             MouseArea {
                 onClicked: {
                     if (root.full === "FULL")
@@ -80,12 +83,16 @@ Item {
         }
         Image {
             id: standard
-            width: 64
-            height: 64
-            sourceSize.width: 64
-            sourceSize.height: 64
-            source: "/resources/images/finder/selectors/sd.svg"
-            opacity: { if (root.quality === "SD") 1; else 0.7 }
+            width: screen.width/35.55
+            height: screen.height/41.65
+            sourceSize.width: screen.width/35.55
+            sourceSize.height: screen.height/41.65
+            source: {
+                if (root.quality === "SD")
+                    "/resources/images/finder/selectors/sd_ON.svg"
+                else
+                    "/resources/images/finder/selectors/sd.svg"
+            }
             MouseArea {
                 onClicked: {
                     if (root.quality === "SD")
@@ -98,12 +105,16 @@ Item {
         }
         Image {
             id: hd
-            width: 64
-            height: 64
-            sourceSize.width: 64
-            sourceSize.height: 64
-            source: "/resources/images/finder/selectors/1080.svg"
-            opacity: { if (root.quality === "720p") 1; else 0.7 }
+            width: screen.width/35.55
+            height: screen.height/20
+            sourceSize.width: screen.width/35.55
+            sourceSize.height: screen.height/20
+            source: {
+                if (root.quality === "720p")
+                    "/resources/images/finder/selectors/720p_ON.svg"
+                else
+                    "/resources/images/finder/selectors/720p.svg"
+            }
             MouseArea {
                 onClicked: {
                     if (root.quality === "720p")
@@ -116,12 +127,16 @@ Item {
         }
         Image {
             id: fullHd
-            width: 64
-            height: 64
-            sourceSize.width: 64
-            sourceSize.height: 64
-            source: "/resources/images/finder/selectors/1080.svg"
-            opacity: { if (root.quality === "1080p") 1; else 0.7 }
+            width: screen.width/35.55
+            height: screen.height/20
+            sourceSize.width: screen.width/35.55
+            sourceSize.height: screen.height/20
+            source: {
+                if (root.quality === "1080p")
+                    "/resources/images/finder/selectors/1080p_ON.svg"
+                else
+                    "/resources/images/finder/selectors/1080p.svg"
+            }
             MouseArea {
                 onClicked: {
                     if (root.quality === "1080p")
@@ -171,12 +186,16 @@ Item {
             to: "hide_selectors"
             SequentialAnimation {
                 NumberAnimation { target: selectorsRow; properties: "opacity"; to: 0; duration: 200; easing.type: Easing.InOutQuart }
-                NumberAnimation { target: moreShadow; easing.amplitude: 1.7; properties: "opacity"; to: 0.5; duration: 100; easing.type: Easing.OutQuart }
+                NumberAnimation { target: moreShadow; easing.amplitude: 1.7; properties: "opacity"; to: 0; duration: 100; easing.type: Easing.OutQuart }
+                PropertyAction { target: selectors; property: "onShowSelectors"; value: false }
             }
         },
         Transition {
             to: "hide_active_selectors"
-            NumberAnimation { target: selectorsRow; properties: "opacity"; to: 0; duration: 200; easing.type: Easing.InOutQuart }
+            SequentialAnimation {
+                NumberAnimation { target: selectorsRow; properties: "opacity"; to: 0; duration: 200; easing.type: Easing.InOutQuart }
+                PropertyAction { target: selectors; property: "onShowSelectors"; value: false }
+            }
         }
     ]
 

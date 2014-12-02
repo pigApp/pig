@@ -49,17 +49,18 @@ Item {
     }
     Text {
         id: readMoreLabel
-        text: "<style type='text/css'> a:link{color:#161616;font-style:normal;text-decoration:none} </style>"+
-              "READ MORE &nbsp; <a href=\'http://google.com\'>GITHUB.COM/PIGAPP/NEWS <font color='#007f00'>➟</font></a>"
+        text: "<style type='text/css'> a:link{color:#707070;font-style:normal;text-decoration:none} </style>"+
+              "ESC TO CLOSE / READ MORE &nbsp; <a href=\'http://google.com\'>GITHUB.COM/PIGAPP/NEWS <font color='#ffffff'>➟</font></a>"
         color: "white"
         font.family: pigFont.name
         font.bold: true
         font.pixelSize: screen.height/54
         textFormat: Text.RichText
         onLinkActivated: Qt.openUrlExternally(link)
-        anchors.horizontalCenter: parent.horizontalCenter
+        anchors.right: parent.right
+        anchors.rightMargin: parent.width/128
         anchors.bottom: parent.bottom
-        anchors.bottomMargin: parent.height/54
+        anchors.bottomMargin: parent.height/154.28
     }
 
     Keys.onPressed: {

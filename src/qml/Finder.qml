@@ -4,7 +4,7 @@ Item {
     id: finder
     x: root.xB
 
-    property string activeFilter
+    property bool onCategoryFilter
 
     Text {
         id: welcomeLabel
@@ -30,8 +30,8 @@ Item {
         font.letterSpacing: parent.width/480
         font.wordSpacing: -parent.width/384
         font.pixelSize: screen.height/18
-        visible: { selectors_loader.opacity === 1.0 && screen.state !== "show_setPassword" }
-        enabled: { selectors_loader.opacity === 1.0 && screen.state !== "show_setPassword" }
+        visible: { selectors_loader.opacity === 1.0 }
+        enabled: { selectors_loader.opacity === 1.0 }
         maximumLength: 28
         cursorVisible: false
         anchors.centerIn: parent
@@ -46,6 +46,7 @@ Item {
             userInput.visible = true
         }
         onCursorVisibleChanged: { if (userInput.cursorVisible) userInput.cursorVisible = false }
+        onEnabledChanged: { if (userInput.enabled) userInput.forceActiveFocus() }
     }
     Text {
         id: dbNullLabel
@@ -64,14 +65,11 @@ Item {
     Column {
         id: buttonsFiltersColumn
         spacing: parent.height/54
-        visible: { screen.state !== "show_setPassword" }
-        enabled: { screen.state !== "show_setPassword" }
         opacity: 0
         anchors.left: parent.left
         anchors.leftMargin: parent.width/48.3
         anchors.bottom: parent.verticalCenter
         anchors.bottomMargin: -parent.height/44
-        onEnabledChanged: { if (enabled) userInput.forceActiveFocus() }
         Button {
             id: categoryFilter
             width: screen.width/4.06
@@ -81,7 +79,7 @@ Item {
             labelSize: screen.height/10
             onClicked: {
                 finder.state = "show_filter"
-                activeFilter = "CATEGORY"
+                onCategoryFilter = true
             }
         }
         Button {
@@ -93,7 +91,7 @@ Item {
             labelSize: screen.height/10
             onClicked: {
                 finder.state = "show_filter"
-                activeFilter = "PORNSTAR"
+                onCategoryFilter = false
             }
         }
     }
@@ -105,12 +103,11 @@ Item {
         active: false
         anchors.fill: parent
     }
-    function filtersManager(filter, label) {
-        if (filter === 'categoryFilter')
+    function filtersManager(label) {
+        if (onCategoryFilter)
             root.category = label.toUpperCase()
         else
             root.pornstar = label.toUpperCase()
-        dbNullLabel.visible = false
         root.signal_qml_find("", root.pornstar, root.category, "", "", 0, true)
     }
 
@@ -119,18 +116,8 @@ Item {
         source: "Selectors.qml"
         asynchronous: true
         active: true
-        visible: { screen.state !== "show_setPassword" }
-        enabled: { screen.state !== "show_setPassword" }
         opacity: 0
         anchors.fill: parent
-    }
-
-    Timer {
-        id: focusDelay
-        running: false
-        repeat: false
-        interval: 1400
-        onTriggered: userInput.forceActiveFocus()
     }
 
     states: [
@@ -158,10 +145,10 @@ Item {
                 NumberAnimation { duration: 100 }
                 ParallelAnimation {
                     NumberAnimation { target: buttonsFiltersColumn; properties: "opacity"; to: 1; duration: 200; easing.type: Easing.InOutQuart }
-                    NumberAnimation { target: backgroundBlur; easing.amplitude: 1.7; properties: "radius"; to: 0; duration: 1100; easing.type: Easing.OutQuart }
+                    NumberAnimation { target: backgroundBlur; easing.amplitude: 1.7; properties: "radius"; to: 0; duration: 600; easing.type: Easing.OutQuart }
                 }
                 ParallelAnimation {
-                    NumberAnimation { target: selectors_loader; properties: "opacity"; to: 1.0; duration: 50; easing.type: Easing.InOutQuart }
+                    NumberAnimation { target: selectors_loader; properties: "opacity"; to: 1.0; duration: 10; easing.type: Easing.InOutQuart }
                     PropertyAction { target: userInput; property: "text"; value: root.input }
                 }
             }
@@ -194,13 +181,13 @@ Item {
         },
         Transition {
             to: "hide_filter"
-            PropertyAction { target: focusDelay; property: "running"; value: true }
             SequentialAnimation {
                 ParallelAnimation {
                     NumberAnimation { target: root; easing.amplitude: 1.7; properties: "xB"; to: 0; duration: 1100; easing.type: Easing.OutQuart }
                     NumberAnimation { target: backgroundBlur; easing.amplitude: 1.7; properties: "radius"; to: 0; duration: 2100; easing.type: Easing.OutQuart }
                 }
                 PropertyAction { target: filters_loader; property: "active"; value: false }
+                PropertyAction { target: userInput; property: "focus"; value: true }
             }
         },
         Transition {
@@ -229,7 +216,7 @@ Item {
             }
         } else if (event.key === Qt.Key_P && (event.modifiers & Qt.ControlModifier)) {
             if (!filters_loader.active) {
-                screen.state = "show_setPassword"
+                screen.state = "show_password"
             }
             event.accepted = true
         } else if (event.key === Qt.Key_Q && (event.modifiers & Qt.ControlModifier)) {
@@ -248,9 +235,6 @@ Item {
         }
     }
 
-    Component.onCompleted: {
-        finder.state = "show"
-        focusDelay.start()
-    }
+    Component.onCompleted: { finder.state = "show" }
 }
 // Tabs hechos.

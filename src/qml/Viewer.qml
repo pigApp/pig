@@ -12,27 +12,192 @@ Item {
     property int currentFilm: 1
     property int nIndex: 0
 
-    ListModel {
-        id: model
-    }
-    ListView {
-        id: listView
-        width: screen.width
-        height: screen.height
-        visible: false
+    ListModel { id: model }
+
+    PathView {
+        id: view
         model: model
         delegate: delegate
+        interactive: false
+        enabled: false
+        anchors.fill: parent
+
+        property int offset: 0
+        property int counter: 5
+
+        path: Path {
+            startX: screen.width/2
+            startY: screen.height/2
+            //startX: 120
+            //startY: 100
+
+            PathAttribute { name: "recipeZ"; value: 2 }
+            PathAttribute { name: "recipeOpacity"; value: 1 }
+            PathAttribute { name: "recipeScale"; value: 1.0 }
+
+            //PathQuad { x: 120; y: 25; controlX: 260; controlY: 75 }
+            PathQuad { x: screen.width/2; y: 360; controlX: screen.width*1.3; controlY: screen.height/2 } //1.3
+
+            PathAttribute { name: "recipeZ"; value: 0 }
+            PathAttribute { name: "recipeOpacity"; value: 0 }
+            PathAttribute { name: "recipeScale"; value: 0.3 }
+
+            //PathQuad { x: 120; y: 100; controlX: -20; controlY: 75 }
+            PathQuad { x: screen.width/2; y: screen.height/2; controlX: -screen.width/3.4; controlY: screen.height/2.05 } //3.4
+        }
+
+        //PathQuad { x: screen.width/2; y: screen.height/2; controlX: screen.width+(screen.width*2.77); controlY: screen.height/2 }
+        //PathQuad { x: screen.width/2; y: screen.height/2; controlX: -screen.width*2.77; controlY: screen.height/2 }
+
+        MouseArea {
+            onClicked: view.setFocus()
+            anchors.fill: parent
+        }
+
+        states: [
+            State {
+                name: "show"
+            },
+            State {
+                name: "hide"
+            },
+            State {
+                name: "show_torrentInformation"
+                when: showTorrentInformation
+            },
+            State {
+                name: "hide_torrentInformation"
+            },
+            State {
+                name: "hide_viewer_show_finder"
+            }
+        ]
+        transitions: [
+            Transition {
+                to: "show"
+                NumberAnimation { target: root; easing.amplitude: 1.7; properties: "xB"; to: 0; duration: 500; easing.type: Easing.OutQuart }
+            },
+            Transition {
+                to: "hide"
+                SequentialAnimation {
+                    NumberAnimation { duration: 20 }
+                    NumberAnimation { target: root; easing.amplitude: 1.7; properties: "xB"; to: screen.width+50; duration: 500; easing.type: Easing.OutQuart }
+                }
+            },
+            Transition {
+                to: "show_torrentInformation"
+                PropertyAction { target: root; property: "screenWidth"; value: screen.width }
+                PropertyAction { target: viewer; property: "showTorrentInformation"; value: false }
+                PropertyAction { target: view; property: "enabled"; value: false }
+                PropertyAction { target: root_loader_A; property: "source"; value: "TorrentInformation.qml" }
+                SequentialAnimation {
+                    NumberAnimation { duration: 20 }
+                    NumberAnimation { target: viewer; easing.amplitude: 1.7; properties: "x"; to: -screen.width; duration: 1100; easing.type: Easing.OutQuart }
+                    PropertyAction { target: root; property: "stopPreview"; value: true }
+                }
+            },
+            Transition {
+                to: "hide_torrentInformation"
+                SequentialAnimation {
+                    PropertyAction { target: viewer; property: "x"; value: -root.screenWidth }
+                    NumberAnimation { target: viewer; easing.amplitude: 1.7; properties: "x"; to: 0; duration: 1080; easing.type: Easing.OutQuart }
+                    PropertyAction { target: root_loader_A; property: "source"; value: "" }
+                    PropertyAction { target: root; property: "stopPreview"; value: false }
+                }
+            },
+            Transition {
+                to: "hide_viewer_show_finder"
+                SequentialAnimation {
+                    PropertyAction { target: root; property: "stopPreview"; value: true }
+                    NumberAnimation { duration: 20 }
+                    NumberAnimation { target: root; easing.amplitude: 1.7; properties: "xB"; to: screen.width+50; duration: 500; easing.type: Easing.OutQuart }
+                    PropertyAction { target: screen; property: "state"; value: "show_finder" }
+                }
+            }
+        ]
+
+        function setFocus() { view.forceActiveFocus() }
+
+        Keys.onPressed: {
+            if (event.key === Qt.Key_Escape) {
+                view.state = "hide_viewer_show_finder"
+                event.accepted = true;
+            } else if (event.key === Qt.Key_H && (event.modifiers & Qt.ControlModifier) && !timeOutNetwork.running) {
+                screen.state = "show_help"
+                event.accepted = true
+            } else if (event.key === Qt.Key_Q && (event.modifiers & Qt.ControlModifier)) {
+                root.stopPreview = true
+                root.signal_qml_quit()
+                event.accepted = true;
+            }
+        }
+
+        Keys.onUpPressed: {
+            if(totalFilms > 5 && counter < totalFilms) {
+                view.enabled = false
+                offset = offset+5
+                counter = counter+5
+                currentFilm = counter-4
+                updateData(offset)
+            }
+        }
+        Keys.onDownPressed: {
+            if(totalFilms > 5 && currentFilm-5 > 0) {
+                view.enabled = false
+                offset = offset-5
+                counter = counter-5
+                currentFilm = counter-4
+                updateData(offset)
+            }
+        }
+        Keys.onRightPressed: {
+            view.enabled = false
+            enabledDelay.start()
+            incrementCurrentIndex()
+            if (locationOnList === dataFilms.length-12) {
+                locationOnList = 0
+                location = 0
+                currentFilm = currentFilm-nFilms+1
+            } else {
+                locationOnList = locationOnList+12
+                ++currentFilm
+                ++location
+            }
+
+        }
+        Keys.onLeftPressed: {
+            view.enabled = false
+            enabledDelay.start()
+            decrementCurrentIndex()
+            if (locationOnList === 0) {
+                locationOnList = dataFilms.length-12
+                location = nFilms-1
+                currentFilm = currentFilm+nFilms-1
+            } else {
+                locationOnList = locationOnList-12
+                --currentFilm
+                --location
+            }
+        }
+        Timer {
+            id: enabledDelay
+            running: false
+            repeat: false
+            interval: 500
+            onTriggered: { view.enabled = true }
+        }
     }
+
     Component {
         id: delegate
         Item {
             id: recipe
-            z: { PathView.recipeZ || 1 }
-            width: listView.width
-            height: listView.height
+            z: PathView.recipeZ
+            width: view.width
+            height: view.height
             //visible: recipe.PathView.isCurrentItem
-            opacity: { PathView.recipeOpacity || 1 }
-            scale: { PathView.recipeScale || 1 }
+            opacity: PathView.recipeOpacity
+            scale: PathView.recipeScale
 
             Rectangle {
                 id: translucentLayer
@@ -107,6 +272,8 @@ Item {
             }
             Image {
                 id: cover
+                //cache: false // TODO: Ver como releer las imagenes ya descargadas y guardadas en chache.
+                               // Posiblemente no limpiando la cache de imagenes al limpiar el modele(updateData) o guardandolas en disco.
                 width: parent.width/4.62
                 height: parent.height/1.8
                 source: hostPosterCover+urlCover
@@ -129,7 +296,7 @@ Item {
             }
 
             Timer {
-                id: imagesStatus
+                id: imagesStatus // Redseñar el imageStatus, afuera del modelo, con image.status y un array.
                 running: false
                 repeat: false
                 interval: 100
@@ -137,9 +304,9 @@ Item {
                     if (successCover) {
                         root_loader_A.source = ""
                         timeOutNetwork.stop()
-                        handler.state = "show"
-                        handler.enabled = true
-                        handler.setFocus()
+                        view.state = "show"
+                        view.enabled = true
+                        view.setFocus()
                     } else {
                         imagesStatus.restart()
                     }
@@ -169,7 +336,7 @@ Item {
                 anchors.topMargin: parent.height/12
                 Text {
                     id: castLabel
-                    //text: "<font color='#ff0000'>∙</font> <font color='#ffffff'>"+cast+"</font>"
+                    //text: "<font color='#007f00'>∙</font> <font color='#ffffff'>"+cast+"</font>"
                     text: "<font color='transparent'>∙</font> <font color='#ffffff'>"+cast+"</font>"
                     font.family: pigFont.name
                     font.bold: true
@@ -177,7 +344,7 @@ Item {
                 }
                 Text {
                     id: categoriesLabel
-                    //text: "<font color='#ff0000'>∙</font> <font color='#ffffff'>"+categories+"</font>"
+                    //text: "<font color='#007f00'>∙</font> <font color='#ffffff'>"+categories+"</font>"
                     text: "<font color='transparent'>∙</font> <font color='#ffffff'>"+categories+"</font>"
                     font.family: pigFont.name
                     font.bold: true
@@ -185,7 +352,7 @@ Item {
                 }
                 Text {
                     id: qualityLabel
-                    //text: "<font color='#ff0000'>∙</font> <font color='#ffffff'>"+quality+"</font>"
+                    //text: "<font color='#007f00'>∙</font> <font color='#ffffff'>"+quality+"</font>"
                     text: "<font color='transparent'>∙</font> <font color='#ffffff'>"+quality+"</font>"
                     font.family: pigFont.name
                     font.bold: true
@@ -197,7 +364,7 @@ Item {
                         //if (scenes === 1)
                             "<font color='transparent'>∙</font> <font color='#ffffff'>SPLIT</font>"
                         //else
-                            //"<font color='#ff0000'>∙</font> <font color='#ffffff'>SPLIT</font>"
+                            //"<font color='#007f00'>∙</font> <font color='#ffffff'>SPLIT</font>"
                     }
                     font.family: pigFont.name
                     font.bold: true
@@ -209,7 +376,7 @@ Item {
                         //if (full === "NOT")
                             "<font color='transparent'>∙</font> <font color='#ffffff'>FULL</font>"
                         //else
-                            //"<font color='#ff0000'>∙</font> <font color='#ffffff'>FULL</font>"
+                            //"<font color='#007f00'>∙</font> <font color='#ffffff'>FULL</font>"
                     }
                     font.family: pigFont.name
                     font.bold: true
@@ -282,184 +449,10 @@ Item {
             NumberAnimation { running: recipe.PathView.isCurrentItem && viewer.x === 0; target: translucentLayer; property: "opacity"; to: 0.6; duration: 1500; easing.type: Easing.InOutQuad }
             NumberAnimation { running: recipe.PathView.isCurrentItem; target: datesColumn; property: "opacity"; to: 1; duration: 2000; easing.type: Easing.OutElastic }
 
-            //PropertyAction { running: !recipe.PathView.isCurrentItem || handler.state === "hide_viewer_show_finder"; target: poster; property: "opacity"; value: 0 }
-            PropertyAction { running: !recipe.PathView.isCurrentItem || handler.state === "hide_viewer_show_finder"; target: translucentLayer; property: "opacity"; value: 0 }
-            NumberAnimation { running: !recipe.PathView.isCurrentItem || handler.state === "hide_viewer_show_finder"; target: datesColumn; property: "opacity"; to: 0;
+            //PropertyAction { running: !recipe.PathView.isCurrentItem || view.state === "hide_viewer_show_finder"; target: poster; property: "opacity"; value: 0 }
+            PropertyAction { running: !recipe.PathView.isCurrentItem || view.state === "hide_viewer_show_finder"; target: translucentLayer; property: "opacity"; value: 0 }
+            NumberAnimation { running: !recipe.PathView.isCurrentItem || view.state === "hide_viewer_show_finder"; target: datesColumn; property: "opacity"; to: 0;
                               duration: 1; easing.type: Easing.InOutQuad }
-        }
-    }
-
-    PathView {
-        id: handler
-        model: model
-        delegate: delegate
-        interactive: false
-        enabled: false
-        anchors.fill: parent
-
-        property int offset: 0
-        property int counter: 5
-
-        path: Path {
-            startX: screen.width/2
-            startY: screen.height/2
-            //startX: 120
-            //startY: 100
-
-            PathAttribute { name: "recipeZ"; value: 2 }
-            PathAttribute { name: "recipeOpacity"; value: 1 }
-            PathAttribute { name: "recipeScale"; value: 1.0 }
-
-            //PathQuad { x: 120; y: 25; controlX: 260; controlY: 75 }
-            PathQuad { x: screen.width/2; y: 360; controlX: screen.width*1.3; controlY: screen.height/2 } //1.3
-
-            PathAttribute { name: "recipeZ"; value: 0 }
-            PathAttribute { name: "recipeOpacity"; value: 0 }
-            PathAttribute { name: "recipeScale"; value: 0.3 }
-
-            //PathQuad { x: 120; y: 100; controlX: -20; controlY: 75 }
-            PathQuad { x: screen.width/2; y: screen.height/2; controlX: -screen.width/3.4; controlY: screen.height/2.05 } //3.4
-        }
-
-        //PathQuad { x: screen.width/2; y: screen.height/2; controlX: screen.width+(screen.width*2.77); controlY: screen.height/2 }
-        //PathQuad { x: screen.width/2; y: screen.height/2; controlX: -screen.width*2.77; controlY: screen.height/2 }
-
-        MouseArea {
-            onClicked: handler.setFocus()
-            anchors.fill: parent
-        }
-
-        states: [
-            State {
-                name: "show"
-            },
-            State {
-                name: "hide"
-            },
-            State {
-                name: "show_torrentInformation"
-                when: showTorrentInformation
-            },
-            State {
-                name: "hide_torrentInformation"
-            },
-            State {
-                name: "hide_viewer_show_finder"
-            }
-        ]
-        transitions: [
-            Transition {
-                to: "show"
-                NumberAnimation { target: root; easing.amplitude: 1.7; properties: "xB"; to: 0; duration: 500; easing.type: Easing.OutQuart }
-            },
-            Transition {
-                to: "hide"
-                SequentialAnimation {
-                    NumberAnimation { duration: 20 }
-                    NumberAnimation { target: root; easing.amplitude: 1.7; properties: "xB"; to: screen.width+50; duration: 500; easing.type: Easing.OutQuart }
-                }
-            },
-            Transition {
-                to: "show_torrentInformation"
-                PropertyAction { target: root; property: "screenWidth"; value: screen.width }
-                PropertyAction { target: viewer; property: "showTorrentInformation"; value: false }
-                PropertyAction { target: handler; property: "enabled"; value: false }
-                PropertyAction { target: root_loader_A; property: "source"; value: "TorrentInformation.qml" }
-                SequentialAnimation {
-                    NumberAnimation { duration: 20 }
-                    NumberAnimation { target: viewer; easing.amplitude: 1.7; properties: "x"; to: -screen.width; duration: 1100; easing.type: Easing.OutQuart }
-                    PropertyAction { target: root; property: "stopPreview"; value: true }
-                }
-            },
-            Transition {
-                to: "hide_torrentInformation"
-                SequentialAnimation {
-                    PropertyAction { target: viewer; property: "x"; value: -root.screenWidth }
-                    NumberAnimation { target: viewer; easing.amplitude: 1.7; properties: "x"; to: 0; duration: 1080; easing.type: Easing.OutQuart }
-                    PropertyAction { target: root_loader_A; property: "source"; value: "" }
-                    PropertyAction { target: root; property: "stopPreview"; value: false }
-                }
-            },
-            Transition {
-                to: "hide_viewer_show_finder"
-                SequentialAnimation {
-                    PropertyAction { target: root; property: "stopPreview"; value: true }
-                    NumberAnimation { duration: 20 }
-                    NumberAnimation { target: root; easing.amplitude: 1.7; properties: "xB"; to: screen.width+50; duration: 500; easing.type: Easing.OutQuart }
-                    PropertyAction { target: screen; property: "state"; value: "show_finder" }
-                }
-            }
-        ]
-
-        function setFocus() { handler.forceActiveFocus() }
-
-        Keys.onPressed: {
-            if (event.key === Qt.Key_Escape) {
-                handler.state = "hide_viewer_show_finder"
-                event.accepted = true;
-            } else if (event.key === Qt.Key_H && (event.modifiers & Qt.ControlModifier) && !timeOutNetwork.running) {
-                screen.state = "show_help"
-                event.accepted = true
-            } else if (event.key === Qt.Key_Q && (event.modifiers & Qt.ControlModifier)) {
-                root.stopPreview = true
-                root.signal_qml_quit()
-                event.accepted = true;
-            }
-        }
-
-        Keys.onUpPressed: {
-            if(totalFilms > 5 && counter < totalFilms) {
-                handler.enabled = false
-                offset = offset+5
-                counter = counter+5
-                currentFilm = counter-4
-                updateData(offset)
-            }
-        }
-        Keys.onDownPressed: {
-            if(totalFilms > 5 && currentFilm-5 > 0) {
-                handler.enabled = false
-                offset = offset-5
-                counter = counter-5
-                currentFilm = counter-4
-                updateData(offset)
-            }
-        }
-        Keys.onRightPressed: {
-            handler.enabled = false
-            enabledDelay.start()
-            incrementCurrentIndex()
-            if (locationOnList === dataFilms.length-12) {
-                locationOnList = 0
-                location = 0
-                currentFilm = currentFilm-nFilms+1
-            } else {
-                locationOnList = locationOnList+12
-                ++currentFilm
-                ++location
-            }
-
-        }
-        Keys.onLeftPressed: {
-            handler.enabled = false
-            enabledDelay.start()
-            decrementCurrentIndex()
-            if (locationOnList === 0) {
-                locationOnList = dataFilms.length-12
-                location = nFilms-1
-                currentFilm = currentFilm+nFilms-1
-            } else {
-                locationOnList = locationOnList-12
-                --currentFilm
-                --location
-            }
-        }
-        Timer {
-            id: enabledDelay
-            running: false
-            repeat: false
-            interval: 500
-            onTriggered: { handler.enabled = true }
         }
     }
 
@@ -491,7 +484,7 @@ Item {
 
     function updateData(offset) {
         root.stopPreview = true
-        handler.state = "hide"
+        view.state = "hide"
         model.clear()
         root.signal_qml_find(root.input, root.pornstar, root.category, root.quality, root.full, offset, false)
     }
@@ -499,9 +492,9 @@ Item {
     Connections {
         target: cppSignals
         onSignal_hide_torrent_information: {
-            handler.state = "hide_torrentInformation"
-            handler.enabled = true
-            handler.setFocus()
+            view.state = "hide_torrentInformation"
+            view.enabled = true
+            view.setFocus()
         }
     }
 

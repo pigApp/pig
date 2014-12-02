@@ -7,8 +7,14 @@
         <file>resources/images/network/icon.svg</file>
         <file>resources/images/network/icon_ERROR.svg</file>
         <file>resources/images/finder/selectors/more.svg</file>
+        <file>resources/images/finder/selectors/full.svg</file>
+        <file>resources/images/finder/selectors/full_ON.svg</file>
         <file>resources/images/finder/selectors/sd.svg</file>
-        <file>resources/images/finder/selectors/1080.svg</file>
+        <file>resources/images/finder/selectors/sd_ON.svg</file>
+        <file>resources/images/finder/selectors/720p.svg</file>
+        <file>resources/images/finder/selectors/720p_ON.svg</file>
+        <file>resources/images/finder/selectors/1080p.svg</file>
+        <file>resources/images/finder/selectors/1080p_ON.svg</file>
         <file>resources/images/finder/filters/icons/number.svg</file>
         <file>resources/images/finder/filters/categories/ANAL.jpg</file>
         <file>resources/images/finder/filters/categories/ASIAN.jpg</file>
@@ -25,15 +31,13 @@
     </qresource>
     <qresource prefix="QML">
         <file>src/qml/main.qml</file>
-        <file>src/qml/AskPassword.qml</file>
+        <file>src/qml/Password.qml</file>
         <file>src/qml/Network.qml</file>
         <file>src/qml/Update.qml</file>
         <file>src/qml/News.qml</file>
-        <file>src/qml/Help.qml</file>
-        <file>src/qml/SetPassword.qml</file>
         <file>src/qml/Finder.qml</file>
+        <file>src/qml/Help.qml</file>
         <file>src/qml/Selectors.qml</file>
-        <file>src/qml/Button.qml</file>
         <file>src/qml/ButtonFilter.qml</file>
         <file>src/qml/Filters.qml</file>
         <file>src/qml/Viewer.qml</file>
@@ -41,6 +45,7 @@
         <file>src/qml/ButtonScene.qml</file>
         <file>src/qml/TorrentInformation.qml</file>
         <file>src/qml/ProgressBar.qml</file>
+        <file>src/qml/Button.qml</file>
         <file>src/qml/ErrorDb.qml</file>
     </qresource>
 </RCC>
