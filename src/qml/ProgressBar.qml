@@ -4,7 +4,6 @@ Item {
     id: progressBar
     width: screen.width-((screen.width/4)*2)
     height: screen.height/108
-    clip: true
 
     property int minimum: 0
     property int maximum: 100

@@ -28,18 +28,6 @@ Rectangle {
         font.pixelSize: screen.height/23
         anchors.centerIn: parent
     }
-    Image {
-        id: numberIcon
-        width: parent.width/7.5
-        height: parent.height/4.21
-        sourceSize.width: parent.width/7.5
-        sourceSize.height: parent.height/4.21
-        source: "/resources/images/finder/filters/icons/number.svg"
-        opacity: 0
-        anchors.right: parent.right
-        anchors.rightMargin: parent.width/32
-        anchors.verticalCenter: parent.verticalCenter
-    }
     Text {
         id: numberLabel
         color: "white"
@@ -47,11 +35,13 @@ Rectangle {
         font.bold: true
         font.pixelSize: screen.height/54
         opacity: 0
-        anchors.centerIn: numberIcon
+        anchors.right: parent.right
+        anchors.rightMargin: parent.width/96
+        anchors.bottom: parent.bottom
     }
     MouseArea {
         hoverEnabled: true
-        onEntered: { buttonFilter.state = "in" }
+        onEntered: { buttonFilter.state = "in"; buttonFilter.forceActiveFocus() }
         onHoveredChanged: { buttonFilter.state = "out"; buttonFilter.forceActiveFocus() }
         onClicked: buttonFilter.clicked()
         anchors.fill: parent
@@ -73,7 +63,6 @@ Rectangle {
             ParallelAnimation {
                 NumberAnimation { target: pic; properties: "opacity"; to: 1; duration: 1000; easing.type: Easing.InOutQuart }
                 NumberAnimation { target: label; properties: "opacity"; to: 0; duration: 200; easing.type: Easing.InOutQuart }
-                NumberAnimation { target: numberIcon; properties: "opacity"; to: 0.5; duration: 800; easing.type: Easing.InOutQuart }
                 NumberAnimation { target: numberLabel; properties: "opacity"; to: 1; duration: 800; easing.type: Easing.InOutQuart }
             }
         },
@@ -82,7 +71,6 @@ Rectangle {
             ParallelAnimation {
                 NumberAnimation { target: pic; properties: "opacity"; to: 0; duration: 100; easing.type: Easing.InOutQuart }
                 NumberAnimation { target: label; properties: "opacity"; to: 1; duration: 200; easing.type: Easing.InOutQuart }
-                NumberAnimation { target: numberIcon; properties: "opacity"; to: 0; duration: 100; easing.type: Easing.InOutQuart }
                 NumberAnimation { target: numberLabel; properties: "opacity"; to: 0; duration: 100; easing.type: Easing.InOutQuart }
             }
         }

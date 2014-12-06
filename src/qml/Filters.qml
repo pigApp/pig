@@ -11,7 +11,6 @@ Item {
         contentWidth: grid.width
         contentHeight: grid.height
         flickableDirection: Flickable.VerticalFlick
-        clip: true
         anchors.margins: parent.width/640
         anchors.fill: parent
         Grid {

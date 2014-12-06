@@ -16,7 +16,7 @@ Rectangle {
     Text {
         id: getDatabase
         text: "<style type='text/css'> a:link{color:#161616;font-style:normal;text-decoration:none} </style>"+
-              "GET LATEST DATABASE &nbsp; <a href=\'http://google.com\'>DL.BINTRAY.COM/DB <font color='#007f00'>➟</font></a>"
+              "GET LATEST DATABASE &nbsp; <a href=\'http://google.com\'>DL.BINTRAY.COM/DB <font color='#ffffff'>➟</font></a>"
         color: "white"
         font.family: pigFont.name
         font.bold: true

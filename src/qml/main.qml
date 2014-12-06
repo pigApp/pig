@@ -30,11 +30,11 @@ Item {
     property int peers: 0
     property int required: 0
     property int downloaded: 0
-    property variant categories
-    property variant nCategories
-    property variant pornstars
-    property variant nPornstars
-    property variant dataFilms
+    property var categories
+    property var nCategories
+    property var pornstars
+    property var nPornstars
+    property var dataFilms
 
     signal signal_qml_password_handler(string plain, bool require, bool check, bool write)
     signal signal_qml_find(string input, string pornstar, string category, string quality, string full, int offset, bool init)
@@ -47,6 +47,7 @@ Item {
 
     Image {
         id: background
+        cache: false//
         source: "/resources/images/general/background.jpg"
         visible: false
         anchors.fill: parent
@@ -94,23 +95,21 @@ Item {
                 PropertyChanges { target: root; askPassword: false; restoreEntryValues: false }
                 PropertyChanges { target: background; visible: true; restoreEntryValues: false }
                 PropertyChanges { target: backgroundBlur; visible: true; restoreEntryValues: false }
+                PropertyChanges { target: root_loader_A; source: ""; restoreEntryValues: false }
                 PropertyChanges { target: root_loader_A; source: "Update.qml"; restoreEntryValues: false }
             },
             State {
                 name: "show_news"
                 PropertyChanges { target: backgroundBlur; radius: 64; restoreEntryValues: false }
-                PropertyChanges { target: root_loader_A; source: "News.qml"; restoreEntryValues: false }
-            },
-            State {
-                name: "hide_news"
                 PropertyChanges { target: root_loader_A; source: ""; restoreEntryValues: false }
-                PropertyChanges { target: root_loader_B; source: "Finder.qml"; restoreEntryValues: false }
+                PropertyChanges { target: root_loader_A; source: "News.qml"; restoreEntryValues: false }
             },
             State {
                 name: "show_finder"
                 PropertyChanges { target: root; pornstar: ""; restoreEntryValues: false }
                 PropertyChanges { target: root; category: ""; restoreEntryValues: false }
                 PropertyChanges { target: root_loader_A; source: ""; restoreEntryValues: false }
+                PropertyChanges { target: root_loader_B; source: ""; restoreEntryValues: false }
                 PropertyChanges { target: root_loader_B; source: "Finder.qml"; restoreEntryValues: false }
                 PropertyChanges { target: root; xB: 0; restoreEntryValues: false }
             },
@@ -124,6 +123,7 @@ Item {
             State {
                 name: "show_viewer"
                 PropertyChanges { target: root; xB: screen.width+50 }
+                PropertyChanges { target: root_loader_B; source: ""; restoreEntryValues: false }
                 PropertyChanges { target: root_loader_B; source: "Viewer.qml"; restoreEntryValues: false }
             },
             State {
@@ -182,7 +182,7 @@ Item {
                 else
                    root_loader_B.item.state = "hide"
             else if (updateData)
-                root_loader_B.item.appendData()
+                root_loader_B.item.append_data()
         }
         onSignal_show_errorDatabase: {
             screen.state = "show_errorDb"

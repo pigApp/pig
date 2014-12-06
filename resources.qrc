@@ -15,7 +15,6 @@
         <file>resources/images/finder/selectors/720p_ON.svg</file>
         <file>resources/images/finder/selectors/1080p.svg</file>
         <file>resources/images/finder/selectors/1080p_ON.svg</file>
-        <file>resources/images/finder/filters/icons/number.svg</file>
         <file>resources/images/finder/filters/categories/ANAL.jpg</file>
         <file>resources/images/finder/filters/categories/ASIAN.jpg</file>
         <file>resources/images/finder/filters/categories/DOUBLE.jpg</file>
@@ -24,8 +23,7 @@
         <file>resources/images/viewer/open.png</file>
         <file>resources/images/viewer/preview/network/icon.png</file>
         <file>resources/images/viewer/preview/replay.png</file>
-        <file>resources/images/viewer/NOT_AVAILABLE/poster_NOT_AVAILABLE.png</file>
-        <file>resources/images/viewer/NOT_AVAILABLE/cover_NOT_AVAILABLE.png</file>
+        <file>resources/images/viewer/NOT_AVAILABLE/cover_NOT_AVAILABLE.jpg</file>
         <file>resources/fonts/pig.ttf</file>
         <file>resources/fonts/finder.ttf</file>
     </qresource>

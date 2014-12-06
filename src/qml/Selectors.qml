@@ -16,7 +16,7 @@ Item {
         anchors.left: parent.left
         anchors.leftMargin: parent.width/42.47
         anchors.verticalCenter: parent.verticalCenter
-        anchors.verticalCenterOffset: parent.height/19.63
+        anchors.verticalCenterOffset: parent.height/28.42
         MouseArea {
             hoverEnabled: true
             onEntered: {
@@ -58,7 +58,7 @@ Item {
         anchors.left: more.right
         anchors.leftMargin: parent.width/384
         anchors.top: more.bottom
-        anchors.topMargin: -screen.height/67.5
+        anchors.topMargin: -screen.height/85
         Image {
             id: fullMovie
             width: screen.width/35.55

@@ -8,7 +8,7 @@ Item {
 
     Text {
         id: welcomeLabel
-        text: "WELCOME &nbsp; <font color='#161616'>CTRL H TO HELP</font></a>"
+        text: "WELCOME &nbsp; <font color='#707070'>CTRL H TO HELP</font></a>"
         color: "white"
         font.family: pigFont.name
         font.bold: true
@@ -22,6 +22,18 @@ Item {
     }
     NumberAnimation { target: welcomeLabel; running: root.init && selectors_loader.opacity === 1.0; properties: "opacity"; to: 1.0; duration: 1400; easing.type: Easing.InOutQuart }
 
+    Rectangle {
+        id: inputLayer
+        color: Qt.rgba(0, 0, 0, 0.1)
+        visible: { selectors_loader.opacity === 1.0 }
+        anchors.margins: { if (userInput.text !== "") -parent.width/384; else 0 }
+        anchors.fill: {
+            if (dbNullLabel.visible)
+                dbNullLabel;
+            else
+                userInput
+        }
+    }
     TextInput {
         id: userInput
         color: "white"
@@ -29,13 +41,14 @@ Item {
         font.capitalization: Font.AllUppercase
         font.letterSpacing: parent.width/480
         font.wordSpacing: -parent.width/384
-        font.pixelSize: screen.height/18
+        font.pixelSize: screen.height/23
         visible: { selectors_loader.opacity === 1.0 }
         enabled: { selectors_loader.opacity === 1.0 }
-        maximumLength: 28
+        maximumLength: 35
         cursorVisible: false
         anchors.centerIn: parent
         anchors.horizontalCenterOffset: -parent.width/112
+        anchors.verticalCenterOffset: -parent.height/400 //-2.7
         onAccepted: {
             root.input = userInput.text
             root.signal_qml_find(root.input, root.pornstar, root.category, root.quality, root.full, 0, true)
@@ -51,25 +64,25 @@ Item {
     Text {
         id: dbNullLabel
         text: "NO RESULT"
-        color: "gray"
+        color: Qt.rgba(1, 1, 1, 0.1)
         font.family: finderFont.name
         font.capitalization: Font.AllUppercase
         font.letterSpacing: parent.width/480
         font.wordSpacing: -parent.width/384
-        font.pixelSize: screen.height/18
-        opacity: 0.3
+        font.pixelSize: screen.height/23
         visible: false
         anchors.centerIn: parent
+        anchors.verticalCenterOffset: -parent.height/400 //-2.7
     }
 
     Column {
         id: buttonsFiltersColumn
-        spacing: parent.height/54
+        spacing: parent.height/72
         opacity: 0
         anchors.left: parent.left
         anchors.leftMargin: parent.width/48.3
         anchors.bottom: parent.verticalCenter
-        anchors.bottomMargin: -parent.height/44
+        anchors.bottomMargin: -parent.height/56.84
         Button {
             id: categoryFilter
             width: screen.width/4.06
@@ -115,7 +128,6 @@ Item {
         id: selectors_loader
         source: "Selectors.qml"
         asynchronous: true
-        active: true
         opacity: 0
         anchors.fill: parent
     }
@@ -142,27 +154,25 @@ Item {
         Transition {
             to: "show"
             SequentialAnimation {
-                NumberAnimation { duration: 100 }
+                NumberAnimation { duration: 250 }
                 ParallelAnimation {
                     NumberAnimation { target: buttonsFiltersColumn; properties: "opacity"; to: 1; duration: 200; easing.type: Easing.InOutQuart }
                     NumberAnimation { target: backgroundBlur; easing.amplitude: 1.7; properties: "radius"; to: 0; duration: 600; easing.type: Easing.OutQuart }
                 }
-                ParallelAnimation {
-                    NumberAnimation { target: selectors_loader; properties: "opacity"; to: 1.0; duration: 10; easing.type: Easing.InOutQuart }
-                    PropertyAction { target: userInput; property: "text"; value: root.input }
-                }
+                PropertyAction { target: selectors_loader; property: "opacity"; value: 1 }
+                PropertyAction { target: userInput; property: "text"; value: root.input }
             }
         },
         Transition {
             to: "hide"
             SequentialAnimation {
+                PropertyAction { target: inputLayer; property: "opacity"; value: 0 }
+                PropertyAction { target: userInput; property: "opacity"; value: 0 }
+                PropertyAction { target: selectors_loader; property: "opacity"; value: 0 }
+                NumberAnimation { duration: 300 }
                 ParallelAnimation {
-                    NumberAnimation { target: userInput; properties: "opacity"; to: 0; duration: 200; easing.type: Easing.InOutQuart }
-                    NumberAnimation { target: selectors_loader; properties: "opacity"; to: 0; duration: 200; easing.type: Easing.InOutQuart }
-                }
-                ParallelAnimation {
-                    NumberAnimation { target: buttonsFiltersColumn; properties: "opacity"; to: 0; duration: 50; easing.type: Easing.InOutQuart }
-                    NumberAnimation { target: backgroundBlur; easing.amplitude: 1.7; properties: "radius"; to: 32; duration: 1100; easing.type: Easing.OutQuart }
+                    NumberAnimation { target: buttonsFiltersColumn; properties: "opacity"; to: 0; duration: 200; easing.type: Easing.InOutQuart }
+                    NumberAnimation { target: backgroundBlur; easing.amplitude: 1.7; properties: "radius"; to: 32; duration: 600; easing.type: Easing.OutQuart }
                 }
                 PropertyAction { target: filters_loader; property: "source"; value: "" }
                 PropertyAction { target: selectors_loader; property: "source"; value: "" }
@@ -193,9 +203,10 @@ Item {
         Transition {
             to: "hide_filter_finder"
             SequentialAnimation {
-                PropertyAction { target: userInput; property: "opacity"; value: 0 }
-                PropertyAction { target: dbNullLabel; property: "opacity"; value: 0 }
-                PropertyAction { target: buttonsFiltersColumn; property: "opacity"; value: 0 }
+                PropertyAction { target: inputLayer; property: "visible"; value: false }
+                PropertyAction { target: userInput; property: "visible"; value: false }
+                PropertyAction { target: dbNullLabel; property: "visible"; value: false }
+                PropertyAction { target: buttonsFiltersColumn; property: "visible"; value: false }
                 PropertyAction { target: selectors_loader; property: "source"; value: "" }
                 ParallelAnimation {
                     NumberAnimation { target: root; easing.amplitude: 1.7; properties: "xB"; to: 0; duration: 1100; easing.type: Easing.OutQuart }

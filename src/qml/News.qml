@@ -65,7 +65,7 @@ Item {
 
     Keys.onPressed: {
         if (event.key === Qt.Key_Escape || event.key === Qt.Key_Return) {
-            screen.state = "hide_news"
+            screen.state = "show_finder"
             event.accepted = true;
         } else if (event.key === Qt.Key_Q && (event.modifiers & Qt.ControlModifier)) {
             root.signal_qml_quit()

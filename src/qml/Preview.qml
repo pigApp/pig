@@ -13,30 +13,13 @@ Item {
     property string path
     property int id
 
-    Rectangle {
-        id: translucentLayer
-        color: Qt.rgba(1, 1, 1, 0.5)
-        anchors.fill: parent
-        MouseArea {
-            onClicked: {
-                if (!onConnect) {
-                    onConnect = true
-                    previewLabel.visible = false
-                    icon.visible = true
-                    root.signal_qml_preview_handler(host, url, "", target, id, false, false, false)
-                }
-            }
-            anchors.fill: parent
-        }
-    }
     Text {
         id: previewLabel
         text: ""//"PREVIEW"
-        color: "white"
+        color: Qt.rgba(1, 1, 1, 0.1)
         font.family: pigFont.name
         font.bold: true
-        font.pixelSize: screen.height/24
-        opacity: 0.4
+        font.pixelSize: screen.height/54
         anchors.centerIn: parent
         MouseArea {
             onClicked: {
@@ -120,6 +103,18 @@ Item {
             previewLabel.text = "PREVIEW ERROR"
             previewLabel.visible = true
         }
+    }
+
+    MouseArea {
+        onClicked: {
+            if (!onConnect) {
+                onConnect = true
+                previewLabel.visible = false
+                icon.visible = true
+                root.signal_qml_preview_handler(host, url, "", target, id, false, false, false)
+            }
+        }
+        anchors.fill: parent
     }
 
     onStopPlayerChanged: {
