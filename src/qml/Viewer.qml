@@ -6,11 +6,10 @@ Item {
     x: root.xB
 
     property bool showTorrentInformation
+    property int location_block: 0
+    property int location_global
     property int offset: 0
-    property int location: 0
-    property int locationOnList
-    property int currentFilm: 1
-    property int nIndex: 0
+    property int current_film: 1
     property var coverStatus: []
 
     ListModel { id: model }
@@ -19,8 +18,6 @@ Item {
         id: view
         model: model
         delegate: delegate
-        interactive: false
-        //cacheItemCount:0
         enabled: false
         anchors.fill: parent
 
@@ -29,11 +26,11 @@ Item {
         path: Path {
             startX: screen.width/1.86
             startY: screen.height/2
-            PathAttribute { name: "recipeZ"; value: 2 }
-            PathAttribute { name: "recipeScale"; value: 1.0 }
-            PathQuad { x: screen.width/1.86; y: 500; controlX: screen.width*1.33; controlY: screen.height/2.05 } // TODO: Pasar 500 a porcentaje.
-            PathAttribute { name: "recipeZ"; value: 0 }
-            PathAttribute { name: "recipeScale"; value: 0.5 }
+            PathAttribute { name: "recipe_z"; value: 2 }
+            PathAttribute { name: "recipe_scale"; value: 1.0 }
+            PathQuad { x: screen.width/1.86; y: screen.height/2.16; controlX: screen.width*1.33; controlY: screen.height/2.05 }
+            PathAttribute { name: "recipe_z"; value: 0 }
+            PathAttribute { name: "recipe_scale"; value: 0.5 }
             PathQuad { x: screen.width/1.86; y: screen.height/2; controlX: -screen.width/3.5; controlY: screen.height/1.8 }
         }
 
@@ -61,9 +58,8 @@ Item {
                 SequentialAnimation {
                     PropertyAction { target: root_loader_A; property: "source"; value: "" }
                     PropertyAction { target: timeOutNetwork; property: "running"; value: false }
-                    PropertyAction { target: viewer; property: "location"; value: 0 }
-                    PropertyAction { target: viewer; property: "locationOnList"; value: 0 }
-                    PropertyAction { target: root; property: "stopPreview"; value: false }
+                    PropertyAction { target: viewer; property: "location_block"; value: 0 }
+                    PropertyAction { target: viewer; property: "location_global"; value: 0 }
                     NumberAnimation { duration: 250 }
                     ParallelAnimation {
                         NumberAnimation { target: root; easing.amplitude: 1.7; properties: "xB"; to: 0; duration: 600; easing.type: Easing.OutQuart }
@@ -76,8 +72,10 @@ Item {
                 to: "hide"
                 SequentialAnimation {
                     PropertyAction { target: view; property: "enabled"; value: false }
-                    NumberAnimation { target: root; easing.amplitude: 1.7; properties: "xB"; to: screen.width+50; duration: 600; easing.type: Easing.OutQuart }
-                    PropertyAction { target: root; property: "stopPreview"; value: true }
+                    ParallelAnimation {
+                        NumberAnimation { target: root; easing.amplitude: 1.7; properties: "xB"; to: screen.width+50; duration: 600; easing.type: Easing.OutQuart }
+                        NumberAnimation { target: backgroundBlur; easing.amplitude: 1.7; properties: "radius"; to: 32; duration: 600; easing.type: Easing.OutQuart }
+                    }
                     PropertyAction { target: update_data; property: "running"; value: true }
                 }
             },
@@ -87,11 +85,7 @@ Item {
                 PropertyAction { target: viewer; property: "showTorrentInformation"; value: false }
                 PropertyAction { target: view; property: "enabled"; value: false }
                 PropertyAction { target: root_loader_A; property: "source"; value: "TorrentInformation.qml" }
-                SequentialAnimation {
-                    //NumberAnimation { duration: 20 }
-                    NumberAnimation { target: viewer; easing.amplitude: 1.7; properties: "x"; to: -screen.width; duration: 1100; easing.type: Easing.OutQuart }
-                    PropertyAction { target: root; property: "stopPreview"; value: true }
-                }
+                NumberAnimation { target: viewer; easing.amplitude: 1.7; properties: "x"; to: -screen.width; duration: 1100; easing.type: Easing.OutQuart }
             },
             Transition {
                 to: "hide_torrentInformation"
@@ -99,15 +93,15 @@ Item {
                     PropertyAction { target: viewer; property: "x"; value: -root.screenWidth }
                     NumberAnimation { target: viewer; easing.amplitude: 1.7; properties: "x"; to: 0; duration: 1100; easing.type: Easing.OutQuart }
                     PropertyAction { target: root_loader_A; property: "source"; value: "" }
-                    PropertyAction { target: root; property: "stopPreview"; value: false }
                 }
             },
             Transition {
                 to: "hide_viewer_show_finder"
                 SequentialAnimation {
-                    PropertyAction { target: root; property: "stopPreview"; value: true }
-                    //NumberAnimation { duration: 20 }
-                    NumberAnimation { target: root; easing.amplitude: 1.7; properties: "xB"; to: screen.width+50; duration: 600; easing.type: Easing.OutQuart }
+                    ParallelAnimation {
+                        NumberAnimation { target: root; easing.amplitude: 1.7; properties: "xB"; to: screen.width+50; duration: 600; easing.type: Easing.OutQuart }
+                        NumberAnimation { target: backgroundBlur; easing.amplitude: 1.7; properties: "radius"; to: 0; duration: 600; easing.type: Easing.OutQuart }
+                    }
                     PropertyAction { target: screen; property: "state"; value: "show_finder" }
                 }
             }
@@ -121,25 +115,24 @@ Item {
                 screen.state = "show_help"
                 event.accepted = true
             } else if (event.key === Qt.Key_Q && (event.modifiers & Qt.ControlModifier)) {
-                root.stopPreview = true
                 root.signal_qml_quit()
                 event.accepted = true;
             }
         }
 
         Keys.onUpPressed: {
-            if(totalFilms > 5 && counter < totalFilms) {
+            if(total_films > 5 && counter < total_films) {
                 viewer.offset = viewer.offset+5
                 counter = counter+5
-                currentFilm = counter-4
+                current_film = counter-4
                 view.state = "hide"
             }
         }
         Keys.onDownPressed: {
-            if(totalFilms > 5 && currentFilm-5 > 0) {
+            if(total_films > 5 && current_film-5 > 0) {
                 viewer.offset = viewer.offset-5
                 counter = counter-5
-                currentFilm = counter-4
+                current_film = counter-4
                 view.state = "hide"
             }
         }
@@ -147,14 +140,14 @@ Item {
             view.enabled = false
             enabledDelay.start()
             incrementCurrentIndex()
-            if (locationOnList === dataFilms.length-11) {
-                locationOnList = 0
-                location = 0
-                currentFilm = currentFilm-nFilms+1
+            if (location_global === data_films.length-11) {
+                location_global = 0
+                location_block = 0
+                current_film = current_film-block_films+1
             } else {
-                locationOnList = locationOnList+11
-                ++currentFilm
-                ++location
+                location_global = location_global+11
+                ++current_film
+                ++location_block
             }
 
         }
@@ -162,14 +155,14 @@ Item {
             view.enabled = false
             enabledDelay.start()
             decrementCurrentIndex()
-            if (locationOnList === 0) {
-                locationOnList = dataFilms.length-11
-                location = nFilms-1
-                currentFilm = currentFilm+nFilms-1
+            if (location_global === 0) {
+                location_global = data_films.length-11
+                location_block = block_films-1
+                current_film = current_film+block_films-1
             } else {
-                locationOnList = locationOnList-11
-                --currentFilm
-                --location
+                location_global = location_global-11
+                --current_film
+                --location_block
             }
         }
 
@@ -194,84 +187,33 @@ Item {
         id: delegate
         Item {
             id: recipe
-            z: PathView.recipeZ
-            scale: PathView.recipeScale
+            z: PathView.recipe_z
+            scale: PathView.recipe_scale
             width: view.width
             height: view.height
 
-            /*
-            Item {
-                id: previewBox
-                width: screen.width/3.04
-                height: screen.height/2.51
-                visible: recipe.PathView.isCurrentItem//
-                //visible: false//
-                anchors.left: parent.left
-                anchors.verticalCenter: parent.verticalCenter
-                anchors.verticalCenterOffset: parent.height/710
-                Component.onCompleted: {
-                    Preview {
-                        host: hostPreview
-                        url: urlPreview
-                        target: filePreview
-                        id: idPreview
-                    }
-
-                    var component = Qt.createComponent("Preview.qml")
-                    var object = component.createObject(previewBox)
-                    object.host = hostPreview
-                    object.url = urlPreview
-                    object.target = filePreview
-                    object.id = idPreview
-                }
-            }
-             */
-
-            /*
             RectangularGlow {
-                id: coverEffect
-                color: "black"
-                glowRadius: 35
-                spread: 0.2
+                id: layerEffect
+                color: "white"
+                glowRadius: 60
                 cornerRadius: 40
-                anchors.fill: frontImage//cover
+                opacity: 0.2
+                anchors.fill: datesLayer
             }
-            */
-
-
-
-            /*
-            Rectangle { // TODO: Mover afuera del recipiente.
-                id: dateLayer
-                color: Qt.rgba(1, 1, 1, 0.02)
-                visible: recipe.PathView.isCurrentItem
-                anchors.right: flipableCover.right
-                anchors.left: flipableCover.left
-                anchors.top: parent.top
-                anchors.topMargin: 10
-                anchors.bottom: flipableCover.top
-                anchors.bottomMargin: 10
-            }
-            */
-
             Rectangle {
-                id: layer
-                color: Qt.rgba(1, 1, 1, 0.02)
+                id: datesLayer
+                color: Qt.rgba(1, 1, 1, 0.03)
                 anchors.top: parent.top
                 anchors.right: flipableCover.right
                 anchors.left: flipableCover.left
-                anchors.bottom: parent.bottom
+                anchors.bottom: flipableCover.top
             }
-
             Column {
                 id: datesColumn
                 spacing: parent.height/216
-                anchors.top: parent.top
-                anchors.topMargin: 40
-                anchors.right: flipableCover.right
-                anchors.left: flipableCover.left
-                anchors.leftMargin: 30
-                anchors.bottom: flipableCover.top
+                anchors.centerIn: datesLayer
+                anchors.verticalCenter: datesLayer.verticalCenter
+                anchors.horizontalCenterOffset: -parent.width/64 //30
                 Text {
                     id: castLabel
                     text: cast
@@ -318,51 +260,106 @@ Item {
                     font.pixelSize: screen.height/38
                 }
             }
+            Row {
+                id: scenesRow
+                spacing: parent.width/192
+                visible: recipe.PathView.isCurrentItem
+                enabled: recipe.PathView.isCurrentItem
+                anchors.right: datesLayer.right
+                anchors.rightMargin: parent.width/192
+                anchors.bottom: datesLayer.bottom
+                anchors.bottomMargin: parent.height/108
+                Repeater {
+                    model: scenes
+                    delegate:
+                    Image {
+                        id: openIcon
+                        width: screen.width/60
+                        height: screen.height/42.63
+                        opacity: 0.1
+                        sourceSize.width: screen.width/60
+                        sourceSize.height: screen.height/42.63
+                        source: "/resources/images/viewer/open/open.svg"
+                        MouseArea {
+                            hoverEnabled: true
+                            onEntered: { openIcon.state = "in" }
+                            onHoveredChanged: { openIcon.state = "out" }
+                            onClicked: {
+                                if (!showTorrentInformation) {
+                                    showTorrentInformation = true
+                                    root.signal_qml_torrent_handler(magnet, index, false)
+                                }
+                            }
+                            anchors.fill: parent
+                        }
+                        states: [
+                            State {
+                                name: "in"
+                            },
+                            State {
+                                name: "out"
+                            }
+                        ]
+                        transitions: [
+                            Transition {
+                                to: "in"
+                                NumberAnimation { target: openIcon; easing.amplitude: 1.7; properties: "opacity"; to: 1; duration: 100; easing.type: Easing.OutQuart }
+                            },
+                            Transition {
+                                to: "out"
+                                NumberAnimation { target: openIcon; easing.amplitude: 1.7; properties: "opacity"; to: 0.1; duration: 100; easing.type: Easing.OutQuart }
+                            }
+                        ]
+                    }
+                }
+            }
 
             Flipable {
                 id: flipableCover
                 width: front.width
                 height: front.height
                 anchors.centerIn: parent
-                anchors.horizontalCenterOffset: -parent.width/15.86
                 anchors.verticalCenter: parent.verticalCenter
                 anchors.verticalCenterOffset: -parent.height/270
+                anchors.horizontalCenterOffset: -parent.width/15.86
                 property bool flipped
-                front: Image {
-                           id: frontCover
-                           width: screen.width/4.58
-                           height: screen.height/1.8
-                           sourceSize.width: 419
-                           sourceSize.height: 600
-                           source: hostCover+urlFrontCover
-                           onStatusChanged: {
-                               if (frontCover.status == Image.Ready) {
-                                   coverStatus.push(0)
-                                   check_cover_status();
-                               } else if (frontCover.status == Image.Error) {
-                                   frontCover.source = "/resources/images/viewer/NOT_AVAILABLE/cover_NOT_AVAILABLE.jpg"
-                                   coverStatus.push(1)
-                                   check_cover_status();
-                               }
-                           }
-                       }
-                back: Image {
-                          id: backCover
-                          width: frontCover.width
-                          height: frontCover.height
-                          sourceSize.width: 419
-                          sourceSize.height: 600
-                          source: {
-                              if (urlBackCover !== "")
-                                  hostCover+urlBackCover
-                              else
-                                  frontCover.source
-                          }
-                          onStatusChanged: {
-                              if (backCover.status == Image.Error)
-                                  backCover.source = frontCover.source
-                          }
-                      }
+                front:
+                Image {
+                    id: frontCover
+                    width: screen.width/4.58
+                    height: screen.height/1.8
+                    sourceSize.width: 419
+                    sourceSize.height: 600
+                    source: hostCover+urlFrontCover
+                    onStatusChanged: {
+                        if (frontCover.status == Image.Ready) {
+                            coverStatus.push(0)
+                            check_cover_status();
+                        } else if (frontCover.status == Image.Error) {
+                            frontCover.source = "/resources/images/viewer/NOT_AVAILABLE/cover_NOT_AVAILABLE.jpg"
+                            coverStatus.push(1)
+                            check_cover_status();
+                        }
+                    }
+                }
+                back:
+                Image {
+                    id: backCover
+                    width: frontCover.width
+                    height: frontCover.height
+                    sourceSize.width: 419
+                    sourceSize.height: 600
+                    source: {
+                        if (urlBackCover !== "")
+                            hostCover+urlBackCover
+                        else
+                            frontCover.source
+                    }
+                    onStatusChanged: {
+                        if (backCover.status == Image.Error)
+                            backCover.source = frontCover.source
+                    }
+                }
                 transform: Rotation {
                     id: rotation
                     origin.x: flipableCover.width / 2
@@ -391,45 +388,50 @@ Item {
                 }
             }
 
-            Loader {
-                id: previewLoader
-                source: "Preview.qml"
-                asynchronous: true
-                visible: { status === Loader.Ready && recipe.PathView.isCurrentItem }
+            Rectangle {
+                id: previewlayer
+                color: Qt.rgba(1, 1, 1, 0.2)
+                visible: recipe.PathView.isCurrentItem
                 anchors.top: flipableCover.bottom
                 anchors.right: flipableCover.right
                 anchors.left: flipableCover.left
                 anchors.bottom: parent.bottom
+                Image {
+                    id: previewIcon
+                    width: screen.width/60
+                    height: screen.height/33.75
+                    sourceSize.width: screen.width/60
+                    sourceSize.height: screen.height/33.75
+                    source: "/resources/images/viewer/preview/play.svg"
+                    opacity: 0.1
+                    anchors.centerIn: parent
+                }
+                MouseArea {
+                    onClicked: {
+                        if (previewIcon.visible) {
+                            previewIcon.visible = false
+                            preview_loader.source = "Preview.qml"
+                            preview_loader.active = true
+                        }
+                    }
+                    anchors.fill: parent
+                }
+            }
+            Loader {
+                id: preview_loader
+                active: false
+                asynchronous: true
+                visible: { status === Loader.Ready && recipe.PathView.isCurrentItem }
+                anchors.fill: previewlayer
                 onStatusChanged: {
                     if (status === Loader.Ready) {
-                        previewLoader.item.host = hostPreview
-                        previewLoader.item.url = urlPreview
-                        previewLoader.item.target = filePreview
-                        previewLoader.item.id = idPreview
+                        preview_loader.item.host = hostPreview
+                        preview_loader.item.url = urlPreview
+                        preview_loader.item.target = filePreview
+                        preview_loader.item.id = idPreview
                     }
                 }
             }
-
-           /*
-            Row {
-                id: openSceneRow
-                spacing: 1
-                visible: false
-                //visible: recipe.PathView.isCurrentItem//
-                anchors.left: cover.right
-                anchors.leftMargin: parent.width/42.66
-                anchors.top: datesColumn.bottom
-                anchors.topMargin: parent.height/38.57
-                Component.onCompleted: {
-                    for (var i=1; i<=scenes && i<=8; i++) {
-                        var component = Qt.createComponent("ButtonScene.qml")
-                        var object = component.createObject(openSceneRow)
-                        object.magnet = magnet
-                        object.scene = i
-                    }
-                }
-            }
-            */
 
             Row {
                 id: counterRow
@@ -441,14 +443,14 @@ Item {
                 anchors.bottomMargin: -parent.height/135
                 Text {
                     id: currentLabel
-                    text: currentFilm
+                    text: current_film
                     color: "white"
                     font.family: pigFont.name
                     font.pixelSize: screen.height/23
                 }
                 Text {
                     id: totalLabel
-                    text: totalFilms
+                    text: total_films
                     color: Qt.rgba(1, 1, 1, 0.6)
                     font.family: pigFont.name
                     font.pixelSize: screen.height/23
@@ -456,11 +458,11 @@ Item {
                 Text {
                     id: arrowsLabel
                     text: {
-                        if (currentFilm == 5 && totalFilms > currentFilm)
+                        if (current_film == 5 && total_films > current_film)
                             " ⇈"
-                        else if (currentFilm !=5 && currentFilm == totalFilms)
+                        else if (current_film !=5 && current_film == total_films)
                             " ⇊"
-                        else if (currentFilm%5 == 0 && currentFilm !=5 && currentFilm != totalFilms)
+                        else if (current_film%5 == 0 && current_film !=5 && current_film != total_films)
                             " ⇅"
                         else
                             " ⇄"
@@ -487,11 +489,11 @@ Item {
         coverStatus = []
         var torrent
         var row = 0
-        for (var i=0; i<nFilms; i++) {
-           torrent = dataFilms[row+10].split(",")
-           model.append({ "cast": dataFilms[row], "categories": dataFilms[row+1], "quality": dataFilms[row+2], "full": dataFilms[row+3], "hostPreview": dataFilms[row+4],
-                          "urlPreview": dataFilms[row+5], "filePreview": dataFilms[row+6], "idPreview": i, "hostCover": dataFilms[row+7], "urlFrontCover": dataFilms[row+8],
-                          "urlBackCover": dataFilms[row+9], "magnet": torrent[0], "scenes": Number(torrent[1]) })
+        for (var i=0; i<block_films; i++) {
+           torrent = data_films[row+10].split(",")
+           model.append({ "cast": data_films[row], "categories": data_films[row+1], "quality": data_films[row+2], "full": data_films[row+3], "hostPreview": data_films[row+4],
+                          "urlPreview": data_films[row+5], "filePreview": data_films[row+6], "idPreview": i, "hostCover": data_films[row+7], "urlFrontCover": data_films[row+8],
+                          "urlBackCover": data_films[row+9], "magnet": torrent[0], "scenes": Number(torrent[1]) })
            row += 11
         }
         root_loader_A.source = "Network.qml"
@@ -509,7 +511,7 @@ Item {
     }
 
     function check_cover_status() {
-        if (coverStatus.length === nFilms)
+        if (coverStatus.length === block_films)
             view.state = "show"
     }
 

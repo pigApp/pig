@@ -100,8 +100,10 @@ void TcpSocket::error()
 {
     timeOut->stop();
 
-    if (request == "PREVIEW" && !abortedPreview)
+    if (request == "PREVIEW" && !abortedPreview) {
+        abortedPreview = true;
         emit signal_preview_ret("", "", "", "", id, false, true, false);
-    else
+    } else {
         emit signal_fail_socket();
+    }
 }

@@ -23,7 +23,8 @@ Item {
                     else
                         pornstars[0]
                 }
-                delegate: ButtonFilter {
+                delegate:
+                FiltersButton {
                     width: filters.width/4
                     labelText: {
                         if (onCategoryFilter)
@@ -33,18 +34,18 @@ Item {
                     }
                     numberLabelText: {
                         if (onCategoryFilter)
-                            nCategories[index]
+                            totalCategories[index]
                         else
-                            nPornstars[index]
+                            totalPornstars[index]
                     }
                     sourceImage: {
                         if (onCategoryFilter) {
-                            if (nCategories[index] !== "0")    // TODO: Borrar
+                            if (totalCategories[index] !== "0")    // TODO: Borrar
                                 "/resources/images/finder/filters/categories/"+categories[index+1]+".jpg"
                             else
                                 ""
                         } else {
-                            if (nPornstars[index] !== "0")    // TODO: Borrar
+                            if (totalPornstars[index] !== "0")    // TODO: Borrar
                                 "/resources/images/finder/filters/pornstars/"+pornstars[index+1]+".jpg"
                             else
                                 ""

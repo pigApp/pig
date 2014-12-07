@@ -125,9 +125,9 @@ void PIG::start_pig()
             const int release = query.value(1).toInt();
             const int database = query.value(2).toInt();
             QStringList categories = query.value(3).toString().split(",");
-            const QStringList nCategories = query.value(4).toString().split(",");
+            const QStringList totalCategories = query.value(4).toString().split(",");
             QStringList pornstars = query.value(5).toString().split(",");
-            const QStringList nPornstars = query.value(6).toString().split(",");
+            const QStringList totalPornstars = query.value(6).toString().split(",");
             db.close();
 
             const QString strBinary = QString::number(binary);
@@ -140,9 +140,9 @@ void PIG::start_pig()
             mRoot->setProperty("release", strRelease);
             mRoot->setProperty("database", strDatabase);
             mRoot->setProperty("categories", categories);
-            mRoot->setProperty("nCategories", nCategories);
+            mRoot->setProperty("totalCategories", totalCategories);
             mRoot->setProperty("pornstars", pornstars);
-            mRoot->setProperty("nPornstars", nPornstars);
+            mRoot->setProperty("totalPornstars", totalPornstars);
 
 #ifdef __linux__
     const QString init = QDir::homePath()+"/.pig/.init";
@@ -275,7 +275,7 @@ void PIG::find(const QString input, const QString pornstar, const QString catego
         } else {
             if (init) {
                 query.last();
-                mRoot->setProperty("totalFilms", query.at()+1);
+                mRoot->setProperty("total_films", query.at()+1);
                 query.first();
                 query.previous();
             }

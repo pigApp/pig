@@ -4,8 +4,8 @@
         <file>resources/images/general/icon.png</file>
         <file>resources/images/general/icon.rc</file>
         <file>resources/images/general/background.jpg</file>
-        <file>resources/images/network/icon.svg</file>
-        <file>resources/images/network/icon_ERROR.svg</file>
+        <file>resources/images/network/network.svg</file>
+        <file>resources/images/network/network_ERROR.svg</file>
         <file>resources/images/finder/selectors/more.svg</file>
         <file>resources/images/finder/selectors/full.svg</file>
         <file>resources/images/finder/selectors/full_ON.svg</file>
@@ -20,10 +20,11 @@
         <file>resources/images/finder/filters/categories/DOUBLE.jpg</file>
         <file>resources/images/finder/filters/categories/GANGBANG.jpg</file>
         <file>resources/images/finder/filters/pornstars/BELLADONNA.jpg</file>
-        <file>resources/images/viewer/open.png</file>
-        <file>resources/images/viewer/preview/network/icon.png</file>
-        <file>resources/images/viewer/preview/replay.png</file>
         <file>resources/images/viewer/NOT_AVAILABLE/cover_NOT_AVAILABLE.jpg</file>
+        <file>resources/images/viewer/open/open.svg</file>
+        <file>resources/images/viewer/preview/play.svg</file>
+        <file>resources/images/viewer/preview/download.svg</file>
+        <file>resources/images/viewer/preview/download_ERROR.svg</file>
         <file>resources/fonts/pig.ttf</file>
         <file>resources/fonts/finder.ttf</file>
     </qresource>
@@ -36,14 +37,13 @@
         <file>src/qml/Finder.qml</file>
         <file>src/qml/Help.qml</file>
         <file>src/qml/Selectors.qml</file>
-        <file>src/qml/ButtonFilter.qml</file>
         <file>src/qml/Filters.qml</file>
         <file>src/qml/Viewer.qml</file>
         <file>src/qml/Preview.qml</file>
-        <file>src/qml/ButtonScene.qml</file>
         <file>src/qml/TorrentInformation.qml</file>
         <file>src/qml/ProgressBar.qml</file>
         <file>src/qml/Button.qml</file>
+        <file>src/qml/FiltersButton.qml</file>
         <file>src/qml/ErrorDb.qml</file>
     </qresource>
 </RCC>

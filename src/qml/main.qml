@@ -8,7 +8,6 @@ Item {
     property bool askPassword
     property bool showNetwork
     property bool errorNetwork
-    property bool stopPreview
     property string status
     property string information
     property string binary
@@ -24,17 +23,17 @@ Item {
     property string bitRate: ""
     property int xA: screen.width
     property int xB: 0
-    property int nFilms
-    property int totalFilms
+    property int block_films
+    property int total_films
     property int screenWidth
     property int peers: 0
     property int required: 0
     property int downloaded: 0
     property var categories
-    property var nCategories
+    property var totalCategories
     property var pornstars
-    property var nPornstars
-    property var dataFilms
+    property var totalPornstars
+    property var data_films
 
     signal signal_qml_password_handler(string plain, bool require, bool check, bool write)
     signal signal_qml_find(string input, string pornstar, string category, string quality, string full, int offset, bool init)
@@ -174,9 +173,9 @@ Item {
             screen.state = "show_finder"
         }
         onSignal_ret_db: {
-            root.nFilms = nFilms
-            root.dataFilms = dataFilms
-            if (nFilms !== 0 && !updateData)
+            root.block_films = blockFilms
+            root.data_films = dataFilms
+            if (blockFilms !== 0 && !updateData)
                 if (pornstar !== "" || category !== "")
                     root_loader_B.item.state = "hide_filter_finder"
                 else

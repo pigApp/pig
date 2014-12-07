@@ -5,33 +5,22 @@ Item {
     id: preview
     anchors.fill: parent
 
-    property bool onConnect
-    property bool stopPlayer: root.stopPreview
+    property bool downloading
     property string host
     property string url
     property string target
     property string path
     property int id
 
-    Text {
-        id: previewLabel
-        text: ""//"PREVIEW"
-        color: Qt.rgba(1, 1, 1, 0.1)
-        font.family: pigFont.name
-        font.bold: true
-        font.pixelSize: screen.height/54
+    Image {
+        id: icon
+        width: screen.width/60
+        height: screen.height/33.75
+        sourceSize.width: screen.width/60
+        sourceSize.height: screen.height/33.75
+        source: "/resources/images/viewer/preview/download.svg"
+        opacity: 0.4
         anchors.centerIn: parent
-        MouseArea {
-            onClicked: {
-                if (!onConnect) {
-                    onConnect = true
-                    previewLabel.visible = false
-                    icon.visible = true
-                    root.signal_qml_preview_handler(host, url, "", target, id, false, false, false)
-                }
-            }
-            anchors.fill: parent
-        }
     }
 
     Video {
@@ -41,108 +30,92 @@ Item {
         fillMode: VideoOutput.Stretch
         anchors.fill: parent
         onPlaybackStateChanged: {
-            if (player.playbackState == MediaPlayer.StoppedState) {
-                player.opacity = 0
+            if (player.playbackState === MediaPlayer.StoppedState) {
+                player.visible = false
+                player.enabled = false
+                icon.source = "/resources/images/viewer/preview/play.svg"
                 icon.visible = true
-                icon.enabled = true
-            } else {
-                icon.visible = false
-                icon.enabled = false
-                icon.source = "/resources/images/viewer/preview/replay.png"
-                player.opacity = 1
             }
         }
-        MouseArea {
-            onClicked: {
-                if (player.playbackState == MediaPlayer.PlayingState)
-                    player.pause()
-                else
-                    player.play()
+    }
+    MouseArea {
+        id: controlsPlayerMouseArea
+        onClicked: {
+            if (!downloading && player.playbackState === MediaPlayer.PlayingState) {
+                player.pause()
+                icon.source = "/resources/images/viewer/preview/play.svg"
+                icon.visible = true
+            } else if (!downloading && player.playbackState === MediaPlayer.PausedState) {
+                icon.visible = false
+                player.play()
+            } else if (!downloading && player.playbackState === MediaPlayer.StoppedState) {
+                icon.visible = false
+                player.visible = true
+                player.enabled = true
+                player.play()
             }
-            anchors.fill: parent
+        }
+        anchors.fill: parent
+    }
+
+    Timer {
+        id: startDelay
+        running: false
+        repeat: false
+        interval: 50
+        onTriggered: {
+            downloading = true
+            root.signal_qml_preview_handler(host, url, "", target, id, false, false, false)
         }
     }
     Timer {
-        id: playerDelay
+        id: startPlayerDelay
         running: false
         repeat: false
-        interval: 10
+        interval: 50
         onTriggered: {
+            icon.visible = false
             player.source = "file://"+path+target
             player.visible = true
             player.enabled = true
             player.play()
         }
     }
-
-    Image {
-        id: icon
-        width: screen.width/22.58
-        height: screen.height/12.70
-        sourceSize.width: screen.width/22.58
-        sourceSize.height: screen.height/12.70
-        source: "/resources/images/viewer/preview/network/icon.png"
-        opacity: 0.4
-        visible: false
-        enabled: false
-        anchors.centerIn: parent
-        MouseArea {
-            onClicked: player.play()
-            anchors.fill: parent
-        }
-    }
-
     Timer {
         id: errorDelay
         running: false
         repeat: false
-        interval: 10
-        onTriggered: {
-            icon.visible = false
-            icon.enabled = false
-            previewLabel.text = "PREVIEW ERROR"
-            previewLabel.visible = true
-        }
-    }
-
-    MouseArea {
-        onClicked: {
-            if (!onConnect) {
-                onConnect = true
-                previewLabel.visible = false
-                icon.visible = true
-                root.signal_qml_preview_handler(host, url, "", target, id, false, false, false)
-            }
-        }
-        anchors.fill: parent
-    }
-
-    onStopPlayerChanged: {
-        if (stopPlayer && (player.playbackState == MediaPlayer.PlayingState || player.playbackState == MediaPlayer.PausedState)) {
-            player.stop()
-        } else if (stopPlayer && onConnect) {
-            icon.visible = false
-            previewLabel.visible = true
-            onConnect = false
-            root.signal_qml_preview_handler("", "", "", "", id, false, false, true)
-        }
+        interval: 50
+        onTriggered: { icon.source = "/resources/images/viewer/preview/download_ERROR.svg" }
     }
 
     Connections {
         target: cppSignals
         onSignal_success_preview: {
             if (id === preview.id) {
-                onConnect = false
+                downloading = false
                 preview.path = path
-                playerDelay.start()
+                startPlayerDelay.start()
             }
         }
         onSignal_fail_preview: {
             if (id === preview.id) {
-                onConnect = false
+                downloading = false
                 errorDelay.start()
             }
         }
     }
+
+    Component.onDestruction: {
+        if (player.playbackState === MediaPlayer.PlayingState || player.playbackState === MediaPlayer.PausedState) {
+            player.stop()
+        } else if (downloading) {
+            icon.visible = false
+            downloading = false
+            root.signal_qml_preview_handler("", "", "", "", id, false, false, true)
+        }
+    }
+
+    Component.onCompleted: startDelay.start()
 }
 // Tabs hechos.

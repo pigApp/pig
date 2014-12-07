@@ -11,9 +11,9 @@ Item {
         sourceSize.height: parent.height/25.35
         source:  {
             if (!root.errorNetwork)
-                "/resources/images/network/icon.svg"
+                "/resources/images/network/network.svg"
             else
-                "/resources/images/network/icon_ERROR.svg"
+                "/resources/images/network/network_ERROR.svg"
         }
         anchors.right: parent.right
         anchors.rightMargin: parent.width/128
