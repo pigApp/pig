@@ -1,4 +1,4 @@
-#include "torrent.h"
+    #include "torrent.h"
 
 #include <libtorrent/extensions/ut_pex.hpp>
 
@@ -115,10 +115,11 @@ void Torrent::filter_files()
 void Torrent::required_video_dump()
 {
     if (!aborted) {
-        if (((handler.status().total_done/1048576)-totalPreSkip_mb) < minimum_mb)
+        if (((handler.status().total_done/1048576)-totalPreSkip_mb) < minimum_mb) {
             QTimer::singleShot(1000, this, SLOT(required_video_dump()));
-        else 
+        } else {
             call_player();
+        }
     }
     qDebug() << "DOWNLOADED: " << (handler.status().total_done/1048576)-totalPreSkip_mb << " MB";
 }
@@ -149,8 +150,10 @@ void Torrent::call_player()
             dir.setPath(QString::fromStdString(handler.save_path()));
         const QString absoluteFilePath = dir.absolutePath()+"/"+fileName;
 
-        emit signal_sandbox(absoluteFilePath, true, false, false);
-        QTimer::singleShot(1000, this, SLOT(progress()));
+        (*_root)->setProperty("sandbox", absoluteFilePath);
+
+        //emit signal_sandbox(absoluteFilePath, true, false, false);
+        //QTimer::singleShot(1000, this, SLOT(progress()));
     } else {
         skip = false;
         (*_player)->update_player();

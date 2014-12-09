@@ -1,49 +1,51 @@
 <RCC>
     <qresource prefix="/">
-        <file>resources/images/general/icon.ico</file>
-        <file>resources/images/general/icon.png</file>
-        <file>resources/images/general/icon.rc</file>
-        <file>resources/images/general/background.jpg</file>
-        <file>resources/images/network/network.svg</file>
-        <file>resources/images/network/network_ERROR.svg</file>
-        <file>resources/images/finder/selectors/more.svg</file>
-        <file>resources/images/finder/selectors/full.svg</file>
-        <file>resources/images/finder/selectors/full_ON.svg</file>
-        <file>resources/images/finder/selectors/sd.svg</file>
-        <file>resources/images/finder/selectors/sd_ON.svg</file>
-        <file>resources/images/finder/selectors/720p.svg</file>
-        <file>resources/images/finder/selectors/720p_ON.svg</file>
-        <file>resources/images/finder/selectors/1080p.svg</file>
-        <file>resources/images/finder/selectors/1080p_ON.svg</file>
-        <file>resources/images/finder/filters/categories/ANAL.jpg</file>
-        <file>resources/images/finder/filters/categories/ASIAN.jpg</file>
-        <file>resources/images/finder/filters/categories/DOUBLE.jpg</file>
-        <file>resources/images/finder/filters/categories/GANGBANG.jpg</file>
-        <file>resources/images/finder/filters/pornstars/BELLADONNA.jpg</file>
-        <file>resources/images/viewer/NOT_AVAILABLE/cover_NOT_AVAILABLE.jpg</file>
-        <file>resources/images/viewer/open/open.svg</file>
-        <file>resources/images/viewer/preview/play.svg</file>
-        <file>resources/images/viewer/preview/download.svg</file>
-        <file>resources/images/viewer/preview/download_ERROR.svg</file>
-        <file>resources/fonts/pig.ttf</file>
-        <file>resources/fonts/finder.ttf</file>
+        <file alias="img-network">resources/images/network/network.svg</file>
+        <file alias="img-network_err">resources/images/network/network_err.svg</file>
+        <file alias="img-more">resources/images/finder/selectors/more.svg</file>
+        <file alias="img-full">resources/images/finder/selectors/full.svg</file>
+        <file alias="img-full_on">resources/images/finder/selectors/full_on.svg</file>
+        <file alias="img-sd">resources/images/finder/selectors/sd.svg</file>
+        <file alias="img-sd_on">resources/images/finder/selectors/sd_on.svg</file>
+        <file alias="img-720p">resources/images/finder/selectors/720p.svg</file>
+        <file alias="img-720p_on">resources/images/finder/selectors/720p_on.svg</file>
+        <file alias="img-1080p">resources/images/finder/selectors/1080p.svg</file>
+        <file alias="img-1080p_on">resources/images/finder/selectors/1080p_on.svg</file>
+        <file alias="img-cat-ANAL">resources/images/finder/filters/categories/ANAL.jpg</file>
+        <file alias="img-cat-ASIAN">resources/images/finder/filters/categories/ASIAN.jpg</file>
+        <file alias="img-cat-DOUBLE">resources/images/finder/filters/categories/DOUBLE.jpg</file>
+        <file alias="img-cat-GANGBANG">resources/images/finder/filters/categories/GANGBANG.jpg</file>
+        <file alias="img-star-BELLADONNA">resources/images/finder/filters/pornstars/BELLADONNA.jpg</file>
+        <file alias="img-cover_na">resources/images/viewer/na/cover_na.jpg</file>
+        <file alias="img-play">resources/images/viewer/preview/play.svg</file>
+        <file alias="img-download">resources/images/viewer/preview/download.svg</file>
+        <file alias="img-download_err">resources/images/viewer/preview/download_err.svg</file>
+        <file alias="img-open">resources/images/viewer/scene/open.svg</file>
+        <file alias="img-background">resources/images/global/background.jpg</file>
+        <file>resources/images/global/icon.ico</file>
+        <file>resources/images/global/icon.png</file>
+        <file>resources/images/global/icon.rc</file>
+        <file alias="font-global">resources/fonts/global.ttf</file>
+        <file alias="font-custom">resources/fonts/custom.ttf</file>
     </qresource>
     <qresource prefix="QML">
         <file>src/qml/main.qml</file>
         <file>src/qml/Password.qml</file>
-        <file>src/qml/Network.qml</file>
         <file>src/qml/Update.qml</file>
         <file>src/qml/News.qml</file>
         <file>src/qml/Finder.qml</file>
-        <file>src/qml/Help.qml</file>
+        <file>src/qml/Filter.qml</file>
+        <file>src/qml/FilterBox.qml</file>
         <file>src/qml/Selectors.qml</file>
-        <file>src/qml/Filters.qml</file>
         <file>src/qml/Viewer.qml</file>
         <file>src/qml/Preview.qml</file>
-        <file>src/qml/TorrentInformation.qml</file>
-        <file>src/qml/ProgressBar.qml</file>
         <file>src/qml/Button.qml</file>
-        <file>src/qml/FiltersButton.qml</file>
-        <file>src/qml/ErrorDb.qml</file>
+        <file>src/qml/torrent/Handler.qml</file>
+        <file>src/qml/torrent/DataDownload.qml</file>
+        <file>src/qml/torrent/ProgressBar.qml</file>
+        <file>src/qml/torrent/videoplayer/VideoPlayer.qml</file>
+        <file>src/qml/global/Network.qml</file>
+        <file>src/qml/global/Help.qml</file>
+        <file>src/qml/global/ErrorDb.qml</file>
     </qresource>
 </RCC>

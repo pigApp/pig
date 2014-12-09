@@ -227,7 +227,7 @@ void PIG::torrent_handler(const QString magnet, const int scene, const bool abor
     } else {
         mTorrent->deleteLater();
         mTorrent = NULL;
-        emit signal_hide_torrent_information();
+        emit signal_hide_torrent_handler();
     }
 }
 
@@ -248,8 +248,8 @@ void PIG::player_handler(const QString absoluteFilePath, const bool sandbox, con
         }
         if (fileReady) {
             mTorrent->toPlayer = true;
-            mPlayer->showFullScreen();
-            hide();
+            //mPlayer->showFullScreen();
+            //hide();
             emit signal_file_ready();
         }
     } else {
@@ -261,13 +261,13 @@ void PIG::player_handler(const QString absoluteFilePath, const bool sandbox, con
 }
 
 //FIND
-void PIG::find(const QString input, const QString pornstar, const QString category,
+void PIG::find(const QString inputUser, const QString pornstar, const QString category,
                const QString quality, const QString full, const int offset, const bool init)
 {
     if (db.open()) {
         QSqlQuery query;
             query.prepare("SELECT Cas, Category, Quality, Full, HostPreview, UrlPreview, FilePreview, HostCover, UrlFrontCover, UrlBackCover, Torrent \
-                           FROM Films WHERE Title LIKE '%"+input+"%' AND Cas LIKE '%"+pornstar+"%' AND Category LIKE '%"+category+"%' \
+                           FROM Films WHERE Title LIKE '%"+inputUser+"%' AND Cas LIKE '%"+pornstar+"%' AND Category LIKE '%"+category+"%' \
                            AND Quality LIKE '%"+quality+"%' AND Full LIKE '%"+full+"%' ORDER BY Title ASC LIMIT 1000 OFFSET '"+QString::number(offset)+"'");
         if (!query.exec()) {
             db.close();

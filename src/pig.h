@@ -40,7 +40,7 @@ signals:
     void signal_fail_preview(const int id);
     void signal_checking_file();
     void signal_file_ready();
-    void signal_hide_torrent_information();
+    void signal_hide_torrent_handler();
     void signal_show_errorDatabase();
 
 private:

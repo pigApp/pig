@@ -5,7 +5,7 @@ Item {
 
     Loader {
         id: network_loader
-        source: "Network.qml"
+        source: "global/Network.qml"
         asynchronous: true
         active: root.showNetwork
         anchors.fill: parent
@@ -19,14 +19,14 @@ Item {
             id: statusLabel
             text: root.status
             color: "white"
-            font.family: pigFont.name
+            font.family: globalFont.name
             font.pixelSize: screen.height/23
         }
         Text {
             id: informationLabel
             text: root.information
             color: "white"
-            font.family: pigFont.name
+            font.family: globalFont.name
             font.pixelSize: screen.height/23
         }
     }

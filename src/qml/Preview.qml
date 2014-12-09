@@ -18,13 +18,14 @@ Item {
         height: screen.height/33.75
         sourceSize.width: screen.width/60
         sourceSize.height: screen.height/33.75
-        source: "/resources/images/viewer/preview/download.svg"
+        source: "qrc:/img-download"
         opacity: 0.4
         anchors.centerIn: parent
     }
 
     Video {
         id: player
+        autoPlay: true
         visible: false
         enabled: false
         fillMode: VideoOutput.Stretch
@@ -33,7 +34,7 @@ Item {
             if (player.playbackState === MediaPlayer.StoppedState) {
                 player.visible = false
                 player.enabled = false
-                icon.source = "/resources/images/viewer/preview/play.svg"
+                icon.source = "qrc:/img-play"
                 icon.visible = true
             }
         }
@@ -43,7 +44,7 @@ Item {
         onClicked: {
             if (!downloading && player.playbackState === MediaPlayer.PlayingState) {
                 player.pause()
-                icon.source = "/resources/images/viewer/preview/play.svg"
+                icon.source = "qrc:/img-play"
                 icon.visible = true
             } else if (!downloading && player.playbackState === MediaPlayer.PausedState) {
                 icon.visible = false
@@ -54,12 +55,13 @@ Item {
                 player.enabled = true
                 player.play()
             }
+            view.forceActiveFocus()
         }
         anchors.fill: parent
     }
 
     Timer {
-        id: startDelay
+        id: startDownloadDelay
         running: false
         repeat: false
         interval: 50
@@ -67,6 +69,13 @@ Item {
             downloading = true
             root.signal_qml_preview_handler(host, url, "", target, id, false, false, false)
         }
+    }
+    Timer {
+        id: errorDownloadDelay
+        running: false
+        repeat: false
+        interval: 50
+        onTriggered: { icon.source = "qrc:/img-download_err" }
     }
     Timer {
         id: startPlayerDelay
@@ -78,15 +87,7 @@ Item {
             player.source = "file://"+path+target
             player.visible = true
             player.enabled = true
-            player.play()
         }
-    }
-    Timer {
-        id: errorDelay
-        running: false
-        repeat: false
-        interval: 50
-        onTriggered: { icon.source = "/resources/images/viewer/preview/download_ERROR.svg" }
     }
 
     Connections {
@@ -101,7 +102,7 @@ Item {
         onSignal_fail_preview: {
             if (id === preview.id) {
                 downloading = false
-                errorDelay.start()
+                errorDownloadDelay.start()
             }
         }
     }
@@ -116,6 +117,6 @@ Item {
         }
     }
 
-    Component.onCompleted: startDelay.start()
+    Component.onCompleted: startDownloadDelay.start()
 }
 // Tabs hechos.

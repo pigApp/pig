@@ -42,11 +42,11 @@ Item {
                 name: "hide"
             },
             State {
-                name: "show_torrentInformation"
-                when: showTorrentInformation
+                name: "show_torrent_handler"
+                //when: showTorrentInformation
             },
             State {
-                name: "hide_torrentInformation"
+                name: "hide_torrent_handler"
             },
             State {
                 name: "hide_viewer_show_finder"
@@ -80,18 +80,19 @@ Item {
                 }
             },
             Transition {
-                to: "show_torrentInformation"
-                PropertyAction { target: root; property: "screenWidth"; value: screen.width }
-                PropertyAction { target: viewer; property: "showTorrentInformation"; value: false }
+                to: "show_torrent_handler"
+                //PropertyAction { target: root; property: "screenWidth"; value: screen.width }
+                //PropertyAction { target: viewer; property: "showTorrentInformation"; value: false }
                 PropertyAction { target: view; property: "enabled"; value: false }
-                PropertyAction { target: root_loader_A; property: "source"; value: "TorrentInformation.qml" }
-                NumberAnimation { target: viewer; easing.amplitude: 1.7; properties: "x"; to: -screen.width; duration: 1100; easing.type: Easing.OutQuart }
+                PropertyAction { target: root_loader_A; property: "source"; value: "torrent/Handler.qml" } //
+
+                NumberAnimation { target: root; easing.amplitude: 1.7; properties: "xB"; to: -screen.width; duration: 1100; easing.type: Easing.OutQuart }
             },
             Transition {
-                to: "hide_torrentInformation"
+                to: "hide_torrent_handler"
                 SequentialAnimation {
-                    PropertyAction { target: viewer; property: "x"; value: -root.screenWidth }
-                    NumberAnimation { target: viewer; easing.amplitude: 1.7; properties: "x"; to: 0; duration: 1100; easing.type: Easing.OutQuart }
+                    //PropertyAction { target: viewer; property: "x"; value: -root.screenWidth }
+                    NumberAnimation { target: root; easing.amplitude: 1.7; properties: "xB"; to: 0; duration: 1100; easing.type: Easing.OutQuart }
                     PropertyAction { target: root_loader_A; property: "source"; value: "" }
                 }
             },
@@ -193,7 +194,7 @@ Item {
             height: view.height
 
             RectangularGlow {
-                id: layerEffect
+                id: datesLayerEffect
                 color: "white"
                 glowRadius: 60
                 cornerRadius: 40
@@ -213,12 +214,12 @@ Item {
                 spacing: parent.height/216
                 anchors.centerIn: datesLayer
                 anchors.verticalCenter: datesLayer.verticalCenter
-                anchors.horizontalCenterOffset: -parent.width/64 //30
+                anchors.horizontalCenterOffset: -parent.width/64
                 Text {
                     id: castLabel
                     text: cast
                     color: "white"
-                    font.family: finderFont.name
+                    font.family: customFont.name
                     font.letterSpacing: screen.width/480
                     font.wordSpacing: -screen.width/384
                     font.pixelSize: screen.height/38
@@ -227,7 +228,7 @@ Item {
                     id: categoriesLabel
                     text: categories
                     color: "white"
-                    font.family: finderFont.name
+                    font.family: customFont.name
                     font.letterSpacing: screen.width/480
                     font.wordSpacing: -screen.width/384
                     font.pixelSize: screen.height/38
@@ -236,7 +237,7 @@ Item {
                     id: qualityLabel
                     text: quality
                     color: "white"
-                    font.family: finderFont.name
+                    font.family: customFont.name
                     font.letterSpacing: screen.width/480
                     font.wordSpacing: -screen.width/384
                     font.pixelSize: screen.height/38
@@ -245,7 +246,7 @@ Item {
                     id: splitLabel
                     text: "SPLIT"
                     color: { if (scenes !== 1) "white"; else Qt.rgba(1, 1, 1, 0.1) }
-                    font.family: finderFont.name
+                    font.family: customFont.name
                     font.letterSpacing: screen.width/480
                     font.wordSpacing: -screen.width/384
                     font.pixelSize: screen.height/38
@@ -254,12 +255,39 @@ Item {
                     id: fullLabel
                     text: "FULL"
                     color: { if (full === "") "white"; else Qt.rgba(1, 1, 1, 0.1) }
-                    font.family: finderFont.name
+                    font.family: customFont.name
                     font.letterSpacing: screen.width/480
                     font.wordSpacing: -screen.width/384
                     font.pixelSize: screen.height/38
                 }
             }
+
+            Row {
+                id: counterRow
+                spacing: parent.width/480
+                visible: recipe.PathView.isCurrentItem
+                anchors.left: datesLayer.right
+                anchors.leftMargin: parent.width/128
+                anchors.top: parent.top
+                anchors.topMargin: parent.height/98.18
+                Text {
+                    id: currentFilmLabel
+                    text: current_film
+                    color: Qt.rgba(1, 1, 1, 0.5)
+                    font.family: globalFont.name
+                    font.bold: true
+                    font.pixelSize: screen.height/54
+                }
+                Text {
+                    id: totalFilmsLabel
+                    text: total_films
+                    color: Qt.rgba(1, 1, 1, 0.2)
+                    font.family: globalFont.name
+                    font.bold: true
+                    font.pixelSize: screen.height/54
+                }
+            }
+
             Row {
                 id: scenesRow
                 spacing: parent.width/192
@@ -273,22 +301,20 @@ Item {
                     model: scenes
                     delegate:
                     Image {
-                        id: openIcon
+                        id: openSceneIcon
                         width: screen.width/60
                         height: screen.height/42.63
                         opacity: 0.1
                         sourceSize.width: screen.width/60
                         sourceSize.height: screen.height/42.63
-                        source: "/resources/images/viewer/open/open.svg"
+                        source: "qrc:/img-open"
                         MouseArea {
                             hoverEnabled: true
-                            onEntered: { openIcon.state = "in" }
-                            onHoveredChanged: { openIcon.state = "out" }
+                            onEntered: { openSceneIcon.state = "in" }
+                            onHoveredChanged: { openSceneIcon.state = "out" }
                             onClicked: {
-                                if (!showTorrentInformation) {
-                                    showTorrentInformation = true
-                                    root.signal_qml_torrent_handler(magnet, index, false)
-                                }
+                                view.state = "show_torrent_handler"
+                                root.signal_qml_torrent_handler(magnet, index, false)
                             }
                             anchors.fill: parent
                         }
@@ -303,11 +329,11 @@ Item {
                         transitions: [
                             Transition {
                                 to: "in"
-                                NumberAnimation { target: openIcon; easing.amplitude: 1.7; properties: "opacity"; to: 1; duration: 100; easing.type: Easing.OutQuart }
+                                NumberAnimation { target: openSceneIcon; easing.amplitude: 1.7; properties: "opacity"; to: 1; duration: 100; easing.type: Easing.OutQuart }
                             },
                             Transition {
                                 to: "out"
-                                NumberAnimation { target: openIcon; easing.amplitude: 1.7; properties: "opacity"; to: 0.1; duration: 100; easing.type: Easing.OutQuart }
+                                NumberAnimation { target: openSceneIcon; easing.amplitude: 1.7; properties: "opacity"; to: 0.1; duration: 100; easing.type: Easing.OutQuart }
                             }
                         ]
                     }
@@ -318,11 +344,6 @@ Item {
                 id: flipableCover
                 width: front.width
                 height: front.height
-                anchors.centerIn: parent
-                anchors.verticalCenter: parent.verticalCenter
-                anchors.verticalCenterOffset: -parent.height/270
-                anchors.horizontalCenterOffset: -parent.width/15.86
-                property bool flipped
                 front:
                 Image {
                     id: frontCover
@@ -336,7 +357,7 @@ Item {
                             coverStatus.push(0)
                             check_cover_status();
                         } else if (frontCover.status == Image.Error) {
-                            frontCover.source = "/resources/images/viewer/NOT_AVAILABLE/cover_NOT_AVAILABLE.jpg"
+                            frontCover.source = "qrc:/img-cover_na"
                             coverStatus.push(1)
                             check_cover_status();
                         }
@@ -360,6 +381,13 @@ Item {
                             backCover.source = frontCover.source
                     }
                 }
+                anchors.centerIn: parent
+                anchors.verticalCenter: parent.verticalCenter
+                anchors.verticalCenterOffset: -parent.height/270
+                anchors.horizontalCenterOffset: -parent.width/15.86
+
+                property bool flipped
+
                 transform: Rotation {
                     id: rotation
                     origin.x: flipableCover.width / 2
@@ -384,7 +412,10 @@ Item {
                 }
                 MouseArea {
                     anchors.fill: parent
-                    onClicked: { flipableCover.flipped = !flipableCover.flipped }
+                    onClicked: {
+                        flipableCover.flipped = !flipableCover.flipped
+                        view.forceActiveFocus()
+                    }
                 }
             }
 
@@ -402,16 +433,28 @@ Item {
                     height: screen.height/33.75
                     sourceSize.width: screen.width/60
                     sourceSize.height: screen.height/33.75
-                    source: "/resources/images/viewer/preview/play.svg"
+                    source: "qrc:/img-play"
                     opacity: 0.1
                     anchors.centerIn: parent
+                }
+                Text {
+                    id: previewLabel
+                    text: "PREVIEW"
+                    color: Qt.rgba(1, 1, 1, 0.06)
+                    font.family: globalFont.name
+                    font.bold: true
+                    font.pixelSize: screen.height/74
+                    anchors.top: previewIcon.bottom
+                    anchors.horizontalCenter: previewlayer.horizontalCenter
                 }
                 MouseArea {
                     onClicked: {
                         if (previewIcon.visible) {
                             previewIcon.visible = false
+                            previewLabel.text = ""
                             preview_loader.source = "Preview.qml"
                             preview_loader.active = true
+                            view.forceActiveFocus()
                         }
                     }
                     anchors.fill: parent
@@ -430,48 +473,6 @@ Item {
                         preview_loader.item.target = filePreview
                         preview_loader.item.id = idPreview
                     }
-                }
-            }
-
-            Row {
-                id: counterRow
-                spacing: parent.width/480
-                visible: false//
-                anchors.right: parent.right
-                anchors.rightMargin: parent.width/480
-                anchors.bottom: parent.bottom
-                anchors.bottomMargin: -parent.height/135
-                Text {
-                    id: currentLabel
-                    text: current_film
-                    color: "white"
-                    font.family: pigFont.name
-                    font.pixelSize: screen.height/23
-                }
-                Text {
-                    id: totalLabel
-                    text: total_films
-                    color: Qt.rgba(1, 1, 1, 0.6)
-                    font.family: pigFont.name
-                    font.pixelSize: screen.height/23
-                }
-                Text {
-                    id: arrowsLabel
-                    text: {
-                        if (current_film == 5 && total_films > current_film)
-                            " ⇈"
-                        else if (current_film !=5 && current_film == total_films)
-                            " ⇊"
-                        else if (current_film%5 == 0 && current_film !=5 && current_film != total_films)
-                            " ⇅"
-                        else
-                            " ⇄"
-                    }
-                    color: Qt.rgba(1, 1, 1, 0.6)
-                    font.family: pigFont.name
-                    font.pixelSize: screen.height/54
-                    anchors.verticalCenter: totalLabel.verticalCenter
-                    anchors.verticalCenterOffset: screen.height/360
                 }
             }
         }
@@ -496,7 +497,7 @@ Item {
                           "urlBackCover": data_films[row+9], "magnet": torrent[0], "scenes": Number(torrent[1]) })
            row += 11
         }
-        root_loader_A.source = "Network.qml"
+        root_loader_A.source = "global/Network.qml"
         timeOutNetwork.start()
     }
 
@@ -506,7 +507,7 @@ Item {
         repeat: false
         onTriggered: {
             model.clear()
-            root.signal_qml_find(root.input, root.pornstar, root.category, root.quality, root.full, viewer.offset, false)
+            root.signal_qml_find(root.inputUser, root.pornstar, root.category, root.quality, root.full, viewer.offset, false)
         }
     }
 
@@ -517,7 +518,7 @@ Item {
 
     Connections {
         target: cppSignals
-        onSignal_hide_torrent_information: { view.state = "hide_torrentInformation" }
+        onSignal_hide_torrent_handler: { view.state = "hide_torrent_handler" }
     }
 
     Component.onCompleted: append_data()

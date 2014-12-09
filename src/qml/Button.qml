@@ -14,7 +14,7 @@ Rectangle {
 
     Text {
         id: label
-        font.family: pigFont.name
+        font.family: globalFont.name
         anchors.verticalCenter: parent.verticalCenter
     }
     DropShadow {

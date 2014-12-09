@@ -11,14 +11,14 @@ Item {
             id: label
             text: "INTRO PASSWORD"
             color: "white"
-            font.family: pigFont.name
+            font.family: globalFont.name
             font.pixelSize: screen.height/23
             anchors.centerIn: parent
         }
         TextInput {
-            id: input
+            id: inputUser
             color: "white"
-            font.family: pigFont.name
+            font.family: globalFont.name
             font.pixelSize: screen.height/43.2
             maximumLength: 16
             echoMode: TextInput.Password
@@ -26,22 +26,22 @@ Item {
             anchors.centerIn: parent
             anchors.verticalCenterOffset: -screen.height/720
             onCursorPositionChanged: {
-                input.visible = true
+                inputUser.visible = true
                 label.color = "white"
-                if (input.text === "")
+                if (inputUser.text === "")
                     label.text = "INTRO PASSWORD"
                 else
                     label.text = ""
             }
-            onCursorVisibleChanged: { if (input.cursorVisible) input.cursorVisible = false }
+            onCursorVisibleChanged: { if (inputUser.cursorVisible) inputUser.cursorVisible = false }
             onAccepted: {
-                if (input.text !== "") {
-                    input.visible = false
+                if (inputUser.text !== "") {
+                    inputUser.visible = false
                     if (root.askPassword) {
-                        root.signal_qml_password_handler(input.text, false, true, false)
+                        root.signal_qml_password_handler(inputUser.text, false, true, false)
                     } else {
-                        root.signal_qml_password_handler(input.text, false, false, true)
-                        input.enabled = false
+                        root.signal_qml_password_handler(inputUser.text, false, false, true)
+                        inputUser.enabled = false
                     }
                 }
             }
@@ -56,7 +56,7 @@ Item {
             }
         }
         MouseArea {
-            onClicked: { input.focus = true }
+            onClicked: { inputUser.focus = true }
             anchors.fill: parent
         }
     }
@@ -85,6 +85,6 @@ Item {
         }
     }
 
-    Component.onCompleted: input.forceActiveFocus()
+    Component.onCompleted: inputUser.forceActiveFocus()
 }
 // Tabs hechos.

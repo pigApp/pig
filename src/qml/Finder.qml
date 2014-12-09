@@ -10,7 +10,7 @@ Item {
         id: welcomeLabel
         text: "WELCOME &nbsp; <font color='#707070'>CTRL H TO HELP</font></a>"
         color: "white"
-        font.family: pigFont.name
+        font.family: globalFont.name
         font.bold: true
         font.pixelSize: screen.height/54
         opacity: 0
@@ -37,7 +37,7 @@ Item {
     TextInput {
         id: inputUser
         color: "white"
-        font.family: finderFont.name
+        font.family: customFont.name
         font.capitalization: Font.AllUppercase
         font.letterSpacing: parent.width/480
         font.wordSpacing: -parent.width/384
@@ -50,8 +50,8 @@ Item {
         anchors.horizontalCenterOffset: -parent.width/112
         anchors.verticalCenterOffset: -parent.height/400 //-2.7
         onAccepted: {
-            root.input = inputUser.text
-            root.signal_qml_find(root.input, root.pornstar, root.category, root.quality, root.full, 0, true)
+            root.inputUser = inputUser.text
+            root.signal_qml_find(root.inputUser, root.pornstar, root.category, root.quality, root.full, 0, true)
         }
         onCursorPositionChanged: {
             if (dbNullLabel.visible)
@@ -65,7 +65,7 @@ Item {
         id: dbNullLabel
         text: "NO RESULT"
         color: Qt.rgba(1, 1, 1, 0.1)
-        font.family: finderFont.name
+        font.family: customFont.name
         font.capitalization: Font.AllUppercase
         font.letterSpacing: parent.width/480
         font.wordSpacing: -parent.width/384
@@ -109,14 +109,14 @@ Item {
         }
     }
     Loader {
-        id: filters_loader
+        id: filter_loader
         z: 2
-        source: "Filters.qml"
+        source: "Filter.qml"
         asynchronous: true
         active: false
         anchors.fill: parent
     }
-    function filtersManager(label) {
+    function set_filter(label) {
         if (onCategoryFilter)
             root.category = label.toUpperCase()
         else
@@ -160,7 +160,7 @@ Item {
                     NumberAnimation { target: backgroundBlur; easing.amplitude: 1.7; properties: "radius"; to: 0; duration: 600; easing.type: Easing.OutQuart }
                 }
                 PropertyAction { target: selectors_loader; property: "opacity"; value: 1 }
-                PropertyAction { target: inputUser; property: "text"; value: root.input }
+                PropertyAction { target: inputUser; property: "text"; value: root.inputUser }
             }
         },
         Transition {
@@ -174,7 +174,7 @@ Item {
                     NumberAnimation { target: filtersColumn; properties: "opacity"; to: 0; duration: 200; easing.type: Easing.InOutQuart }
                     NumberAnimation { target: backgroundBlur; easing.amplitude: 1.7; properties: "radius"; to: 32; duration: 600; easing.type: Easing.OutQuart }
                 }
-                PropertyAction { target: filters_loader; property: "source"; value: "" }
+                PropertyAction { target: filter_loader; property: "source"; value: "" }
                 PropertyAction { target: selectors_loader; property: "source"; value: "" }
                 PropertyAction { target: screen; property: "state"; value: "show_viewer" }
             }
@@ -182,7 +182,7 @@ Item {
         Transition {
             to: "show_filter"
             SequentialAnimation {
-                PropertyAction { target: filters_loader; property: "active"; value: true }
+                PropertyAction { target: filter_loader; property: "active"; value: true }
                 ParallelAnimation {
                     NumberAnimation { target: root; easing.amplitude: 1.7; properties: "xB"; to: -screen.width; duration: 1100; easing.type: Easing.OutQuart }
                     NumberAnimation { target: backgroundBlur; easing.amplitude: 1.7; properties: "radius"; to: 96; duration: 2000; easing.type: Easing.OutQuart }
@@ -196,7 +196,7 @@ Item {
                     NumberAnimation { target: root; easing.amplitude: 1.7; properties: "xB"; to: 0; duration: 1100; easing.type: Easing.OutQuart }
                     NumberAnimation { target: backgroundBlur; easing.amplitude: 1.7; properties: "radius"; to: 0; duration: 2100; easing.type: Easing.OutQuart }
                 }
-                PropertyAction { target: filters_loader; property: "active"; value: false }
+                PropertyAction { target: filter_loader; property: "active"; value: false }
                 PropertyAction { target: inputUser; property: "focus"; value: true }
             }
         },
@@ -212,7 +212,7 @@ Item {
                     NumberAnimation { target: root; easing.amplitude: 1.7; properties: "xB"; to: 0; duration: 1100; easing.type: Easing.OutQuart }
                     NumberAnimation { target: backgroundBlur; easing.amplitude: 1.7; properties: "radius"; to: 32; duration: 1100; easing.type: Easing.OutQuart }
                 }
-                PropertyAction { target: filters_loader; property: "source"; value: "" }
+                PropertyAction { target: filter_loader; property: "source"; value: "" }
                 PropertyAction { target: screen; property: "state"; value: "show_viewer" }
             }
         }
@@ -221,12 +221,12 @@ Item {
     Keys.onPressed: {
         root.init = false
         if (event.key === Qt.Key_H && (event.modifiers & Qt.ControlModifier)) {
-            if (!filters_loader.active) {
+            if (!filter_loader.active) {
                 screen.state = "show_help"
                 event.accepted = true
             }
         } else if (event.key === Qt.Key_P && (event.modifiers & Qt.ControlModifier)) {
-            if (!filters_loader.active) {
+            if (!filter_loader.active) {
                 screen.state = "show_password"
             }
             event.accepted = true

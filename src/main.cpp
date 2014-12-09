@@ -15,7 +15,7 @@ int main(int argc, char *argv[])
     view->rootContext()->setContextProperty("cppSignals", &pig);
     view->setSource(QUrl("qrc:/QML/src/qml/main.qml"));
     view->setResizeMode(QQuickView::SizeRootObjectToView);
-    view->setIcon(QIcon("/resources/images/general/icon.png"));
+    view->setIcon(QIcon("/resources/images/global/icon.png"));
 
     pig.set_root_object(view->rootObject());
     pig.container = QWidget::createWindowContainer(view);

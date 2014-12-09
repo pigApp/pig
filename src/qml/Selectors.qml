@@ -7,12 +7,12 @@ Item {
     property bool onShowSelectors
 
     Image {
-        id: more
+        id: moreIcon
         width: parent.width/45.71
         height: parent.height/60
         sourceSize.width: parent.width/45.71
         sourceSize.height: parent.height/60
-        source: "/resources/images/finder/selectors/more.svg"
+        source: "qrc:/img-more"
         anchors.left: parent.left
         anchors.leftMargin: parent.width/42.47
         anchors.verticalCenter: parent.verticalCenter
@@ -42,34 +42,34 @@ Item {
         }
     }
     DropShadow {
-        id: moreShadow
+        id: moreIconShadow
         color: "white"
-        source: more
+        source: moreIcon
         radius: 8
         samples: 32
         opacity: 0
-        anchors.fill: more
+        anchors.fill: moreIcon
     }
 
     Row {
         id: selectorsRow
         spacing: parent.width/384
         opacity: 0
-        anchors.left: more.right
+        anchors.left: moreIcon.right
         anchors.leftMargin: parent.width/384
-        anchors.top: more.bottom
+        anchors.top: moreIcon.bottom
         anchors.topMargin: -screen.height/85
         Image {
-            id: fullMovie
+            id: fullMovieIcon
             width: screen.width/35.55
             height: screen.height/41.65
             sourceSize.width: screen.width/35.55
             sourceSize.height: screen.height/41.65
             source: {
                 if (root.full === "FULL")
-                    "/resources/images/finder/selectors/full_ON.svg"
+                    "qrc:/img-full_on"
                 else
-                    "/resources/images/finder/selectors/full.svg"
+                    "qrc:/img-full"
             }
             MouseArea {
                 onClicked: {
@@ -82,16 +82,16 @@ Item {
             }
         }
         Image {
-            id: standard
+            id: sdIcon
             width: screen.width/35.55
             height: screen.height/41.65
             sourceSize.width: screen.width/35.55
             sourceSize.height: screen.height/41.65
             source: {
                 if (root.quality === "SD")
-                    "/resources/images/finder/selectors/sd_ON.svg"
+                    "qrc:/img-sd_on"
                 else
-                    "/resources/images/finder/selectors/sd.svg"
+                    "qrc:/img-sd"
             }
             MouseArea {
                 onClicked: {
@@ -104,16 +104,16 @@ Item {
             }
         }
         Image {
-            id: hd
+            id: hdIcon
             width: screen.width/35.55
             height: screen.height/20
             sourceSize.width: screen.width/35.55
             sourceSize.height: screen.height/20
             source: {
                 if (root.quality === "720p")
-                    "/resources/images/finder/selectors/720p_ON.svg"
+                    "qrc:/img-720p_on"
                 else
-                    "/resources/images/finder/selectors/720p.svg"
+                    "qrc:/img-720p"
             }
             MouseArea {
                 onClicked: {
@@ -126,16 +126,16 @@ Item {
             }
         }
         Image {
-            id: fullHd
+            id: fullHdIcon
             width: screen.width/35.55
             height: screen.height/20
             sourceSize.width: screen.width/35.55
             sourceSize.height: screen.height/20
             source: {
                 if (root.quality === "1080p")
-                    "/resources/images/finder/selectors/1080p_ON.svg"
+                    "qrc:/img-1080p_on"
                 else
-                    "/resources/images/finder/selectors/1080p.svg"
+                    "qrc:/img-1080p"
             }
             MouseArea {
                 onClicked: {
@@ -169,16 +169,16 @@ Item {
     transitions: [
         Transition {
             to: "in"
-            NumberAnimation { target: moreShadow; easing.amplitude: 1.7; properties: "opacity"; to: 0.5; duration: 100; easing.type: Easing.OutQuart }
+            NumberAnimation { target: moreIconShadow; easing.amplitude: 1.7; properties: "opacity"; to: 0.5; duration: 100; easing.type: Easing.OutQuart }
         },
         Transition {
             to: "out"
-            NumberAnimation { target: moreShadow; easing.amplitude: 1.7; properties: "opacity"; to: 0; duration: 100; easing.type: Easing.OutQuart }
+            NumberAnimation { target: moreIconShadow; easing.amplitude: 1.7; properties: "opacity"; to: 0; duration: 100; easing.type: Easing.OutQuart }
         },
         Transition {
             to: "show_selectors"
             SequentialAnimation {
-                NumberAnimation { target: moreShadow; easing.amplitude: 1.7; properties: "opacity"; to: 0.5; duration: 100; easing.type: Easing.OutQuart }
+                NumberAnimation { target: moreIconShadow; easing.amplitude: 1.7; properties: "opacity"; to: 0.5; duration: 100; easing.type: Easing.OutQuart }
                 NumberAnimation { target: selectorsRow; properties: "opacity"; to: 1.0; duration: 200; easing.type: Easing.InOutQuart }
             }
         },
@@ -186,7 +186,7 @@ Item {
             to: "hide_selectors"
             SequentialAnimation {
                 NumberAnimation { target: selectorsRow; properties: "opacity"; to: 0; duration: 200; easing.type: Easing.InOutQuart }
-                NumberAnimation { target: moreShadow; easing.amplitude: 1.7; properties: "opacity"; to: 0; duration: 100; easing.type: Easing.OutQuart }
+                NumberAnimation { target: moreIconShadow; easing.amplitude: 1.7; properties: "opacity"; to: 0; duration: 100; easing.type: Easing.OutQuart }
                 PropertyAction { target: selectors; property: "onShowSelectors"; value: false }
             }
         },

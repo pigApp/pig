@@ -14,13 +14,13 @@ Item {
                 id: binaryLabel
                 text: " "+" PIG "+root.binary+"."+root.release
                 color: "white"
-                font.family: pigFont.name
+                font.family: globalFont.name
                 font.pixelSize: screen.height/23
             }
             Text {
                 text: binaryNews
                 color: "white"
-                font.family: pigFont.name
+                font.family: globalFont.name
                 font.bold: true
                 font.pixelSize: screen.height/54
                 textFormat: Text.RichText
@@ -33,13 +33,13 @@ Item {
                 id: databaseLabel
                 text: " "+" DB "+root.database
                 color: "white"
-                font.family: pigFont.name
+                font.family: globalFont.name
                 font.pixelSize: screen.height/23
             }
             Text {
                 text: databaseNews
                 color: "white"
-                font.family: pigFont.name
+                font.family: globalFont.name
                 font.bold: true
                 font.pixelSize: screen.height/54
                 textFormat: Text.RichText
@@ -52,7 +52,7 @@ Item {
         text: "<style type='text/css'> a:link{color:#707070;font-style:normal;text-decoration:none} </style>"+
               "ESC TO CLOSE / READ MORE &nbsp; <a href=\'http://google.com\'>GITHUB.COM/PIGAPP/NEWS <font color='#ffffff'>➟</font></a>"
         color: "white"
-        font.family: pigFont.name
+        font.family: globalFont.name
         font.bold: true
         font.pixelSize: screen.height/54
         textFormat: Text.RichText

@@ -15,12 +15,13 @@ Item {
     property string database
     property string binaryNews: ""
     property string databaseNews: ""
-    property string input: ""
+    property string inputUser: ""
     property string pornstar: ""
     property string category: ""
     property string quality: ""
     property string full: ""
     property string bitRate: ""
+    property string sandbox: ""
     property int xA: screen.width
     property int xB: 0
     property int block_films
@@ -36,18 +37,18 @@ Item {
     property var data_films
 
     signal signal_qml_password_handler(string plain, bool require, bool check, bool write)
-    signal signal_qml_find(string input, string pornstar, string category, string quality, string full, int offset, bool init)
+    signal signal_qml_find(string inputUser, string pornstar, string category, string quality, string full, int offset, bool init)
     signal signal_qml_preview_handler(string host, string url, string path, string target, int id, bool success, bool fail, bool abort)
     signal signal_qml_torrent_handler(string magnet, int scene, bool abort)
     signal signal_qml_quit()
 
-    FontLoader { id: pigFont; source: "/resources/fonts/pig.ttf" }
-    FontLoader { id: finderFont; source: "/resources/fonts/finder.ttf" }
+    FontLoader { id: globalFont; source: "qrc:/font-global" }
+    FontLoader { id: customFont; source: "qrc:/font-custom" }
 
     Image {
         id: background
-        cache: false//
-        source: "/resources/images/general/background.jpg"
+        cache: false
+        source: "qrc:/img-background"
         visible: false
         anchors.fill: parent
     }
@@ -114,7 +115,7 @@ Item {
             },
             State {
                 name: "show_help"
-                PropertyChanges { target: root_loader_A; source: "Help.qml"; restoreEntryValues: false }
+                PropertyChanges { target: root_loader_A; source: "global/Help.qml"; restoreEntryValues: false }
             },
             State {
                 name: "hide_help"
