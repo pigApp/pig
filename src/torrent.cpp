@@ -1,4 +1,4 @@
-    #include "torrent.h"
+#include "torrent.h"
 
 #include <libtorrent/extensions/ut_pex.hpp>
 
@@ -10,8 +10,7 @@ Torrent::Torrent(QObject *parent, const QString *magnet) : QObject(parent)
 {
     aborted = false;
     skip = false;
-    toPlayer = false;
-    minimum_mb = 15;
+    minimum_mb = 5;//15;
     totalPreSkip_mb = 0;
     pieceLength = 0;
     firstPiece_file = 0;
@@ -99,7 +98,7 @@ void Torrent::filter_files()
 
     file_storage = handler.get_torrent_info().files();
     pieceLength = file_storage.piece_length();
-    qDebug() << "-- PIECE_LENGTH: " << pieceLength/1024;
+    //qDebug() << "-- PIECE_LENGTH: " << pieceLength/1024;
     firstPiece_file = file_storage.map_file(scene-1, 0, 0).piece;
     lastPiece_file = file_storage.map_file(scene-1, file_storage.file_size(scene-1), 0).piece;
     totalPieces_file = lastPiece_file - firstPiece_file;
@@ -121,23 +120,28 @@ void Torrent::required_video_dump()
             call_player();
         }
     }
-    qDebug() << "DOWNLOADED: " << (handler.status().total_done/1048576)-totalPreSkip_mb << " MB";
+    //qDebug() << "DOWNLOADED: " << (handler.status().total_done/1048576)-totalPreSkip_mb << " MB";
 }
 
 void Torrent::download_Information()
 {
-    if (!aborted) {
+    if (!aborted) { // TODO: Enviar una señal desde QML para detener esto un ves que inicie el video
         const int bitRate = handler.status().download_rate/1024;
         const int peers = handler.status().num_peers;
-        if (toPlayer) {
-            (*_player)->download_Information(bitRate, peers);
-        } else {
-            const int downloaded_mb = handler.status().total_wanted_done/1048576;
-            (*_root)->setProperty("required", 15);
-            (*_root)->setProperty("downloaded", downloaded_mb);
-            (*_root)->setProperty("bitRate", QString::number(bitRate));
-            (*_root)->setProperty("peers", peers);
-        }
+        const int downloaded_mb = handler.status().total_wanted_done/1048576;
+        
+
+        (*_root)->setProperty("required", minimum_mb);
+        (*_root)->setProperty("downloaded", downloaded_mb);
+
+        (*_root)->setProperty("bitRate", QString::number(bitRate));
+        (*_root)->setProperty("peers", peers);
+
+
+        const qint64 downloaded_kb = offset_kb+(handler.status().total_wanted_done/1024);
+        (*_root)->setProperty("total_kb", total_kb);
+        (*_root)->setProperty("downloaded_kb", downloaded_kb);
+        
         QTimer::singleShot(1000, this, SLOT(download_Information()));
     }
 }
@@ -150,13 +154,13 @@ void Torrent::call_player()
             dir.setPath(QString::fromStdString(handler.save_path()));
         const QString absoluteFilePath = dir.absolutePath()+"/"+fileName;
 
-        (*_root)->setProperty("sandbox", absoluteFilePath);
+        (*_root)->setProperty("videoFilePath", absoluteFilePath);
 
         //emit signal_sandbox(absoluteFilePath, true, false, false);
         //QTimer::singleShot(1000, this, SLOT(progress()));
     } else {
         skip = false;
-        (*_player)->update_player();
+        //(*_player)->update_player();
     }
 }
 
@@ -165,10 +169,10 @@ void Torrent::progress()
     if (!aborted) {
         if (!skip) {
             const qint64 downloaded_kb = offset_kb+(handler.status().total_wanted_done/1024);
-            (*_player)->progress(total_kb, downloaded_kb, 220);
+            //(*_player)->progress(total_kb, downloaded_kb, 220);
         } else {
             const int downloadedSkip_mb = (handler.status().total_done/1048576)-totalPreSkip_mb;
-            (*_player)->progress(0, 0, downloadedSkip_mb);
+            //(*_player)->progress(0, 0, downloadedSkip_mb);
         }
         QTimer::singleShot(1000, this, SLOT(progress()));
     }

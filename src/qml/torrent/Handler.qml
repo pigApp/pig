@@ -2,26 +2,26 @@ import QtQuick 2.3
 
 Rectangle {
     id: handler
-    x: screen.width
+    x: root.xA
     width: screen.width
     height: screen.height
     color: "black"
 
-    property string sandboxX: root.sandbox
+    property string videoFilePath: root.videoFilePath
+    property string sandboxStatus: ""
 
     Loader {
-        id: dataDownload_loader
-        source: "DataDownload.qml"
+        id: downloadStatus_loader
         active: false
         asynchronous: true
         visible: { status === Loader.Ready }
         anchors.fill: parent
     }
-
     Loader {
         id: videoPlayer_loader
         active: false
         asynchronous: true
+        focus: videoPlayer_loader.visible
         visible: false
         anchors.fill: parent
     }
@@ -37,44 +37,27 @@ Rectangle {
     transitions: [
         Transition {
             to: "show"
-            NumberAnimation { target: handler; easing.amplitude: 1.7; properties: "x"; to: 0; duration: 1100; easing.type: Easing.OutQuart }
-            PropertyAction { target: dataDownload_loader; property: "active"; value: true }
+            NumberAnimation { target: root; easing.amplitude: 1.7; properties: "xA"; to: 0; duration: 1100; easing.type: Easing.OutQuart }
+            PropertyAction { target: downloadStatus_loader; property: "source"; value: "DownloadStatus.qml" }
+            PropertyAction { target: downloadStatus_loader; property: "active"; value: true }
         },
         Transition {
             to: "hide"
-            NumberAnimation { target: handler; easing.amplitude: 1.7; properties: "x"; to: root.screenWidth; duration: 1100; easing.type: Easing.OutQuart }
+            NumberAnimation { target: root; easing.amplitude: 1.7; properties: "xA"; to: root.screenWidth; duration: 1100; easing.type: Easing.OutQuart }
         }
     ]
 
-    Keys.onPressed: {
-        if (event.key === Qt.Key_Escape) {
-            root.signal_qml_torrent_handler("", 0, true)
-            event.accepted = true;
-        } else if (event.key === Qt.Key_Q && (event.modifiers & Qt.ControlModifier)) {
-            root.signal_qml_quit()
-            event.accepted = true;
-        }
-    }
-
-
-    Timer {
-        id: test
-        running: false
-        repeat: true
-        interval: 4000
-        onTriggered: {
-            videoPlayer_loader.visible = true
-            dataDownload_loader.source = ""
-            dataDownload_loader.active = false
-        }
-    }
-
-    onSandboxXChanged: {
-        if (sandboxX !== "") {
-            dataDownload_loader.item.state = "show_sandbox"
+    onVideoFilePathChanged: {
+        if (videoFilePath !== "") {
             videoPlayer_loader.source = "videoplayer/VideoPlayer.qml"
             videoPlayer_loader.active = true
-            test.start()
+        }
+    }
+    onSandboxStatusChanged:  {
+        if (sandboxStatus === "success") {
+            videoPlayer_loader.visible = true
+            downloadStatus_loader.source = ""
+            downloadStatus_loader.active = false
         }
     }
 

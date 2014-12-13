@@ -4,7 +4,9 @@ import QtGraphicalEffects 1.0
 Rectangle {
     id: button
     color: "transparent"
-
+   
+    transform: Rotation { origin.x: 25; origin.y: 25; angle: -25}
+    
     property alias label: label.text
     property alias labelColor: label.color
     property alias labelBold: label.font.bold

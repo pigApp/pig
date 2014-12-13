@@ -67,7 +67,7 @@ Item {
         interval: 50
         onTriggered: {
             downloading = true
-            root.signal_qml_preview_handler(host, url, "", target, id, false, false, false)
+            root.signal_qml_preview_handler(host, url, "", target, id, false, false)
         }
     }
     Timer {
@@ -92,17 +92,16 @@ Item {
 
     Connections {
         target: cppSignals
-        onSignal_success_preview: {
+        onSignal_ret__preview: {
             if (id === preview.id) {
-                downloading = false
-                preview.path = path
-                startPlayerDelay.start()
-            }
-        }
-        onSignal_fail_preview: {
-            if (id === preview.id) {
-                downloading = false
-                errorDownloadDelay.start()
+                if (success) {
+                    downloading = false
+                    preview.path = path
+                    startPlayerDelay.start()
+                } else {
+                    downloading = false
+                    errorDownloadDelay.start()
+                }
             }
         }
     }
@@ -113,7 +112,7 @@ Item {
         } else if (downloading) {
             icon.visible = false
             downloading = false
-            root.signal_qml_preview_handler("", "", "", "", id, false, false, true)
+            root.signal_qml_preview_handler("", "", "", "", id, false, true)
         }
     }
 

@@ -116,13 +116,6 @@ Item {
         active: false
         anchors.fill: parent
     }
-    function set_filter(label) {
-        if (onCategoryFilter)
-            root.category = label.toUpperCase()
-        else
-            root.pornstar = label.toUpperCase()
-        root.signal_qml_find("", root.pornstar, root.category, "", "", 0, true)
-    }
 
     Loader {
         id: selectors_loader
@@ -234,6 +227,14 @@ Item {
             root.signal_qml_quit()
             event.accepted = true
         }
+    }
+
+    function set_filter(label) {
+        if (onCategoryFilter)
+            root.category = label.toUpperCase()
+        else
+            root.pornstar = label.toUpperCase()
+        root.signal_qml_find("", root.pornstar, root.category, "", "", 0, true)
     }
 
     Connections {

@@ -21,7 +21,7 @@ Item {
     property string quality: ""
     property string full: ""
     property string bitRate: ""
-    property string sandbox: ""
+    property string videoFilePath: ""
     property int xA: screen.width
     property int xB: 0
     property int block_films
@@ -30,6 +30,8 @@ Item {
     property int peers: 0
     property int required: 0
     property int downloaded: 0
+    property int total_kb: 0
+    property int downloaded_kb: 0
     property var categories
     property var totalCategories
     property var pornstars
@@ -38,7 +40,7 @@ Item {
 
     signal signal_qml_password_handler(string plain, bool require, bool check, bool write)
     signal signal_qml_find(string inputUser, string pornstar, string category, string quality, string full, int offset, bool init)
-    signal signal_qml_preview_handler(string host, string url, string path, string target, int id, bool success, bool fail, bool abort)
+    signal signal_qml_preview_handler(string host, string url, string path, string target, int id, bool success, bool abort)
     signal signal_qml_torrent_handler(string magnet, int scene, bool abort)
     signal signal_qml_quit()
 
@@ -62,7 +64,7 @@ Item {
 
     Rectangle {
         id: screen
-        color: Qt.rgba(0, 0, 0, 0.6)
+        color: Qt.rgba(0, 0, 0, 0.3)
         anchors.fill: parent
 
         Loader {
@@ -158,9 +160,11 @@ Item {
 
     Connections {
         target: cppSignals
-        onSignal_require_password: {
-            askPassword = true
-            screen.state = "show_password"
+        onSignal_ret_password: {
+            if (require) {
+                askPassword = true
+                screen.state = "show_password"
+            }
         }
         onSignal_show_update: {
             screen.state = "show_update"

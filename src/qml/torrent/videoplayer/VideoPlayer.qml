@@ -3,91 +3,85 @@ import QtMultimedia 5.0
 
 Rectangle {
     id: videoPlayer
-    //x: screen.width
-    //width: screen.width
-    //height: screen.height
     color: "black"
     anchors.fill: parent
 
+    property bool sandbox: true
+    property bool standby
+    property int sideBoxMargin: 0
+    property int barsMargin: 0
+
     Video {
         id: player
-        //source: "file:///home/lxfb/legoMovie.mp4"
         autoPlay: true
+        volume: 0.8 
         fillMode: VideoOutput.PreserveAspectFit
         anchors.fill: parent
-    }
-    MouseArea {
-        id: controlsPlayerMouseArea
-        onClicked: {
-            if (player.playbackState === MediaPlayer.PlayingState)
-                player.pause()
-            else if (player.playbackState === MediaPlayer.PausedState)
-                player.play()
-            else if (player.playbackState === MediaPlayer.StoppedState)
-                player.play()
+        onStatusChanged: {
+            if (sandbox) {
+                if (player.status === MediaPlayer.Buffered && !player.error) {
+                    handler.sandboxStatus = "success"
+                    videoPlayer.sandbox = false
+                    controls.forceActiveFocus()
+                } else if (player.status === MediaPlayer.NoMedia || player.status === MediaPlayer.InvalidMedia) {
+                    handler.sandboxStatus = "fail"
+                    // Timer recheck video start -10
+                }
+            } else {
+                //...
+            }
         }
+    }
+    Control {}
+
+    SideBox {
+        id: sideBox
+        width: 200//
+        height: parent.height/1.33
+        anchors.right: parent.right
+        anchors.rightMargin: sideBoxMargin
+        anchors.verticalCenter: parent.verticalCenter
+    }
+    Bars {
+        id: bars
+        width: parent.width 
+        height: 20//
+        anchors.left: parent.left
+        anchors.bottom: parent.bottom
+        anchors.bottomMargin: barsMargin
+    } 
+    ControlsHandler {
+        id: controls
         anchors.fill: parent
     }
 
-    //
-    Row {
-        id: timeRow
-        spacing: 20
-        anchors.top: parent.top
-        anchors.topMargin: 10
-        anchors.horizontalCenter: parent.horizontalCenter
-        Text {
-            id: currentTimeLabel
-            text: formatTime(player.position)
-            color: "white"
-            font.family: globalFont.name
-            font.bold: true
-            font.pixelSize: screen.height/23
+    states: [
+        State {
+            name: "showControls"
+        },
+        State {
+            name: "hideControls"
         }
-        Text {
-            id: totalTimeLabel
-            text: formatTime(player.duration)
-            color: "white"
-            font.family: globalFont.name
-            font.bold: true
-            font.pixelSize: screen.height/23
+    ]
+    transitions: [
+        Transition {
+            to: "showControls"
+            ParallelAnimation {
+                NumberAnimation { target: videoPlayer; easing.amplitude: 1.7; properties: "sideBoxMargin"; to: 0; duration: 500; easing.type: Easing.OutQuart }
+                NumberAnimation { target: videoPlayer; easing.amplitude: 1.7; properties: "barsMargin"; to: 0; duration: 200; easing.type: Easing.OutQuart }
+            }
+        },
+        Transition {
+            to: "hideControls"
+            ParallelAnimation {
+                NumberAnimation { target: videoPlayer; easing.amplitude: 1.7; properties: "sideBoxMargin"; to: -200; duration: 500; easing.type: Easing.OutQuart }
+                NumberAnimation { target: videoPlayer; easing.amplitude: 1.7; properties: "barsMargin"; to: -20; duration: 500; easing.type: Easing.OutQuart }
+            }
         }
-    }
-    function formatTime(timeMs) {
-        if (!timeMs || timeMs <= 0) return "00:00:00"
-        var seconds = timeMs/1000;
-        var minutes = Math.floor(seconds/60)
-        var hours = Math.floor(minutes/60)
-        seconds = Math.floor(seconds%60)
-        minutes = Math.floor(minutes%60)
-        hours = Math.floor(hours%60)
-        if (seconds < 10) seconds = "0"+seconds;
-        if (minutes < 10) minutes = "0"+minutes;
-        if (hours < 10) hours = "0"+hours;
-        return hours+":"+minutes+":"+seconds
-    }
+    ]
+    
+    onStandbyChanged: { if (standby) player.pause(); else player.play() } 
 
-    Column {
-        id: progressColumn
-        spacing: 2
-        anchors.left: parent.left
-        anchors.bottom: parent.bottom
-        anchors.bottomMargin: 10
-        Rectangle {
-            id: timeBar
-            width: { videoPlayer.width*player.position/player.duration }
-            height: 2
-            color: "white"
-        }
-        Rectangle {
-           id: torrentBar
-           width: { (videoPlayer.width*player.position/player.duration)+10 }
-           height: 2
-           color: "gray"
-           opacity: 0.5
-        }
-    }
-
-    Component.onCompleted: { player.source = "file://"+root.sandbox }
+    Component.onCompleted: { player.source = "file://"+root.videoFilePath }
 }
 // Tabs hechos.

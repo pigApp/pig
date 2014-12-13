@@ -14,13 +14,12 @@ public:
     explicit TcpSocket(QTcpSocket *parent = 0);
     ~TcpSocket();
 
-    bool abortedPreview;
-
     QString host;
     QStringList urls;
     QString target;
     QString request;
 
+    bool abortedPreview;
     int id;
 
 public slots:
@@ -29,8 +28,8 @@ public slots:
 signals:
     void signal_ret_str(const QString *const str);
     void signal_ret_files(const QString *const path, const QStringList *const files);
-    void signal_preview_ret(const QString, const QString, const QString path, const QString file,
-                            const int id, const bool success, const bool fail, const bool abort);
+    void signal_ret_preview(const QString, const QString, const QString path, const QString file,
+                            const int id, const bool success, const bool abort);
     void signal_fail_socket();
 
 private:

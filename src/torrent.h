@@ -3,7 +3,6 @@
 
 #include <libtorrent/session.hpp>
 #include <libtorrent/file_storage.hpp>
-#include "videoplayer.h"
 
 #include <stdlib.h>
 
@@ -17,17 +16,13 @@ public:
     explicit Torrent(QObject *parent=0, const QString *magnet=NULL);
     ~Torrent();
 
-    Q_INVOKABLE bool piece_is_available(qint64 total_msec, qint64 offset_msec);
-    Q_INVOKABLE void piece_update(qint64 total_msec, qint64 offset_msec);
-
     QObject **_root;
-    VideoPlayer **_player;
 
-    bool toPlayer;
     int scene;
 
-signals:
-    void signal_sandbox(const QString absoluteFilePath, bool sandbox, bool fileReady, bool close);
+public slots:
+    bool piece_is_available(qint64 total_msec, qint64 offset_msec);
+    void piece_update(qint64 total_msec, qint64 offset_msec);
 
 private:
     libtorrent::session *client;

@@ -9,7 +9,6 @@ PIG::PIG(QWidget *parent) : QWidget(parent), mRoot(0)
 {
     mUpdate = NULL;
     mTorrent = NULL;
-    mPlayer = NULL;
     for (int i=0; i<5; i++)
         mSocket[i] = NULL;
 
@@ -24,8 +23,6 @@ PIG::~PIG()
 {
     if (mUpdate != NULL)
         delete mUpdate;
-    if (mPlayer != NULL)
-        delete mPlayer;
     if (mTorrent != NULL)
         delete mTorrent;
     for (int i=0; i<5; i++)
@@ -45,8 +42,8 @@ void PIG::set_root_object(QObject *root)
                         SLOT(password_handler(const QString, const bool, const bool, const bool)));
         connect (mRoot, SIGNAL(signal_qml_find(const QString, const QString, const QString, const QString, const QString, const int, const bool)), this,
                         SLOT(find(const QString, const QString, const QString, const QString, const QString, const int, const bool)));
-        connect (mRoot, SIGNAL(signal_qml_preview_handler(const QString, const QString, const QString, const QString, const int, const bool, const bool, const bool)), this,
-                        SLOT(preview_handler(const QString, const QString, const QString, const QString, const int, const bool, const bool, const bool)));
+        connect (mRoot, SIGNAL(signal_qml_preview_handler(const QString, const QString, const QString, const QString, const int, const bool, const bool)), this,
+                        SLOT(preview_handler(const QString, const QString, const QString, const QString, const int, const bool, const bool)));
         connect (mRoot, SIGNAL(signal_qml_torrent_handler(const QString, const int, const bool)), this, SLOT(torrent_handler(const QString, const int, const bool)));
         connect (mRoot, SIGNAL(signal_qml_quit()), this, SLOT(quit()));
     }
@@ -63,7 +60,7 @@ void PIG::password_handler(const QString plain, const bool require, const bool c
 #endif
        QFile file;
        if (file.exists(target))
-           emit signal_require_password();
+           emit signal_ret_password(true);
        else
            update_handler();
        file.close();
@@ -72,13 +69,13 @@ void PIG::password_handler(const QString plain, const bool require, const bool c
         if (mPassword.check(&plain))
             update_handler();
         else
-            emit signal_fail_password();
+            emit signal_ret_password();
     } else if (write) {
         Password mPassword;
         if (mPassword.write(&plain))
-            emit signal_success_password();
+            emit signal_ret_password(false, true);
         else
-            emit signal_fail_password();
+            emit signal_ret_password();
     }
 }
 
@@ -188,9 +185,9 @@ void PIG::start_pig()
 
 //PREVIEW
 void PIG::preview_handler(const QString host, const QString url, const QString path, const QString target,
-                          const int id, const bool success, const bool fail, const bool abort)
+                          const int id, const bool success, const bool abort)
 {
-    if (!success && !fail && !abort) {
+    if (!target.isEmpty()) {
         mSocket[id] = new TcpSocket();
         mSocket[id]->host = host;
         mSocket[id]->urls << url;
@@ -198,13 +195,10 @@ void PIG::preview_handler(const QString host, const QString url, const QString p
         mSocket[id]->id = id;
         mSocket[id]->request = "PREVIEW";
         mSocket[id]->start();
-        connect (mSocket[id], SIGNAL(signal_preview_ret(const QString, const QString, const QString, const QString, const int, const bool, const bool, const bool)),this,
-                              SLOT(preview_handler(const QString, const QString, const QString, const QString, const int, const bool, const bool, const bool)));
-    } else if (success || fail) {
-        if (success)
-            emit signal_success_preview(path, id);
-        else if (fail)
-            emit signal_fail_preview(id);
+        connect (mSocket[id], SIGNAL(signal_ret_preview(const QString, const QString, const QString, const QString, const int, const bool, const bool)),this,
+                              SLOT(preview_handler(const QString, const QString, const QString, const QString, const int, const bool, const bool)));
+    } else if (target.isEmpty() && !abort) {
+        emit signal_ret__preview(path, id, success);
         mSocket[id]->deleteLater();
         mSocket[id] = NULL;
     } else if (abort) {
@@ -222,41 +216,9 @@ void PIG::torrent_handler(const QString magnet, const int scene, const bool abor
         mTorrent = new Torrent(NULL, &magnet);
         mTorrent->_root = &mRoot;
         mTorrent->scene = scene;
-        connect (mTorrent, SIGNAL(signal_sandbox(const QString, const bool, const bool, const bool)), this,
-                           SLOT(player_handler(const QString, const bool, const bool, const bool)));
     } else {
         mTorrent->deleteLater();
         mTorrent = NULL;
-        emit signal_hide_torrent_handler();
-    }
-}
-
-//PLAYER
-void PIG::player_handler(const QString absoluteFilePath, const bool sandbox, const bool fileReady, const bool close)
-{
-    if (!close) {
-        if (sandbox) {
-            mPlayer = new VideoPlayer(NULL, &absoluteFilePath);
-            mPlayer->_torrent = mTorrent;
-            mTorrent->_player = &mPlayer;
-            connect (mPlayer, SIGNAL(signal_file_ready(const QString, const bool, const bool, const bool)), this,
-                              SLOT(player_handler(const QString, const bool, const bool, const bool)));
-            connect (mPlayer, SIGNAL(signal_close_player(const QString, const bool, const bool, const bool)), this,
-                              SLOT(player_handler(const QString, const bool, const bool, const bool)));
-            connect (mPlayer, SIGNAL(signal_quit()), this, SLOT(quit()));
-            emit signal_checking_file();
-        }
-        if (fileReady) {
-            mTorrent->toPlayer = true;
-            //mPlayer->showFullScreen();
-            //hide();
-            emit signal_file_ready();
-        }
-    } else {
-        show();
-        delete mPlayer;
-        mPlayer = NULL;
-        torrent_handler("", 0, true);
     }
 }
 

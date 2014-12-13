@@ -41,9 +41,12 @@
         <file>src/qml/Preview.qml</file>
         <file>src/qml/Button.qml</file>
         <file>src/qml/torrent/Handler.qml</file>
-        <file>src/qml/torrent/DataDownload.qml</file>
-        <file>src/qml/torrent/ProgressBar.qml</file>
+        <file>src/qml/torrent/DownloadStatus.qml</file>
         <file>src/qml/torrent/videoplayer/VideoPlayer.qml</file>
+        <file>src/qml/torrent/videoplayer/Control.qml</file>
+        <file>src/qml/torrent/videoplayer/ControlsHandler.qml</file>
+        <file>src/qml/torrent/videoplayer/SideBox.qml</file>
+        <file>src/qml/torrent/videoplayer/Bars.qml</file>
         <file>src/qml/global/Network.qml</file>
         <file>src/qml/global/Help.qml</file>
         <file>src/qml/global/ErrorDb.qml</file>

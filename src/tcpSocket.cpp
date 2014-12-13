@@ -92,7 +92,7 @@ void TcpSocket::write()
         file.open(QIODevice::WriteOnly);
         file.write(data);
         file.close();
-        emit signal_preview_ret("", "", path, "", id, true, false, false);
+        emit signal_ret_preview("", "", path, "", id, true, false);
     }
 }
 
@@ -102,7 +102,7 @@ void TcpSocket::error()
 
     if (request == "PREVIEW" && !abortedPreview) {
         abortedPreview = true;
-        emit signal_preview_ret("", "", "", "", id, false, true, false);
+        emit signal_ret_preview("", "", "", "", id, false, false);
     } else {
         emit signal_fail_socket();
     }

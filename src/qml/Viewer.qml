@@ -43,7 +43,6 @@ Item {
             },
             State {
                 name: "show_torrent_handler"
-                //when: showTorrentInformation
             },
             State {
                 name: "hide_torrent_handler"
@@ -263,32 +262,6 @@ Item {
             }
 
             Row {
-                id: counterRow
-                spacing: parent.width/480
-                visible: recipe.PathView.isCurrentItem
-                anchors.left: datesLayer.right
-                anchors.leftMargin: parent.width/128
-                anchors.top: parent.top
-                anchors.topMargin: parent.height/98.18
-                Text {
-                    id: currentFilmLabel
-                    text: current_film
-                    color: Qt.rgba(1, 1, 1, 0.5)
-                    font.family: globalFont.name
-                    font.bold: true
-                    font.pixelSize: screen.height/54
-                }
-                Text {
-                    id: totalFilmsLabel
-                    text: total_films
-                    color: Qt.rgba(1, 1, 1, 0.2)
-                    font.family: globalFont.name
-                    font.bold: true
-                    font.pixelSize: screen.height/54
-                }
-            }
-
-            Row {
                 id: scenesRow
                 spacing: parent.width/192
                 visible: recipe.PathView.isCurrentItem
@@ -477,6 +450,28 @@ Item {
             }
         }
     }
+    Row {
+        id: counterRow
+        spacing: parent.width/480
+        anchors.right: parent.right
+        anchors.rightMargin: parent.width/128
+        anchors.bottom: parent.bottom
+        anchors.bottomMargin: parent.height/270
+        Text {
+            id: currentFilmLabel
+            text: current_film
+            color: { if (location_block+1 !== block_films) Qt.rgba(1, 1, 1, 0.1); else "white" }
+            font.family: globalFont.name
+            font.pixelSize: screen.height/38
+        }
+        Text {
+            id: totalFilmsLabel
+            text: total_films
+            color: { if (current_film !== total_films) Qt.rgba(1, 1, 1, 0.1); else "white" }
+            font.family: globalFont.name
+            font.pixelSize: screen.height/38
+        }
+    }
 
     Timer {
         id: timeOutNetwork
@@ -484,6 +479,16 @@ Item {
         repeat: false
         interval: 60000
         onTriggered: { root.errorNetwork = true }
+    }
+
+    Timer {
+        id: update_data
+        running: false
+        repeat: false
+        onTriggered: {
+            model.clear()
+            root.signal_qml_find(root.inputUser, root.pornstar, root.category, root.quality, root.full, viewer.offset, false)
+        }
     }
 
     function append_data() {
@@ -500,25 +505,9 @@ Item {
         root_loader_A.source = "global/Network.qml"
         timeOutNetwork.start()
     }
-
-    Timer {
-        id: update_data
-        running: false
-        repeat: false
-        onTriggered: {
-            model.clear()
-            root.signal_qml_find(root.inputUser, root.pornstar, root.category, root.quality, root.full, viewer.offset, false)
-        }
-    }
-
     function check_cover_status() {
         if (coverStatus.length === block_films)
             view.state = "show"
-    }
-
-    Connections {
-        target: cppSignals
-        onSignal_hide_torrent_handler: { view.state = "hide_torrent_handler" }
     }
 
     Component.onCompleted: append_data()

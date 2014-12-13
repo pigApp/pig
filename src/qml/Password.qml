@@ -71,16 +71,17 @@ Item {
 
     Connections {
         target: cppSignals
-        onSignal_success_password: {
-            screen.state = "hide_password"
-        }
-        onSignal_fail_password: {
-            label.color = Qt.rgba(0.1, 0.1, 0.1, 1)
-            if (root.askPassword) {
-                label.text = "WRONG PASSWORD"
+        onSignal_ret_password: {
+            if (success) {
+                screen.state = "hide_password"
             } else {
-                label.text = "FAIL CHECK PERMISSIONS"
-                hide.start()
+                label.color = Qt.rgba(0.1, 0.1, 0.1, 1)
+                if (root.askPassword) {
+                    label.text = "WRONG PASSWORD"
+                } else {
+                    label.text = "FAIL CHECK PERMISSIONS"
+                    hide.start()
+                }
             }
         }
     }

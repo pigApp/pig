@@ -22,7 +22,6 @@ signals:
 private:
     QString manager;
     QProcess *proc;
-
 };
 
 #endif

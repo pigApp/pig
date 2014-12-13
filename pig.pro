@@ -8,7 +8,7 @@ win32 {
     QMAKE_MOC = $$QMAKE_MOC -DBOOST_TT_HAS_OPERATOR_HPP_INCLUDED
 }
 
-QT += qml quick sql network multimediawidgets
+QT += qml quick sql network widgets 
 
 SOURCES += src/main.cpp\
            src/pig.cpp\
@@ -16,7 +16,6 @@ SOURCES += src/main.cpp\
            src/update.cpp\
            src/tcpSocket.cpp\
            src/torrent.cpp\
-           src/videoplayer.cpp\
            src/unzip.cpp \
            src/su.cpp
 
@@ -25,7 +24,6 @@ HEADERS += src/pig.h\
            src/update.h\
            src/tcpSocket.h\
            src/torrent.h\
-           src/videoplayer.h\
            src/unzip.h \
            src/su.h
 
