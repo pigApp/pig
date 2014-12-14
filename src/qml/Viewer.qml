@@ -1,5 +1,4 @@
 import QtQuick 2.3
-import QtGraphicalEffects 1.0
 
 Item {
     id: viewer
@@ -28,9 +27,11 @@ Item {
             startY: screen.height/2
             PathAttribute { name: "recipe_z"; value: 2 }
             PathAttribute { name: "recipe_scale"; value: 1.0 }
+            PathAttribute { name: "recipe_opacity"; value: 1.0 }
             PathQuad { x: screen.width/1.86; y: screen.height/2.16; controlX: screen.width*1.33; controlY: screen.height/2.05 }
             PathAttribute { name: "recipe_z"; value: 0 }
             PathAttribute { name: "recipe_scale"; value: 0.5 }
+            PathAttribute { name: "recipe_opacity"; value:  0.4 } // TODO: Sacarlo sino se usa la opacidad.
             PathQuad { x: screen.width/1.86; y: screen.height/2; controlX: -screen.width/3.5; controlY: screen.height/1.8 }
         }
 
@@ -62,7 +63,8 @@ Item {
                     NumberAnimation { duration: 250 }
                     ParallelAnimation {
                         NumberAnimation { target: root; easing.amplitude: 1.7; properties: "xB"; to: 0; duration: 600; easing.type: Easing.OutQuart }
-                        NumberAnimation { target: backgroundBlur; easing.amplitude: 1.7; properties: "radius"; to: 64; duration: 2000; easing.type: Easing.OutQuart }
+                        NumberAnimation { target: root; easing.amplitude: 1.7; properties: "screenOpacity"; to: 0.5; duration: 600; easing.type: Easing.OutQuart }
+                        NumberAnimation { target: backgroundBlur; easing.amplitude: 1.7; properties: "radius"; to: 96; duration: 600; easing.type: Easing.OutQuart }
                     }
                     PropertyAction { target: enabledDelay; property: "running"; value: true }
                 }
@@ -73,6 +75,7 @@ Item {
                     PropertyAction { target: view; property: "enabled"; value: false }
                     ParallelAnimation {
                         NumberAnimation { target: root; easing.amplitude: 1.7; properties: "xB"; to: screen.width+50; duration: 600; easing.type: Easing.OutQuart }
+                        NumberAnimation { target: root; easing.amplitude: 1.7; properties: "screenOpacity"; to: 0.4; duration: 600; easing.type: Easing.OutQuart }
                         NumberAnimation { target: backgroundBlur; easing.amplitude: 1.7; properties: "radius"; to: 32; duration: 600; easing.type: Easing.OutQuart }
                     }
                     PropertyAction { target: update_data; property: "running"; value: true }
@@ -84,7 +87,6 @@ Item {
                 //PropertyAction { target: viewer; property: "showTorrentInformation"; value: false }
                 PropertyAction { target: view; property: "enabled"; value: false }
                 PropertyAction { target: root_loader_A; property: "source"; value: "torrent/Handler.qml" } //
-
                 NumberAnimation { target: root; easing.amplitude: 1.7; properties: "xB"; to: -screen.width; duration: 1100; easing.type: Easing.OutQuart }
             },
             Transition {
@@ -188,21 +190,14 @@ Item {
         Item {
             id: recipe
             z: PathView.recipe_z
-            scale: PathView.recipe_scale
             width: view.width
             height: view.height
+            scale: PathView.recipe_scale
+            opacity: PathView.recipe_opacity
 
-            RectangularGlow {
-                id: datesLayerEffect
-                color: "white"
-                glowRadius: 60
-                cornerRadius: 40
-                opacity: 0.2
-                anchors.fill: datesLayer
-            }
             Rectangle {
                 id: datesLayer
-                color: Qt.rgba(1, 1, 1, 0.03)
+                color: Qt.rgba(1, 1, 1, 0.02)
                 anchors.top: parent.top
                 anchors.right: flipableCover.right
                 anchors.left: flipableCover.left
@@ -211,9 +206,10 @@ Item {
             Column {
                 id: datesColumn
                 spacing: parent.height/216
-                anchors.centerIn: datesLayer
-                anchors.verticalCenter: datesLayer.verticalCenter
-                anchors.horizontalCenterOffset: -parent.width/64
+                anchors.left: datesLayer.left
+                anchors.leftMargin: parent.width/64
+                anchors.bottom: scenesRow.top
+                anchors.bottomMargin: parent.height/108
                 Text {
                     id: castLabel
                     text: cast
@@ -267,7 +263,7 @@ Item {
                 visible: recipe.PathView.isCurrentItem
                 enabled: recipe.PathView.isCurrentItem
                 anchors.right: datesLayer.right
-                anchors.rightMargin: parent.width/192
+                anchors.rightMargin: parent.width/96
                 anchors.bottom: datesLayer.bottom
                 anchors.bottomMargin: parent.height/108
                 Repeater {
@@ -363,8 +359,8 @@ Item {
 
                 transform: Rotation {
                     id: rotation
-                    origin.x: flipableCover.width / 2
-                    origin.y: flipableCover.height / 2
+                    origin.x: flipableCover.width/2
+                    origin.y: flipableCover.height/2
                     axis.x: 0
                     axis.y: 1
                     axis.z: 0
@@ -393,8 +389,8 @@ Item {
             }
 
             Rectangle {
-                id: previewlayer
-                color: Qt.rgba(1, 1, 1, 0.2)
+                id: previewLayer
+                color: Qt.rgba(1, 1, 1, 0.05)
                 visible: recipe.PathView.isCurrentItem
                 anchors.top: flipableCover.bottom
                 anchors.right: flipableCover.right
@@ -418,7 +414,7 @@ Item {
                     font.bold: true
                     font.pixelSize: screen.height/74
                     anchors.top: previewIcon.bottom
-                    anchors.horizontalCenter: previewlayer.horizontalCenter
+                    anchors.horizontalCenter: previewLayer.horizontalCenter
                 }
                 MouseArea {
                     onClicked: {
@@ -438,7 +434,7 @@ Item {
                 active: false
                 asynchronous: true
                 visible: { status === Loader.Ready && recipe.PathView.isCurrentItem }
-                anchors.fill: previewlayer
+                anchors.fill: previewLayer
                 onStatusChanged: {
                     if (status === Loader.Ready) {
                         preview_loader.item.host = hostPreview

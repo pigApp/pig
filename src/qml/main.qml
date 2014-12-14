@@ -37,6 +37,7 @@ Item {
     property var pornstars
     property var totalPornstars
     property var data_films
+    property real screenOpacity: 0.4
 
     signal signal_qml_password_handler(string plain, bool require, bool check, bool write)
     signal signal_qml_find(string inputUser, string pornstar, string category, string quality, string full, int offset, bool init)
@@ -64,7 +65,7 @@ Item {
 
     Rectangle {
         id: screen
-        color: Qt.rgba(0, 0, 0, 0.3)
+        color: Qt.rgba(0, 0, 0, screenOpacity)
         anchors.fill: parent
 
         Loader {
@@ -140,6 +141,7 @@ Item {
                 ParallelAnimation {
                     NumberAnimation { target: root; easing.amplitude: 1.7; properties: "xA"; to: 0; duration: 1100; easing.type: Easing.OutQuart }
                     NumberAnimation { target: root; easing.amplitude: 1.7; properties: "xB"; to: -screen.width; duration: 1100; easing.type: Easing.OutQuart }
+                    NumberAnimation { target: root; easing.amplitude: 1.7; properties: "screenOpacity"; to: 0.5; duration: 2000; easing.type: Easing.OutQuart }
                     NumberAnimation { target: backgroundBlur; easing.amplitude: 1.7; properties: "radius"; to: 96; duration: 2000; easing.type: Easing.OutQuart }
                 }
             },
@@ -149,8 +151,9 @@ Item {
                     ParallelAnimation {
                         NumberAnimation { target: root; easing.amplitude: 1.7; properties: "xA"; to: screen.width; duration: 1100; easing.type: Easing.OutQuart }
                         NumberAnimation { target: root; easing.amplitude: 1.7; properties: "xB"; to: 0; duration: 1100; easing.type: Easing.OutQuart }
+                        NumberAnimation { target: root; easing.amplitude: 1.7; properties: "screenOpacity"; to: 0.3; duration: 2100; easing.type: Easing.OutQuart }
                         NumberAnimation { target: backgroundBlur; easing.amplitude: 1.7; properties: "radius"; to: 0; duration: 2100; easing.type: Easing.OutQuart }
-                    }
+                    } //FIX: Al mostrar help en viewer, screenOpacity y radius no tienen que volver a 0.3 y 0. Se tienen que mantener en 0.5 y 96.
                     PropertyAction { target: root_loader_A; property: "source"; value: "" }
                     PropertyAction { target: root_loader_B; property: "focus"; value: true }
                 }

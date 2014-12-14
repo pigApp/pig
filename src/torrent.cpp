@@ -10,7 +10,7 @@ Torrent::Torrent(QObject *parent, const QString *magnet) : QObject(parent)
 {
     aborted = false;
     skip = false;
-    minimum_mb = 5;//15;
+    minimum_mb = 15;
     totalPreSkip_mb = 0;
     pieceLength = 0;
     firstPiece_file = 0;

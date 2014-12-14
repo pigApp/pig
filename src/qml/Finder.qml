@@ -150,6 +150,7 @@ Item {
                 NumberAnimation { duration: 250 }
                 ParallelAnimation {
                     NumberAnimation { target: filtersColumn; properties: "opacity"; to: 1; duration: 200; easing.type: Easing.InOutQuart }
+                    NumberAnimation { target: root; easing.amplitude: 1.7; properties: "screenOpacity"; to: 0.3; duration: 600; easing.type: Easing.OutQuart }
                     NumberAnimation { target: backgroundBlur; easing.amplitude: 1.7; properties: "radius"; to: 0; duration: 600; easing.type: Easing.OutQuart }
                 }
                 PropertyAction { target: selectors_loader; property: "opacity"; value: 1 }
@@ -162,9 +163,10 @@ Item {
                 PropertyAction { target: inputLayer; property: "opacity"; value: 0 }
                 PropertyAction { target: inputUser; property: "opacity"; value: 0 }
                 PropertyAction { target: selectors_loader; property: "opacity"; value: 0 }
-                NumberAnimation { duration: 300 }
+                NumberAnimation { duration: 100 }
+                NumberAnimation { target: filtersColumn; properties: "opacity"; to: 0; duration: 200; easing.type: Easing.InOutQuart }
                 ParallelAnimation {
-                    NumberAnimation { target: filtersColumn; properties: "opacity"; to: 0; duration: 200; easing.type: Easing.InOutQuart }
+                    NumberAnimation { target: root; easing.amplitude: 1.7; properties: "screenOpacity"; to: 0.4; duration: 600; easing.type: Easing.OutQuart }
                     NumberAnimation { target: backgroundBlur; easing.amplitude: 1.7; properties: "radius"; to: 32; duration: 600; easing.type: Easing.OutQuart }
                 }
                 PropertyAction { target: filter_loader; property: "source"; value: "" }
@@ -178,6 +180,7 @@ Item {
                 PropertyAction { target: filter_loader; property: "active"; value: true }
                 ParallelAnimation {
                     NumberAnimation { target: root; easing.amplitude: 1.7; properties: "xB"; to: -screen.width; duration: 1100; easing.type: Easing.OutQuart }
+                    NumberAnimation { target: root; easing.amplitude: 1.7; properties: "screenOpacity"; to: 0.5; duration: 2000; easing.type: Easing.OutQuart }
                     NumberAnimation { target: backgroundBlur; easing.amplitude: 1.7; properties: "radius"; to: 96; duration: 2000; easing.type: Easing.OutQuart }
                 }
             }
@@ -187,6 +190,7 @@ Item {
             SequentialAnimation {
                 ParallelAnimation {
                     NumberAnimation { target: root; easing.amplitude: 1.7; properties: "xB"; to: 0; duration: 1100; easing.type: Easing.OutQuart }
+                    NumberAnimation { target: root; easing.amplitude: 1.7; properties: "screenOpacity"; to: 0.3; duration: 2100; easing.type: Easing.OutQuart }
                     NumberAnimation { target: backgroundBlur; easing.amplitude: 1.7; properties: "radius"; to: 0; duration: 2100; easing.type: Easing.OutQuart }
                 }
                 PropertyAction { target: filter_loader; property: "active"; value: false }
