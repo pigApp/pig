@@ -53,6 +53,7 @@ Torrent::~Torrent()
 void Torrent::get_metadata()
 {
     if (!aborted) {
+        qDebug() << "//// METADATA";
         if (handler.status(1).state != 2)
            filter_files();
         else
@@ -120,7 +121,7 @@ void Torrent::required_video_dump()
             call_player();
         }
     }
-    //qDebug() << "DOWNLOADED: " << (handler.status().total_done/1048576)-totalPreSkip_mb << " MB";
+    qDebug() << "DOWNLOADED: " << (handler.status().total_done/1048576)-totalPreSkip_mb << " MB";
 }
 
 void Torrent::download_Information()

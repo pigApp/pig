@@ -2,17 +2,15 @@ import QtQuick 2.3
 
 Item {
     id: news
-    anchors.fill: parent
 
     Row {
-        id: newsRow
         spacing: parent.width/54.85
         anchors.centerIn: parent
         Column {
             spacing: screen.height/216
             Text {
                 id: binaryLabel
-                text: " "+" PIG "+root.binary+"."+root.release
+                text: "PIG "+root.binary+"."+root.release
                 color: "white"
                 font.family: globalFont.name
                 font.pixelSize: screen.height/23
@@ -31,7 +29,7 @@ Item {
             spacing: screen.height/216
             Text {
                 id: databaseLabel
-                text: " "+" DB "+root.database
+                text: "DB "+root.database
                 color: "white"
                 font.family: globalFont.name
                 font.pixelSize: screen.height/23
@@ -49,8 +47,8 @@ Item {
     }
     Text {
         id: readMoreLabel
-        text: "<style type='text/css'> a:link{color:#707070;font-style:normal;text-decoration:none} </style>"+
-              "ESC TO CLOSE / READ MORE &nbsp; <a href=\'http://google.com\'>GITHUB.COM/PIGAPP/NEWS <font color='#ffffff'>➟</font></a>"
+        text: "<style type='text/css'> a:link{color:#161616;font-style:normal;text-decoration:none} </style>"+
+              "ESC TO CLOSE NEWS / READ MORE &nbsp; <a href=\'http://google.com\'>GITHUB.COM/PIGAPP/NEWS <font color='#ffffff'>➟</font></a>"
         color: "white"
         font.family: globalFont.name
         font.bold: true

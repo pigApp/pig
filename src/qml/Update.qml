@@ -1,34 +1,69 @@
 import QtQuick 2.3
+import "global/"
 
 Item {
     id: update
 
-    Loader {
-        id: network_loader
-        source: "global/Network.qml"
-        asynchronous: true
-        active: root.showNetwork
-        anchors.fill: parent
-    }
-
     Row {
         id: labelsRow
-        spacing: parent.height/192
+        spacing: parent.width/192
         anchors.centerIn: parent
         Text {
             id: statusLabel
             text: root.status
-            color: "white"
+            color: { if(statusLabel.text === "FAIL") Qt.rgba(0.08, 0.08, 0.08, 1); else "white" }
             font.family: globalFont.name
             font.pixelSize: screen.height/23
         }
         Text {
             id: informationLabel
             text: root.information
-            color: "white"
+            color: { if(statusLabel.text === "FAIL") Qt.rgba(0.08, 0.08, 0.08, 1); else "white" }
             font.family: globalFont.name
             font.pixelSize: screen.height/23
         }
+    }
+    Row {
+        id: buttonsRow
+        spacing: parent.width/192
+        visible: { statusLabel.text === "UPDATE AVAILABLE" }
+        enabled: { statusLabel.text === "UPDATE AVAILABLE" }
+        anchors.top: labelsRow.bottom
+        anchors.horizontalCenter: labelsRow.horizontalCenter
+        anchors.horizontalCenterOffset: -parent.width/192
+        Button {
+            id: accept
+            width: screen.width/27.9
+            height: screen.height/72
+            label: "INSTALL"
+            labelColor: "white"
+            labelBold: true
+            labelSize: screen.height/54
+            labelAngle: 0
+            labelAxisX: 0
+            labelAxisY: 0
+            labelAxisZ: 0
+            onClicked: root.signal_qml_accept_update()
+        }
+        Button {
+            id: skip
+            width: screen.width/49.23
+            height: screen.height/72
+            label: "SKIP"
+            labelColor: "white"
+            labelBold: true
+            labelSize: screen.height/54
+            labelAngle: 0
+            labelAxisX: 0
+            labelAxisY: 0
+            labelAxisZ: 0
+            onClicked: root.signal_qml_skip_update()
+        }
+    }
+
+    Network {
+        visible: root.showNetwork
+        anchors.fill: parent
     }
 
     Keys.onPressed: {

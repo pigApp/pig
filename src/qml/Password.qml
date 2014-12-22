@@ -16,7 +16,7 @@ Item {
             anchors.centerIn: parent
         }
         TextInput {
-            id: inputUser
+            id: user
             color: "white"
             font.family: globalFont.name
             font.pixelSize: screen.height/43.2
@@ -25,23 +25,23 @@ Item {
             cursorVisible: false
             anchors.centerIn: parent
             anchors.verticalCenterOffset: -screen.height/720
+            onCursorVisibleChanged: { if (user.cursorVisible) user.cursorVisible = false }
             onCursorPositionChanged: {
-                inputUser.visible = true
+                user.visible = true
                 label.color = "white"
-                if (inputUser.text === "")
+                if (user.text === "")
                     label.text = "INTRO PASSWORD"
                 else
                     label.text = ""
             }
-            onCursorVisibleChanged: { if (inputUser.cursorVisible) inputUser.cursorVisible = false }
             onAccepted: {
-                if (inputUser.text !== "") {
-                    inputUser.visible = false
+                if (user.text !== "") {
+                    user.visible = false
                     if (root.askPassword) {
-                        root.signal_qml_password_handler(inputUser.text, false, true, false)
+                        root.signal_qml_password_handler(user.text, false, true, false)
                     } else {
-                        root.signal_qml_password_handler(inputUser.text, false, false, true)
-                        inputUser.enabled = false
+                        root.signal_qml_password_handler(user.text, false, false, true)
+                        user.enabled = false
                     }
                 }
             }
@@ -56,7 +56,7 @@ Item {
             }
         }
         MouseArea {
-            onClicked: { inputUser.focus = true }
+            onClicked: { user.focus = true }
             anchors.fill: parent
         }
     }
@@ -65,7 +65,7 @@ Item {
         id: hide
         running: false
         repeat: false
-        interval: 3000
+        interval: 5000
         onTriggered: { screen.state = "hide_password" }
     }
 
@@ -86,6 +86,6 @@ Item {
         }
     }
 
-    Component.onCompleted: inputUser.forceActiveFocus()
+    Component.onCompleted: user.forceActiveFocus()
 }
 // Tabs hechos.

@@ -24,8 +24,6 @@ void Update::start()
     databaseAvailable = false;
     libraryAvailable = false;
 
-    (*_root)->setProperty("showNetwork", true);
-
     QString Url;
     const int i = sizeof(void*);
 #ifdef __linux__
@@ -51,8 +49,8 @@ void Update::start()
             release = query.value(1).toInt();
             database = query.value(2).toInt();
             library = query.value(3).toInt();
-            const QString host = query.value(4).toString();
-            QStringList urls; urls << query.value(5).toString();
+            host = query.value(4).toString();
+            urls << query.value(5).toString();
             db->close();
 
             get(&host, &urls, "VERSIONS");
@@ -75,13 +73,15 @@ void Update::get(const QString *const host, const QStringList *const urls, const
     mSocket->urls = *urls;
     mSocket->request = request;
     mSocket->start();
+
+    (*_root)->setProperty("showNetwork", true);
 }
 
 void Update::check_versions(const QString *const str)
 {
-    QStringList urls;
     const QStringList split = (*str).split(",");
-    const QString host = split[4];
+    urls.clear();
+    host = split[4];
     if ((split[0].toInt()+split[1].toInt()) > binary+release) {
         newBinary = split[0].toInt();
         newRelease = split[1].toInt();
@@ -102,10 +102,19 @@ void Update::check_versions(const QString *const str)
         libraryAvailable = true;
     }
 
-    if (binaryAvailable || databaseAvailable || libraryAvailable)
-        get(&host, &urls, "UPDATE");
-    else
+    if (binaryAvailable || databaseAvailable || libraryAvailable) {
+        (*_root)->setProperty("showNetwork", false);
+        (*_root)->setProperty("status", "UPDATE AVAILABLE");
+    } else {
         emit signal_continue();
+    }
+}
+
+void Update::accepted()
+{
+    (*_root)->setProperty("status", "");
+
+    get(&host, &urls, "UPDATE");
 }
 
 void Update::unzip_files(const QString *const path, const QStringList *const files)
@@ -118,7 +127,7 @@ void Update::unzip_files(const QString *const path, const QStringList *const fil
     } else {
         (*_root)->setProperty("status", "FAIL");
         (*_root)->setProperty("information", "TRY LATER");
-        QTimer::singleShot(3000, this, SLOT(error()));
+        QTimer::singleShot(5000, this, SLOT(error()));
     }
 }
 
@@ -157,7 +166,7 @@ void Update::update_files()
         } else {
             (*_root)->setProperty("status", "FAIL");
             (*_root)->setProperty("information", "TRY LATER");
-            QTimer::singleShot(3000, this, SLOT(error()));
+            QTimer::singleShot(5000, this, SLOT(error()));
         }
     }
 
@@ -218,7 +227,7 @@ void Update::check_exit(int exitCode)
     } else {
         (*_root)->setProperty("status", "FAIL");
         (*_root)->setProperty("information", "TRY LATER");
-        QTimer::singleShot(3000, this, SLOT(error()));
+        QTimer::singleShot(5000, this, SLOT(error()));
     }
 #else
     if (exitCode == 0) {
@@ -244,7 +253,7 @@ void Update::check_exit(int exitCode)
     } else {
         (*_root)->setProperty("status", "FAIL");
         (*_root)->setProperty("information", "TRY LATER");
-        QTimer::singleShot(3000, this, SLOT(error()));
+        QTimer::singleShot(5000, this, SLOT(error()));
     }
 #endif
 }

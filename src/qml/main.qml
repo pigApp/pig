@@ -40,6 +40,8 @@ Item {
     property real screenOpacity: 0.4
 
     signal signal_qml_password_handler(string plain, bool require, bool check, bool write)
+    signal signal_qml_accept_update()
+    signal signal_qml_skip_update()
     signal signal_qml_find(string inputUser, string pornstar, string category, string quality, string full, int offset, bool init)
     signal signal_qml_preview_handler(string host, string url, string path, string target, int id, bool success, bool abort)
     signal signal_qml_torrent_handler(string magnet, int scene, bool abort)
@@ -108,55 +110,42 @@ Item {
                 PropertyChanges { target: root_loader_A; source: "News.qml"; restoreEntryValues: false }
             },
             State {
-                name: "show_finder"
-                PropertyChanges { target: root; pornstar: ""; restoreEntryValues: false }
-                PropertyChanges { target: root; category: ""; restoreEntryValues: false }
-                PropertyChanges { target: root_loader_A; source: ""; restoreEntryValues: false }
-                PropertyChanges { target: root_loader_B; source: ""; restoreEntryValues: false }
-                PropertyChanges { target: root_loader_B; source: "Finder.qml"; restoreEntryValues: false }
-                PropertyChanges { target: root; xB: 0; restoreEntryValues: false }
-            },
-            State {
                 name: "show_help"
                 PropertyChanges { target: root_loader_A; source: "global/Help.qml"; restoreEntryValues: false }
             },
             State {
                 name: "hide_help"
+                PropertyChanges { target: root_loader_A; source: ""; restoreEntryValues: false }
+                PropertyChanges { target: root_loader_B; focus: true; restoreEntryValues: false }
+
+            },
+            State {
+                name: "show_finder"
+                PropertyChanges { target: root; pornstar: ""; restoreEntryValues: false }
+                PropertyChanges { target: root; category: ""; restoreEntryValues: false }
+                PropertyChanges { target: root_loader_A; source: ""; restoreEntryValues: false }
+                PropertyChanges { target: root_loader_B; source: ""; restoreEntryValues: false }
+                PropertyChanges { target: root_loader_B; source: "finder/Finder_Handler.qml"; restoreEntryValues: false }
+                PropertyChanges { target: root; xB: 0; restoreEntryValues: false }
             },
             State {
                 name: "show_viewer"
                 PropertyChanges { target: root; xB: screen.width+50 }
                 PropertyChanges { target: root_loader_B; source: ""; restoreEntryValues: false }
-                PropertyChanges { target: root_loader_B; source: "Viewer.qml"; restoreEntryValues: false }
+                PropertyChanges { target: root_loader_B; source: "viewer/Viewer_Handler.qml"; restoreEntryValues: false }
+            },
+            State {
+                name: "show_torrent"
+                PropertyChanges { target: root_loader_A; source: "torrent/Torrent_Handler.qml"; restoreEntryValues: false }
+            },
+            State {
+                name: "hide_torrent"
+                PropertyChanges { target: root_loader_A; source: ""; restoreEntryValues: false }
             },
             State {
                 name: "show_errorDb"
                 PropertyChanges { target: root_loader_B; source: ""; restoreEntryValues: false }
-                PropertyChanges { target: root_loader_A; source: "ErrorDb.qml"; restoreEntryValues: false }
-            }
-        ]
-        transitions: [
-            Transition {
-                to: "show_help"
-                ParallelAnimation {
-                    NumberAnimation { target: root; easing.amplitude: 1.7; properties: "xA"; to: 0; duration: 1100; easing.type: Easing.OutQuart }
-                    NumberAnimation { target: root; easing.amplitude: 1.7; properties: "xB"; to: -screen.width; duration: 1100; easing.type: Easing.OutQuart }
-                    NumberAnimation { target: root; easing.amplitude: 1.7; properties: "screenOpacity"; to: 0.5; duration: 2000; easing.type: Easing.OutQuart }
-                    NumberAnimation { target: backgroundBlur; easing.amplitude: 1.7; properties: "radius"; to: 96; duration: 2000; easing.type: Easing.OutQuart }
-                }
-            },
-            Transition {
-                to: "hide_help"
-                SequentialAnimation {
-                    ParallelAnimation {
-                        NumberAnimation { target: root; easing.amplitude: 1.7; properties: "xA"; to: screen.width; duration: 1100; easing.type: Easing.OutQuart }
-                        NumberAnimation { target: root; easing.amplitude: 1.7; properties: "xB"; to: 0; duration: 1100; easing.type: Easing.OutQuart }
-                        NumberAnimation { target: root; easing.amplitude: 1.7; properties: "screenOpacity"; to: 0.3; duration: 2100; easing.type: Easing.OutQuart }
-                        NumberAnimation { target: backgroundBlur; easing.amplitude: 1.7; properties: "radius"; to: 0; duration: 2100; easing.type: Easing.OutQuart }
-                    } //FIX: Al mostrar help en viewer, screenOpacity y radius no tienen que volver a 0.3 y 0. Se tienen que mantener en 0.5 y 96.
-                    PropertyAction { target: root_loader_A; property: "source"; value: "" }
-                    PropertyAction { target: root_loader_B; property: "focus"; value: true }
-                }
+                PropertyChanges { target: root_loader_A; source: "global/ErrorDb.qml"; restoreEntryValues: false }
             }
         ]
     }

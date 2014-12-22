@@ -2,6 +2,7 @@ import QtQuick 2.3
 import QtMultimedia 5.0
 
 Rectangle {
+    id: sidebox
     color: Qt.rgba(0, 0, 0, 0.5)
 
     Column {
@@ -30,7 +31,7 @@ Rectangle {
         sourceSize.width: screen.width/60
         sourceSize.height: screen.height/33.75
         source: {
-            if (videoPlayer.standby) {
+            if (videoPlayerHandler.standby) {
                 "qrc:/img-play"
             } else {
                 if (player.playbackState === MediaPlayer.PlayingState )
@@ -42,16 +43,16 @@ Rectangle {
             }
         }
         opacity: 0.4
-        anchors.left: timeColumn.left
         anchors.top: timeColumn.bottom
         anchors.topMargin: 10//
+        anchors.left: timeColumn.left
     }
     Row {
         id: volumeRow
         spacing: 10
-        anchors.left: timeColumn.left
         anchors.top: playerStatusIcon.bottom
         anchors.topMargin: 10//
+        anchors.left: timeColumn.left
         Image {
             id: volumeIcon
             width: screen.width/60
@@ -90,9 +91,9 @@ Rectangle {
     Column {
         id: downloadStatusColumn
         spacing: -15//
-        anchors.left: timeColumn.left
         anchors.top: volumeRow.bottom
         anchors.topMargin: -20//
+        anchors.left: timeColumn.left
         Text {
             id: bitRateLabel
             text: { if (root.bitRate !== "") root.bitRate }

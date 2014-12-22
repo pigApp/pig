@@ -1,124 +1,96 @@
 import QtQuick 2.3
 
-Item {
+Rectangle {
     id: help
-    x: root.xA
-    width: screen.width
-    height: screen.height
+    color: "black"
 
     property var titles: [
         "LICENSE",
-        "SETUP",
-        "GLOBAL",
+        "KEYS GLOBAL",
         "BITTORRENT",
 
-        "TRACKING",
-        "",
-        "PLAYER",
+        "TAKE PART",
+        "KEYS MOVIES",
         "CODECS",
 
-        "TAKE PART",
-        "",
-        "",
-        "",
+        "TRACKING",
+        "KEYS PLAYER",
+        "FOCUS",
 
-        "",
-        "",
+        "CONTACT",
         "",
         ""
     ]
     property var contents: [
-        "PIG "+binary+"."+release+" DB "+database+" GPL 2.0<br/>"+
-        "FREE SOFTWARE<br/>"+
+        "PIG "+binary+"."+release+" DB "+database+"<br/>"+
+        "GPL 2.0 Free Software.<br/>"+
         "MADE BY USERS FOR USERS",
 
-        "",
+        "ESC &nbsp; <font color='#161616'>BACK</font><br/>"+
+        "CTRL H &nbsp; <font color='#161616'>HELP</font><br/>"+
+        "CTRL P &nbsp; <font color='#161616'>PASSWORD</font><br/>"+
+        "CTRL Q &nbsp; <font color='#161616'>CLOSE PIG</font>",
 
-        "ESC &nbsp; <font color='#707070'>BACK</font><br/>"+
-        "CTRL H &nbsp; <font color='#707070'>HELP</font><br/>"+
-        "CTRL P &nbsp; <font color='#707070'>PASSWORD</font><br/>"+
-        "CTRL Q &nbsp; <font color='#707070'>CLOSE PIG</font><br/>",
-
-        "<style type='text/css'> a:link{color:#707070;font-style:normal;text-decoration:none} </style>"+
+        "<style type='text/css'> a:link{color:#161616;font-style:normal;text-decoration:none} </style>"+
         "THE MOVIE NOT DOWNLOAD<br/>"+
-        "You probably have blocked the ports used<br/>"+
-        "by BitTorrent in your firewall or ISP.<br/>"+
+        "Probably are blocked the ports used<br/>"+
+        "by BitTorrent in the firewall or ISP.<br/>"+
         "<a href=\'http://google.com\'>READ MORE <font color='#ffffff'>➟</font></a>",
 
 
+        "<style type='text/css'> a:link{color:#161616;font-style:normal;text-decoration:none} </style>"+
+        "MOVIES &nbsp; <a href=\'http://clarin.com\'>GITHUB.COM/PIGAPP/MOVIES <font color='#ffffff'>➟</font></a><br/>"+
+        "CODE &nbsp; <a href=\'http://google.com\'>GITHUB.COM/PIGAPP <font color='#ffffff'>➟</font></a><br/>"+
+        "BUGS &nbsp; <a href=\'http://google.com\'>GITHUB.COM/PIGAPP/BUGS <font color='#ffffff'>➟</font></a><br/>"+
+        "BTC &nbsp; <font color='#161616'>1LtU9rMsQ41rCqsJAvMtw89TA5XT2dW7f9</font><br/>",
 
-        "Those who create this software agree not to<br/>"+
-        "collect any user data. Note that this software<br/>"+
-        "does not use encrypted connections. So it<br/>"+
-        "does not ensure that third parties do not spy<br/>"+
-        "what you see.",
+        "LEFT RIGHT &nbsp; <font color='#161616'>MOVE ON MOVIES</font><br/>"+
+        "UP DOWN &nbsp; <font color='#161616'>MORE LESS FIVE MOVIES</font>",
 
-        "",
-
-        "SPACE &nbsp; <font color='#707070'>PLAY PAUSE</font><br/>"+
-        "UP DOWN &nbsp; <font color='#707070'>VOLUME</font><br/>"+
-        "LEFT RIGHT &nbsp; <font color='#707070'>MOVE ON MOVIE</font><br/>"+
-        "CTRL L &nbsp; <font color='#707070'>LOOP</font>",
-
-        "<style type='text/css'> a:link{color:#707070;font-style:normal;text-decoration:none} </style>"+
+        "<style type='text/css'> a:link{color:#161616;font-style:normal;text-decoration:none} </style>"+
         "THE MOVIE NOT PLAY<br/>"+
-        "You probably do not have installed<br/>"+
+        "Probably do not are installed<br/>"+
         "the necessary video codecs.<br/>"+
         "<a href=\'http://google.com\'>READ MORE <font color='#ffffff'>➟</font></a>",
 
 
+        "Those who create this software agree not to<br/>"+
+        "collect any user data.",
 
-        "<style type='text/css'> a:link{color:#707070;font-style:normal;text-decoration:none} </style>"+
-        "CODE &nbsp; <a href=\'http://google.com\'>GITHUB.COM/PIGAPP <font color='#ffffff'>➟</font></a><br/>"+
-        "TORRENTS &nbsp; <a href=\'http://clarin.com\'>GITHUB.COM/PIGAPP/TORRENT <font color='#ffffff'>➟</font></a><br/>"+
-        "TRANSLATIONS &nbsp; <a href=\'http://google.com\'>GITHUB.COM/PIGAPP/TRS <font color='#ffffff'>➟</font></a><br/>"+
-        "BTC &nbsp; <font color='#707070'>1LtU9rMsQ41rCqsJAvMtw89TA5XT2dW7f9</font><br/>"+
-        "BUGS &nbsp; <a href=\'http://google.com\'>GITHUB.COM/PIGAPP/BUGS <font color='#ffffff'>➟</font></a><br/>"+
-        "SHARE &nbsp; <a href=\'http://google.com\'>PIG.IO <font color='#ffffff'>➟</font></a><br/>"+
-        "CONTACT &nbsp; <font color='#707070'>PIG@MAIL.COM</font>",
+        "SPACE &nbsp; <font color='#161616'>PLAY PAUSE</font><br/>"+
+        "LEFT RIGHT &nbsp; <font color='#161616'>OFFSET</font><br/>"+
+        "UP DOWN &nbsp; <font color='#161616'>VOLUME</font><br/>"+
+        "CTRL L &nbsp; <font color='#161616'>LOOP</font>",
 
-        "",
-
-        "",
-
-        "",
+        "<style type='text/css'> a:link{color:#161616;font-style:normal;text-decoration:none} </style>"+
+        "THE KEYBOARD NOT WORK<br/>"+
+        "Click on the screen to regain focus.",
 
 
-
-        /*
-        "If you use this software, consider collaborate.<br/>"+
-        "This is the only way we can move forward.",
-        */
-        "",
-
-        "",
+        "<font color='#161616'>PIG@MAIL.COM</font>",
 
         "",
 
         ""
-        /*
-        "If you have problems to use PIG<br/>"+
-        "feel free to contact us."
-        */
     ]
 
     Grid {
         id: grid
-        spacing: 3
-        anchors.fill: parent
+        columns: 3
+        anchors.top: parent.top
+        anchors.topMargin: parent.height/8.64
+        anchors.horizontalCenter: parent.horizontalCenter
+        anchors.horizontalCenterOffset: parent.width/12.8
         Repeater {
-            model: 16
-            delegate: Rectangle {
-                id: box
-                width: parent.width/4
-                height: parent.height/4
-                color: Qt.rgba(0, 0, 0, 0.05)
+            model: 12
+            delegate:
+            Item {
+                width: screen.width/3
+                height: screen.height/5
                 Column {
-                    spacing: parent.height/216
+                    spacing: screen.height/108
                     anchors.top: parent.top
-                    anchors.topMargin: parent.height/40
                     anchors.left: parent.left
-                    anchors.leftMargin: parent.width/9
                     Text {
                         id: title
                         text: titles[index]

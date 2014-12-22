@@ -1,17 +1,14 @@
 import QtQuick 2.3
 
-Rectangle {
+Item {
     id: downloadStatus
-    color: "black"
-    anchors.fill: parent
 
     property int timeLeft: 10
 
     Row {
         id: downloadStatusRow
         spacing: parent.width/96
-        anchors.horizontalCenter: parent.horizontalCenter
-        anchors.verticalCenter: parent.verticalCenter
+        anchors.centerIn: parent
         Text {
             id: bitRateLabel
             text: {
@@ -38,21 +35,30 @@ Rectangle {
             font.pixelSize: screen.height/23
         }
     }
-
     Text {
         id: sandboxLabel
         text: "FILE NOT READY - RECHECK "+timeLeft
         color: Qt.rgba(0.1, 0.1, 0.1, 1)
         font.family: globalFont.name
         font.pixelSize: screen.height/56
-        visible: { if (handler.sandboxStatus === "fail") true; else false }
-        anchors.horizontalCenter: parent.horizontalCenter
+        visible: { if (torrentHandler.sandboxStatus === "fail") true; else false }
         anchors.top: downloadStatusRow.bottom
         anchors.topMargin: screen.height/108
+        anchors.horizontalCenter: parent.horizontalCenter
     }
+    Rectangle {
+       id: bar
+       width: { (parent.width*root.downloaded)/root.required }
+       height: 2
+       color: { if (torrentHandler.sandboxStatus === "fail") "yellow"; else "white" }
+       visible: { bitRateLabel.text !== "RECOVERING METADATA" && peersLabel !== "PEERS 0" }
+       anchors.bottom: parent.bottom
+       anchors.bottomMargin: 2
+    }
+
     Timer {
         id: recheckDelay
-        running: { if (handler.sandboxStatus === "fail") true; else false }
+        running: { if (torrentHandler.sandboxStatus === "fail") true; else false }
         repeat: true
         interval: 1000
         onTriggered: {
@@ -63,19 +69,10 @@ Rectangle {
             sandboxLabel.text = "FILE NOT READY - RECHECK "+timeLeft
         }
     }
-
-    Rectangle {
-       id: bar
-       width: { (parent.width*root.downloaded)/root.required }
-       height: 2
-       color: { if (handler.sandboxStatus === "fail") "yellow"; else "white" }
-       visible: { bitRateLabel.text !== "RECOVERING METADATA" && peersLabel !== "PEERS 0" }
-       anchors.bottom: parent.bottom
-       anchors.bottomMargin: 2
-    }
     
     Keys.onPressed: {
         if (event.key === Qt.Key_Escape) {
+            torrentHandler.state = "hide"
             root.signal_qml_torrent_handler("", 0, true)
             event.accepted = true;
         } else if (event.key === Qt.Key_Q && (event.modifiers & Qt.ControlModifier)) {
@@ -86,3 +83,4 @@ Rectangle {
 
     Component.onCompleted: downloadStatus.forceActiveFocus()
 }
+// Tabs hechos.

@@ -6,12 +6,12 @@ Item {
     property real downloaded: root.downloaded_kb
 
     onDownloadedChanged: {
-        if (!videoPlayer.sandbox)
-            if (!videoPlayer.stanby && (player.position/player.duration)+0.001 >= (downloaded/root.total_kb)) {
-                videoPlayer.standby = true
+        if (!videoPlayerHandler.sandbox) {
+            if (!videoPlayerHandler.stanby && (player.position/player.duration)+0.001 >= (downloaded/root.total_kb)) {
+                videoPlayerHandler.standby = true
                 console.log("//// STANDBY")
-            } else if (videoPlayer.stanby && (player.position/player.duration)+0.001 < (downloaded/root.total_kb)) {
-                videoPlayer.standby = false
+            } else if (videoPlayerHandler.stanby && (player.position/player.duration)+0.001 < (downloaded/root.total_kb)) {
+                videoPlayerHandler.standby = false
                 console.log("//// STANDBY-FALSE")
             }
         }

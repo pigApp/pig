@@ -29,7 +29,8 @@ private:
     TcpSocket *mSocket;
     Su *mSu;
 
-    QStringList sums;
+    QString host;
+    QStringList urls, sums;
 
     bool binaryAvailable, databaseAvailable, libraryAvailable;
     int binary, release, database, library;
@@ -38,6 +39,7 @@ private:
 private slots:
     void get(const QString *const host, const QStringList *const urls, const QString request);
     void check_versions(const QString *const str);
+    void accepted();
     void unzip_files(const QString * const path, const QStringList * const files);
     void update_files();
     void check_exit(int exitCode);
