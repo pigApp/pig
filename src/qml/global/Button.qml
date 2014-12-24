@@ -11,6 +11,8 @@ Rectangle {
     property alias labelBold: label.font.bold
     property alias labelSize: label.font.pixelSize
     property alias labelAngle: rotation.angle
+    property alias labelOriginX: rotation.origin.x
+    property alias labelOriginY: rotation.origin.y
     property alias labelAxisX: rotation.axis.x
     property alias labelAxisY: rotation.axis.y
     property alias labelAxisZ: rotation.axis.z
@@ -42,8 +44,8 @@ Rectangle {
     
     transform: Rotation {
         id: rotation
-        origin.x: 0
-        origin.y: 0
+        //origin.x: 0
+        //origin.y: 0
     }
 
     states: [

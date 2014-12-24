@@ -1,8 +1,9 @@
 import QtQuick 2.3
+import "filters_components/"
 
 Item {
     id: filters
-    x: screen.width
+    x: root.xA
     width: screen.width
     height: screen.height
 

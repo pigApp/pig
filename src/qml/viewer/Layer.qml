@@ -1,4 +1,5 @@
 import QtQuick 2.3
+import "layer_components/"
 
 Item {
     id: layer

@@ -52,6 +52,9 @@ Torrent::~Torrent()
 
 void Torrent::get_metadata()
 {
+    QTimer::singleShot(5000, this, SLOT(filter_files())); //
+
+    /*
     if (!aborted) {
         qDebug() << "//// METADATA";
         if (handler.status(1).state != 2)
@@ -59,10 +62,13 @@ void Torrent::get_metadata()
         else
             QTimer::singleShot(1000, this, SLOT(get_metadata()));
     }
+    */
 }
 
 void Torrent::filter_files()
 {
+    (*_root)->setProperty("videoFilePath", "/home/lxfb/.pig/tmp/300.mkv"); //
+    /*
     QStringList formats; formats << ".avi" << ".divx" << ".flv" << ".h264" << ".mkv" << ".mp4"
                                  << ".mpg" << ".mpeg" << ".ogm"<< ".ogv" << ".wmv";
     std::vector<int> filePriority;
@@ -110,6 +116,7 @@ void Torrent::filter_files()
         
     required_video_dump();
     download_Information();
+    */
 }
 
 void Torrent::required_video_dump()

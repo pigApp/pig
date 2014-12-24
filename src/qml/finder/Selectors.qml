@@ -19,14 +19,8 @@ Item {
         anchors.verticalCenterOffset: parent.height/28.42
         MouseArea {
             hoverEnabled: true
-            onEntered: {
-                if (!onShowSelectors && root.full === "" && root.quality === "")
-                    selectors.state = "in"
-            }
-            onHoveredChanged: {
-                if (!onShowSelectors && root.full === "" && root.quality === "")
-                    selectors.state = "out"
-            }
+            onEntered: { if (!onShowSelectors && root.full === "" && root.quality === "") selectors.state = "in" }
+            onHoveredChanged: { if (!onShowSelectors && root.full === "" && root.quality === "") selectors.state = "out" }
             onClicked: {
                 if (!onShowSelectors) {
                     onShowSelectors = true
@@ -61,89 +55,49 @@ Item {
         anchors.leftMargin: parent.width/384
         Image {
             id: fullMovieIcon
-            width: screen.width/35.55
-            height: screen.height/41.65
-            sourceSize.width: screen.width/35.55
-            sourceSize.height: screen.height/41.65
-            source: {
-                if (root.full === "FULL")
-                    "qrc:/img-full_on"
-                else
-                    "qrc:/img-full"
-            }
+            width: screen.width/30
+            height: screen.height/16.87
+            sourceSize.width: screen.width/30
+            sourceSize.height: screen.height/16.87
+            source: { if (root.full === "FULL") "qrc:/img-full_on"; else "qrc:/img-full_off" }
             MouseArea {
-                onClicked: {
-                    if (root.full === "FULL")
-                        root.full = ""
-                    else
-                        root.full= "FULL"
-                }
+                onClicked: { if (root.full === "FULL") root.full = ""; else root.full= "FULL" }
                 anchors.fill: parent
             }
         }
         Image {
             id: sdIcon
-            width: screen.width/35.55
-            height: screen.height/41.65
-            sourceSize.width: screen.width/35.55
-            sourceSize.height: screen.height/41.65
-            source: {
-                if (root.quality === "SD")
-                    "qrc:/img-sd_on"
-                else
-                    "qrc:/img-sd"
-            }
+            width: screen.width/30
+            height: screen.height/16.87
+            sourceSize.width: screen.width/30
+            sourceSize.height: screen.height/16.87
+            source: { if (root.quality === "SD") "qrc:/img-sd_on"; else "qrc:/img-sd_off" }
             MouseArea {
-                onClicked: {
-                    if (root.quality === "SD")
-                        root.quality = ""
-                    else
-                        root.quality = "SD"
-                }
+                onClicked: { if (root.quality === "SD") root.quality = ""; else root.quality = "SD" }
                 anchors.fill: parent
             }
         }
         Image {
             id: hdIcon
-            width: screen.width/35.55
-            height: screen.height/20
-            sourceSize.width: screen.width/35.55
-            sourceSize.height: screen.height/20
-            source: {
-                if (root.quality === "720p")
-                    "qrc:/img-720p_on"
-                else
-                    "qrc:/img-720p"
-            }
+            width: screen.width/30
+            height: screen.height/16.87
+            sourceSize.width: screen.width/30
+            sourceSize.height: screen.height/16.87
+            source: { if (root.quality === "720p") "qrc:/img-720p_on"; else "qrc:/img-720p_off" }
             MouseArea {
-                onClicked: {
-                    if (root.quality === "720p")
-                        root.quality = ""
-                    else
-                        root.quality = "720p"
-                }
+                onClicked: { if (root.quality === "720p") root.quality = ""; else root.quality = "720p" }
                 anchors.fill: parent
             }
         }
         Image {
             id: fullHdIcon
-            width: screen.width/35.55
-            height: screen.height/20
-            sourceSize.width: screen.width/35.55
-            sourceSize.height: screen.height/20
-            source: {
-                if (root.quality === "1080p")
-                    "qrc:/img-1080p_on"
-                else
-                    "qrc:/img-1080p"
-            }
+            width: screen.width/30
+            height: screen.height/16.87
+            sourceSize.width: screen.width/30
+            sourceSize.height: screen.height/16.87
+            source: { if (root.quality === "1080p") "qrc:/img-1080p_on"; else "qrc:/img-1080p_off" }
             MouseArea {
-                onClicked: {
-                    if (root.quality === "1080p")
-                        root.quality = ""
-                    else
-                        root.quality = "1080p"
-                }
+                onClicked: { if (root.quality === "1080p") root.quality = ""; else root.quality = "1080p" }
                 anchors.fill: parent
             }
         }

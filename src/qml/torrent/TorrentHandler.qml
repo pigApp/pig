@@ -63,7 +63,7 @@ Item {
 
     onVideoFilePathChanged: {
         if (videoFilePath !== "") {
-            videoPlayer_loader.source = "videoplayer/VideoPlayer.qml"
+            videoPlayer_loader.source = "VideoPlayer.qml"
             videoPlayer_loader.active = true
         }
     }

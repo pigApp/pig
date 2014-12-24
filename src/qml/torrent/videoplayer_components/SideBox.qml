@@ -32,14 +32,14 @@ Rectangle {
         sourceSize.height: screen.height/33.75
         source: {
             if (videoPlayerHandler.standby) {
-                "qrc:/img-play"
+                "qrc:/img-standby"
             } else {
                 if (player.playbackState === MediaPlayer.PlayingState )
-                    "qrc:/img-play"
+                    "qrc:/img-playing"
                 else if (player.playbackState === MediaPlayer.PausedState)
-                    "qrc:/img-download"
+                    "qrc:/img-paused"
                 else if (player.playbackState === MediaPlayer.StoppedState)
-                    "qrc:/img-download"
+                    "qrc:/img-standby"
             }
         }
         opacity: 0.4
@@ -59,12 +59,7 @@ Rectangle {
             height: screen.height/33.75
             sourceSize.width: screen.width/60
             sourceSize.height: screen.height/33.75
-            source: {
-                if (player.volume !== 0.0 && !player.muted)
-                    "qrc:/img-play"
-                else 
-                    "qrc:/img-download"
-            }
+            source: { if (player.volume !== 0.0 && !player.muted) "qrc:/img-volume_on"; else "qrc:/img-volume_off" }
             opacity: 0.4
         }
         Text {

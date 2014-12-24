@@ -3,14 +3,14 @@
         <file alias="img-network">resources/images/network/network.svg</file>
         <file alias="img-network_err">resources/images/network/network_err.svg</file>
         <file alias="img-more">resources/images/finder/selectors/more.svg</file>
-        <file alias="img-full">resources/images/finder/selectors/full.svg</file>
         <file alias="img-full_on">resources/images/finder/selectors/full_on.svg</file>
-        <file alias="img-sd">resources/images/finder/selectors/sd.svg</file>
+        <file alias="img-full_off">resources/images/finder/selectors/full_off.svg</file>
         <file alias="img-sd_on">resources/images/finder/selectors/sd_on.svg</file>
-        <file alias="img-720p">resources/images/finder/selectors/720p.svg</file>
+        <file alias="img-sd_off">resources/images/finder/selectors/sd_off.svg</file>
         <file alias="img-720p_on">resources/images/finder/selectors/720p_on.svg</file>
-        <file alias="img-1080p">resources/images/finder/selectors/1080p.svg</file>
+        <file alias="img-720p_off">resources/images/finder/selectors/720p_off.svg</file>
         <file alias="img-1080p_on">resources/images/finder/selectors/1080p_on.svg</file>
+        <file alias="img-1080p_off">resources/images/finder/selectors/1080p_off.svg</file>
         <file alias="img-cat-ANAL">resources/images/finder/filters/categories/ANAL.jpg</file>
         <file alias="img-cat-ASIAN">resources/images/finder/filters/categories/ASIAN.jpg</file>
         <file alias="img-cat-DOUBLE">resources/images/finder/filters/categories/DOUBLE.jpg</file>
@@ -22,6 +22,11 @@
         <file alias="img-download">resources/images/viewer/preview/download.svg</file>
         <file alias="img-download_err">resources/images/viewer/preview/download_err.svg</file>
         <file alias="img-open">resources/images/viewer/scene/open.svg</file>
+        <file alias="img-playing">resources/images/videoplayer/playing.svg</file>
+        <file alias="img-paused">resources/images/videoplayer/paused.svg</file>
+        <file alias="img-standby">resources/images/videoplayer/standby.svg</file>
+        <file alias="img-volume_on">resources/images/videoplayer/volume_on.svg</file>
+        <file alias="img-volume_off">resources/images/videoplayer/volume_off.svg</file>
         <file alias="img-background">resources/images/global/background.jpg</file>
         <file>resources/images/global/icon.ico</file>
         <file>resources/images/global/icon.png</file>
@@ -34,26 +39,26 @@
         <file>src/qml/Password.qml</file>
         <file>src/qml/Update.qml</file>
         <file>src/qml/News.qml</file>
-        <file>src/qml/finder/Finder_Handler.qml</file>
+        <file>src/qml/finder/FinderHandler.qml</file>
         <file>src/qml/finder/Welcome.qml</file>
         <file>src/qml/finder/Input.qml</file>
+        <file>src/qml/finder/Filters.qml</file>
         <file>src/qml/finder/Selectors.qml</file>
-        <file>src/qml/finder/filters/Filters.qml</file>
-        <file>src/qml/finder/filters/FilterBox.qml</file>
-        <file>src/qml/viewer/Viewer_Handler.qml</file>
+        <file>src/qml/finder/filters_components/FilterBox.qml</file>
+        <file>src/qml/viewer/ViewerHandler.qml</file>
         <file>src/qml/viewer/Cover.qml</file>
         <file>src/qml/viewer/Layer.qml</file>
-        <file>src/qml/viewer/Dates.qml</file>
-        <file>src/qml/viewer/Preview.qml</file>
-        <file>src/qml/viewer/PreviewPlayer.qml</file>
-        <file>src/qml/viewer/Scenes.qml</file>
-        <file>src/qml/torrent/Torrent_Handler.qml</file>
+        <file>src/qml/viewer/layer_components/Dates.qml</file>
+        <file>src/qml/viewer/layer_components/Scenes.qml</file>
+        <file>src/qml/viewer/layer_components/Preview.qml</file>
+        <file>src/qml/viewer/layer_components/PreviewPlayer.qml</file>
+        <file>src/qml/torrent/TorrentHandler.qml</file>
         <file>src/qml/torrent/DownloadStatus.qml</file>
-        <file>src/qml/torrent/videoplayer/VideoPlayer_Handler.qml</file>
-        <file>src/qml/torrent/videoplayer/Control.qml</file>
-        <file>src/qml/torrent/videoplayer/Controls.qml</file>
-        <file>src/qml/torrent/videoplayer/SideBox.qml</file>
-        <file>src/qml/torrent/videoplayer/Bars.qml</file>
+        <file>src/qml/torrent/VideoPlayer.qml</file>
+        <file>src/qml/torrent/videoplayer_components/SideBox.qml</file>
+        <file>src/qml/torrent/videoplayer_components/Bars.qml</file>
+        <file>src/qml/torrent/videoplayer_components/Controls.qml</file>
+        <file>src/qml/torrent/videoplayer_components/Control.qml</file>
         <file>src/qml/global/Network.qml</file>
         <file>src/qml/global/Help.qml</file>
         <file>src/qml/global/ErrorDb.qml</file>

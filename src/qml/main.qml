@@ -125,18 +125,18 @@ Item {
                 PropertyChanges { target: root; category: ""; restoreEntryValues: false }
                 PropertyChanges { target: root_loader_A; source: ""; restoreEntryValues: false }
                 PropertyChanges { target: root_loader_B; source: ""; restoreEntryValues: false }
-                PropertyChanges { target: root_loader_B; source: "finder/Finder_Handler.qml"; restoreEntryValues: false }
+                PropertyChanges { target: root_loader_B; source: "finder/FinderHandler.qml"; restoreEntryValues: false }
                 PropertyChanges { target: root; xB: 0; restoreEntryValues: false }
             },
             State {
                 name: "show_viewer"
                 PropertyChanges { target: root; xB: screen.width+50 }
                 PropertyChanges { target: root_loader_B; source: ""; restoreEntryValues: false }
-                PropertyChanges { target: root_loader_B; source: "viewer/Viewer_Handler.qml"; restoreEntryValues: false }
+                PropertyChanges { target: root_loader_B; source: "viewer/ViewerHandler.qml"; restoreEntryValues: false }
             },
             State {
                 name: "show_torrent"
-                PropertyChanges { target: root_loader_A; source: "torrent/Torrent_Handler.qml"; restoreEntryValues: false }
+                PropertyChanges { target: root_loader_A; source: "torrent/TorrentHandler.qml"; restoreEntryValues: false }
             },
             State {
                 name: "hide_torrent"

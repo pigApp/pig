@@ -1,5 +1,6 @@
 import QtQuick 2.3
 import QtMultimedia 5.0
+import "videoplayer_components/"
 
 Rectangle {
     id: videoPlayerHandler
@@ -19,11 +20,11 @@ Rectangle {
         onStatusChanged: {
             if (sandbox) {
                 if (player.status === MediaPlayer.Buffered && !player.error) {
-                    handler.sandboxStatus = "success"
+                    torrentHandler.sandboxStatus = "success"
                     videoPlayerHandler.sandbox = false
                     controls.forceActiveFocus()
                 } else if (player.status === MediaPlayer.NoMedia || player.status === MediaPlayer.InvalidMedia) {
-                    handler.sandboxStatus = "fail"
+                    torrentHandler.sandboxStatus = "fail"
                     // Timer recheck video start -10
                 }
             } else {
@@ -85,9 +86,6 @@ Rectangle {
 
     Component.onCompleted: { player.source = "file://"+root.videoFilePath }
 
-    Component.onDestruction: {
-        if (player.playbackState === MediaPlayer.PlayingState || player.playbackState === MediaPlayer.PausedState)
-            player.stop()
-    }
+    Component.onDestruction: { if (player.playbackState === MediaPlayer.PlayingState || player.playbackState === MediaPlayer.PausedState) player.stop() }
 }
 // Tabs hechos.

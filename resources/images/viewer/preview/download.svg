@@ -7,52 +7,94 @@
    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
    xmlns:svg="http://www.w3.org/2000/svg"
    xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    version="1.1"
-   width="32.009197"
-   height="32.009197"
-   viewBox="0 0 32.009197 32.009197"
-   id="Capa_1"
-   xml:space="preserve"><metadata
-     id="metadata3546"><rdf:RDF><cc:Work
-         rdf:about=""><dc:format>image/svg+xml</dc:format><dc:type
-           rdf:resource="http://purl.org/dc/dcmitype/StillImage" /><dc:title></dc:title></cc:Work></rdf:RDF></metadata><defs
-     id="defs3544" /><g
-     transform="matrix(0.70738554,0,0,0.70738554,0.35369277,0.35369277)"
-     id="g3506"
-     style="fill:#ffffff;stroke:#ffffff"><path
-       d="M 22.118,44.237 C 9.922,44.237 0,34.314 0,22.118 0,9.922 9.922,0 22.118,0 c 12.196,0 22.119,9.922 22.119,22.118 0,12.196 -9.923,22.119 -22.119,22.119 z m 0,-42.737 C 10.75,1.5 1.5,10.749 1.5,22.118 c 0,11.369 9.25,20.619 20.618,20.619 11.37,0 20.619,-9.25 20.619,-20.619 C 42.737,10.749 33.488,1.5 22.118,1.5 z"
-       id="path3508"
-       style="fill:#ffffff;stroke:#ffffff" /></g><g
-     transform="translate(-6.1185002,-6.1185002)"
-     id="g3512" /><g
-     transform="translate(-6.1185002,-6.1185002)"
-     id="g3514" /><g
-     transform="translate(-6.1185002,-6.1185002)"
-     id="g3516" /><g
-     transform="translate(-6.1185002,-6.1185002)"
-     id="g3518" /><g
-     transform="translate(-6.1185002,-6.1185002)"
-     id="g3520" /><g
-     transform="translate(-6.1185002,-6.1185002)"
-     id="g3522" /><g
-     transform="translate(-6.1185002,-6.1185002)"
-     id="g3524" /><g
-     transform="translate(-6.1185002,-6.1185002)"
-     id="g3526" /><g
-     transform="translate(-6.1185002,-6.1185002)"
-     id="g3528" /><g
-     transform="translate(-6.1185002,-6.1185002)"
-     id="g3530" /><g
-     transform="translate(-6.1185002,-6.1185002)"
-     id="g3532" /><g
-     transform="translate(-6.1185002,-6.1185002)"
-     id="g3534" /><g
-     transform="translate(-6.1185002,-6.1185002)"
-     id="g3536" /><g
-     transform="translate(-6.1185002,-6.1185002)"
-     id="g3538" /><g
-     transform="translate(-6.1185002,-6.1185002)"
-     id="g3540" /><path
-     d="m 22.902968,16.145113 c 0,0.845703 -0.68494,1.531152 -1.53117,1.531152 -0.84518,0 -1.53118,-0.685449 -1.53118,-1.531152 0,-0.845708 0.686,-1.531157 1.53118,-1.531157 0.84623,0 1.53117,0.685449 1.53117,1.531157 z m -5.15146,0.0017 c 0,0.845707 -0.68493,1.531152 -1.53117,1.531152 -0.84518,0 -1.53117,-0.685445 -1.53117,-1.531152 0,-0.845712 0.68599,-1.531152 1.53117,-1.531152 0.84624,0 1.53117,0.68544 1.53117,1.531152 z m -5.18908,0 c 0,0.845707 -0.68543,1.531152 -1.53117,1.531152 -0.84568,0 -1.5311696,-0.685445 -1.5311696,-1.531152 0,-0.845712 0.6854896,-1.531152 1.5311696,-1.531152 0.84574,0 1.53117,0.68544 1.53117,1.531152 z"
-     id="svg_1"
-     style="fill:#ffffff" /></svg>
+   width="32"
+   height="32.000362"
+   id="svg5023"
+   inkscape:version="0.48.5 r10040"
+   sodipodi:docname="download.svg">
+  <sodipodi:namedview
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1"
+     objecttolerance="10"
+     gridtolerance="10"
+     guidetolerance="10"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     inkscape:window-width="865"
+     inkscape:window-height="480"
+     id="namedview7419"
+     showgrid="false"
+     inkscape:zoom="7.3749165"
+     inkscape:cx="16"
+     inkscape:cy="16.000181"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:window-maximized="0"
+     inkscape:current-layer="svg5023" />
+  <defs
+     id="defs5025" />
+  <metadata
+     id="metadata5028">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+        <cc:license
+           rdf:resource="http://artlibre.org/licence/lal" />
+      </cc:Work>
+      <cc:License
+         rdf:about="http://artlibre.org/licence/lal">
+        <cc:permits
+           rdf:resource="http://creativecommons.org/ns#Reproduction" />
+        <cc:permits
+           rdf:resource="http://creativecommons.org/ns#Distribution" />
+        <cc:permits
+           rdf:resource="http://creativecommons.org/ns#DerivativeWorks" />
+        <cc:requires
+           rdf:resource="http://creativecommons.org/ns#ShareAlike" />
+        <cc:requires
+           rdf:resource="http://creativecommons.org/ns#Notice" />
+        <cc:requires
+           rdf:resource="http://creativecommons.org/ns#Attribution" />
+      </cc:License>
+    </rdf:RDF>
+  </metadata>
+  <g
+     id="g5098"
+     style="fill:#ffffff">
+    <g
+       transform="matrix(0.49999997,0,0,0.49999997,2.3722849e-6,4.9999997e-5)"
+       id="g5093"
+       style="fill:#ffffff">
+      <g
+         transform="translate(-307.99998,-454.64755)"
+         id="g6455"
+         style="fill:#ffffff">
+        <g
+           id="g6423"
+           style="fill:#ffffff">
+          <path
+             d="m 340.57853,454.65045 -0.59117,-0.003 c -17.32046,0 -31.66546,14.09003 -31.98206,31.4161 -0.3194,17.64546 13.77064,32.25943 31.4133,32.58163 l 0.58837,0.003 c 17.32046,0 31.67106,-14.09564 31.98766,-31.4161 0.1541,-8.55096 -3.0259,-16.64524 -8.96002,-22.79509 -5.93412,-6.15827 -13.90792,-9.62404 -22.45608,-9.78654 z m -0.57156,61.70029 -0.55194,-0.008 c -16.37347,-0.29138 -29.45487,-13.85749 -29.15509,-30.23376 0.29139,-16.08208 13.60534,-29.16348 29.68462,-29.16348 l 0.55194,0.006 c 7.93738,0.13729 15.33682,3.36491 20.84227,9.08049 5.51106,5.70999 8.46411,13.2243 8.32122,21.15047 -0.29418,16.08488 -13.61654,29.16909 -29.69302,29.16909 z"
+             id="path4050"
+             style="fill:#ffffff" />
+        </g>
+      </g>
+    </g>
+  </g>
+  <text
+     x="8.5"
+     y="16.810728"
+     id="text5184"
+     xml:space="preserve"
+     style="font-size:20px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:50%;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#ffffff;fill-opacity:1;stroke:none;font-family:Times New Roman;-inkscape-font-specification:'Times New Roman,'"><tspan
+       x="8.5"
+       y="16.810728"
+       id="tspan5186">...</tspan></text>
+</svg>

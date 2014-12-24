@@ -11,24 +11,14 @@ Item {
         anchors.centerIn: parent
         Text {
             id: bitRateLabel
-            text: {
-                if (root.bitRate !== "")
-                    root.bitRate+" KB/s"
-                else
-                    "RECOVERING METADATA"
-            }
+            text: { if (root.bitRate !== "") root.bitRate+" KB/s"; else "RECOVERING METADATA" }
             color: "white"
             font.family: globalFont.name
             font.pixelSize: screen.height/23
         }
         Text {
             id: peersLabel
-            text: {
-                if (root.peers !== 0)
-                    "PEERS "+root.peers
-                else
-                    "PEERS 0"
-            }
+            text: { if (root.peers !== 0) "PEERS "+root.peers; else "PEERS 0" }
             color: "white"
             visible: { bitRateLabel.text !== "RECOVERING METADATA" }
             font.family: globalFont.name
