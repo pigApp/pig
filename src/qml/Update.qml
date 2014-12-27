@@ -39,10 +39,6 @@ Item {
             labelColor: "white"
             labelBold: true
             labelSize: screen.height/54
-            labelAngle: 0
-            labelAxisX: 0
-            labelAxisY: 0
-            labelAxisZ: 0
             onClicked: root.signal_qml_accept_update()
         }
         Button {
@@ -53,10 +49,6 @@ Item {
             labelColor: "white"
             labelBold: true
             labelSize: screen.height/54
-            labelAngle: 0
-            labelAxisX: 0
-            labelAxisY: 0
-            labelAxisZ: 0
             onClicked: root.signal_qml_skip_update()
         }
     }

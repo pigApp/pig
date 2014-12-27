@@ -15,50 +15,38 @@ Item {
         anchors.centerIn: parent
     }
 
-    Button {
-        id: categoryFilter
-        width: screen.width/4.06
-        height: screen.height/13.67
-        label: "CATEGORY"
-        labelColor: "white"
-        labelSize: screen.height/10
-        labelAngle: 64
-        labelOriginX: 100
-        labelOriginY: 100
-        labelAxisX: -0.8
-        labelAxisY: 2
-        labelAxisZ: -1.5
+    Column {
+        id: filtersButtonsColumn
+        spacing: parent.height/108
         opacity: 0
         anchors.left: parent.left
-        anchors.leftMargin: 120//parent.width/48.3
+        anchors.leftMargin: parent.width/48
         anchors.verticalCenter: parent.verticalCenter
-        anchors.verticalCenterOffset: -220
-        onClicked: {
-            finderHandler.state = "show_filter"
-            onCategoryFilter = true
+        anchors.verticalCenterOffset: -parent.height/9.81
+        onOpacityChanged: { if (selectors.onShowSelectors) filtersButtonsColumn.anchors.verticalCenterOffset = -screen.height/8.12 }
+        Button {
+            id: categoryFilter
+            width: screen.width/4.06
+            height: screen.height/13.67
+            label: "CATEGORY"
+            labelColor: "white"
+            labelSize: screen.height/10
+            onClicked: {
+                finderHandler.state = "show_filter"
+                onCategoryFilter = true
+            }
         }
-    }
-    Button {
-        id: pornstarFilter
-        width: screen.width/3.92
-        height: screen.height/13.67
-        label: "PORNSTAR"
-        labelColor: "white"
-        labelSize: screen.height/10
-        labelAngle: 67
-        labelOriginX: 100
-        labelOriginY: 100
-        labelAxisX: -0.8
-        labelAxisY: 2
-        labelAxisZ: -1.5
-        opacity: 0
-        anchors.left: parent.left
-        anchors.leftMargin: 190//parent.width/48.3
-        anchors.verticalCenter: parent.verticalCenter
-        anchors.verticalCenterOffset: -150
-        onClicked: {
-            finderHandler.state = "show_filter"
-            onCategoryFilter = false
+        Button {
+            id: pornstarFilter
+            width: screen.width/3.92
+            height: screen.height/13.67
+            label: "PORNSTAR"
+            labelColor: "white"
+            labelSize: screen.height/10
+            onClicked: {
+                finderHandler.state = "show_filter"
+                onCategoryFilter = false
+            }
         }
     }
     Loader {
@@ -72,8 +60,9 @@ Item {
     Selectors {
         id: selectors
         visible: false
-        //opacity: 0 //
-        anchors.fill: parent
+        anchors.left: parent.left
+        anchors.leftMargin:  parent.width/58.18
+        anchors.verticalCenter: parent.verticalCenter
     }
 
     Welcome {
@@ -100,6 +89,12 @@ Item {
             name: "hide_filter"
         },
         State {
+            name: "show_selectors"
+        },
+        State {
+            name: "hide_selectors"
+        },
+        State {
             name: "hide_filter_finder"
         }
     ]
@@ -111,10 +106,7 @@ Item {
                     NumberAnimation { target: root; easing.amplitude: 1.7; properties: "screenOpacity"; to: 0.3; duration: 600; easing.type: Easing.OutQuart }
                     NumberAnimation { target: backgroundBlur; easing.amplitude: 1.7; properties: "radius"; to: 0; duration: 600; easing.type: Easing.OutQuart }
                 }
-                ParallelAnimation {
-                    NumberAnimation { target: categoryFilter; properties: "opacity"; to: 1; duration: 200; easing.type: Easing.InOutQuart }
-                    NumberAnimation { target: pornstarFilter; properties: "opacity"; to: 1; duration: 200; easing.type: Easing.InOutQuart }
-                }
+                NumberAnimation { target: filtersButtonsColumn; properties: "opacity"; to: 1; duration: 200; easing.type: Easing.InOutQuart }
                 PropertyAction { target: selectors; property: "visible"; value: true }
                 PropertyAction { target: finderHandler; property: "active"; value: true }
             }
@@ -125,10 +117,7 @@ Item {
                 PropertyAction { target: finderHandler; property: "active"; value: false }
                 PropertyAction { target: selectors; property: "visible"; value: false }
                 NumberAnimation { duration: 250 }
-                ParallelAnimation {
-                    NumberAnimation { target: categoryFilter; properties: "opacity"; to: 0; duration: 200; easing.type: Easing.InOutQuart }
-                    NumberAnimation { target: pornstarFilter; properties: "opacity"; to: 0; duration: 200; easing.type: Easing.InOutQuart }
-                }
+                NumberAnimation { target: filtersButtonsColumn; properties: "opacity"; to: 0; duration: 200; easing.type: Easing.InOutQuart }
                 ParallelAnimation {
                     NumberAnimation { target: root; easing.amplitude: 1.7; properties: "screenOpacity"; to: 0.4; duration: 600; easing.type: Easing.OutQuart }
                     NumberAnimation { target: backgroundBlur; easing.amplitude: 1.7; properties: "radius"; to: 32; duration: 600; easing.type: Easing.OutQuart }
@@ -144,8 +133,7 @@ Item {
                 PropertyAction { target: filter_loader; property: "active"; value: true }
                 ParallelAnimation {
                     NumberAnimation { target: input; easing.amplitude: 1.7; properties: "opacity"; to: 0; duration: 600; easing.type: Easing.OutQuart }
-                    NumberAnimation { target: categoryFilter; easing.amplitude: 1.7; properties: "opacity"; to: 0; duration: 600; easing.type: Easing.OutQuart }
-                    NumberAnimation { target: pornstarFilter; easing.amplitude: 1.7; properties: "opacity"; to: 0; duration: 600; easing.type: Easing.OutQuart }
+                    NumberAnimation { target: filtersButtonsColumn; easing.amplitude: 1.7; properties: "opacity"; to: 0; duration: 600; easing.type: Easing.OutQuart }
                     NumberAnimation { target: selectors; easing.amplitude: 1.7; properties: "opacity"; to: 0; duration: 600; easing.type: Easing.OutQuart }
                     NumberAnimation { target: root; easing.amplitude: 1.7; properties: "xA"; to: 0; duration: 1100; easing.type: Easing.OutQuart }
                     NumberAnimation { target: backgroundBlur; easing.amplitude: 1.7; properties: "radius"; to: 96; duration: 2000; easing.type: Easing.OutQuart }
@@ -157,14 +145,24 @@ Item {
             SequentialAnimation {
                 ParallelAnimation {
                     NumberAnimation { target: input; easing.amplitude: 1.7; properties: "opacity"; to: 1; duration: 600; easing.type: Easing.InSine }
-                    NumberAnimation { target: categoryFilter; easing.amplitude: 1.7; properties: "opacity"; to: 1; duration: 600; easing.type: Easing.InSine }
-                    NumberAnimation { target: pornstarFilter; easing.amplitude: 1.7; properties: "opacity"; to: 1; duration: 600; easing.type: Easing.InSine }
+                    NumberAnimation { target: filtersButtonsColumn; easing.amplitude: 1.7; properties: "opacity"; to: 1; duration: 600; easing.type: Easing.InSine }
                     NumberAnimation { target: selectors; easing.amplitude: 1.7; properties: "opacity"; to: 1; duration: 600; easing.type: Easing.InSine }
                     NumberAnimation { target: root; easing.amplitude: 1.7; properties: "xA"; to: screen.width; duration: 1100; easing.type: Easing.OutQuart }
                     NumberAnimation { target: backgroundBlur; easing.amplitude: 1.7; properties: "radius"; to: 0; duration: 2100; easing.type: Easing.OutQuart }
                 }
                 PropertyAction { target: filter_loader; property: "active"; value: false }
                 PropertyAction { target: finderHandler; property: "active"; value: true }
+            }
+        },
+        Transition {
+            to: "show_selectors"
+            NumberAnimation { target: filtersButtonsColumn; easing.amplitude: 1.7; properties: "anchors.verticalCenterOffset"; to: -screen.height/8.12; duration: 600; easing.type: Easing.OutQuart }
+        },
+        Transition {
+            to: "hide_selectors"
+            SequentialAnimation {
+                NumberAnimation { duration: 300 }
+                NumberAnimation { target: filtersButtonsColumn; easing.amplitude: 1.7; properties: "anchors.verticalCenterOffset"; to: -screen.height/9.81; duration: 600; easing.type: Easing.OutQuart }
             }
         },
         Transition {

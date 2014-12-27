@@ -20,6 +20,7 @@ Item {
         font.pixelSize: screen.height/23
         maximumLength: 35
         cursorVisible: false
+        anchors.centerIn: parent
         onCursorVisibleChanged: { if (user.cursorVisible) user.cursorVisible = false }
         onCursorPositionChanged: {
             if (dbNullLabel.visible)
@@ -41,6 +42,7 @@ Item {
         font.wordSpacing: -screen.width/384
         font.pixelSize: screen.height/23
         visible: false
+        anchors.centerIn: parent
     }
 
     onEnabledChanged: user.forceActiveFocus()

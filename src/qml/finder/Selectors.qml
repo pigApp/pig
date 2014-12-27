@@ -8,28 +8,30 @@ Item {
 
     Image {
         id: moreIcon
-        width: parent.width/45.71
-        height: parent.height/60
-        sourceSize.width: parent.width/45.71
-        sourceSize.height: parent.height/60
+        width: screen.width/45.71
+        height: screen.height/60
+        sourceSize.width: screen.width/45.71
+        sourceSize.height: screen.height/60
         source: "qrc:/img-more"
         anchors.left: parent.left
-        anchors.leftMargin: parent.width/42.47
         anchors.verticalCenter: parent.verticalCenter
-        anchors.verticalCenterOffset: parent.height/28.42
         MouseArea {
             hoverEnabled: true
             onEntered: { if (!onShowSelectors && root.full === "" && root.quality === "") selectors.state = "in" }
             onHoveredChanged: { if (!onShowSelectors && root.full === "" && root.quality === "") selectors.state = "out" }
             onClicked: {
                 if (!onShowSelectors) {
+                    finderHandler.state = "show_selectors"
                     onShowSelectors = true
-                    selectors.state = "show_selectors"
+                    statesDelay.restart()
                 } else {
+                    statesDelay.stop()
+                    finderHandler.state = "hide_selectors"
                     if (root.full !== "" || root.quality !== "")
                         selectors.state = "hide_active_selectors"
                     else
                         selectors.state = "hide_selectors"
+                    onShowSelectors = false
                 }
             }
             anchors.fill: parent
@@ -47,12 +49,11 @@ Item {
 
     Row {
         id: selectorsRow
-        spacing: parent.width/384
+        spacing: screen.width/384
         opacity: 0
-        anchors.top: moreIcon.bottom
-        anchors.topMargin: -screen.height/85
         anchors.left: moreIcon.right
-        anchors.leftMargin: parent.width/384
+        anchors.leftMargin: screen.width/192
+        anchors.verticalCenter: moreIcon.verticalCenter
         Image {
             id: fullMovieIcon
             width: screen.width/30
@@ -103,6 +104,14 @@ Item {
         }
     }
 
+    Timer {
+        id: statesDelay
+        running: false
+        repeat: false
+        interval: 300
+        onTriggered: { selectors.state = "show_selectors" }
+    }
+
     states: [
         State {
             name: "in"
@@ -139,7 +148,7 @@ Item {
         Transition {
             to: "hide_selectors"
             SequentialAnimation {
-                NumberAnimation { target: selectorsRow; properties: "opacity"; to: 0; duration: 200; easing.type: Easing.InOutQuart }
+                NumberAnimation { target: selectorsRow; properties: "opacity"; to: 0; duration: 100; easing.type: Easing.InOutQuart }
                 NumberAnimation { target: moreIconShadow; easing.amplitude: 1.7; properties: "opacity"; to: 0; duration: 100; easing.type: Easing.OutQuart }
                 PropertyAction { target: selectors; property: "onShowSelectors"; value: false }
             }

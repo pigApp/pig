@@ -5,17 +5,10 @@ Rectangle {
     id: button
     color: "transparent"
    
-    
     property alias label: label.text
     property alias labelColor: label.color
     property alias labelBold: label.font.bold
     property alias labelSize: label.font.pixelSize
-    property alias labelAngle: rotation.angle
-    property alias labelOriginX: rotation.origin.x
-    property alias labelOriginY: rotation.origin.y
-    property alias labelAxisX: rotation.axis.x
-    property alias labelAxisY: rotation.axis.y
-    property alias labelAxisZ: rotation.axis.z
 
     signal clicked()
 
@@ -42,12 +35,6 @@ Rectangle {
         anchors.fill: parent
     }
     
-    transform: Rotation {
-        id: rotation
-        //origin.x: 0
-        //origin.y: 0
-    }
-
     states: [
         State {
             name: "in"

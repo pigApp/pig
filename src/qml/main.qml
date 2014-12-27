@@ -18,23 +18,22 @@ Item {
     property string inputUser: ""
     property string pornstar: ""
     property string category: ""
-    property string quality: ""
     property string full: ""
+    property string quality: ""
     property string bitRate: ""
     property string videoFilePath: ""
     property int xA: screen.width
     property int xB: 0
     property int block_films
     property int total_films
-    property int screenWidth
-    property int peers: 0
     property int required: 0
+    property int peers: 0
     property int downloaded: 0
-    property int total_kb: 0
     property int downloaded_kb: 0
+    property int total_kb: 0
     property var categories
-    property var totalCategories
     property var pornstars
+    property var totalCategories
     property var totalPornstars
     property var data_films
     property real screenOpacity: 0.4
