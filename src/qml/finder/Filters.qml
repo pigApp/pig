@@ -3,7 +3,8 @@ import "filters_components/"
 
 Item {
     id: filters
-    x: root.xA
+    x: root.xA-(screen.width/192)
+    y: -screen.height/360
     width: screen.width
     height: screen.height
 
@@ -15,7 +16,7 @@ Item {
         anchors.margins: parent.width/640
         Grid {
             id: grid
-            spacing: 3
+            spacing: screen.height/360
             Repeater {
                 model: {
                     if (onCategoryFilter)
@@ -40,17 +41,10 @@ Item {
                             totalPornstars[index]
                     }
                     sourceImage: {
-                        if (onCategoryFilter) {
-                            if (totalCategories[index] !== "0")    // TODO: Borrar
-                                "qrc:/img-cat-"+categories[index+1]
-                            else
-                                ""
-                        } else {
-                            if (totalPornstars[index] !== "0")    // TODO: Borrar
-                                "qrc:/img-star-"+pornstars[index+1]
-                            else
-                                ""
-                        }
+                        if (onCategoryFilter)
+                            "qrc:/img-cat-"+categories[index+1]
+                        else
+                            "qrc:/img-star-"+pornstars[index+1]
                     }
                     onClicked: {
                         if (onCategoryFilter)
