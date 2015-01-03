@@ -3,34 +3,28 @@ import "../global/"
 
 Item {
     id: finderHandler
-    x: root.xB
 
-    property bool active
     property bool onCategoryFilter
-
-    Input {
-        id: input
-        visible: finderHandler.active
-        enabled: finderHandler.active
-        anchors.centerIn: parent
-    }
 
     Column {
         id: filtersButtonsColumn
+        x: -screen.width/3.84
         spacing: parent.height/108
-        opacity: 0
-        anchors.left: parent.left
-        anchors.leftMargin: parent.width/48
         anchors.verticalCenter: parent.verticalCenter
-        anchors.verticalCenterOffset: -parent.height/9.81
-        onOpacityChanged: { if (selectors.onShowSelectors) filtersButtonsColumn.anchors.verticalCenterOffset = -screen.height/8.12 }
+        anchors.verticalCenterOffset: -parent.height/36
+        onXChanged: { if (finderHandler.state === "show" && selectors.onShowSelectors) filtersButtonsColumn.anchors.verticalCenterOffset = -screen.height/18.94 }
         Button {
             id: categoryFilter
-            width: screen.width/4.06
-            height: screen.height/13.67
-            label: "CATEGORY"
+            width: screen.width/3.84
+            height: screen.height/21.6
+            labelFont: customFont.name
+            label: " CATEGORY"
             labelColor: "white"
-            labelSize: screen.height/10
+            labelSize: screen.height/23
+            layerWidth: screen.width/3.96
+            layerHeight: screen.height/21.6
+            layerColor: Qt.rgba(0, 0, 0, 0.1)
+            layerVisible: true
             onClicked: {
                 finderHandler.state = "show_filter"
                 onCategoryFilter = true
@@ -38,11 +32,16 @@ Item {
         }
         Button {
             id: pornstarFilter
-            width: screen.width/3.92
-            height: screen.height/13.67
-            label: "PORNSTAR"
+            width: screen.width/3.84
+            height: screen.height/21.6
+            labelFont: customFont.name
+            label: " PORNSTAR"
             labelColor: "white"
-            labelSize: screen.height/10
+            labelSize: screen.height/23
+            layerWidth: screen.width/3.96
+            layerHeight: screen.height/21.6
+            layerColor: Qt.rgba(0, 0, 0, 0.1)
+            layerVisible: true
             onClicked: {
                 finderHandler.state = "show_filter"
                 onCategoryFilter = false
@@ -57,12 +56,20 @@ Item {
         active: false
     }
 
+    Input {
+        id: input
+        x: -screen.width/3.84
+        enabled: false
+        anchors.top: filtersButtonsColumn.bottom
+        anchors.topMargin: parent.height/108
+    }
+
     Selectors {
         id: selectors
         visible: false
         anchors.left: parent.left
-        anchors.leftMargin:  parent.width/58.18
         anchors.verticalCenter: parent.verticalCenter
+        anchors.verticalCenterOffset: 100//parent.height/10.28
     }
 
     Welcome {
@@ -103,21 +110,26 @@ Item {
             to: "show"
             SequentialAnimation {
                 ParallelAnimation {
-                    NumberAnimation { target: root; easing.amplitude: 1.7; properties: "screenOpacity"; to: 0.3; duration: 600; easing.type: Easing.OutQuart }
+                    NumberAnimation { target: root; easing.amplitude: 1.7; properties: "screenOpacity"; to: 0; duration: 600; easing.type: Easing.OutQuart }
                     NumberAnimation { target: backgroundBlur; easing.amplitude: 1.7; properties: "radius"; to: 0; duration: 600; easing.type: Easing.OutQuart }
                 }
-                NumberAnimation { target: filtersButtonsColumn; properties: "opacity"; to: 1; duration: 200; easing.type: Easing.InOutQuart }
+                ParallelAnimation {
+                    NumberAnimation { target: filtersButtonsColumn; properties: "x"; to: 0; duration: 600; easing.type: Easing.InOutQuart }
+                    NumberAnimation { target: input; properties: "x"; to: 0; duration: 1200; easing.type: Easing.InOutQuart }
+                }
                 PropertyAction { target: selectors; property: "visible"; value: true }
-                PropertyAction { target: finderHandler; property: "active"; value: true }
+                PropertyAction { target: input; property: "enabled"; value: true }
             }
         },
         Transition {
             to: "hide"
             SequentialAnimation {
-                PropertyAction { target: finderHandler; property: "active"; value: false }
+                PropertyAction { target: input; property: "enabled"; value: false }
                 PropertyAction { target: selectors; property: "visible"; value: false }
-                NumberAnimation { duration: 250 }
-                NumberAnimation { target: filtersButtonsColumn; properties: "opacity"; to: 0; duration: 200; easing.type: Easing.InOutQuart }
+                ParallelAnimation {
+                    NumberAnimation { target: filtersButtonsColumn; properties: "x"; to: -screen.width/3.84; duration: 600; easing.type: Easing.InOutQuart }
+                    NumberAnimation { target: input; properties: "x"; to: -screen.width/3.84; duration: 300; easing.type: Easing.InOutQuart }
+                }
                 ParallelAnimation {
                     NumberAnimation { target: root; easing.amplitude: 1.7; properties: "screenOpacity"; to: 0.4; duration: 600; easing.type: Easing.OutQuart }
                     NumberAnimation { target: backgroundBlur; easing.amplitude: 1.7; properties: "radius"; to: 32; duration: 600; easing.type: Easing.OutQuart }
@@ -129,13 +141,13 @@ Item {
         Transition {
             to: "show_filter"
             SequentialAnimation {
-                PropertyAction { target: finderHandler; property: "active"; value: false }
+                PropertyAction { target: input; property: "enabled"; value: false }
+                PropertyAction { target: selectors; property: "visible"; value: false }
                 PropertyAction { target: filter_loader; property: "active"; value: true }
                 ParallelAnimation {
-                    NumberAnimation { target: input; easing.amplitude: 1.7; properties: "opacity"; to: 0; duration: 600; easing.type: Easing.OutQuart }
-                    NumberAnimation { target: filtersButtonsColumn; easing.amplitude: 1.7; properties: "opacity"; to: 0; duration: 600; easing.type: Easing.OutQuart }
-                    NumberAnimation { target: selectors; easing.amplitude: 1.7; properties: "opacity"; to: 0; duration: 600; easing.type: Easing.OutQuart }
-                    NumberAnimation { target: root; easing.amplitude: 1.7; properties: "xA"; to: 0; duration: 1100; easing.type: Easing.OutQuart }
+                    NumberAnimation { target: filtersButtonsColumn; properties: "x"; to: -screen.width/3.84; duration: 300; easing.type: Easing.InOutQuart }
+                    NumberAnimation { target: input; properties: "x"; to: -screen.width/3.84; duration: 300; easing.type: Easing.InOutQuart }
+                    NumberAnimation { target: root; easing.amplitude: 1.7; properties: "xA"; to: 0; duration: 1200; easing.type: Easing.OutQuart }
                     NumberAnimation { target: backgroundBlur; easing.amplitude: 1.7; properties: "radius"; to: 96; duration: 2000; easing.type: Easing.OutQuart }
                 }
             }
@@ -144,35 +156,35 @@ Item {
             to: "hide_filter"
             SequentialAnimation {
                 ParallelAnimation {
-                    NumberAnimation { target: input; easing.amplitude: 1.7; properties: "opacity"; to: 1; duration: 600; easing.type: Easing.InSine }
-                    NumberAnimation { target: filtersButtonsColumn; easing.amplitude: 1.7; properties: "opacity"; to: 1; duration: 600; easing.type: Easing.InSine }
-                    NumberAnimation { target: selectors; easing.amplitude: 1.7; properties: "opacity"; to: 1; duration: 600; easing.type: Easing.InSine }
-                    NumberAnimation { target: root; easing.amplitude: 1.7; properties: "xA"; to: screen.width; duration: 1100; easing.type: Easing.OutQuart }
-                    NumberAnimation { target: backgroundBlur; easing.amplitude: 1.7; properties: "radius"; to: 0; duration: 2100; easing.type: Easing.OutQuart }
+                    NumberAnimation { target: filtersButtonsColumn; properties: "x"; to: 0; duration: 600; easing.type: Easing.InOutQuart }
+                    NumberAnimation { target: input; properties: "x"; to: 0; duration: 1200; easing.type: Easing.InOutQuart }
+                    NumberAnimation { target: root; easing.amplitude: 1.7; properties: "xA"; to: screen.width; duration: 1200; easing.type: Easing.OutQuart }
+                    NumberAnimation { target: backgroundBlur; easing.amplitude: 1.7; properties: "radius"; to: 0; duration: 1200; easing.type: Easing.OutQuart }
                 }
                 PropertyAction { target: filter_loader; property: "active"; value: false }
-                PropertyAction { target: finderHandler; property: "active"; value: true }
+                PropertyAction { target: selectors; property: "visible"; value: true }
+                PropertyAction { target: input; property: "enabled"; value: true }
             }
         },
         Transition {
             to: "show_selectors"
-            NumberAnimation { target: filtersButtonsColumn; easing.amplitude: 1.7; properties: "anchors.verticalCenterOffset"; to: -screen.height/8.12; duration: 600; easing.type: Easing.OutQuart }
+            NumberAnimation { target: filtersButtonsColumn; easing.amplitude: 1.7; properties: "anchors.verticalCenterOffset"; to: -screen.height/18.94; duration: 600; easing.type: Easing.OutQuart }
         },
         Transition {
             to: "hide_selectors"
             SequentialAnimation {
                 NumberAnimation { duration: 300 }
-                NumberAnimation { target: filtersButtonsColumn; easing.amplitude: 1.7; properties: "anchors.verticalCenterOffset"; to: -screen.height/9.81; duration: 600; easing.type: Easing.OutQuart }
+                NumberAnimation { target: filtersButtonsColumn; easing.amplitude: 1.7; properties: "anchors.verticalCenterOffset"; to: -screen.height/36; duration: 600; easing.type: Easing.OutQuart }
             }
         },
         Transition {
             to: "hide_filter_finder"
             SequentialAnimation {
                 ParallelAnimation {
-                    NumberAnimation { target: root; easing.amplitude: 1.7; properties: "xA"; to: screen.width; duration: 1100; easing.type: Easing.OutQuart }
-                    NumberAnimation { target: root; easing.amplitude: 1.7; properties: "screenOpacity"; to: 0.4; duration: 600; easing.type: Easing.OutQuart }
-                    NumberAnimation { target: backgroundBlur; easing.amplitude: 1.7; properties: "radius"; to: 32; duration: 1100; easing.type: Easing.OutQuart }
+                    NumberAnimation { target: root; easing.amplitude: 1.7; properties: "xA"; to: screen.width; duration: 1200; easing.type: Easing.OutQuart }
+                    NumberAnimation { target: backgroundBlur; easing.amplitude: 1.7; properties: "radius"; to: 32; duration: 1200; easing.type: Easing.OutQuart }
                 }
+                NumberAnimation { target: root; easing.amplitude: 1.7; properties: "screenOpacity"; to: 0.4; duration: 600; easing.type: Easing.OutQuart }
                 PropertyAction { target: filter_loader; property: "source"; value: "" }
                 PropertyAction { target: root; property: "inputUser"; value: "" }
                 PropertyAction { target: screen; property: "state"; value: "show_viewer" }

@@ -15,5 +15,5 @@ Item {
         anchors.bottom: parent.bottom
     }
 
-    NumberAnimation { target: label; running: root.init && finderHandler.active; properties: "opacity"; to: 1.0; duration: 1400; easing.type: Easing.InOutQuart }
+    NumberAnimation { target: label; running: root.init; properties: "opacity"; to: 1.0; duration: 1400; easing.type: Easing.InOutQuart }
 }

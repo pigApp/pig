@@ -35,6 +35,7 @@ Item {
             id: accept
             width: screen.width/27.9
             height: screen.height/72
+            labelFont: globalFont.name
             label: "INSTALL"
             labelColor: "white"
             labelBold: true
@@ -45,6 +46,7 @@ Item {
             id: skip
             width: screen.width/49.23
             height: screen.height/72
+            labelFont: globalFont.name
             label: "SKIP"
             labelColor: "white"
             labelBold: true

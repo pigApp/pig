@@ -5,26 +5,42 @@ Item {
 
     Rectangle {
         id: layer
+        width: screen.width/3.95
+        height: screen.height/21.6
         color: Qt.rgba(0, 0, 0, 0.1)
-        anchors.fill: { if (dbNullLabel.visible) dbNullLabel; else user }
-        anchors.margins: { if (user.text !== "") -screen.width/384; else 0 }
+    }
+    Text {
+        id: label
+        text: "SEARCH"
+        color: Qt.rgba(1, 1, 1, 0.3)
+        font.family: globalFont.name
+        font.bold: true
+        font.pixelSize: screen.height/48
+        anchors.left: layer.left
+        anchors.leftMargin: screen.width/192
+        anchors.verticalCenter: layer.verticalCenter
     }
     TextInput {
         id: user
-        color: "white"
         text: root.inputUser
-        font.family: customFont.name
+        color: "black"
+        font.family: globalFont.name
         font.capitalization: Font.AllUppercase
-        font.letterSpacing: screen.width/480
-        font.wordSpacing: -screen.width/384
-        font.pixelSize: screen.height/23
-        maximumLength: 35
+        font.bold: true
+        font.pixelSize: screen.height/48
+        maximumLength: 26
         cursorVisible: false
-        anchors.centerIn: parent
+        anchors.left: layer.left
+        anchors.leftMargin: screen.width/192
+        anchors.verticalCenter: layer.verticalCenter
         onCursorVisibleChanged: { if (user.cursorVisible) user.cursorVisible = false }
         onCursorPositionChanged: {
             if (dbNullLabel.visible)
                 dbNullLabel.visible = false
+            if (user.text === "")
+                label.text = "SEARCH"
+            else
+                label.text = ""
             user.visible = true
         }
         onAccepted: {
@@ -35,14 +51,14 @@ Item {
     Text {
         id: dbNullLabel
         text: "NO RESULT"
-        color: Qt.rgba(1, 1, 1, 0.1)
-        font.family: customFont.name
-        font.capitalization: Font.AllUppercase
-        font.letterSpacing: screen.width/480
-        font.wordSpacing: -screen.width/384
-        font.pixelSize: screen.height/23
+        color: Qt.rgba(1, 1, 1, 0.3)
+        font.family: globalFont.name
+        font.bold: true
+        font.pixelSize: screen.height/48
         visible: false
-        anchors.centerIn: parent
+        anchors.left: layer.left
+        anchors.leftMargin: screen.width/192
+        anchors.verticalCenter: layer.verticalCenter
     }
 
     onEnabledChanged: user.forceActiveFocus()

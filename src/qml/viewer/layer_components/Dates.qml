@@ -14,7 +14,7 @@ Item {
             font.family: customFont.name
             font.letterSpacing: screen.width/480
             font.wordSpacing: -screen.width/384
-            font.pixelSize: screen.height/38
+            font.pixelSize: screen.height/23
         }
         Text {
             id: qualityLabel
@@ -23,7 +23,7 @@ Item {
             font.family: customFont.name
             font.letterSpacing: screen.width/480
             font.wordSpacing: -screen.width/384
-            font.pixelSize: screen.height/38
+            font.pixelSize: screen.height/23
         }
         Text {
             id: splitLabel
@@ -32,7 +32,7 @@ Item {
             font.family: customFont.name
             font.letterSpacing: screen.width/480
             font.wordSpacing: -screen.width/384
-            font.pixelSize: screen.height/38
+            font.pixelSize: screen.height/23
         }
         Text {
             id: fullLabel
@@ -41,7 +41,7 @@ Item {
             font.family: customFont.name
             font.letterSpacing: screen.width/480
             font.wordSpacing: -screen.width/384
-            font.pixelSize: screen.height/38
+            font.pixelSize: screen.height/23
         }
         Row {
             id: counterRow
@@ -53,7 +53,7 @@ Item {
                 font.family: customFont.name
                 font.letterSpacing: screen.width/480
                 font.wordSpacing: -screen.width/384
-                font.pixelSize: screen.height/38
+                font.pixelSize: screen.height/23
             }
             Text {
                 id: totalFilmsLabel
@@ -62,7 +62,7 @@ Item {
                 font.family: customFont.name
                 font.letterSpacing: screen.width/480
                 font.wordSpacing: -screen.width/384
-                font.pixelSize: screen.height/38
+                font.pixelSize: screen.height/23
             }
         }
     }

@@ -5,16 +5,27 @@ Rectangle {
     id: button
     color: "transparent"
    
+    property alias labelFont: label.font.family
     property alias label: label.text
     property alias labelColor: label.color
     property alias labelBold: label.font.bold
     property alias labelSize: label.font.pixelSize
+    property alias layerWidth: layer.width
+    property alias layerHeight: layer.height
+    property alias layerColor: layer.color
+    property alias layerVisible: layer.visible
 
     signal clicked()
 
+    Rectangle {
+        id: layer
+        width: 0
+        height: 0
+        visible: false
+        anchors.verticalCenter: parent.verticalCenter
+    }
     Text {
         id: label
-        font.family: globalFont.name
         anchors.verticalCenter: parent.verticalCenter
     }
     DropShadow {

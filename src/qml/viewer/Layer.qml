@@ -15,7 +15,7 @@ Item {
             id: titleLabel
             text: title
             color: "white"
-            font.family: globalFont.name
+            font.family: fancyFont.name
             font.pixelSize: screen.height/10
         }
         Text {
@@ -32,17 +32,17 @@ Item {
     Dates {
         id: dates
         anchors.left: preview.left
-        anchors.leftMargin: -screen.width/12.8
+        anchors.leftMargin: -screen.width/11.29
         anchors.bottom: preview.verticalCenter
-        anchors.bottomMargin: -screen.height/77.14
+        anchors.bottomMargin: -screen.height/13.05
     }
     Scenes {
         id: scenesButton
         totalScenes: scenes
         anchors.top: preview.verticalCenter
-        anchors.topMargin: screen.height/27
+        anchors.topMargin: screen.height/11.25
         anchors.left: preview.left
-        anchors.leftMargin: -screen.width/12.8
+        anchors.leftMargin: -screen.width/11.29
     }
     Preview {
         id: preview
@@ -52,3 +52,4 @@ Item {
         anchors.centerIn: parent
     }
 }
+// Tabs hechos.

@@ -1,5 +1,4 @@
 import QtQuick 2.3
-import QtGraphicalEffects 1.0
 
 Item {
     id: selectors
@@ -13,7 +12,9 @@ Item {
         sourceSize.width: screen.width/45.71
         sourceSize.height: screen.height/60
         source: "qrc:/img-more"
+        opacity: 0.1
         anchors.left: parent.left
+        anchors.leftMargin: screen.width/320
         anchors.verticalCenter: parent.verticalCenter
         MouseArea {
             hoverEnabled: true
@@ -37,22 +38,13 @@ Item {
             anchors.fill: parent
         }
     }
-    DropShadow {
-        id: moreIconShadow
-        color: "white"
-        source: moreIcon
-        radius: 8
-        samples: 32
-        opacity: 0
-        anchors.fill: moreIcon
-    }
 
     Row {
         id: selectorsRow
         spacing: screen.width/384
         opacity: 0
         anchors.left: moreIcon.right
-        anchors.leftMargin: screen.width/192
+        anchors.leftMargin: screen.width/240
         anchors.verticalCenter: moreIcon.verticalCenter
         Image {
             id: fullMovieIcon
@@ -132,16 +124,16 @@ Item {
     transitions: [
         Transition {
             to: "in"
-            NumberAnimation { target: moreIconShadow; easing.amplitude: 1.7; properties: "opacity"; to: 0.5; duration: 100; easing.type: Easing.OutQuart }
+            NumberAnimation { target: moreIcon; easing.amplitude: 1.7; properties: "opacity"; to: 1; duration: 100; easing.type: Easing.OutQuart }
         },
         Transition {
             to: "out"
-            NumberAnimation { target: moreIconShadow; easing.amplitude: 1.7; properties: "opacity"; to: 0; duration: 100; easing.type: Easing.OutQuart }
+            NumberAnimation { target: moreIcon; easing.amplitude: 1.7; properties: "opacity"; to: 0.1; duration: 100; easing.type: Easing.OutQuart }
         },
         Transition {
             to: "show_selectors"
             SequentialAnimation {
-                NumberAnimation { target: moreIconShadow; easing.amplitude: 1.7; properties: "opacity"; to: 0.5; duration: 100; easing.type: Easing.OutQuart }
+                NumberAnimation { target: moreIcon; easing.amplitude: 1.7; properties: "opacity"; to: 1; duration: 100; easing.type: Easing.OutQuart }
                 NumberAnimation { target: selectorsRow; properties: "opacity"; to: 1.0; duration: 200; easing.type: Easing.InOutQuart }
             }
         },
@@ -149,7 +141,7 @@ Item {
             to: "hide_selectors"
             SequentialAnimation {
                 NumberAnimation { target: selectorsRow; properties: "opacity"; to: 0; duration: 100; easing.type: Easing.InOutQuart }
-                NumberAnimation { target: moreIconShadow; easing.amplitude: 1.7; properties: "opacity"; to: 0; duration: 100; easing.type: Easing.OutQuart }
+                NumberAnimation { target: moreIcon; easing.amplitude: 1.7; properties: "opacity"; to: 0.1; duration: 100; easing.type: Easing.OutQuart }
                 PropertyAction { target: selectors; property: "onShowSelectors"; value: false }
             }
         },
@@ -169,3 +161,4 @@ Item {
         }
     }
 }
+// Tabs hechos.

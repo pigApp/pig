@@ -47,6 +47,7 @@ Item {
     signal signal_qml_quit()
 
     FontLoader { id: globalFont; source: "qrc:/font-global" }
+    FontLoader { id: fancyFont; source: "qrc:/font-fancy" }
     FontLoader { id: customFont; source: "qrc:/font-custom" }
 
     Image {
