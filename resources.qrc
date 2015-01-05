@@ -58,7 +58,6 @@
         <file>resources/images/global/icon.png</file>
         <file>resources/images/global/icon.rc</file>
         <file alias="font-global">resources/fonts/global.ttf</file>
-        <file alias="font-fancy">resources/fonts/fancy.ttf</file>
         <file alias="font-custom">resources/fonts/custom.ttf</file>
     </qresource>
     <qresource prefix="QML">

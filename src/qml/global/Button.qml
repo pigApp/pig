@@ -4,11 +4,12 @@ import QtGraphicalEffects 1.0
 Rectangle {
     id: button
     color: "transparent"
-   
-    property alias labelFont: label.font.family
+
     property alias label: label.text
     property alias labelColor: label.color
+    property alias labelFont: label.font.family
     property alias labelBold: label.font.bold
+    property alias labelLetterSpacing: label.font.letterSpacing
     property alias labelSize: label.font.pixelSize
     property alias layerWidth: layer.width
     property alias layerHeight: layer.height

@@ -35,9 +35,9 @@ Item {
             id: accept
             width: screen.width/27.9
             height: screen.height/72
-            labelFont: globalFont.name
             label: "INSTALL"
             labelColor: "white"
+            labelFont: globalFont.name
             labelBold: true
             labelSize: screen.height/54
             onClicked: root.signal_qml_accept_update()
@@ -46,9 +46,9 @@ Item {
             id: skip
             width: screen.width/49.23
             height: screen.height/72
-            labelFont: globalFont.name
             label: "SKIP"
             labelColor: "white"
+            labelFont: globalFont.name
             labelBold: true
             labelSize: screen.height/54
             onClicked: root.signal_qml_skip_update()

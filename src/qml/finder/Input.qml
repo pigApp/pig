@@ -7,12 +7,12 @@ Item {
         id: layer
         width: screen.width/3.95
         height: screen.height/21.6
-        color: Qt.rgba(0, 0, 0, 0.1)
+        color: Qt.rgba(0, 0, 0, 0.05)
     }
     Text {
         id: label
         text: "SEARCH"
-        color: Qt.rgba(1, 1, 1, 0.3)
+        color: Qt.rgba(1, 1, 1, 0.5)
         font.family: globalFont.name
         font.bold: true
         font.pixelSize: screen.height/48
@@ -51,7 +51,7 @@ Item {
     Text {
         id: dbNullLabel
         text: "NO RESULT"
-        color: Qt.rgba(1, 1, 1, 0.3)
+        color: Qt.rgba(0, 0, 0, 0.3)
         font.family: globalFont.name
         font.bold: true
         font.pixelSize: screen.height/48

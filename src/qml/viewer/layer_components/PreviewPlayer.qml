@@ -18,7 +18,7 @@ Item {
         sourceSize.width: screen.width/60
         sourceSize.height: screen.height/33.75
         source: "qrc:/img-download"
-        opacity: 0.5
+        opacity: 0.3
         anchors.centerIn: parent
     }
     Video {
@@ -72,10 +72,7 @@ Item {
         onClicked: {
             if (!downloading && player.playbackState === MediaPlayer.PlayingState) {
                 player.pause()
-                icon.source = "qrc:/img-play"
-                icon.visible = true
             } else if (!downloading && player.playbackState === MediaPlayer.PausedState) {
-                icon.visible = false
                 player.play()
             } else if (!downloading && player.playbackState === MediaPlayer.StoppedState) {
                 icon.visible = false

@@ -42,7 +42,7 @@ Rectangle {
                     "qrc:/img-standby"
             }
         }
-        opacity: 0.4
+        opacity: 1
         anchors.top: timeColumn.bottom
         anchors.topMargin: 10//
         anchors.left: timeColumn.left
@@ -60,7 +60,7 @@ Rectangle {
             sourceSize.width: screen.width/60
             sourceSize.height: screen.height/33.75
             source: { if (player.volume !== 0.0 && !player.muted) "qrc:/img-volume_on"; else "qrc:/img-volume_off" }
-            opacity: 0.4
+            opacity: 1
         }
         Text {
             id: volumeLabel
@@ -76,11 +76,16 @@ Rectangle {
                     "0.0"
                 }
             }
-            color: Qt.rgba(0.1, 0.1, 0.1, 1)
+            color: {
+                if (player.muted || player.volume === 0.0)
+                    Qt.rgba(0.1, 0.1, 0.1, 1)
+                else
+                    "white"
+            }
             font.family: globalFont.name
             font.pixelSize: screen.height/23
             anchors.verticalCenter: volumeIcon.verticalCenter
-            anchors.verticalCenterOffset: -2.3
+            anchors.verticalCenterOffset: -3.3
         }
     }
     Column {

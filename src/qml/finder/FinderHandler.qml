@@ -17,13 +17,14 @@ Item {
             id: categoryFilter
             width: screen.width/3.84
             height: screen.height/21.6
-            labelFont: customFont.name
             label: " CATEGORY"
             labelColor: "white"
+            labelFont: customFont.name
+            labelLetterSpacing: screen.width/960
             labelSize: screen.height/23
             layerWidth: screen.width/3.96
             layerHeight: screen.height/21.6
-            layerColor: Qt.rgba(0, 0, 0, 0.1)
+            layerColor: Qt.rgba(0, 0, 0, 0.05)
             layerVisible: true
             onClicked: {
                 finderHandler.state = "show_filter"
@@ -34,13 +35,14 @@ Item {
             id: pornstarFilter
             width: screen.width/3.84
             height: screen.height/21.6
-            labelFont: customFont.name
             label: " PORNSTAR"
             labelColor: "white"
+            labelFont: customFont.name
+            labelLetterSpacing: screen.width/960
             labelSize: screen.height/23
             layerWidth: screen.width/3.96
             layerHeight: screen.height/21.6
-            layerColor: Qt.rgba(0, 0, 0, 0.1)
+            layerColor: Qt.rgba(0, 0, 0, 0.05)
             layerVisible: true
             onClicked: {
                 finderHandler.state = "show_filter"

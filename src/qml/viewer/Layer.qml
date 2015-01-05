@@ -6,7 +6,7 @@ Item {
 
     Column {
         id: titleCastColumn
-        spacing: -screen.height/108
+        spacing: -screen.height/72
         visible: !root.onShowTorrent
         anchors.horizontalCenter: preview.horizontalCenter
         anchors.bottom: preview.top
@@ -15,7 +15,7 @@ Item {
             id: titleLabel
             text: title
             color: "white"
-            font.family: fancyFont.name
+            font.family: globalFont.name
             font.pixelSize: screen.height/10
         }
         Text {
@@ -32,17 +32,17 @@ Item {
     Dates {
         id: dates
         anchors.left: preview.left
-        anchors.leftMargin: -screen.width/11.29
+        anchors.leftMargin: -screen.width/10.97
         anchors.bottom: preview.verticalCenter
-        anchors.bottomMargin: -screen.height/13.05
+        anchors.bottomMargin: -screen.height/15.42
     }
     Scenes {
         id: scenesButton
         totalScenes: scenes
-        anchors.top: preview.verticalCenter
-        anchors.topMargin: screen.height/11.25
-        anchors.left: preview.left
-        anchors.leftMargin: -screen.width/11.29
+        anchors.top: dates.bottom
+        anchors.topMargin: screen.height/72
+        anchors.left: dates.left
+        anchors.leftMargin: -screen.width/640
     }
     Preview {
         id: preview
