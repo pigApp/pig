@@ -79,7 +79,7 @@
         <file>src/qml/viewer/layer_components/Preview.qml</file>
         <file>src/qml/viewer/layer_components/PreviewPlayer.qml</file>
         <file>src/qml/torrent/TorrentHandler.qml</file>
-        <file>src/qml/torrent/DownloadStatus.qml</file>
+        <file>src/qml/torrent/Status.qml</file>
         <file>src/qml/torrent/VideoPlayer.qml</file>
         <file>src/qml/torrent/videoplayer_components/SideBox.qml</file>
         <file>src/qml/torrent/videoplayer_components/Bars.qml</file>

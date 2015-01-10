@@ -211,11 +211,11 @@ void PIG::preview_handler(const QString host, const QString url, const QString p
 }
 
 //TORRENT
-void PIG::torrent_handler(const QString magnet, const int scene, const bool abort)
+void PIG::torrent_handler(const QString url, const int scene, const bool abort)
 {
     //cleanup();
     if (!abort) {
-        mTorrent = new Torrent(NULL, &magnet);
+        mTorrent = new Torrent(NULL, &url);
         mTorrent->_root = &mRoot;
         mTorrent->scene = scene;
     } else {

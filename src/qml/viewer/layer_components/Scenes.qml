@@ -29,7 +29,7 @@ Item {
                     onClicked: {
                         icon.viewed = true
                         screen.state = "show_torrent"
-                        root.signal_qml_torrent_handler(magnet, index, false)
+                        root.signal_qml_torrent_handler(urlTorrent, index+1, false)
                     }
                     anchors.fill: parent
                 }

@@ -2,31 +2,23 @@
 
 #include <libtorrent/extensions/ut_pex.hpp>
 
+#include <stdlib.h>
+
 #include <QDir>
 #include <QTimer>
 #include <QDebug>
 
-Torrent::Torrent(QObject *parent, const QString *magnet) : QObject(parent)
+const int KB = 1024;
+const int MB = 1048576;
+
+Torrent::Torrent(QObject *parent, const QString *url) : QObject(parent)
 {
+    dump = true;
     aborted = false;
     skip = false;
-    minimum_mb = 15;
-    totalPreSkip_mb = 0;
-    pieceLength = 0;
-    firstPiece_file = 0;
-    lastPiece_file = 0;
-    totalPieces_file = 0;
-    offsetPieces_file = 0;
-    offsetPieces = 0;
-    totalPieces = 0;
-    total_kb = 0;
-    offset_kb = 0;
-
-    client = new libtorrent::session;
-    client->listen_on(std::make_pair(6881, 6889), ec);
-    client->start_dht();
-    client->start_upnp();
-    client->add_extension(&libtorrent::create_ut_pex_plugin);
+    required = 10;
+    skipGlobal = 0;
+    pieceOffsetGlobal = 0;
 
 #ifdef __linux__
     const QString home = QDir::homePath();
@@ -34,217 +26,211 @@ Torrent::Torrent(QObject *parent, const QString *magnet) : QObject(parent)
 #else
     const std::string path = "C:/PIG/.pig/tmp/";
 #endif
-    params.save_path = path;
-    params.url = magnet->toStdString();
-    handler = client->add_torrent(params);
-    handler.set_sequential_download(true);
-    handler.set_priority(255);
 
-    get_metadata();
+    //TODO: Compilar libtorrent sin deprecated.
+
+    libtorrent::session_settings ss;
+    ss.disable_hash_checks = true;
+    libtorrent::add_torrent_params p;
+    libtorrent::error_code ec; //TODO: Error code.
+
+    s = new libtorrent::session;
+    s->set_settings(ss);
+    s->add_extension(&libtorrent::create_ut_pex_plugin);
+    s->listen_on(std::make_pair(6881, 6889), ec);
+    s->start_dht();
+    s->start_upnp();
+    p.save_path = path;
+    p.url = url->toStdString();
+    h = s->add_torrent(p);
+    h.set_sequential_download(true);
+    h.set_priority(255);
+
+    get();
 }
 
 Torrent::~Torrent()
 {
     aborted = true;
-    client->remove_torrent(handler);
+    s->remove_torrent(h);
     (*_root)->disconnect(this);
 }
 
-void Torrent::get_metadata()
+void Torrent::get()
 {
-    QTimer::singleShot(5000, this, SLOT(filter_files())); //
-
-    /*
-    if (!aborted) {
-        qDebug() << "//// METADATA";
-        if (handler.status(1).state != 2)
-           filter_files();
+    if (!aborted) { //TODO: Hacerlo con alert.
+        if (h.status(32).state != 0 && h.status(32).state != 1 && h.status(32).state != 2)
+            filter();
         else
-            QTimer::singleShot(1000, this, SLOT(get_metadata()));
+            QTimer::singleShot(1000, this, SLOT(get()));
     }
-    */
 }
 
-void Torrent::filter_files()
+void Torrent::filter()
 {
-    (*_root)->setProperty("videoFilePath", "/home/lxfb/.pig/tmp/300.mkv"); //
-    /*
-    QStringList formats; formats << ".avi" << ".divx" << ".flv" << ".h264" << ".mkv" << ".mp4"
-                                 << ".mpg" << ".mpeg" << ".ogm"<< ".ogv" << ".wmv";
-    std::vector<int> filePriority;
-    file_storage = handler.get_torrent_info().orig_files();
-    bool checkFile = true;
-    const int numberOfFiles = handler.get_torrent_info().num_files();
-    int scennesOffset = 1;
+    boost::intrusive_ptr<const libtorrent::torrent_info> ti = h.torrent_file();
+    libtorrent::file_storage fs = ti.get()->orig_files();
 
-    filePriority.clear();
-    for (int i=1; i <= numberOfFiles; i++) {
-        if (checkFile) {
-            fileName = QString::fromStdString(file_storage.file_name(i-1));
-            for (int f=0; f < formats.size(); ++f) {
-                if (fileName.endsWith(formats[f], Qt::CaseInsensitive)) {
-                    if (scene == scennesOffset) {
-                        filePriority.push_back(7);
+    QStringList formats; formats << ".avi" << ".divx" << ".flv" << ".h264" << ".mkv" << ".mp4" << ".mpg" << ".mpeg" << ".ogm"<< ".ogv" << ".wmv";
+    std::vector<int> priorities;
+
+    scene = scene-1; //
+    file = QString::fromStdString(fs.file_name(0)); //
+
+    //FIX: Filtrar filas por prioridad. Al aplicar las prioridades, el video baja corrupto.
+    /*
+    bool check = true;
+    int ctrl = 1;
+    for (int i=0; i<fs.num_files(); i++) {
+        if (check) {
+            file = QString::fromStdString(fs.file_name(i));
+            for (int fts=0; fts<formats.size(); fts++) {
+                if (file.endsWith(formats[fts], Qt::CaseInsensitive)) {
+                    if (scene == ctrl) {
+                        priorities.push_back(7);
                         scene = i;
-                        checkFile = false;
+                        check = false;
                     } else {
-                        filePriority.push_back(0);
-                        ++scennesOffset;
+                        priorities.push_back(0);
+                        ++ctrl;
                     }
                     break;
                 } else {
-                    if (f == formats.size()-1)
-                        filePriority.push_back(0);
+                    if (fts == formats.size()+1)
+                        priorities.push_back(0);
                 }
             }
         } else {
-            filePriority.push_back(0);
+            priorities.push_back(0);
         }
     }
-    handler.prioritize_files(filePriority); 
+    h.prioritize_files(priorities);
 
-    file_storage = handler.get_torrent_info().files();
-    pieceLength = file_storage.piece_length();
-    //qDebug() << "-- PIECE_LENGTH: " << pieceLength/1024;
-    firstPiece_file = file_storage.map_file(scene-1, 0, 0).piece;
-    lastPiece_file = file_storage.map_file(scene-1, file_storage.file_size(scene-1), 0).piece;
-    totalPieces_file = lastPiece_file - firstPiece_file;
-    totalPieces = handler.get_torrent_info().num_pieces();
-    total_kb = (totalPieces_file*pieceLength)/1024;
-    for (int i=0; i < (scene-1); i++ )
-        offsetPieces = offsetPieces+(file_storage.map_file(i, file_storage.file_size(i), 0).piece - file_storage.map_file(i, 0, 0).piece);
-        
-    required_video_dump();
-    download_Information();
+    VER PRIORIDADES.
+    for(std::size_t i=0; i<priorities.size(); ++i)
+        std::cout << priorities[i] << ' ';
+    std::cout << std::endl;
+
+    for(std::size_t i=0; i<h.file_priorities().size(); ++i)
+        std::cout << h.file_priorities()[i] << ' ';
+    std::cout << std::endl;
     */
-}
 
-void Torrent::required_video_dump()
-{
-    if (!aborted) {
-        if (((handler.status().total_done/1048576)-totalPreSkip_mb) < minimum_mb) {
-            QTimer::singleShot(1000, this, SLOT(required_video_dump()));
-        } else {
-            call_player();
-        }
-    }
-    qDebug() << "DOWNLOADED: " << (handler.status().total_done/1048576)-totalPreSkip_mb << " MB";
-}
-
-void Torrent::download_Information()
-{
-    if (!aborted) { // TODO: Enviar una señal desde QML para detener esto un ves que inicie el video
-        const int bitRate = handler.status().download_rate/1024;
-        const int peers = handler.status().num_peers;
-        const int downloaded_mb = handler.status().total_wanted_done/1048576;
+    fs = ti.get()->files();
+    pieceFirst = fs.map_file(scene, 0, 0).piece;
+    pieceLast = fs.map_file(scene, fs.file_size(scene), 0).piece;
+    pieceTotal = pieceLast-pieceFirst;
+    pieceLength = fs.piece_length();
+    pieceTotalGlobal = fs.num_pieces();
+    total = (pieceTotal*pieceLength)/KB;
+    for (int i=0; i<(scene+1); i++ )
+        pieceOffsetGlobal = pieceOffsetGlobal+(fs.map_file(i, fs.file_size(i), 0).piece-fs.map_file(i, 0, 0).piece);
         
-
-        (*_root)->setProperty("required", minimum_mb);
-        (*_root)->setProperty("downloaded", downloaded_mb);
-
-        (*_root)->setProperty("bitRate", QString::number(bitRate));
-        (*_root)->setProperty("peers", peers);
-
-
-        const qint64 downloaded_kb = offset_kb+(handler.status().total_wanted_done/1024);
-        (*_root)->setProperty("total_kb", total_kb);
-        (*_root)->setProperty("downloaded_kb", downloaded_kb);
-        
-        QTimer::singleShot(1000, this, SLOT(download_Information()));
-    }
-}
-
-void Torrent::call_player()
-{
-    if (!skip) {
-        QDir dir(QString::fromStdString(handler.save_path())+QString::fromStdString(handler.name()));
-        if (!dir.exists())
-            dir.setPath(QString::fromStdString(handler.save_path()));
-        const QString absoluteFilePath = dir.absolutePath()+"/"+fileName;
-
-        (*_root)->setProperty("videoFilePath", absoluteFilePath);
-
-        //emit signal_sandbox(absoluteFilePath, true, false, false);
-        //QTimer::singleShot(1000, this, SLOT(progress()));
-    } else {
-        skip = false;
-        //(*_player)->update_player();
-    }
+    progress();
 }
 
 void Torrent::progress()
 {
     if (!aborted) {
-        if (!skip) {
-            const qint64 downloaded_kb = offset_kb+(handler.status().total_wanted_done/1024);
-            //(*_player)->progress(total_kb, downloaded_kb, 220);
-        } else {
-            const int downloadedSkip_mb = (handler.status().total_done/1048576)-totalPreSkip_mb;
-            //(*_player)->progress(0, 0, downloadedSkip_mb);
+        const int downloaded = h.status(2).total_wanted_done/MB;
+        (*_root)->setProperty("bitRate", QString::number(h.status(2).download_rate/KB));
+        (*_root)->setProperty("peers", h.status(2).num_peers);
+        (*_root)->setProperty("total", total);
+        (*_root)->setProperty("required", required);
+        (*_root)->setProperty("downloaded", downloaded);
+        if (dump) {
+            if ((downloaded-skipGlobal) >= required) {
+                if (!skip) {
+                    dump = false;
+                    QDir dir(QString::fromStdString(h.status(128).save_path)+QString::fromStdString(h.status(64).name));
+                    if (!dir.exists())
+                        dir.setPath(QString::fromStdString(h.status(128).save_path));
+                    (*_root)->setProperty("videoPath", dir.absolutePath()+"/"+file);
+                } else {
+                    dump = false;
+                    skip = false;
+                    //UPDATE PLAYER
+                }
+            }
         }
         QTimer::singleShot(1000, this, SLOT(progress()));
     }
 }
 
-bool Torrent::piece_is_available(qint64 total_msec, qint64 offset_msec)
+/*
+bool Torrent::piece_available(qint64 total_msec, qint64 offset_msec)
 {
     //SIZE
-    //qDebug() << "FILE_SIZE_TORRENT: " << handler.get_torrent_info().total_size();
+    //qDebug() << "FILE_SIZE_TORRENT: " << h.get_torrent_info().total_size();
 
-    offsetPieces_file = offsetPieces+((offset_msec*totalPieces_file)/total_msec);
-    return handler.have_piece(offsetPieces_file);
+    //pieceOffset = pieceOffsetGlobal+((offset_msec*pieceTotal)/total_msec);
+    //return h.have_piece(pieceOffset);
 }
 
 void Torrent::piece_update(qint64 total_msec, qint64 offset_msec)
 {
+
     std::vector<int> piecePriority;
     skip = true;
 
-    //offsetPieces_file = 475; //offsetPieces+(((offset_msec)*totalPieces_file)/total_msec);
-    offsetPieces_file = offsetPieces+((99*totalPieces_file)/100);
-    offset_kb = (offsetPieces+((offset_msec*totalPieces_file)/total_msec))*(pieceLength/1024);
-    totalPreSkip_mb = handler.status().total_done/1048576;
+    //pieceOffset = 475; //pieceOffsetGlobal+(((offset_msec)*pieceTotal)/total_msec);
+    pieceOffset = pieceOffsetGlobal+((99*pieceTotal)/100);
+    offset = (pieceOffsetGlobal+((offset_msec*pieceTotal)/total_msec))*(pieceLength/1024);
+    skipGlobal = h.status().total_done/MB;
 
     qDebug() << "-- SCENE: " << scene;
     qDebug() << "-- TOTAL_MSEC: " << total_msec;
     qDebug() << "-- OFFSET_MESEC: " << offset_msec;
-    qDebug() << "-- FIRST_PIECE_FILE: " << firstPiece_file;
-    qDebug() << "-- LAST_PIECE_FILE: " << lastPiece_file;
-    qDebug() << "-- TOTAL_PIECE_FILE: " << totalPieces_file;
-    qDebug() << "-- TOTAL_PIECE: " << totalPieces;
-    qDebug() << "-- TOTAL_PRE_SKIP: " << totalPreSkip_mb;
-    qDebug() << "-- OFFSET_PIECES: " << offsetPieces;
-    qDebug() << "-- OFFSET_PIECE_FILE: " << offsetPieces_file;
+    qDebug() << "-- PIECE_FIRST: " << pieceFirst;
+    qDebug() << "-- PIECE_LAST: " << pieceLast;
+    qDebug() << "-- PIECE_TOTAL: " << pieceTotal;
+    qDebug() << "-- PIECE_TOTAL_GLOBAL: " << pieceTotalGlobal;
+    qDebug() << "-- PIECES_OFFSET_GLOBAL: " << pieceOffsetGlobal;
+    qDebug() << "-- TOTAL_PRE_SKIP: " << skipGlobal;
+    qDebug() << "-- OFFSET_PIECE_FILE: " << pieceOffset;
     
-    for (int i=0; i < (totalPieces+1); i++)
-        if (i < offsetPieces_file) 
+    for (int i=0; i < (pieceTotalGlobal+1); i++)
+        if (i < pieceOffset)
             piecePriority.push_back(0);
-        else if (i >= offsetPieces_file && i <= lastPiece_file) 
+        else if (i >= pieceOffset && i <= pieceLast)
             piecePriority.push_back(7);
         else
             piecePriority.push_back(0);
 
-    /*
-    const qint64 remnant = totalPieces-((offset_msec*totalPieces_file)/total_msec);
-    if (((remnant*pieceLength)/1048576) < 15)
-        minimum_mb = remnant-1; //TODO: Cuando este solucionado el tema del slider, revisar esto.
-    else 
-        minimum_mb = 15;
-    */
 
-    handler.prioritize_pieces(piecePriority);
-    required_video_dump();
+    //const qint64 remnant = pieceTotalGlobal-((offset_msec*pieceTotal)/total_msec);
+    //if (((remnant*pieceLength)/MB) < 15)
+        //required = remnant-1; //TODO: Cuando este solucionado el tema del slider, revisar esto.
+    //else
+        //required = 15;
+
+
+    h.prioritize_pieces(piecePriority);
+    dump();
+
 }
+*/
+
+
+
+
+
+
+
+
+
+
+
 
 
 
 
 /*
-for (int i=0; i < (totalPieces+1); i++) {
-    if (i < offsetPieces_file) {
+for (int i=0; i < (pieceTotalGlobal+1); i++) {
+    if (i < pieceOffset) {
         piecePriority.push_back(0);
-    } else if (i >= offsetPieces_file && i <= lastPiece_file) {
-        if (offsetPiecesLast_file != 0 && offsetPiecesLast_file > offsetPieces_file) {
+    } else if (i >= pieceOffset && i <= pieceLast) {
+        if (offsetPiecesLast_file != 0 && offsetPiecesLast_file > pieceOffset) {
             if (i < offsetPiecesLast_file)
                 piecePriority.push_back(7);
             else
@@ -256,5 +242,23 @@ for (int i=0; i < (totalPieces+1); i++) {
         piecePriority.push_back(0);
     }
 }
-offsetPiecesLast_file = offsetPieces_file;
+offsetPiecesLast_file = pieceOffset;
+*/
+
+
+
+/*
+void Torrent::progress()
+{
+    if (!aborted) {
+        if (!skip) {
+            const qint64 kb_downloaded = offset+(h.status().total_wanted_done/1024);
+            //(*_player)->progress(total, kb_downloaded, 220);
+        } else {
+            const int downloadedSkip_mb = (h.status().total_done/MB)-skipGlobal;
+            //(*_player)->progress(0, 0, downloadedSkip_mb);
+        }
+        QTimer::singleShot(1000, this, SLOT(progress()));
+    }
+}
 */

@@ -6,11 +6,11 @@ Item {
     width: screen.width
     height: screen.height
 
-    property string videoFilePath: root.videoFilePath
+    property string videoPath: root.videoPath
     property string sandboxStatus: ""
 
     Loader {
-        id: downloadStatus_loader
+        id: status_loader
         active: false
         asynchronous: true
         visible: { status === Loader.Ready }
@@ -37,8 +37,8 @@ Item {
         Transition {
             to: "show"
             SequentialAnimation {
-                PropertyAction { target: downloadStatus_loader; property: "source"; value: "DownloadStatus.qml" }
-                PropertyAction { target: downloadStatus_loader; property: "active"; value: true }
+                PropertyAction { target: status_loader; property: "source"; value: "Status.qml" }
+                PropertyAction { target: status_loader; property: "active"; value: true }
                 ParallelAnimation {
                     NumberAnimation { target: root; easing.amplitude: 1.7; properties: "screenOpacity"; to: 1; duration: 900; easing.type: Easing.InSine }
                     NumberAnimation { target: root; easing.amplitude: 1.7; properties: "xA"; to: 0; duration: 1100; easing.type: Easing.OutQuart }
@@ -61,8 +61,8 @@ Item {
         }
     ]
 
-    onVideoFilePathChanged: {
-        if (videoFilePath !== "") {
+    onVideoPathChanged: {
+        if (videoPath !== "") {
             videoPlayer_loader.source = "VideoPlayer.qml"
             videoPlayer_loader.active = true
         }
@@ -70,15 +70,15 @@ Item {
     onSandboxStatusChanged:  {
         if (sandboxStatus === "success") {
             videoPlayer_loader.visible = true
-            downloadStatus_loader.source = ""
-            downloadStatus_loader.active = false
+            status_loader.source = ""
+            status_loader.active = false
         }
     }
 
     Component.onCompleted: { torrentHandler.state = "show" }
 
     Component.onDestruction: {
-        downloadStatus_loader.source = ""
+        status_loader.source = ""
         videoPlayer_loader.source = ""
     }
 }

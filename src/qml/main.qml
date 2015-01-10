@@ -21,7 +21,7 @@ Item {
     property string full: ""
     property string quality: ""
     property string bitRate: ""
-    property string videoFilePath: ""
+    property string videoPath: ""
     property int xA: screen.width
     property int xB: 0
     property int block_films
@@ -29,8 +29,7 @@ Item {
     property int required: 0
     property int peers: 0
     property int downloaded: 0
-    property int downloaded_kb: 0
-    property int total_kb: 0
+    property int total: 0
     property var categories
     property var pornstars
     property var totalCategories
@@ -43,7 +42,7 @@ Item {
     signal signal_qml_skip_update()
     signal signal_qml_find(string inputUser, string pornstar, string category, string quality, string full, int offset, bool init)
     signal signal_qml_preview_handler(string host, string url, string path, string target, int id, bool success, bool abort)
-    signal signal_qml_torrent_handler(string magnet, int scene, bool abort)
+    signal signal_qml_torrent_handler(string url, int scene, bool abort)
     signal signal_qml_quit()
 
     FontLoader { id: globalFont; source: "qrc:/font-global" }

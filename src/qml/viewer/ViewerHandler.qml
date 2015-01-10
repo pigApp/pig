@@ -231,7 +231,7 @@ Item {
            model.append({ "title": root.data_films[row], "cast": root.data_films[row+1], "categories": root.data_films[row+2], "quality": root.data_films[row+3],
                           "full": root.data_films[row+4], "hostPreview": root.data_films[row+5], "urlPreview": root.data_films[row+6], "filePreview": root.data_films[row+7],
                           "idPreview": i, "hostCover": root.data_films[row+8], "urlFrontCover": root.data_films[row+9],"urlBackCover": root.data_films[row+10],
-                          "magnet": torrent[0], "scenes": Number(torrent[1]) })
+                          "urlTorrent": torrent[0], "scenes": Number(torrent[1]) })
            row += 12
         }
         root_loader_A.source = "../global/Network.qml"

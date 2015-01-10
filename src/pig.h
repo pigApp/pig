@@ -51,7 +51,7 @@ private slots:
               const QString quality, const QString full, const int offset, const bool init);
     void preview_handler(const QString host, const QString url, const QString path, const QString target,
                          const int id, const bool success, const bool abort);
-    void torrent_handler(const QString magnet, const int scene, const bool abort);
+    void torrent_handler(const QString url, const int scene, const bool abort);
     void cleanup();
     void error_database();
     void quit();

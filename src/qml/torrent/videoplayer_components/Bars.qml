@@ -5,7 +5,7 @@ Item {
 
     Rectangle {
        id: downloadBar
-       width: { (parent.width*root.downloaded_kb)/root.total_kb }
+       width: { (parent.width*root.downloaded)/root.total }
        height: 2
        color: "gray"
        opacity: 0.5

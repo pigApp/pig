@@ -1,17 +1,17 @@
 import QtQuick 2.3
 
 Item {
-    id: downloadStatus
+    id: status
 
     property int timeLeft: 10
 
     Row {
-        id: downloadStatusRow
+        id: statusRow
         spacing: parent.width/96
         anchors.centerIn: parent
         Text {
             id: bitRateLabel
-            text: { if (root.bitRate !== "") root.bitRate+" KB/s"; else "RECOVERING METADATA" }
+            text: { if (root.bitRate !== "") root.bitRate+" KB/s"; else "CONNECTING" }
             color: "white"
             font.family: globalFont.name
             font.pixelSize: screen.height/23
@@ -20,7 +20,7 @@ Item {
             id: peersLabel
             text: { if (root.peers !== 0) "PEERS "+root.peers; else "PEERS 0" }
             color: "white"
-            visible: { bitRateLabel.text !== "RECOVERING METADATA" }
+            visible: { bitRateLabel.text !== "CONNECTING" }
             font.family: globalFont.name
             font.pixelSize: screen.height/23
         }
@@ -32,7 +32,7 @@ Item {
         font.family: globalFont.name
         font.pixelSize: screen.height/56
         visible: { if (torrentHandler.sandboxStatus === "fail") true; else false }
-        anchors.top: downloadStatusRow.bottom
+        anchors.top: statusRow.bottom
         anchors.topMargin: screen.height/108
         anchors.horizontalCenter: parent.horizontalCenter
     }
@@ -41,7 +41,7 @@ Item {
        width: { (parent.width*root.downloaded)/root.required }
        height: 2
        color: { if (torrentHandler.sandboxStatus === "fail") "yellow"; else "white" }
-       visible: { bitRateLabel.text !== "RECOVERING METADATA" && peersLabel !== "PEERS 0" }
+       visible: { bitRateLabel.text !== "CONNECTING" && peersLabel !== "PEERS 0" }
        anchors.bottom: parent.bottom
        anchors.bottomMargin: 2
     }
@@ -71,6 +71,6 @@ Item {
         }
     }
 
-    Component.onCompleted: downloadStatus.forceActiveFocus()
+    Component.onCompleted: status.forceActiveFocus()
 }
 // Tabs hechos.

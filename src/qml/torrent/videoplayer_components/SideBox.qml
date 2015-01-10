@@ -89,7 +89,7 @@ Rectangle {
         }
     }
     Column {
-        id: downloadStatusColumn
+        id: statusColumn
         spacing: -15//
         anchors.top: volumeRow.bottom
         anchors.topMargin: -20//

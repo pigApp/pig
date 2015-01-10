@@ -33,10 +33,9 @@ RC_FILE = resources/images/global/icon.rc
 
 unix {
     CONFIG += link_pkgconfig
-    PKGCONFIG += libtorrent-rasterbar
-    LIBS += -L/usr/lib/pig -lquazip -lz
-    INCLUDEPATH += /usr/include/pig
     QMAKE_RPATHDIR += /usr/lib/pig
+    LIBS += -L/usr/lib/pig -ltorrent-rasterbar -lboost_system -lquazip -lz
+    INCLUDEPATH += /usr/include/pig
 
     target.path = /usr/bin
     config.path = $$(HOME)/.pig
