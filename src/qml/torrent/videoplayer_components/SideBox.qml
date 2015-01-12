@@ -49,10 +49,10 @@ Item {
                 anchors.verticalCenterOffset: screen.height/72
                 Image {
                     id: playbackIcon
-                    width: screen.width/60
-                    height: screen.height/33.75
-                    sourceSize.width: screen.width/60
-                    sourceSize.height: screen.height/33.75
+                    width: screen.width/58.18
+                    height: screen.height/32.72
+                    sourceSize.width: screen.width/58.18
+                    sourceSize.height: screen.height/32.72
                     source: {
                         if (videoPlayerHandler.standby) {
                             "qrc:/img-standby"
@@ -71,11 +71,11 @@ Item {
                     spacing: screen.width/192
                     Image {
                         id: volumeIcon
-                        width: screen.width/60
-                        height: screen.height/33.75
-                        sourceSize.width: screen.width/60
-                        sourceSize.height: screen.height/33.75
-                        source: { if (player.volume !== 0.0 && !player.muted) "qrc:/img-volume_on"; else "qrc:/img-volume_off" }
+                        width: screen.width/58.18
+                        height: screen.height/32.72
+                        sourceSize.width: screen.width/58.18
+                        sourceSize.height: screen.height/32.72
+                        source: { if (player.volume !== 0.0 && !player.muted) "qrc:/img-volume"; else "qrc:/img-volume_off" }
                     }
                     Text {
                         id: volumeLabel
@@ -116,11 +116,11 @@ Item {
                     spacing: screen.width/192
                     Image {
                         id: bitRateIcon
-                        width: screen.width/60
-                        height: screen.height/33.75
-                        sourceSize.width: screen.width/60
-                        sourceSize.height: screen.height/33.75
-                        source: "qrc:/img-download"
+                        width: screen.width/58.18
+                        height: screen.height/32.72
+                        sourceSize.width: screen.width/58.18
+                        sourceSize.height: screen.height/32.72
+                        source: "qrc:/img-download-dark"
                     }
                     Text {
                         id: bitRateLabel
@@ -131,17 +131,27 @@ Item {
                         anchors.verticalCenter: bitRateIcon.verticalCenter
                         anchors.verticalCenterOffset: -screen.height/432
                     }
+                    Text {
+                        id: kbLabel
+                        text: { if (root.bitRate !== "") "Kb/s" }
+                        color: Qt.rgba(0.1, 0.1, 0.1, 1)
+                        font.family: globalFont.name
+                        font.bold: true
+                        font.pixelSize: screen.height/54
+                        anchors.bottom: bitRateLabel.bottom
+                        anchors.bottomMargin: screen.height/154.28
+                    }
                 }
                 Row {
                     id: peersRow
                     spacing: screen.width/192
                     Image {
                         id: peersIcon
-                        width: screen.width/60
-                        height: screen.height/33.75
-                        sourceSize.width: screen.width/60
-                        sourceSize.height: screen.height/33.75
-                        source: "qrc:/img-peers"
+                        width: screen.width/58.18
+                        height: screen.height/32.72
+                        sourceSize.width: screen.width/58.18
+                        sourceSize.height: screen.height/32.72
+                        source: "qrc:/img-peers-dark"
                     }
                     Text {
                         id: peersLabel

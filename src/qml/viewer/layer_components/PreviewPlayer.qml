@@ -13,10 +13,10 @@ Item {
 
     Image {
         id: icon
-        width: screen.width/60
-        height: screen.height/33.75
-        sourceSize.width: screen.width/60
-        sourceSize.height: screen.height/33.75
+        width: screen.width/58.18
+        height: screen.height/32.72
+        sourceSize.width: screen.width/58.18
+        sourceSize.height: screen.height/32.72
         source: "qrc:/img-download"
         anchors.centerIn: parent
     }

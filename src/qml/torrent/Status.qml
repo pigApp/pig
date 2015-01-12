@@ -3,37 +3,80 @@ import QtQuick 2.4
 Item {
     id: status
 
-    property int timeLeft: 10
+    property int timeLeft: 9
 
     Row {
         id: statusRow
         spacing: parent.width/96
         anchors.centerIn: parent
-        Text {
-            id: bitRateLabel
-            text: { if (root.bitRate !== "") root.bitRate+" KB/s"; else "CONNECTING" }
-            color: "white"
-            font.family: globalFont.name
-            font.pixelSize: screen.height/23
+        Row {
+            id: bitRateRow
+            spacing: screen.width/192
+            Image {
+                id: bitRateIcon
+                width: screen.width/58.18
+                height: screen.height/32.72
+                sourceSize.width: screen.width/58.18
+                sourceSize.height: screen.height/32.72
+                source: "qrc:/img-download"
+                visible: { bitRateLabel.text !== "CONNECTING" }
+            }
+            Text {
+                id: bitRateLabel
+                text: { if (root.bitRate !== "") root.bitRate; else "CONNECTING" }
+                color: "white"
+                font.family: globalFont.name
+                font.pixelSize: screen.height/23
+                anchors.verticalCenter: bitRateIcon.verticalCenter
+                anchors.verticalCenterOffset: -screen.height/432
+            }
+            Text {
+                id: kbLabel
+                text: "Kb/s"
+                color: "white"
+                font.family: globalFont.name
+                font.bold: true
+                font.pixelSize: screen.height/54
+                visible: { bitRateLabel.text !== "CONNECTING" }
+                anchors.bottom: bitRateLabel.bottom
+                anchors.bottomMargin: screen.height/135
+            }
         }
-        Text {
-            id: peersLabel
-            text: { if (root.peers !== 0) "PEERS "+root.peers; else "PEERS 0" }
-            color: "white"
-            visible: { bitRateLabel.text !== "CONNECTING" }
-            font.family: globalFont.name
-            font.pixelSize: screen.height/23
+        Row {
+            id: peersRow
+            spacing: screen.width/192
+            Image {
+                id: peersIcon
+                width: screen.width/58.18
+                height: screen.height/32.72
+                sourceSize.width: screen.width/58.18
+                sourceSize.height: screen.height/32.72
+                source: "qrc:/img-peers"
+                visible: { bitRateLabel.text !== "CONNECTING" }
+            }
+            Text {
+                id: peersLabel
+                text: { if (root.peers !== 0) root.peers; else "0" }
+                color: "white"
+                font.family: globalFont.name
+                font.pixelSize: screen.height/23
+                visible: { bitRateLabel.text !== "CONNECTING" }
+                anchors.verticalCenter: peersIcon.verticalCenter
+                anchors.verticalCenterOffset: -screen.height/432
+            }
         }
     }
     Text {
         id: sandboxLabel
-        text: "FILE NOT READY - RECHECK "+timeLeft
-        color: "yellow" //Qt.rgba(0.1, 0.1, 0.1, 1)
+        text: "<font color='#ffff00'>FILE NOT READY</font> RECHECK "+timeLeft
+        color: "white"
         font.family: globalFont.name
-        font.pixelSize: screen.height/56
+        font.bold: true
+        font.pixelSize: screen.height/54
+        textFormat: Text.RichText
         visible: { torrentHandler.sandboxStatus === "fail" }
         anchors.top: statusRow.bottom
-        anchors.topMargin: screen.height/108
+        anchors.topMargin: -screen.height/72
         anchors.horizontalCenter: parent.horizontalCenter
     }
 
@@ -56,8 +99,12 @@ Item {
             if (timeLeft > 0)
                 timeLeft -= 1
             else
-                timeLeft = 10
-            sandboxLabel.text = "FILE NOT READY - RECHECK "+timeLeft
+                timeLeft = 9
+
+            if (timeLeft !== 0)
+                sandboxLabel.text = "<font color='#ffff00'>FILE NOT READY</font> RECHECK "+timeLeft
+            else
+                sandboxLabel.text = "<font color='#ffff00'>FILE NOT READY</font> RECHECK <font color='#ffff00'>checking</font>"
         }
     }
     

@@ -20,7 +20,7 @@ Item {
                     viewerHandler.coverStatus.push(0)
                     check_cover_status();
                 } else if (front.status === Image.Error) {
-                    front.source = "qrc:/img-cover_na"
+                    front.source = "qrc:/img-cover_err"
                     viewerHandler.coverStatus.push(1)
                     check_cover_status();
                 }
