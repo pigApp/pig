@@ -1,4 +1,4 @@
-import QtQuick 2.3
+import QtQuick 2.4
 
 Item {
     id: bars
@@ -6,7 +6,7 @@ Item {
     Rectangle {
        id: downloadBar
        width: { (parent.width*root.downloaded)/root.total }
-       height: 2
+       height: screen.height/540
        color: "gray"
        opacity: 0.5
        anchors.bottom: parent.bottom
@@ -14,7 +14,7 @@ Item {
     Rectangle {
         id: timeBar
         width: { (parent.width*player.position)/player.duration }
-        height: 2
+        height: screen.height/540
         color: { if (videoPlayerHandler.standby) "yellow"; else "white" }
         anchors.bottom: parent.bottom
     }

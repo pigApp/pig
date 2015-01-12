@@ -1,4 +1,4 @@
-import QtQuick 2.3
+import QtQuick 2.4
 
 Item {
     id: control
@@ -9,10 +9,10 @@ Item {
         if (!videoPlayerHandler.sandbox) {
             if (!videoPlayerHandler.stanby && (player.position/player.duration)+0.001 >= (downloaded/root.total)) {
                 videoPlayerHandler.standby = true
-                console.log("//// STANDBY")
+                console.log("//// STANDBY")//
             } else if (videoPlayerHandler.stanby && (player.position/player.duration)+0.001 < (downloaded/root.total)) {
                 videoPlayerHandler.standby = false
-                console.log("//// STANDBY-FALSE")
+                console.log("//// STANDBY-FALSE")//
             }
         }
     }

@@ -1,4 +1,4 @@
-import QtQuick 2.3
+import QtQuick 2.4
 import "../global/"
 
 Item {
@@ -71,7 +71,7 @@ Item {
         visible: false
         anchors.left: parent.left
         anchors.verticalCenter: parent.verticalCenter
-        anchors.verticalCenterOffset: 100//parent.height/10.28
+        anchors.verticalCenterOffset: parent.height/10.8
     }
 
     Welcome {

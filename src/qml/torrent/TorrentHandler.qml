@@ -1,4 +1,4 @@
-import QtQuick 2.3
+import QtQuick 2.4
 
 Item {
     id: torrentHandler
@@ -82,3 +82,4 @@ Item {
         videoPlayer_loader.source = ""
     }
 }
+// Tabs hechos.

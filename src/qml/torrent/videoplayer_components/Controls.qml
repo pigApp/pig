@@ -1,5 +1,5 @@
-import QtQuick 2.3
-import QtMultimedia 5.0
+import QtQuick 2.4
+import QtMultimedia 5.4
 
 Item {
     id: constrols
@@ -10,7 +10,7 @@ Item {
         repeat: false
         interval: 4000
         onTriggered: {
-            if ((mouseArea.mouseX < (parent.width-200)) && (mouseArea.mouseY < (parent.height-20)))
+            if ((mouseArea.mouseX < (parent.width-(parent.width/9.6))) && (mouseArea.mouseY < (parent.height-(parent.height/54))))
                 videoPlayerHandler.state = "hideControls"
             else
                 hideControlsDelay.restart()

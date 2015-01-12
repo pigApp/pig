@@ -1,21 +1,16 @@
+- Verificar los enleces simbolicos al actualizar librerias.
 - Agregar UNSIGNED SHORT a int
-- Ver si es necesario libicu en linux.
 - Agregar todas las imagenes a CATEGORY y PORNSTAR.
 - Terminar la imagen de background.
 - PLAYER
-  - Al adelantar el slider, si es necesario descargar una nueva pieza (descarga la pieza correcta - dos minutos antes - o dos minutos despues) ver por que.
-  - Al mover el slider, comprobar que marque correctamente si sobrepasa a bar (rojo - blanco). 
-  - Si termino la descarga, mostrar bar completa. ( if(bar->value() >= total_msec-13312) mostrar bar completa).
   - Audio.
 - Links para update en la db. Distintos para windows, linux, 32 y 64.
 - Destacar que en linux es necesario tener instalado gksu/kdesu.
 - Cuando este todo terminado, cambiar los links de Help y errorDb por los reales.
-- Tabs.
 - Metadata.
 
 - PROXIMA VERSION
   - traducciones.
-  - Paso extra en update. Por si es necesario actulizar tambien las librerias.
 
 
 --

@@ -1,4 +1,4 @@
-import QtQuick 2.3
+import QtQuick 2.4
 import QtGraphicalEffects 1.0
 
 Item {
@@ -38,8 +38,8 @@ Item {
     property real screenOpacity: 0.4
 
     signal signal_qml_password_handler(string plain, bool require, bool check, bool write)
-    signal signal_qml_accept_update()
-    signal signal_qml_skip_update()
+    signal signal_qml_update_accept()
+    signal signal_qml_update_skip()
     signal signal_qml_find(string inputUser, string pornstar, string category, string quality, string full, int offset, bool init)
     signal signal_qml_preview_handler(string host, string url, string path, string target, int id, bool success, bool abort)
     signal signal_qml_torrent_handler(string url, int scene, bool abort)
@@ -50,8 +50,8 @@ Item {
 
     Image {
         id: background
-        cache: false
         source: "qrc:/img-background"
+        cache: false
         visible: false
         anchors.fill: parent
     }

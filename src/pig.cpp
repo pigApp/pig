@@ -96,8 +96,8 @@ void PIG::update_handler()
         mUpdate->_root = &mRoot;
         mUpdate->db = &db;
         mUpdate->start();
-        connect (mRoot, SIGNAL(signal_qml_accept_update()), mUpdate, SLOT(accepted()));
-        connect (mRoot, SIGNAL(signal_qml_skip_update()), this, SLOT(start_pig()));
+        connect (mRoot, SIGNAL(signal_qml_update_accept()), mUpdate, SLOT(accepted()));
+        connect (mRoot, SIGNAL(signal_qml_update_skip()), this, SLOT(start_pig()));
         connect (mUpdate, SIGNAL(signal_continue()), this, SLOT(start_pig()));
         connect (mUpdate, SIGNAL(signal_fail_database()), this, SLOT(error_database()));
         emit signal_show_update();

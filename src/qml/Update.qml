@@ -1,4 +1,4 @@
-import QtQuick 2.3
+import QtQuick 2.4
 import "global/"
 
 Item {
@@ -40,7 +40,7 @@ Item {
             labelFont: globalFont.name
             labelBold: true
             labelSize: screen.height/54
-            onClicked: root.signal_qml_accept_update()
+            onClicked: root.signal_qml_update_accept()
         }
         Button {
             id: skip
@@ -51,7 +51,7 @@ Item {
             labelFont: globalFont.name
             labelBold: true
             labelSize: screen.height/54
-            onClicked: root.signal_qml_skip_update()
+            onClicked: root.signal_qml_update_skip()
         }
     }
 

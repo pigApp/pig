@@ -1,5 +1,5 @@
-import QtQuick 2.3
-import QtMultimedia 5.0
+import QtQuick 2.4
+import QtMultimedia 5.4
 
 Item {
     id: previewPlayer
@@ -18,15 +18,14 @@ Item {
         sourceSize.width: screen.width/60
         sourceSize.height: screen.height/33.75
         source: "qrc:/img-download"
-        opacity: 0.3
         anchors.centerIn: parent
     }
     Video {
         id: player
         autoPlay: true
+        fillMode: VideoOutput.Stretch
         visible: false
         enabled: false
-        fillMode: VideoOutput.Stretch
         anchors.fill: parent
         onPlaybackStateChanged: {
             if (player.playbackState === MediaPlayer.StoppedState) {

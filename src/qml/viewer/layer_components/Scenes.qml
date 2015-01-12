@@ -1,4 +1,4 @@
-import QtQuick 2.3
+import QtQuick 2.4
 
 Item {
     id: scenesButton
@@ -17,10 +17,10 @@ Item {
                 id: icon
                 width: screen.width/60
                 height: screen.height/42.63
-                opacity: 0.1
                 sourceSize.width: screen.width/60
                 sourceSize.height: screen.height/42.63
                 source: "qrc:/img-open"
+                opacity: 0.1
                 property bool viewed
                 MouseArea {
                     hoverEnabled: true

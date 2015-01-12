@@ -1,4 +1,4 @@
-import QtQuick 2.3
+import QtQuick 2.4
 
 Item {
     id: status
@@ -28,27 +28,28 @@ Item {
     Text {
         id: sandboxLabel
         text: "FILE NOT READY - RECHECK "+timeLeft
-        color: Qt.rgba(0.1, 0.1, 0.1, 1)
+        color: "yellow" //Qt.rgba(0.1, 0.1, 0.1, 1)
         font.family: globalFont.name
         font.pixelSize: screen.height/56
-        visible: { if (torrentHandler.sandboxStatus === "fail") true; else false }
+        visible: { torrentHandler.sandboxStatus === "fail" }
         anchors.top: statusRow.bottom
         anchors.topMargin: screen.height/108
         anchors.horizontalCenter: parent.horizontalCenter
     }
+
     Rectangle {
        id: bar
        width: { (parent.width*root.downloaded)/root.required }
-       height: 2
+       height: parent.height/540
        color: { if (torrentHandler.sandboxStatus === "fail") "yellow"; else "white" }
        visible: { bitRateLabel.text !== "CONNECTING" && peersLabel !== "PEERS 0" }
        anchors.bottom: parent.bottom
-       anchors.bottomMargin: 2
+       anchors.bottomMargin: parent.height/540
     }
 
     Timer {
         id: recheckDelay
-        running: { if (torrentHandler.sandboxStatus === "fail") true; else false }
+        running: { torrentHandler.sandboxStatus === "fail" }
         repeat: true
         interval: 1000
         onTriggered: {

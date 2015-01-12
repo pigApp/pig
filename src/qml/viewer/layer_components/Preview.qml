@@ -1,40 +1,23 @@
-import QtQuick 2.3
+import QtQuick 2.4
 
 Rectangle {
     id: preview
     color: Qt.rgba(0, 0, 0, 0.05)
 
-    Column {
-        spacing: screen.height/360
+    Image {
+        id: icon
+        width: screen.width/60
+        height: screen.height/33.75
+        sourceSize.width: screen.width/60
+        sourceSize.height: screen.height/33.75
+        source: "qrc:/img-play"
         anchors.centerIn: parent
-        anchors.verticalCenterOffset: screen.height/135
-        Image {
-            id: icon
-            width: screen.width/60
-            height: screen.height/33.75
-            sourceSize.width: screen.width/60
-            sourceSize.height: screen.height/33.75
-            source: "qrc:/img-play"
-            opacity: 0.2
-            anchors.horizontalCenter: parent.horizontalCenter
-        }
-        Text {
-            id: label
-            width: screen.width/27.7
-            height: screen.height/72
-            text: "PREVIEW"
-            color: Qt.rgba(1, 1, 1, 0.1)
-            font.family: globalFont.name
-            font.pixelSize: screen.height/54
-            anchors.horizontalCenter: parent.horizontalCenter
-        }
     }
 
     MouseArea {
         onClicked: {
             if (icon.visible) {
                 icon.visible = false
-                label.visible = false
                 previewPlayer_loader.source = "PreviewPlayer.qml"
                 previewPlayer_loader.active = true
             }

@@ -1,5 +1,5 @@
-import QtQuick 2.3
-import QtMultimedia 5.0
+import QtQuick 2.4
+import QtMultimedia 5.4
 import "videoplayer_components/"
 
 Rectangle {
@@ -36,8 +36,8 @@ Rectangle {
 
     SideBox {
         id: sideBox
-        width: 200//
-        height: parent.height/1.33
+        width: parent.width/9.6
+        height: parent.height
         anchors.right: parent.right
         anchors.rightMargin: sideBoxMargin
         anchors.verticalCenter: parent.verticalCenter
@@ -46,7 +46,7 @@ Rectangle {
     Bars {
         id: bars
         width: parent.width 
-        height: 20//
+        height: parent.height/54
         anchors.left: parent.left
         anchors.bottom: parent.bottom
         anchors.bottomMargin: barsMargin
@@ -76,8 +76,8 @@ Rectangle {
         Transition {
             to: "hideControls"
             ParallelAnimation {
-                NumberAnimation { target: videoPlayerHandler; easing.amplitude: 1.7; properties: "sideBoxMargin"; to: -200; duration: 500; easing.type: Easing.OutQuart }
-                NumberAnimation { target: videoPlayerHandler; easing.amplitude: 1.7; properties: "barsMargin"; to: -20; duration: 500; easing.type: Easing.OutQuart }
+                NumberAnimation { target: videoPlayerHandler; easing.amplitude: 1.7; properties: "sideBoxMargin"; to: -screen.width/9.6; duration: 500; easing.type: Easing.OutQuart }
+                NumberAnimation { target: videoPlayerHandler; easing.amplitude: 1.7; properties: "barsMargin"; to: -screen.height/54; duration: 500; easing.type: Easing.OutQuart }
             }
         }
     ]

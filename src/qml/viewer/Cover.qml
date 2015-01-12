@@ -1,4 +1,4 @@
-import QtQuick 2.3
+import QtQuick 2.4
 
 Item {
     id: cover
@@ -12,8 +12,8 @@ Item {
             id: front
             width: screen.width/4.58
             height: screen.height/1.8
-            sourceSize.width: 419
-            sourceSize.height: 600
+            sourceSize.width: screen.width/4.58
+            sourceSize.height: screen.height/1.8
             source: hostCover+urlFrontCover
             onStatusChanged: {
                 if (front.status === Image.Ready) {
@@ -31,8 +31,8 @@ Item {
             id: back
             width: front.width
             height: front.height
-            sourceSize.width: 419
-            sourceSize.height: 600
+            sourceSize.width: screen.width/4.58
+            sourceSize.height: screen.height/1.8
             source: {
                 if (urlBackCover !== "")
                     hostCover+urlBackCover

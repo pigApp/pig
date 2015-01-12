@@ -1,115 +1,162 @@
-import QtQuick 2.3
-import QtMultimedia 5.0
+import QtQuick 2.4
+import QtMultimedia 5.4
 
-Rectangle {
+Item {
     id: sidebox
-    color: Qt.rgba(0, 0, 0, 0.5)
 
     Column {
-        id: timeColumn
-        spacing: -15//
-        anchors.centerIn: parent
-        Text {
-            id: currentLabel
-            text: formatTime(player.position)
-            color: "white"
-            font.family: globalFont.name
-            font.pixelSize: screen.height/23
-        }
-        Text {
-            id: totalLabel
-            text: formatTime(player.duration)
-            color: Qt.rgba(0.1, 0.1, 0.1, 1)
-            font.family: globalFont.name
-            font.pixelSize: screen.height/23
-        }
-    }
-    Image {
-        id: playerStatusIcon
-        width: screen.width/60
-        height: screen.height/33.75
-        sourceSize.width: screen.width/60
-        sourceSize.height: screen.height/33.75
-        source: {
-            if (videoPlayerHandler.standby) {
-                "qrc:/img-standby"
-            } else {
-                if (player.playbackState === MediaPlayer.PlayingState )
-                    "qrc:/img-playing"
-                else if (player.playbackState === MediaPlayer.PausedState)
-                    "qrc:/img-paused"
-                else if (player.playbackState === MediaPlayer.StoppedState)
-                    "qrc:/img-standby"
-            }
-        }
-        opacity: 1
-        anchors.top: timeColumn.bottom
-        anchors.topMargin: 10//
-        anchors.left: timeColumn.left
-    }
-    Row {
-        id: volumeRow
-        spacing: 10
-        anchors.top: playerStatusIcon.bottom
-        anchors.topMargin: 10//
-        anchors.left: timeColumn.left
-        Image {
-            id: volumeIcon
-            width: screen.width/60
-            height: screen.height/33.75
-            sourceSize.width: screen.width/60
-            sourceSize.height: screen.height/33.75
-            source: { if (player.volume !== 0.0 && !player.muted) "qrc:/img-volume_on"; else "qrc:/img-volume_off" }
-            opacity: 1
-        }
-        Text {
-            id: volumeLabel
-            text: {
-                if (!player.muted) {
-                    if (player.volume === 0.0)
-                        "0.0"
-                    else if (player.volume === 1.0)
-                        "1.0"
-                    else
-                        player.volume
-                } else {
-                    "0.0"
+        id: globalColumn
+        spacing: parent.height/540
+        anchors.left: parent.left
+        anchors.verticalCenter: parent.verticalCenter
+        Rectangle {
+            id: timeLayer
+            width: sidebox.width
+            height: screen.height/10.8
+            color: Qt.rgba(0, 0, 0, 0.5)
+            Column {
+                id: timeColumn
+                spacing: -screen.height/54
+                anchors.left: parent.left
+                anchors.leftMargin: screen.width/87.27
+                anchors.verticalCenter: parent.verticalCenter
+                Text {
+                    id: currentLabel
+                    text: formatTime(player.position)
+                    color: "white"
+                    font.family: globalFont.name
+                    font.pixelSize: screen.height/23
+                }
+                Text {
+                    id: totalLabel
+                    text: formatTime(player.duration)
+                    color: Qt.rgba(0.1, 0.1, 0.1, 1)
+                    font.family: globalFont.name
+                    font.pixelSize: screen.height/23
                 }
             }
-            color: {
-                if (player.muted || player.volume === 0.0)
-                    Qt.rgba(0.1, 0.1, 0.1, 1)
-                else
-                    "white"
+        }
+        Rectangle {
+            id: playerStateLayer
+            width: sidebox.width
+            height: screen.height/10.8
+            color: Qt.rgba(0, 0, 0, 0.5)
+            Column {
+                spacing: screen.height/154.28
+                anchors.left: parent.left
+                anchors.leftMargin: screen.width/80
+                anchors.verticalCenter: parent.verticalCenter
+                anchors.verticalCenterOffset: screen.height/72
+                Image {
+                    id: playbackIcon
+                    width: screen.width/60
+                    height: screen.height/33.75
+                    sourceSize.width: screen.width/60
+                    sourceSize.height: screen.height/33.75
+                    source: {
+                        if (videoPlayerHandler.standby) {
+                            "qrc:/img-standby"
+                        } else {
+                            if (player.playbackState === MediaPlayer.PlayingState )
+                                "qrc:/img-playing"
+                            else if (player.playbackState === MediaPlayer.PausedState)
+                                "qrc:/img-paused"
+                            else if (player.playbackState === MediaPlayer.StoppedState)
+                                "qrc:/img-standby"
+                        }
+                    }
+                }
+                Row {
+                    id: volumeRow
+                    spacing: screen.width/192
+                    Image {
+                        id: volumeIcon
+                        width: screen.width/60
+                        height: screen.height/33.75
+                        sourceSize.width: screen.width/60
+                        sourceSize.height: screen.height/33.75
+                        source: { if (player.volume !== 0.0 && !player.muted) "qrc:/img-volume_on"; else "qrc:/img-volume_off" }
+                    }
+                    Text {
+                        id: volumeLabel
+                        text: {
+                            if (!player.muted) {
+                                if (player.volume === 0.0)
+                                    "0.0"
+                                else if (player.volume === 1.0)
+                                    "1.0"
+                                else
+                                    player.volume
+                            } else {
+                                "0.0"
+                            }
+                        }
+                        color: { if (player.muted || player.volume === 0.0) Qt.rgba(0.1, 0.1, 0.1, 1); else "white" }
+                        font.family: globalFont.name
+                        font.pixelSize: screen.height/23
+                        anchors.verticalCenter: volumeIcon.verticalCenter
+                        anchors.verticalCenterOffset: -screen.height/360
+                    }
+                }
             }
-            font.family: globalFont.name
-            font.pixelSize: screen.height/23
-            anchors.verticalCenter: volumeIcon.verticalCenter
-            anchors.verticalCenterOffset: -3.3
+        }
+        Rectangle {
+            id: statusLayer
+            width: sidebox.width
+            height: screen.height/10.8
+            color: Qt.rgba(0, 0, 0, 0.5)
+            Column {
+                spacing: -screen.height/49.09
+                anchors.left: parent.left
+                anchors.leftMargin: screen.width/80
+                anchors.verticalCenter: parent.verticalCenter
+                anchors.verticalCenterOffset: screen.height/72
+                Row {
+                    id: bitRateRow
+                    spacing: screen.width/192
+                    Image {
+                        id: bitRateIcon
+                        width: screen.width/60
+                        height: screen.height/33.75
+                        sourceSize.width: screen.width/60
+                        sourceSize.height: screen.height/33.75
+                        source: "qrc:/img-download"
+                    }
+                    Text {
+                        id: bitRateLabel
+                        text: { if (root.bitRate !== "") root.bitRate }
+                        color: Qt.rgba(0.1, 0.1, 0.1, 1)
+                        font.family: globalFont.name
+                        font.pixelSize: screen.height/23
+                        anchors.verticalCenter: bitRateIcon.verticalCenter
+                        anchors.verticalCenterOffset: -screen.height/432
+                    }
+                }
+                Row {
+                    id: peersRow
+                    spacing: screen.width/192
+                    Image {
+                        id: peersIcon
+                        width: screen.width/60
+                        height: screen.height/33.75
+                        sourceSize.width: screen.width/60
+                        sourceSize.height: screen.height/33.75
+                        source: "qrc:/img-peers"
+                    }
+                    Text {
+                        id: peersLabel
+                        text: { if (root.peers !== "") root.peers }
+                        color: Qt.rgba(0.1, 0.1, 0.1, 1)
+                        font.family: globalFont.name
+                        font.pixelSize: screen.height/23
+                        anchors.verticalCenter: peersIcon.verticalCenter
+                        anchors.verticalCenterOffset: -screen.height/432
+                    }
+                }
+            }
         }
     }
-    Column {
-        id: statusColumn
-        spacing: -15//
-        anchors.top: volumeRow.bottom
-        anchors.topMargin: -20//
-        anchors.left: timeColumn.left
-        Text {
-            id: bitRateLabel
-            text: { if (root.bitRate !== "") root.bitRate }
-            color: Qt.rgba(0.1, 0.1, 0.1, 1)
-            font.family: globalFont.name
-            font.pixelSize: screen.height/23
-        }
-        Text {
-            id: peersLabel
-            text: { if (root.peers !== "") root.peers }
-            color: Qt.rgba(0.1, 0.1, 0.1, 1)
-            font.family: globalFont.name
-            font.pixelSize: screen.height/23
-        }
-    }
-    
+
     function formatTime(timeMs) {
         if (!timeMs || timeMs <= 0) return "00:00:00"
         var seconds = timeMs/1000;
@@ -124,3 +171,4 @@ Rectangle {
         return hours+":"+minutes+":"+seconds
     }
 }
+// Tabs hechos.

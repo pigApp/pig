@@ -7,34 +7,10 @@
    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
    xmlns:svg="http://www.w3.org/2000/svg"
    xmlns="http://www.w3.org/2000/svg"
-   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
-   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    version="1.1"
    width="32"
    height="32.000362"
-   id="svg5023"
-   inkscape:version="0.48.5 r10040"
-   sodipodi:docname="download.svg">
-  <sodipodi:namedview
-     pagecolor="#ffffff"
-     bordercolor="#666666"
-     borderopacity="1"
-     objecttolerance="10"
-     gridtolerance="10"
-     guidetolerance="10"
-     inkscape:pageopacity="0"
-     inkscape:pageshadow="2"
-     inkscape:window-width="865"
-     inkscape:window-height="480"
-     id="namedview7419"
-     showgrid="false"
-     inkscape:zoom="7.3749165"
-     inkscape:cx="16"
-     inkscape:cy="16.000181"
-     inkscape:window-x="0"
-     inkscape:window-y="0"
-     inkscape:window-maximized="0"
-     inkscape:current-layer="svg5023" />
+   id="svg5023">
   <defs
      id="defs5025" />
   <metadata
@@ -67,7 +43,7 @@
     </rdf:RDF>
   </metadata>
   <g
-     id="g5098"
+     id="g3060"
      style="fill:#ffffff">
     <g
        transform="matrix(0.49999997,0,0,0.49999997,2.3722849e-6,4.9999997e-5)"
@@ -88,13 +64,8 @@
       </g>
     </g>
   </g>
-  <text
-     x="8.5"
-     y="16.810728"
-     id="text5184"
-     xml:space="preserve"
-     style="font-size:20px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:50%;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#ffffff;fill-opacity:1;stroke:none;font-family:Times New Roman;-inkscape-font-specification:'Times New Roman,'"><tspan
-       x="8.5"
-       y="16.810728"
-       id="tspan5186">...</tspan></text>
+  <path
+     d="m 21.727041,13.737758 c -0.16,-0.16 -0.42,-0.16 -0.58,0 l -5.121,5.121 -5.11702,-5.12098 c -0.16,-0.16 -0.419,-0.160001 -0.578999,-1e-6 -0.08,0.08 -0.120001,0.186001 -0.12,0.291 -1e-6,0.104001 0.04,0.209001 0.12,0.289001 l 5.696015,5.698985 5.70099,-5.699011 c 0.159014,-0.159994 0.159014,-0.419994 1.4e-5,-0.579994 z"
+     id="path4567"
+     style="fill:#ffffff" />
 </svg>
