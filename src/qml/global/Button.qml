@@ -6,31 +6,31 @@ Rectangle {
 
     property alias label: label.text
     property alias labelColor: label.color
-    property alias labelFont: label.font.family
-    property alias labelBold: label.font.bold
-    property alias labelLetterSpacing: label.font.letterSpacing
-    property alias labelSize: label.font.pixelSize
-    property alias gridLayerWidth: gridLayer.width
-    property alias gridLayerHeight: gridLayer.height
-    property alias gridLayerSourceSizeWidth: gridLayer.sourceSize.width
-    property alias gridLayerSourceSizeHeight: gridLayer.sourceSize.height
+    property alias labelLeftMargin: button.leftMargin
     property alias gridLayerVisible: gridLayer.visible
+
+    property int leftMargin: 0
 
     signal clicked()
 
     Image {
         id: gridLayer
-        width: 0
-        height: 0
-        sourceSize.width: 0
-        sourceSize.height: 0
-        source: "qrc:/img-grid-small"
+        width: parent.width
+        height: parent.height
+        sourceSize.width: 455
+        sourceSize.height: 50
+        source: { if (gridLayer.visible) "qrc:/img-grid-small"; else "" }
         visible: false
         anchors.verticalCenter: parent.verticalCenter
     }
 
     Text {
         id: label
+        color: "white"
+        font.family: globalFont.name
+        font.pixelSize: screen.height/23
+        anchors.left: parent.left
+        anchors.leftMargin: leftMargin
         anchors.verticalCenter: parent.verticalCenter
     }
 

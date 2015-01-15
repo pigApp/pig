@@ -5,8 +5,8 @@ Item {
 
     Image {
         id: gridLayer
-        width: screen.width/4.22
-        height: screen.height/21.6
+        width: parent.width
+        height: parent.height
         sourceSize.width: 455
         sourceSize.height: 50
         source: "qrc:/img-grid-small"
@@ -15,12 +15,12 @@ Item {
     Text {
         id: label
         text: "SEARCH"
-        color: Qt.rgba(1, 1, 1, 0.7)
+        color: Qt.rgba(1, 1, 1, 0.8)
         font.family: globalFont.name
         font.bold: true
-        font.pixelSize: screen.height/48
+        font.pixelSize: screen.height/53
         anchors.left: gridLayer.left
-        anchors.leftMargin: screen.width/192
+        anchors.leftMargin: screen.width/147.69
         anchors.verticalCenter: gridLayer.verticalCenter
     }
     TextInput {
@@ -30,11 +30,11 @@ Item {
         font.family: globalFont.name
         font.capitalization: Font.AllUppercase
         font.bold: true
-        font.pixelSize: screen.height/48
-        maximumLength: 24
+        font.pixelSize: screen.height/53
+        maximumLength: 27
         cursorVisible: false
         anchors.left: gridLayer.left
-        anchors.leftMargin: screen.width/192
+        anchors.leftMargin: screen.width/147.69
         anchors.verticalCenter: gridLayer.verticalCenter
         onCursorVisibleChanged: { if (user.cursorVisible) user.cursorVisible = false }
         onCursorPositionChanged: {
@@ -57,10 +57,10 @@ Item {
         color: "black"
         font.family: globalFont.name
         font.bold: true
-        font.pixelSize: screen.height/48
+        font.pixelSize: screen.height/53
         visible: false
         anchors.left: gridLayer.left
-        anchors.leftMargin: screen.width/192
+        anchors.leftMargin: screen.width/147.69
         anchors.verticalCenter: gridLayer.verticalCenter
     }
 

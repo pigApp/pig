@@ -6,26 +6,50 @@ Item {
 
     property bool onCategoryFilter
 
+    Quality {
+        id: quality
+        x: -parent.width/6.5
+        width: parent.width/6.5
+        height: parent.height/21.6
+        anchors.bottom: filtersColumn.top
+        anchors.bottomMargin: parent.height/108
+    }
+    Button {
+        id: showHideQuality
+        width: parent.width/112.94
+        height: parent.height/63.52
+        label: "»"
+        labelColor: { if ((root.quality !== ""||root.full === "FULL")&&(quality.x === -screen.width/6.50)) "black"; else "white" }
+        visible: false
+        anchors.left: quality.right
+        anchors.verticalCenter: quality.verticalCenter
+        anchors.verticalCenterOffset: -parent.height/360
+        MouseArea {
+            onClicked: {
+                if (showHideQuality.label === "»") {
+                    showHideQuality.label = "«"
+                    finderHandler.state = "show_quality"
+                } else {
+                    showHideQuality.label = "»"
+                    finderHandler.state = "hide_quality"
+                }
+            }
+            anchors.fill: parent
+        }
+    }
+
     Column {
-        id: filtersButtonsColumn
-        x: -screen.width/3.84
+        id: filtersColumn
+        x: -parent.width/4.22
         spacing: parent.height/108
         anchors.verticalCenter: parent.verticalCenter
         anchors.verticalCenterOffset: -parent.height/27
-        onXChanged: { if (finderHandler.state === "show" && selectors.onShowSelectors) filtersButtonsColumn.anchors.verticalCenterOffset = -screen.height/17.41 }
         Button {
             id: categoryFilter
             width: screen.width/4.22
             height: screen.height/21.6
-            label: " CATEGORY"
-            labelColor: "white"
-            labelFont: customFont.name
-            labelLetterSpacing: screen.width/960
-            labelSize: screen.height/23
-            gridLayerWidth: screen.width/4.22
-            gridLayerHeight: screen.height/21.6
-            gridLayerSourceSizeWidth: 455
-            gridLayerSourceSizeHeight: 50
+            label: "CATEGORY"
+            labelLeftMargin: screen.width/192
             gridLayerVisible: true
             onClicked: {
                 finderHandler.state = "show_filter"
@@ -36,15 +60,8 @@ Item {
             id: pornstarFilter
             width: screen.width/4.22
             height: screen.height/21.6
-            label: " PORNSTAR"
-            labelColor: "white"
-            labelFont: customFont.name
-            labelLetterSpacing: screen.width/960
-            labelSize: screen.height/23
-            gridLayerWidth: screen.width/4.22
-            gridLayerHeight: screen.height/21.6
-            gridLayerSourceSizeWidth: 455
-            gridLayerSourceSizeHeight: 50
+            label: "PORNSTAR"
+            labelLeftMargin: screen.width/192
             gridLayerVisible: true
             onClicked: {
                 finderHandler.state = "show_filter"
@@ -62,18 +79,12 @@ Item {
 
     Input {
         id: input
-        x: -screen.width/3.84
+        x: -parent.width/4.22
+        width: parent.width/4.22
+        height: parent.height/36
         enabled: false
-        anchors.top: filtersButtonsColumn.bottom
+        anchors.top: filtersColumn.bottom
         anchors.topMargin: parent.height/108
-    }
-
-    Selectors {
-        id: selectors
-        visible: false
-        anchors.left: parent.left
-        anchors.verticalCenter: parent.verticalCenter
-        anchors.verticalCenterOffset: parent.height/10.8
     }
 
     Welcome {
@@ -100,10 +111,10 @@ Item {
             name: "hide_filter"
         },
         State {
-            name: "show_selectors"
+            name: "show_quality"
         },
         State {
-            name: "hide_selectors"
+            name: "hide_quality"
         },
         State {
             name: "hide_filter_finder"
@@ -118,10 +129,10 @@ Item {
                     NumberAnimation { target: backgroundBlur; easing.amplitude: 1.7; properties: "radius"; to: 0; duration: 600; easing.type: Easing.OutQuart }
                 }
                 ParallelAnimation {
-                    NumberAnimation { target: filtersButtonsColumn; properties: "x"; to: 0; duration: 600; easing.type: Easing.InOutQuart }
+                    NumberAnimation { target: filtersColumn; properties: "x"; to: 0; duration: 600; easing.type: Easing.InOutQuart }
                     NumberAnimation { target: input; properties: "x"; to: 0; duration: 1200; easing.type: Easing.InOutQuart }
                 }
-                PropertyAction { target: selectors; property: "visible"; value: true }
+                PropertyAction { target: showHideQuality; property: "visible"; value: true }
                 PropertyAction { target: input; property: "enabled"; value: true }
             }
         },
@@ -129,10 +140,11 @@ Item {
             to: "hide"
             SequentialAnimation {
                 PropertyAction { target: input; property: "enabled"; value: false }
-                PropertyAction { target: selectors; property: "visible"; value: false }
+                PropertyAction { target: showHideQuality; property: "visible"; value: false }
                 ParallelAnimation {
-                    NumberAnimation { target: filtersButtonsColumn; properties: "x"; to: -screen.width/3.84; duration: 600; easing.type: Easing.InOutQuart }
-                    NumberAnimation { target: input; properties: "x"; to: -screen.width/3.84; duration: 300; easing.type: Easing.InOutQuart }
+                    NumberAnimation { target: quality; properties: "x"; to: -screen.width/6.5; duration: 600; easing.type: Easing.InOutQuart }
+                    NumberAnimation { target: filtersColumn; properties: "x"; to: -screen.width/4.22; duration: 600; easing.type: Easing.InOutQuart }
+                    NumberAnimation { target: input; properties: "x"; to: -screen.width/4.22; duration: 300; easing.type: Easing.InOutQuart }
                 }
                 ParallelAnimation {
                     NumberAnimation { target: root; easing.amplitude: 1.7; properties: "screenOpacity"; to: 0.4; duration: 600; easing.type: Easing.OutQuart }
@@ -146,11 +158,12 @@ Item {
             to: "show_filter"
             SequentialAnimation {
                 PropertyAction { target: input; property: "enabled"; value: false }
-                PropertyAction { target: selectors; property: "visible"; value: false }
+                PropertyAction { target: showHideQuality; property: "visible"; value: false }
                 PropertyAction { target: filter_loader; property: "active"; value: true }
                 ParallelAnimation {
-                    NumberAnimation { target: filtersButtonsColumn; properties: "x"; to: -screen.width/3.84; duration: 300; easing.type: Easing.InOutQuart }
-                    NumberAnimation { target: input; properties: "x"; to: -screen.width/3.84; duration: 300; easing.type: Easing.InOutQuart }
+                    NumberAnimation { target: quality; properties: "x"; to: -screen.width/6.5; duration: 300; easing.type: Easing.InOutQuart }
+                    NumberAnimation { target: filtersColumn; properties: "x"; to: -screen.width/4.22; duration: 300; easing.type: Easing.InOutQuart }
+                    NumberAnimation { target: input; properties: "x"; to: -screen.width/4.22; duration: 300; easing.type: Easing.InOutQuart }
                     NumberAnimation { target: root; easing.amplitude: 1.7; properties: "xA"; to: 0; duration: 1200; easing.type: Easing.OutQuart }
                     NumberAnimation { target: backgroundBlur; easing.amplitude: 1.7; properties: "radius"; to: 96; duration: 2000; easing.type: Easing.OutQuart }
                 }
@@ -160,26 +173,23 @@ Item {
             to: "hide_filter"
             SequentialAnimation {
                 ParallelAnimation {
-                    NumberAnimation { target: filtersButtonsColumn; properties: "x"; to: 0; duration: 600; easing.type: Easing.InOutQuart }
+                    NumberAnimation { target: filtersColumn; properties: "x"; to: 0; duration: 600; easing.type: Easing.InOutQuart }
                     NumberAnimation { target: input; properties: "x"; to: 0; duration: 1200; easing.type: Easing.InOutQuart }
                     NumberAnimation { target: root; easing.amplitude: 1.7; properties: "xA"; to: screen.width; duration: 1200; easing.type: Easing.OutQuart }
                     NumberAnimation { target: backgroundBlur; easing.amplitude: 1.7; properties: "radius"; to: 0; duration: 1200; easing.type: Easing.OutQuart }
                 }
                 PropertyAction { target: filter_loader; property: "active"; value: false }
-                PropertyAction { target: selectors; property: "visible"; value: true }
+                PropertyAction { target: showHideQuality; property: "label"; value: "»" }
+                PropertyAction { target: showHideQuality; property: "visible"; value: true }
                 PropertyAction { target: input; property: "enabled"; value: true }
             }
         },
         Transition {
-            to: "show_selectors"
-            NumberAnimation { target: filtersButtonsColumn; easing.amplitude: 1.7; properties: "anchors.verticalCenterOffset"; to: -screen.height/17.41; duration: 600; easing.type: Easing.OutQuart }
-        },
-        Transition {
-            to: "hide_selectors"
-            SequentialAnimation {
-                NumberAnimation { duration: 300 }
-                NumberAnimation { target: filtersButtonsColumn; easing.amplitude: 1.7; properties: "anchors.verticalCenterOffset"; to: -screen.height/27; duration: 600; easing.type: Easing.OutQuart }
-            }
+            to: "show_quality"
+            NumberAnimation { target: quality; properties: "x"; to: 0; duration: 600; easing.type: Easing.InOutQuart }
+        },Transition {
+            to: "hide_quality"
+            NumberAnimation { target: quality; properties: "x"; to: -screen.width/6.5; duration: 600; easing.type: Easing.InOutQuart }
         },
         Transition {
             to: "hide_filter_finder"

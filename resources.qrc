@@ -7,15 +7,6 @@
         <file alias="img-peers-dark">resources/images/network/peers-dark.svg</file>
         <file alias="img-network-err">resources/images/network/error/network-err.svg</file>
         <file alias="img-download-err">resources/images/network/error/download-err.svg</file>
-        <file alias="img-more">resources/images/finder/selectors/more.svg</file>
-        <file alias="img-full">resources/images/finder/selectors/full.svg</file>
-        <file alias="img-full-off">resources/images/finder/selectors/full-off.svg</file>
-        <file alias="img-480p">resources/images/finder/selectors/480p.svg</file>
-        <file alias="img-480p-off">resources/images/finder/selectors/480p-off.svg</file>
-        <file alias="img-720p">resources/images/finder/selectors/720p.svg</file>
-        <file alias="img-720p-off">resources/images/finder/selectors/720p-off.svg</file>
-        <file alias="img-1080p">resources/images/finder/selectors/1080p.svg</file>
-        <file alias="img-1080p-off">resources/images/finder/selectors/1080p-off.svg</file>
         <file alias="img-grid-filters">resources/images/finder/filters/grid-filters.svg</file>
         <file alias="img-cat-AMATEUR">resources/images/finder/filters/categories/AMATEUR.jpg</file>
         <file alias="img-cat-ANAL">resources/images/finder/filters/categories/ANAL.jpg</file>
@@ -72,10 +63,10 @@
         <file>src/qml/Update.qml</file>
         <file>src/qml/News.qml</file>
         <file>src/qml/finder/FinderHandler.qml</file>
-        <file>src/qml/finder/Welcome.qml</file>
-        <file>src/qml/finder/Input.qml</file>
+        <file>src/qml/finder/Quality.qml</file>
         <file>src/qml/finder/Filters.qml</file>
-        <file>src/qml/finder/Selectors.qml</file>
+        <file>src/qml/finder/Input.qml</file>
+        <file>src/qml/finder/Welcome.qml</file>
         <file>src/qml/finder/filters_components/FilterBox.qml</file>
         <file>src/qml/viewer/ViewerHandler.qml</file>
         <file>src/qml/viewer/Cover.qml</file>

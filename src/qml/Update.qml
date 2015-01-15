@@ -37,9 +37,6 @@ Item {
             width: screen.width/25.6
             height: screen.height/30.85
             label: "GET"
-            labelColor: "white"
-            labelFont: globalFont.name
-            labelSize: screen.height/23
             onClicked: root.signal_qml_update_get()
         }
         Button {
@@ -47,9 +44,6 @@ Item {
             width: screen.width/22.58
             height: screen.height/30.85
             label: "SKIP"
-            labelColor: "white"
-            labelFont: globalFont.name
-            labelSize: screen.height/23
             onClicked: root.signal_qml_update_skip()
         }
     }
