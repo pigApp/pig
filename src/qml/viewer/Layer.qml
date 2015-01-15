@@ -10,7 +10,7 @@ Item {
         visible: !root.onShowTorrent
         anchors.horizontalCenter: preview.horizontalCenter
         anchors.bottom: preview.top
-        anchors.bottomMargin: screen.height/21.6
+        anchors.bottomMargin: 20//screen.height/21.6
         Text {
             id: titleLabel
             text: title
@@ -29,27 +29,25 @@ Item {
             anchors.horizontalCenter: titleLabel.horizontalCenter
         }
     }
-    Dates {
-        id: dates
-        anchors.left: preview.left
-        anchors.leftMargin: -screen.width/10.97
-        anchors.bottom: preview.verticalCenter
-        anchors.bottomMargin: -screen.height/15.42
-    }
-    Scenes {
-        id: scenesButton
-        totalScenes: scenes
-        anchors.top: dates.bottom
-        anchors.topMargin: screen.height/72
-        anchors.left: dates.left
-        anchors.leftMargin: -screen.width/640
-    }
     Preview {
         id: preview
         width: screen.width/3
         height: screen.height/2.25
         visible: !root.onShowTorrent
         anchors.centerIn: parent
+    }
+    Dates {
+        id: dates
+        anchors.top: preview.bottom
+        anchors.topMargin: 20//
+        anchors.horizontalCenter: preview.horizontalCenter
+    }
+    Scenes {
+        id: scenesButtons
+        totalScenes: scenes
+        anchors.top: dates.bottom
+        anchors.topMargin: 45//
+        anchors.horizontalCenter: dates.horizontalCenter
     }
 }
 // Tabs hechos.

@@ -15,9 +15,10 @@ Item {
         id: icon
         width: screen.width/58.18
         height: screen.height/32.72
-        sourceSize.width: screen.width/58.18
-        sourceSize.height: screen.height/32.72
+        sourceSize.width: 33
+        sourceSize.height: 33
         source: "qrc:/img-download"
+        opacity: 0.1
         anchors.centerIn: parent
     }
     Video {
@@ -52,7 +53,7 @@ Item {
         running: false
         repeat: false
         interval: 50
-        onTriggered: { icon.source = "qrc:/img-download_err" }
+        onTriggered: { icon.source = "qrc:/img-download-err" }
     }
     Timer {
         id: startPlayerDelay

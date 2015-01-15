@@ -38,7 +38,7 @@ Item {
     property real screenOpacity: 0.4
 
     signal signal_qml_password_handler(string plain, bool require, bool check, bool write)
-    signal signal_qml_update_accept()
+    signal signal_qml_update_get()
     signal signal_qml_update_skip()
     signal signal_qml_find(string inputUser, string pornstar, string category, string quality, string full, int offset, bool init)
     signal signal_qml_preview_handler(string host, string url, string path, string target, int id, bool success, bool abort)
@@ -103,7 +103,6 @@ Item {
             },
             State {
                 name: "show_news"
-                PropertyChanges { target: backgroundBlur; radius: 64; restoreEntryValues: false }
                 PropertyChanges { target: root_loader_A; source: ""; restoreEntryValues: false }
                 PropertyChanges { target: root_loader_A; source: "News.qml"; restoreEntryValues: false }
             },

@@ -5,15 +5,15 @@ Item {
 
     Image {
         id: icon
-        width: parent.width/30
-        height: parent.height/25.35
-        sourceSize.width: parent.width/30
-        sourceSize.height: parent.height/25.35
+        width: screen.width/30
+        height: screen.height/25.11
+        sourceSize.width: 64
+        sourceSize.height: 43
         source:  {
             if (!root.errorNetwork)
                 "qrc:/img-network"
             else
-                "qrc:/img-network_err"
+                "qrc:/img-network-err"
         }
         anchors.right: parent.right
         anchors.rightMargin: parent.width/128
@@ -36,3 +36,4 @@ Item {
         }
     }
 }
+// Tabs hechos.

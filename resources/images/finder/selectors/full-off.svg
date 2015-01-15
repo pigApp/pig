@@ -17,18 +17,20 @@
          rdf:about=""><dc:format>image/svg+xml</dc:format><dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" /><dc:title></dc:title></cc:Work></rdf:RDF></metadata><defs
      id="defs3250" /><g
-     id="g3788"><g
-       id="g5382"><path
+     id="g3788"
+     style="fill:#ffffff"><g
+       id="g5382"
+       style="fill:#ffffff"><path
          d="m 32.5,0.5 c -17.67388,0 -32,14.32612 -32,32 0,17.67387 14.32612,32 32,32 17.67387,0 32,-14.32613 32,-32 0,-17.67388 -14.32613,-32 -32,-32 z m 0,59 c -14.91213,0 -27,-12.08788 -27,-27 0,-14.91213 12.08787,-27 27,-27 14.91212,0 27,12.08787 27,27 0,14.91212 -12.08788,27 -27,27 z"
          id="path3244"
-         style="fill:#000000" /></g><text
+         style="fill:#ffffff" /></g><text
        x="10.116668"
        y="38.570538"
        id="text6189"
        xml:space="preserve"
-       style="font-size:18px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:50%;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;font-family:Times New Roman;-inkscape-font-specification:'Times New Roman,'"><tspan
+       style="font-size:18px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:50%;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#ffffff;fill-opacity:1;stroke:none;font-family:Times New Roman;-inkscape-font-specification:'Times New Roman,'"><tspan
          x="10.116668"
          y="38.570538"
          id="tspan6191"
-         style="fill:#000000">FULL</tspan></text>
+         style="fill:#ffffff">FULL</tspan></text>
 </g></svg>

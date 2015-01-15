@@ -17,10 +17,10 @@
          rdf:about=""><dc:format>image/svg+xml</dc:format><dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" /><dc:title></dc:title></cc:Work></rdf:RDF></metadata><defs
      id="defs23010" /><g
-     id="g3269"><path
+     id="g3194"><path
        d="m 16.5,0.5 c -8.83694,0 -16,7.16306 -16,16 0,8.83694 7.16306,16 16,16 8.83694,0 16,-7.16306 16,-16 0,-8.83694 -7.16306,-16 -16,-16 z m 0,29.5 C 9.04394,30 3,23.95606 3,16.5 3,9.04394 9.04394,3 16.5,3 23.95606,3 30,9.04394 30,16.5 30,23.95606 23.95606,30 16.5,30 z"
        id="path23004"
-       style="fill:#ffffff" /><path
+       style="fill:#181818;fill-opacity:1" /><path
        d="m 24.5,11.5 v -3 h -3 v 1 h -10 v -1 h -3 v 3 h 1 v 10 h -1 v 3 h 3 v -1 h 10 v 1 h 3 v -3 h -1 v -10 h 1 z m -2,-2 h 1 v 1 h -1 v -1 z m -13,0 h 1 v 1 h -1 v -1 z m 1,14 h -1 v -1 h 1 v 1 z m 13,0 h -1 v -1 h 1 v 1 z m -1,-2 h -1 v 1 h -10 v -1 h -1 v -10 h 1 v -1 h 10 v 1 h 1 v 10 z"
        id="path23006"
-       style="fill:#ffffff;fill-rule:evenodd" /></g></svg>
+       style="fill:#181818;fill-opacity:1;fill-rule:evenodd" /></g></svg>

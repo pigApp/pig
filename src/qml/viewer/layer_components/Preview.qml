@@ -1,17 +1,16 @@
 import QtQuick 2.4
 
-Rectangle {
+Item {
     id: preview
-    color: Qt.rgba(0, 0, 0, 0.05)
 
     Image {
         id: icon
         width: screen.width/58.18
         height: screen.height/32.72
-        sourceSize.width: screen.width/58.18
-        sourceSize.height: screen.height/32.72
+        sourceSize.width: 33
+        sourceSize.height: 33
         source: "qrc:/img-play"
-        opacity: 0.2
+        opacity: 0.1
         anchors.centerIn: parent
     }
 

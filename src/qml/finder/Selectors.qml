@@ -9,8 +9,8 @@ Item {
         id: moreIcon
         width: screen.width/58.18
         height: screen.height/32.72
-        sourceSize.width: screen.width/58.18
-        sourceSize.height: screen.height/32.72
+        sourceSize.width: 33
+        sourceSize.height: 33
         source: "qrc:/img-more"
         opacity: 0.5
         anchors.left: parent.left
@@ -44,15 +44,15 @@ Item {
         spacing: screen.width/384
         opacity: 0
         anchors.left: moreIcon.right
-        anchors.leftMargin: screen.width/240
+        anchors.leftMargin: screen.width/160
         anchors.verticalCenter: moreIcon.verticalCenter
         Image {
             id: fullMovieIcon
             width: screen.width/29.53
             height: screen.height/16.61
-            sourceSize.width: screen.width/29.53
-            sourceSize.height: screen.height/16.61
-            source: { if (root.full === "FULL") "qrc:/img-full"; else "qrc:/img-full_off" }
+            sourceSize.width: 65
+            sourceSize.height: 65
+            source: { if (root.full === "FULL") "qrc:/img-full"; else "qrc:/img-full-off" }
             MouseArea {
                 onClicked: { if (root.full === "FULL") root.full = ""; else root.full= "FULL" }
                 anchors.fill: parent
@@ -62,9 +62,9 @@ Item {
             id: sdIcon
             width: screen.width/29.53
             height: screen.height/16.61
-            sourceSize.width: screen.width/29.53
-            sourceSize.height: screen.height/16.61
-            source: { if (root.quality === "SD") "qrc:/img-sd"; else "qrc:/img-sd_off" }
+            sourceSize.width: 65
+            sourceSize.height: 65
+            source: { if (root.quality === "SD") "qrc:/img-480p"; else "qrc:/img-480p-off" }
             MouseArea {
                 onClicked: { if (root.quality === "SD") root.quality = ""; else root.quality = "SD" }
                 anchors.fill: parent
@@ -74,9 +74,9 @@ Item {
             id: hdIcon
             width: screen.width/29.53
             height: screen.height/16.61
-            sourceSize.width: screen.width/29.53
-            sourceSize.height: screen.height/16.61
-            source: { if (root.quality === "720p") "qrc:/img-720p"; else "qrc:/img-720p_off" }
+            sourceSize.width: 65
+            sourceSize.height: 65
+            source: { if (root.quality === "720p") "qrc:/img-720p"; else "qrc:/img-720p-off" }
             MouseArea {
                 onClicked: { if (root.quality === "720p") root.quality = ""; else root.quality = "720p" }
                 anchors.fill: parent
@@ -86,9 +86,9 @@ Item {
             id: fullHdIcon
             width: screen.width/29.53
             height: screen.height/16.61
-            sourceSize.width: screen.width/29.53
-            sourceSize.height: screen.height/16.61
-            source: { if (root.quality === "1080p") "qrc:/img-1080p"; else "qrc:/img-1080p_off" }
+            sourceSize.width: 65
+            sourceSize.height: 65
+            source: { if (root.quality === "1080p") "qrc:/img-1080p"; else "qrc:/img-1080p-off" }
             MouseArea {
                 onClicked: { if (root.quality === "1080p") root.quality = ""; else root.quality = "1080p" }
                 anchors.fill: parent
@@ -134,7 +134,7 @@ Item {
             to: "show_selectors"
             SequentialAnimation {
                 NumberAnimation { target: moreIcon; easing.amplitude: 1.7; properties: "opacity"; to: 1; duration: 100; easing.type: Easing.OutQuart }
-                NumberAnimation { target: selectorsRow; properties: "opacity"; to: 1.0; duration: 200; easing.type: Easing.InOutQuart }
+                NumberAnimation { target: selectorsRow; properties: "opacity"; to: 1; duration: 200; easing.type: Easing.InOutQuart }
             }
         },
         Transition {

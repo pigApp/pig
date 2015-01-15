@@ -7,13 +7,27 @@ Item {
         id: layer
         color: "black"
         anchors.fill: parent
-        Text {
-            id: label
-            text: "INTRO PASSWORD"
-            color: "white"
-            font.family: globalFont.name
-            font.pixelSize: screen.height/23
+        Row {
+            spacing: parent.width/192
             anchors.centerIn: parent
+            Text {
+                id: failLabel
+                text: "FAIL"
+                color: "red"
+                font.family: globalFont.name
+                font.bold: true
+                font.pixelSize: screen.height/23
+                visible: false
+                anchors.verticalCenter: label.verticalCenter
+                anchors.verticalCenterOffset: screen.height/540
+            }
+            Text {
+                id: label
+                text: "INTRO PASSWORD"
+                color: "white"
+                font.family: globalFont.name
+                font.pixelSize: screen.height/23
+            }
         }
         TextInput {
             id: user
@@ -28,7 +42,6 @@ Item {
             onCursorVisibleChanged: { if (user.cursorVisible) user.cursorVisible = false }
             onCursorPositionChanged: {
                 user.visible = true
-                label.color = "white"
                 if (user.text === "")
                     label.text = "INTRO PASSWORD"
                 else
@@ -75,11 +88,11 @@ Item {
             if (success) {
                 screen.state = "hide_password"
             } else {
-                label.color = Qt.rgba(0.1, 0.1, 0.1, 1)
                 if (root.askPassword) {
                     label.text = "WRONG PASSWORD"
                 } else {
-                    label.text = "FAIL CHECK PERMISSIONS"
+                    failLabel.visible = true
+                    label.text = "CHECK PERMISSIONS"
                     hide.start()
                 }
             }

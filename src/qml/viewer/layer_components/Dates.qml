@@ -3,10 +3,10 @@ import QtQuick 2.4
 Item {
     id: dates
 
-    Column {
+    Row {
         spacing: screen.height/216
-        anchors.left: parent.left
-        anchors.bottom: parent.bottom
+        anchors.top: parent.top
+        anchors.horizontalCenter: parent.horizontalCenter
         Text {
             id: categoriesLabel
             text: categories
@@ -24,9 +24,9 @@ Item {
             font.pixelSize: screen.height/30
         }
         Text {
-            id: splitLabel
-            text: "SPLIT"
-            color: { if (scenes !== 1) "white"; else Qt.rgba(1, 1, 1, 0.1) }
+            id: timeLabel
+            text: time
+            color: "white"
             font.family: customFont.name
             font.letterSpacing: screen.width/960
             font.pixelSize: screen.height/30

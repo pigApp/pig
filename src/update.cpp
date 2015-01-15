@@ -110,7 +110,7 @@ void Update::check_versions(const QString *const str)
     }
 }
 
-void Update::accepted()
+void Update::user_confirmation()
 {
     (*_root)->setProperty("status", "");
 
@@ -222,7 +222,7 @@ void Update::check_exit(int exitCode)
         (*_root)->setProperty("information", "RESTART PIG");
     } else if (exitCode == -1) {
         (*_root)->setProperty("status", "FAIL");
-        (*_root)->setProperty("information", "GKSU_KDESU NEEDED");
+        (*_root)->setProperty("information", "GKSU OR KDESU NEEDED");
         QTimer::singleShot(10000, this, SLOT(error()));
     } else {
         (*_root)->setProperty("status", "FAIL");

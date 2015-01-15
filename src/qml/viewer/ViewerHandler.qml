@@ -10,6 +10,16 @@ Item {
     property int current_film: 1
     property var coverStatus: []
 
+    Image {
+        id: gridLayer
+        width: parent.width
+        height: 610 //
+        sourceSize.width: 1920
+        sourceSize.height: 610
+        source: "qrc:/img-grid-viewer"
+        anchors.verticalCenter: parent.verticalCenter
+    }
+
     ListModel { id: model }
 
     PathView {
@@ -89,7 +99,7 @@ Item {
                     NumberAnimation { duration: 250 }
                     ParallelAnimation {
                         NumberAnimation { target: root; easing.amplitude: 1.7; properties: "xB"; to: 0; duration: 1200; easing.type: Easing.OutQuart }
-                        NumberAnimation { target: root; easing.amplitude: 1.7; properties: "screenOpacity"; to: 0.5; duration: 1200; easing.type: Easing.OutQuart }
+                        NumberAnimation { target: root; easing.amplitude: 1.7; properties: "screenOpacity"; to: 0; duration: 1200; easing.type: Easing.OutQuart } //0.4
                         NumberAnimation { target: backgroundBlur; easing.amplitude: 1.7; properties: "radius"; to: 96; duration: 1200; easing.type: Easing.OutQuart }
                     }
                     PropertyAction { target: view; property: "enabled"; value: true }
@@ -138,12 +148,12 @@ Item {
                 view.enabled = false
                 enabledDelay.start()
                 incrementCurrentIndex()
-                if (location_global === root.data_films.length-12) {
+                if (location_global === root.data_films.length-13) {
                     location_global = 0
                     location_block = 0
                     current_film = current_film-root.block_films+1
                 } else {
-                    location_global = location_global+12
+                    location_global = location_global+13
                     ++current_film
                     ++location_block
                 }
@@ -152,11 +162,11 @@ Item {
                 enabledDelay.start()
                 decrementCurrentIndex()
                 if (location_global === 0) {
-                    location_global = root.data_films.length-12
+                    location_global = root.data_films.length-13
                     location_block = root.block_films-1
                     current_film = current_film+root.block_films-1
                 } else {
-                    location_global = location_global-12
+                    location_global = location_global-13
                     --current_film
                     --location_block
                 }
@@ -184,7 +194,6 @@ Item {
             width: view.width
             height: view.height
             scale: PathView.recipe_scale
-
             Cover {
                 id: cover
                 width: parent.width/4.58
@@ -227,12 +236,12 @@ Item {
         var torrent
         var row = 0
         for (var i=0; i<root.block_films; i++) {
-           torrent = root.data_films[row+11].split(",")
+           torrent = root.data_films[row+12].split(",")
            model.append({ "title": root.data_films[row], "cast": root.data_films[row+1], "categories": root.data_films[row+2], "quality": root.data_films[row+3],
-                          "full": root.data_films[row+4], "hostPreview": root.data_films[row+5], "urlPreview": root.data_films[row+6], "filePreview": root.data_films[row+7],
-                          "idPreview": i, "hostCover": root.data_films[row+8], "urlFrontCover": root.data_films[row+9],"urlBackCover": root.data_films[row+10],
-                          "urlTorrent": torrent[0], "scenes": Number(torrent[1]) })
-           row += 12
+                          "time": root.data_films[row+4], "full": root.data_films[row+5], "hostPreview": root.data_films[row+6], "urlPreview": root.data_films[row+7],
+                          "filePreview": root.data_films[row+8], "idPreview": i, "hostCover": root.data_films[row+9], "urlFrontCover": root.data_films[row+10],
+                          "urlBackCover": root.data_films[row+11], "urlTorrent": torrent[0], "scenes": Number(torrent[1]) })
+           row += 13
         }
         root_loader_A.source = "../global/Network.qml"
         networkTimeOut.start()

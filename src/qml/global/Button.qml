@@ -1,5 +1,4 @@
 import QtQuick 2.4
-import QtGraphicalEffects 1.0
 
 Rectangle {
     id: button
@@ -11,32 +10,28 @@ Rectangle {
     property alias labelBold: label.font.bold
     property alias labelLetterSpacing: label.font.letterSpacing
     property alias labelSize: label.font.pixelSize
-    property alias layerWidth: layer.width
-    property alias layerHeight: layer.height
-    property alias layerColor: layer.color
-    property alias layerVisible: layer.visible
+    property alias gridLayerWidth: gridLayer.width
+    property alias gridLayerHeight: gridLayer.height
+    property alias gridLayerSourceSizeWidth: gridLayer.sourceSize.width
+    property alias gridLayerSourceSizeHeight: gridLayer.sourceSize.height
+    property alias gridLayerVisible: gridLayer.visible
 
     signal clicked()
 
-    Rectangle {
-        id: layer
+    Image {
+        id: gridLayer
         width: 0
         height: 0
+        sourceSize.width: 0
+        sourceSize.height: 0
+        source: "qrc:/img-grid-small"
         visible: false
         anchors.verticalCenter: parent.verticalCenter
     }
+
     Text {
         id: label
         anchors.verticalCenter: parent.verticalCenter
-    }
-    DropShadow {
-        id: shadow
-        color: "white"
-        source: label
-        radius: 8
-        samples: 32
-        opacity: 0
-        anchors.fill: label
     }
 
     MouseArea {
@@ -58,11 +53,11 @@ Rectangle {
     transitions: [
         Transition {
             to: "in"
-            NumberAnimation { target: shadow; easing.amplitude: 1.7; properties: "opacity"; to: 0.5; duration: 100; easing.type: Easing.OutQuart }
+            NumberAnimation { target: label; easing.amplitude: 1.7; properties: "opacity"; to: 0.7; duration: 100; easing.type: Easing.OutQuart }
         },
         Transition {
             to: "out"
-            NumberAnimation { target: shadow; easing.amplitude: 1.7; properties: "opacity"; to: 0; duration: 100; easing.type: Easing.OutQuart }
+            NumberAnimation { target: label; easing.amplitude: 1.7; properties: "opacity"; to: 1; duration: 100; easing.type: Easing.OutQuart }
         }
     ]
 }

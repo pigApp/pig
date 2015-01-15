@@ -11,14 +11,15 @@ Item {
         Text {
             id: statusLabel
             text: root.status
-            color: { if(statusLabel.text === "FAIL") Qt.rgba(0.08, 0.08, 0.08, 1); else "white" }
+            color: { if(statusLabel.text === "FAIL") "red"; else "white" }
             font.family: globalFont.name
+            font.bold: { statusLabel.text === "UPDATED" || statusLabel.text === "FAIL" }
             font.pixelSize: screen.height/23
         }
         Text {
             id: informationLabel
             text: root.information
-            color: { if(statusLabel.text === "FAIL") Qt.rgba(0.08, 0.08, 0.08, 1); else "white" }
+            color: "white"
             font.family: globalFont.name
             font.pixelSize: screen.height/23
         }
@@ -30,27 +31,25 @@ Item {
         enabled: { statusLabel.text === "UPDATE AVAILABLE" }
         anchors.top: labelsRow.bottom
         anchors.horizontalCenter: labelsRow.horizontalCenter
-        anchors.horizontalCenterOffset: -parent.width/192
+        anchors.horizontalCenterOffset: -parent.width/384
         Button {
-            id: accept
-            width: screen.width/27.9
-            height: screen.height/72
-            label: "INSTALL"
+            id: get
+            width: screen.width/25.6
+            height: screen.height/30.85
+            label: "GET"
             labelColor: "white"
             labelFont: globalFont.name
-            labelBold: true
-            labelSize: screen.height/54
-            onClicked: root.signal_qml_update_accept()
+            labelSize: screen.height/23
+            onClicked: root.signal_qml_update_get()
         }
         Button {
             id: skip
-            width: screen.width/49.23
-            height: screen.height/72
+            width: screen.width/22.58
+            height: screen.height/30.85
             label: "SKIP"
             labelColor: "white"
             labelFont: globalFont.name
-            labelBold: true
-            labelSize: screen.height/54
+            labelSize: screen.height/23
             onClicked: root.signal_qml_update_skip()
         }
     }

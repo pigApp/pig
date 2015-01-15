@@ -16,8 +16,8 @@ Item {
                 id: bitRateIcon
                 width: screen.width/58.18
                 height: screen.height/32.72
-                sourceSize.width: screen.width/58.18
-                sourceSize.height: screen.height/32.72
+                sourceSize.width: 33
+                sourceSize.height: 33
                 source: "qrc:/img-download"
                 visible: { bitRateLabel.text !== "CONNECTING" }
             }
@@ -49,8 +49,8 @@ Item {
                 id: peersIcon
                 width: screen.width/58.18
                 height: screen.height/32.72
-                sourceSize.width: screen.width/58.18
-                sourceSize.height: screen.height/32.72
+                sourceSize.width: 33
+                sourceSize.height: 33
                 source: "qrc:/img-peers"
                 visible: { bitRateLabel.text !== "CONNECTING" }
             }

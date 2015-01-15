@@ -11,21 +11,22 @@ Item {
         x: -screen.width/3.84
         spacing: parent.height/108
         anchors.verticalCenter: parent.verticalCenter
-        anchors.verticalCenterOffset: -parent.height/36
-        onXChanged: { if (finderHandler.state === "show" && selectors.onShowSelectors) filtersButtonsColumn.anchors.verticalCenterOffset = -screen.height/18.94 }
+        anchors.verticalCenterOffset: -parent.height/27
+        onXChanged: { if (finderHandler.state === "show" && selectors.onShowSelectors) filtersButtonsColumn.anchors.verticalCenterOffset = -screen.height/17.41 }
         Button {
             id: categoryFilter
-            width: screen.width/3.84
+            width: screen.width/4.22
             height: screen.height/21.6
             label: " CATEGORY"
             labelColor: "white"
             labelFont: customFont.name
             labelLetterSpacing: screen.width/960
             labelSize: screen.height/23
-            layerWidth: screen.width/3.96
-            layerHeight: screen.height/21.6
-            layerColor: Qt.rgba(0, 0, 0, 0.05)
-            layerVisible: true
+            gridLayerWidth: screen.width/4.22
+            gridLayerHeight: screen.height/21.6
+            gridLayerSourceSizeWidth: 455
+            gridLayerSourceSizeHeight: 50
+            gridLayerVisible: true
             onClicked: {
                 finderHandler.state = "show_filter"
                 onCategoryFilter = true
@@ -33,17 +34,18 @@ Item {
         }
         Button {
             id: pornstarFilter
-            width: screen.width/3.84
+            width: screen.width/4.22
             height: screen.height/21.6
             label: " PORNSTAR"
             labelColor: "white"
             labelFont: customFont.name
             labelLetterSpacing: screen.width/960
             labelSize: screen.height/23
-            layerWidth: screen.width/3.96
-            layerHeight: screen.height/21.6
-            layerColor: Qt.rgba(0, 0, 0, 0.05)
-            layerVisible: true
+            gridLayerWidth: screen.width/4.22
+            gridLayerHeight: screen.height/21.6
+            gridLayerSourceSizeWidth: 455
+            gridLayerSourceSizeHeight: 50
+            gridLayerVisible: true
             onClicked: {
                 finderHandler.state = "show_filter"
                 onCategoryFilter = false
@@ -170,13 +172,13 @@ Item {
         },
         Transition {
             to: "show_selectors"
-            NumberAnimation { target: filtersButtonsColumn; easing.amplitude: 1.7; properties: "anchors.verticalCenterOffset"; to: -screen.height/18.94; duration: 600; easing.type: Easing.OutQuart }
+            NumberAnimation { target: filtersButtonsColumn; easing.amplitude: 1.7; properties: "anchors.verticalCenterOffset"; to: -screen.height/17.41; duration: 600; easing.type: Easing.OutQuart }
         },
         Transition {
             to: "hide_selectors"
             SequentialAnimation {
                 NumberAnimation { duration: 300 }
-                NumberAnimation { target: filtersButtonsColumn; easing.amplitude: 1.7; properties: "anchors.verticalCenterOffset"; to: -screen.height/36; duration: 600; easing.type: Easing.OutQuart }
+                NumberAnimation { target: filtersButtonsColumn; easing.amplitude: 1.7; properties: "anchors.verticalCenterOffset"; to: -screen.height/27; duration: 600; easing.type: Easing.OutQuart }
             }
         },
         Transition {

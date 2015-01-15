@@ -2,20 +2,21 @@
     <qresource prefix="/">
         <file alias="img-network">resources/images/network/network.svg</file>
         <file alias="img-download">resources/images/network/download.svg</file>
-        <file alias="img-download-dark">resources/images/network/download_dark.svg</file>
+        <file alias="img-download-dark">resources/images/network/download-dark.svg</file>
         <file alias="img-peers">resources/images/network/peers.svg</file>
-        <file alias="img-peers-dark">resources/images/network/peers_dark.svg</file>
-        <file alias="img-network_err">resources/images/network/error/network_err.svg</file>
-        <file alias="img-download_err">resources/images/network/error/download_err.svg</file>
+        <file alias="img-peers-dark">resources/images/network/peers-dark.svg</file>
+        <file alias="img-network-err">resources/images/network/error/network-err.svg</file>
+        <file alias="img-download-err">resources/images/network/error/download-err.svg</file>
         <file alias="img-more">resources/images/finder/selectors/more.svg</file>
         <file alias="img-full">resources/images/finder/selectors/full.svg</file>
-        <file alias="img-full_off">resources/images/finder/selectors/full_off.svg</file>
-        <file alias="img-sd">resources/images/finder/selectors/sd.svg</file>
-        <file alias="img-sd_off">resources/images/finder/selectors/sd_off.svg</file>
+        <file alias="img-full-off">resources/images/finder/selectors/full-off.svg</file>
+        <file alias="img-480p">resources/images/finder/selectors/480p.svg</file>
+        <file alias="img-480p-off">resources/images/finder/selectors/480p-off.svg</file>
         <file alias="img-720p">resources/images/finder/selectors/720p.svg</file>
-        <file alias="img-720p_off">resources/images/finder/selectors/720p_off.svg</file>
+        <file alias="img-720p-off">resources/images/finder/selectors/720p-off.svg</file>
         <file alias="img-1080p">resources/images/finder/selectors/1080p.svg</file>
-        <file alias="img-1080p_off">resources/images/finder/selectors/1080p_off.svg</file>
+        <file alias="img-1080p-off">resources/images/finder/selectors/1080p-off.svg</file>
+        <file alias="img-grid-filters">resources/images/finder/filters/grid-filters.svg</file>
         <file alias="img-cat-AMATEUR">resources/images/finder/filters/categories/AMATEUR.jpg</file>
         <file alias="img-cat-ANAL">resources/images/finder/filters/categories/ANAL.jpg</file>
         <file alias="img-cat-ASIAN">resources/images/finder/filters/categories/ASIAN.jpg</file>
@@ -47,16 +48,18 @@
         <file alias="img-cat-TOYS">resources/images/finder/filters/categories/TOYS.jpg</file>
         <file alias="img-cat-VOYEUR">resources/images/finder/filters/categories/VOYEUR.jpg</file>
         <file alias="img-star-BELLADONNA">resources/images/finder/filters/pornstars/BELLADONNA.jpg</file>
+        <file alias="img-grid-viewer">resources/images/viewer/grid-viewer.svg</file>
+        <file alias="img-scene">resources/images/viewer/scene/scene.svg</file>
         <file alias="img-play">resources/images/viewer/preview/play.svg</file>
         <file alias="img-replay">resources/images/viewer/preview/replay.svg</file>
-        <file alias="img-open">resources/images/viewer/scene/open.svg</file>
-        <file alias="img-cover_err">resources/images/viewer/error/cover_err.jpg</file>
+        <file alias="img-cover-err">resources/images/viewer/error/cover-err.jpg</file>
         <file alias="img-playing">resources/images/videoplayer/playing.svg</file>
         <file alias="img-paused">resources/images/videoplayer/paused.svg</file>
         <file alias="img-standby">resources/images/videoplayer/standby.svg</file>
         <file alias="img-volume">resources/images/videoplayer/volume.svg</file>
-        <file alias="img-volume_off">resources/images/videoplayer/volume_off.svg</file>
+        <file alias="img-volume-off">resources/images/videoplayer/volume-off.svg</file>
         <file alias="img-background">resources/images/global/background.jpg</file>
+        <file alias="img-grid-small">resources/images/global/grid-small.svg</file>
         <file>resources/images/global/icon.ico</file>
         <file>resources/images/global/icon.png</file>
         <file>resources/images/global/icon.rc</file>
@@ -77,10 +80,10 @@
         <file>src/qml/viewer/ViewerHandler.qml</file>
         <file>src/qml/viewer/Cover.qml</file>
         <file>src/qml/viewer/Layer.qml</file>
-        <file>src/qml/viewer/layer_components/Dates.qml</file>
-        <file>src/qml/viewer/layer_components/Scenes.qml</file>
         <file>src/qml/viewer/layer_components/Preview.qml</file>
         <file>src/qml/viewer/layer_components/PreviewPlayer.qml</file>
+        <file>src/qml/viewer/layer_components/Dates.qml</file>
+        <file>src/qml/viewer/layer_components/Scenes.qml</file>
         <file>src/qml/torrent/TorrentHandler.qml</file>
         <file>src/qml/torrent/Status.qml</file>
         <file>src/qml/torrent/VideoPlayer.qml</file>

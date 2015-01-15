@@ -51,8 +51,8 @@ Item {
                     id: playbackIcon
                     width: screen.width/58.18
                     height: screen.height/32.72
-                    sourceSize.width: screen.width/58.18
-                    sourceSize.height: screen.height/32.72
+                    sourceSize.width: 33
+                    sourceSize.height: 33
                     source: {
                         if (videoPlayerHandler.standby) {
                             "qrc:/img-standby"
@@ -73,9 +73,9 @@ Item {
                         id: volumeIcon
                         width: screen.width/58.18
                         height: screen.height/32.72
-                        sourceSize.width: screen.width/58.18
-                        sourceSize.height: screen.height/32.72
-                        source: { if (player.volume !== 0.0 && !player.muted) "qrc:/img-volume"; else "qrc:/img-volume_off" }
+                        sourceSize.width: 33
+                        sourceSize.height: 33
+                        source: { if (player.volume !== 0.0 && !player.muted) "qrc:/img-volume"; else "qrc:/img-volume-off" }
                     }
                     Text {
                         id: volumeLabel
@@ -118,8 +118,8 @@ Item {
                         id: bitRateIcon
                         width: screen.width/58.18
                         height: screen.height/32.72
-                        sourceSize.width: screen.width/58.18
-                        sourceSize.height: screen.height/32.72
+                        sourceSize.width: 33
+                        sourceSize.height: 33
                         source: "qrc:/img-download-dark"
                     }
                     Text {
@@ -149,8 +149,8 @@ Item {
                         id: peersIcon
                         width: screen.width/58.18
                         height: screen.height/32.72
-                        sourceSize.width: screen.width/58.18
-                        sourceSize.height: screen.height/32.72
+                        sourceSize.width: 33
+                        sourceSize.height: 33
                         source: "qrc:/img-peers-dark"
                     }
                     Text {

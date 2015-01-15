@@ -1,26 +1,25 @@
 import QtQuick 2.4
 
 Item {
-    id: scenesButton
+    id: scenesButtons
 
     property alias totalScenes: repeater.model
 
-    Grid {
+    Row {
         spacing: screen.width/192
-        columns: 2
         anchors.top: parent.top
-        anchors.left: parent.left
+        anchors.horizontalCenter: parent.horizontalCenter
         Repeater {
             id: repeater
             delegate:
             Image {
                 id: icon
-                width: screen.width/60
-                height: screen.height/42.63
-                sourceSize.width: screen.width/60
-                sourceSize.height: screen.height/42.63
-                source: "qrc:/img-open"
-                opacity: 0.1
+                width: screen.width/58.18
+                height: screen.height/32.72
+                sourceSize.width: 33
+                sourceSize.height: 33
+                source: "qrc:/img-scene"
+                opacity: 0.5
                 property bool viewed
                 MouseArea {
                     hoverEnabled: true
@@ -29,7 +28,7 @@ Item {
                     onClicked: {
                         icon.viewed = true
                         screen.state = "show_torrent"
-                        root.signal_qml_torrent_handler(urlTorrent, index+1, false)
+                        root.signal_qml_torrent_handler(urlTorrent, index, false)
                     }
                     anchors.fill: parent
                 }
@@ -48,7 +47,7 @@ Item {
                     },
                     Transition {
                         to: "out"
-                        NumberAnimation { target: icon; easing.amplitude: 1.7; properties: "opacity"; to: 0.1; duration: 100; easing.type: Easing.OutQuart }
+                        NumberAnimation { target: icon; easing.amplitude: 1.7; properties: "opacity"; to: 0.5; duration: 100; easing.type: Easing.OutQuart }
                     }
                 ]
             }

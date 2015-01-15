@@ -48,7 +48,7 @@ Item {
     Text {
         id: readMoreLabel
         text: "<style type='text/css'> a:link{color:#161616;font-style:normal;text-decoration:none} </style>"+
-              "ESC TO CLOSE NEWS / READ MORE &nbsp; <a href=\'http://google.com\'>GITHUB.COM/PIGAPP/NEWS <font color='#ffffff'>➟</font></a>"
+              "READ MORE &nbsp; <a href=\'http://google.com\'>GITHUB.COM/PIGAPP/NEWS <font color='#ffffff'>➟</font></a>"
         color: "white"
         font.family: globalFont.name
         font.bold: true

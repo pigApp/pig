@@ -3,22 +3,25 @@ import QtQuick 2.4
 Item {
     id: input
 
-    Rectangle {
-        id: layer
-        width: screen.width/3.95
+    Image {
+        id: gridLayer
+        width: screen.width/4.22
         height: screen.height/21.6
-        color: Qt.rgba(0, 0, 0, 0.05)
+        sourceSize.width: 455
+        sourceSize.height: 50
+        source: "qrc:/img-grid-small"
     }
+
     Text {
         id: label
         text: "SEARCH"
-        color: Qt.rgba(1, 1, 1, 0.5)
+        color: Qt.rgba(1, 1, 1, 0.7)
         font.family: globalFont.name
         font.bold: true
         font.pixelSize: screen.height/48
-        anchors.left: layer.left
+        anchors.left: gridLayer.left
         anchors.leftMargin: screen.width/192
-        anchors.verticalCenter: layer.verticalCenter
+        anchors.verticalCenter: gridLayer.verticalCenter
     }
     TextInput {
         id: user
@@ -28,11 +31,11 @@ Item {
         font.capitalization: Font.AllUppercase
         font.bold: true
         font.pixelSize: screen.height/48
-        maximumLength: 26
+        maximumLength: 24
         cursorVisible: false
-        anchors.left: layer.left
+        anchors.left: gridLayer.left
         anchors.leftMargin: screen.width/192
-        anchors.verticalCenter: layer.verticalCenter
+        anchors.verticalCenter: gridLayer.verticalCenter
         onCursorVisibleChanged: { if (user.cursorVisible) user.cursorVisible = false }
         onCursorPositionChanged: {
             if (dbNullLabel.visible)
@@ -51,14 +54,14 @@ Item {
     Text {
         id: dbNullLabel
         text: "NO RESULT"
-        color: Qt.rgba(0, 0, 0, 0.3)
+        color: "black"
         font.family: globalFont.name
         font.bold: true
         font.pixelSize: screen.height/48
         visible: false
-        anchors.left: layer.left
+        anchors.left: gridLayer.left
         anchors.leftMargin: screen.width/192
-        anchors.verticalCenter: layer.verticalCenter
+        anchors.verticalCenter: gridLayer.verticalCenter
     }
 
     onEnabledChanged: user.forceActiveFocus()
