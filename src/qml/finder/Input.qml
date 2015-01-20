@@ -12,67 +12,56 @@ Item {
         source: "qrc:/img-grid-small"
     }
 
-    Text {
-        id: label
-        text: "SEARCH"
-        color: Qt.rgba(1, 1, 1, 0.8)
-        font.family: globalFont.name
-        font.bold: true
-        font.pixelSize: screen.height/53
-        anchors.left: gridLayer.left
-        anchors.leftMargin: screen.width/147.69
+    Image {
+        id: icon
+        width: screen.width/58.18
+        height: screen.height/32.72
+        sourceSize.width: 33
+        sourceSize.height: 33
+        source: "qrc:/img-find"
+        visible: false
+        anchors.left: gridLayer.right
+        anchors.leftMargin: screen.width/192
         anchors.verticalCenter: gridLayer.verticalCenter
     }
     TextInput {
         id: user
         text: root.inputUser
-        color: "black"
+        color: "white"
         font.family: globalFont.name
         font.capitalization: Font.AllUppercase
         font.bold: true
-        font.pixelSize: screen.height/53
-        maximumLength: 27
+        font.pixelSize: screen.height/23
+        maximumLength: 17//
         cursorVisible: false
         anchors.left: gridLayer.left
-        anchors.leftMargin: screen.width/147.69
+        anchors.leftMargin: screen.width/192
         anchors.verticalCenter: gridLayer.verticalCenter
-        onCursorVisibleChanged: { if (user.cursorVisible) user.cursorVisible = false }
         onCursorPositionChanged: {
-            if (dbNullLabel.visible)
-                dbNullLabel.visible = false
-            if (user.text === "")
-                label.text = "SEARCH"
+            if (icon.source !== "qrc:/img-find")
+                icon.source = "qrc:/img-find"
+            if (user.text !== "")
+                user.cursorVisible = true
             else
-                label.text = ""
-            user.visible = true
+                user.cursorVisible = false
         }
         onAccepted: {
             root.inputUser = user.text
             root.signal_qml_find(root.inputUser, root.pornstar, root.category, root.quality, root.full, 0, true)
         }
     }
-    Text {
-        id: dbNullLabel
-        text: "NO RESULT"
-        color: "black"
-        font.family: globalFont.name
-        font.bold: true
-        font.pixelSize: screen.height/53
-        visible: false
-        anchors.left: gridLayer.left
-        anchors.leftMargin: screen.width/147.69
-        anchors.verticalCenter: gridLayer.verticalCenter
-    }
 
-    onEnabledChanged: user.forceActiveFocus()
+    onXChanged: { if (input.x>(-screen.width/4.4)) icon.visible = true }
+    onEnabledChanged: {
+        user.forceActiveFocus()
+        user.cursorVisible = false
+    }
 
     Connections {
         target: cppSignals
         onSignal_ret_db: {
-            if (block_films === 0) {
-                user.visible = false
-                dbNullLabel.visible = true
-            }
+            if (block_films === 0 && !filter_loader.active)
+                icon.source = "qrc:/img-null"
         }
     }
 }

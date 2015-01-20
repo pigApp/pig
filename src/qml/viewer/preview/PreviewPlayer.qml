@@ -18,7 +18,6 @@ Item {
         sourceSize.width: 33
         sourceSize.height: 33
         source: "qrc:/img-download"
-        opacity: 0.1
         anchors.centerIn: parent
     }
     Video {

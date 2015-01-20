@@ -1,4 +1,5 @@
 import QtQuick 2.4
+import "preview/"
 
 Item {
     id: viewerHandler
@@ -9,16 +10,6 @@ Item {
     property int offset: 0
     property int current_film: 1
     property var coverStatus: []
-
-    Image {
-        id: gridLayer
-        width: parent.width
-        height: 610 //
-        sourceSize.width: 1920
-        sourceSize.height: 610
-        source: "qrc:/img-grid-viewer"
-        anchors.verticalCenter: parent.verticalCenter
-    }
 
     ListModel { id: model }
 
@@ -59,7 +50,7 @@ Item {
             PathQuad {
                 x: screen.width/2.4
                 y: screen.height/2
-                controlX: -screen.width/11 // TODO: cuenta para las distintos numeros de peliculas.
+                controlX: -screen.width/11
                 controlY: screen.height/1.8
             }
         }
@@ -99,7 +90,7 @@ Item {
                     NumberAnimation { duration: 250 }
                     ParallelAnimation {
                         NumberAnimation { target: root; easing.amplitude: 1.7; properties: "xB"; to: 0; duration: 1200; easing.type: Easing.OutQuart }
-                        NumberAnimation { target: root; easing.amplitude: 1.7; properties: "screenOpacity"; to: 0; duration: 1200; easing.type: Easing.OutQuart } //0.4
+                        NumberAnimation { target: root; easing.amplitude: 1.7; properties: "screenOpacity"; to: 0; duration: 1200; easing.type: Easing.OutQuart }
                         NumberAnimation { target: backgroundBlur; easing.amplitude: 1.7; properties: "radius"; to: 96; duration: 1200; easing.type: Easing.OutQuart }
                     }
                     PropertyAction { target: view; property: "enabled"; value: true }
@@ -194,6 +185,32 @@ Item {
             width: view.width
             height: view.height
             scale: PathView.recipe_scale
+            //TODO: visible y enable si no se esta cargando un torrent (root.onShowTorrent)
+            //TODO: revisar que texto necesita usar contentWidth-contentHeight.
+            Text {
+                id: titleLabel
+                height: titleLabel.contentHeight
+                text: title
+                color: "white"
+                font.family: globalFont.name
+                font.pixelSize: screen.height/10
+                visible: recipe.PathView.isCurrentItem
+                anchors.left: cover.left
+                anchors.bottom: castLabel.top
+                anchors.bottomMargin: -parent.height/54
+            }
+            Text {
+                id: castLabel
+                height: castLabel.contentHeight
+                text: cast
+                color: Qt.rgba(1, 1, 1, 0.5)
+                font.family: globalFont.name
+                font.bold: true
+                font.pixelSize: screen.height/54
+                anchors.left: cover.left
+                anchors.bottom: cover.top
+                anchors.bottomMargin: parent.height/108
+            }
             Cover {
                 id: cover
                 width: parent.width/4.58
@@ -202,16 +219,82 @@ Item {
                 anchors.horizontalCenterOffset: -parent.width/15.86
                 anchors.verticalCenterOffset: -parent.height/270
             }
-            Layer {
-                id: layer
-                width: screen.width/1.86
+            Dates {
+                id: dates
+                visible: recipe.PathView.isCurrentItem
+                anchors.top: cover.bottom
+                anchors.left: cover.left
+            }
+            /*
+            Row {
+                id: counterRow
+                spacing: 0//screen.width/480
+                anchors.left: cover.right
+                anchors.leftMargin: 15
+                anchors.bottom: cover.bottom
+                anchors.bottomMargin: -12
+                Text {
+                    id: currentFilmLabel
+                    height: currentFilmLabel.contentHeight
+                    text: viewerHandler.current_film
+                    color: "white"
+                    font.family: globalFont.name
+                    font.pixelSize: screen.height/23
+                }
+                Text {
+                    id: currentFilmLabelx
+                    height: currentFilmLabel.contentHeight
+                    text: "»"
+                    color: "white"
+                    font.family: globalFont.name
+                    font.pixelSize: screen.height/23
+                }
+                Text {
+                    id: totalFilmsLabel
+                    height: totalFilmsLabel.contentHeight
+                    text: root.total_films
+                    color: "white"
+                    font.family: globalFont.name
+                    font.pixelSize: screen.height/23
+                }
+            }
+            */
+            /*
+            Scenes {
+                id: scenesButtons
+                totalScenes: scenes
                 visible: recipe.PathView.isCurrentItem
                 enabled: recipe.PathView.isCurrentItem
-                anchors.top: parent.top
                 anchors.left: cover.right
-                anchors.bottom: parent.bottom
+                anchors.leftMargin: 13
+                anchors.bottom: cover.bottom
+                anchors.bottomMargin: -3
+            }
+            */
+            Preview {
+                id: preview
+                width: parent.width/3
+                height: parent.height/2.25
+                visible: recipe.PathView.isCurrentItem
+                enabled: recipe.PathView.isCurrentItem
+                anchors.right: parent.right
+                anchors.rightMargin: parent.width/96
+                anchors.verticalCenter: parent.verticalCenter
+                anchors.verticalCenterOffset: parent.height/108
             }
         }
+    }
+    Image {
+        id: board
+        width: parent.width/3
+        height: parent.height/2.25
+        sourceSize.width: 640
+        sourceSize.height: 480
+        source: "qrc:/img-board"
+        anchors.right: parent.right
+        anchors.rightMargin: parent.width/10.66
+        anchors.verticalCenter: parent.verticalCenter
+        anchors.verticalCenterOffset: parent.height/108
     }
 
     Timer {

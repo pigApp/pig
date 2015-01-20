@@ -2,14 +2,18 @@ import QtQuick 2.4
 
 Rectangle {
     id: button
+    width: label.contentWidth
+    height: label.contentHeight/1.6
     color: "transparent"
 
     property alias label: label.text
     property alias labelColor: label.color
+    property alias labelBold: label.font.bold
     property alias labelLeftMargin: button.leftMargin
     property alias gridLayerVisible: gridLayer.visible
 
     property int leftMargin: 0
+    property bool lockColor
 
     signal clicked()
 
@@ -28,37 +32,30 @@ Rectangle {
         id: label
         color: "white"
         font.family: globalFont.name
+        font.bold: true
         font.pixelSize: screen.height/23
         anchors.left: parent.left
         anchors.leftMargin: leftMargin
         anchors.verticalCenter: parent.verticalCenter
-    }
-
-    MouseArea {
-        hoverEnabled: true
-        onEntered: { button.state = "in" }
-        onHoveredChanged: { button.state = "out" }
-        onClicked: button.clicked()
-        anchors.fill: parent
-    }
-    
-    states: [
-        State {
-            name: "in"
-        },
-        State {
-            name: "out"
+        ColorAnimation on color { id: in_label; running: false; to: "black"; duration: 100 }
+        ColorAnimation on color { id: out_label; running: false; to: "white"; duration: 100 }
+        MouseArea {
+            hoverEnabled: true
+            onEntered: {
+                if (!lockColor) {
+                    out_label.running = false
+                    in_label.running = true
+                }
+            }
+            onHoveredChanged: {
+                if (!lockColor) {
+                    in_label.running = false
+                    out_label.running = true
+                }
+            }
+            onClicked: button.clicked()
+            anchors.fill: parent
         }
-    ]
-    transitions: [
-        Transition {
-            to: "in"
-            NumberAnimation { target: label; easing.amplitude: 1.7; properties: "opacity"; to: 0.7; duration: 100; easing.type: Easing.OutQuart }
-        },
-        Transition {
-            to: "out"
-            NumberAnimation { target: label; easing.amplitude: 1.7; properties: "opacity"; to: 1; duration: 100; easing.type: Easing.OutQuart }
-        }
-    ]
+    }
 }
 // Tabs hechos.

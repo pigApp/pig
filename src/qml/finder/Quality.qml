@@ -14,52 +14,76 @@ Item {
     }
 
     Row {
-        spacing: screen.width/192
+        spacing: screen.width/96
         anchors.left: parent.left
         anchors.leftMargin: screen.width/384
         anchors.verticalCenter: parent.verticalCenter
         Button {
             id: sd
-            width: screen.width/34.90
-            height: screen.height/30.85
             label: "SD"
             labelColor: { if (root.quality === "SD") "black"; else "white" }
             labelLeftMargin: screen.width/384
             MouseArea {
-                onClicked: { if (root.quality === "SD") root.quality = ""; else root.quality = "SD" }
+                onClicked: {
+                    if (root.quality === "SD") {
+                        sd.lockColor = false
+                        root.quality = ""
+                    } else {
+                        sd.lockColor = true
+                        root.quality = "SD"
+                    }
+                }
                 anchors.fill: parent
             }
         }
         Button {
             id: hd
-            width: screen.width/33.68
-            height: screen.height/30.85
             label: "HD"
             labelColor: { if (root.quality === "HD") "black"; else "white" }
             MouseArea {
-                onClicked: { if (root.quality === "HD") root.quality = ""; else root.quality = "HD" }
+                onClicked: {
+                    if (root.quality === "HD") {
+                        hd.lockColor = false
+                        root.quality = ""
+                    } else {
+                        hd.lockColor = true
+                        root.quality = "HD"
+                    }
+                }
                 anchors.fill: parent
             }
         }
         Button {
             id: fhd
-            width: screen.width/24
-            height: screen.height/30.85
             label: "FHD"
             labelColor: { if (root.quality === "FHD") "black"; else "white" }
             MouseArea {
-                onClicked: { if (root.quality === "FHD") root.quality = ""; else root.quality = "FHD" }
+                onClicked: {
+                    if (root.quality === "FHD") {
+                        fhd.lockColor = false
+                        root.quality = ""
+                    } else {
+                        fhd.lockColor = true
+                        root.quality = "FHD"
+                    }
+                }
                 anchors.fill: parent
             }
         }
         Button {
             id: full
-            width: screen.width/36.92
-            height: screen.height/30.85
             label: "FM"
-            labelColor: { if (root.full === "FULL") "black"; else "white" }
+            labelColor: { if (root.full === "1") "black"; else "white" }
             MouseArea {
-                onClicked: { if (root.full === "FULL") root.full = ""; else root.full= "FULL" }
+                onClicked: {
+                    if (root.full === "1") {
+                        full.lockColor = false
+                        root.full = ""
+                    } else {
+                        full.lockColor = true
+                        root.full = "1"
+                    }
+                }
                 anchors.fill: parent
             }
         }

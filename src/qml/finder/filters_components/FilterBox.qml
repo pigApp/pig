@@ -24,7 +24,6 @@ Item {
         opacity: 0
         anchors.fill: parent
     }
-
     Text {
         id: label
         color: "white"

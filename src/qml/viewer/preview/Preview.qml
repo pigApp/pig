@@ -3,6 +3,9 @@ import QtQuick 2.4
 Item {
     id: preview
 
+    property bool downaloaded
+
+    /*
     Image {
         id: icon
         width: screen.width/58.18
@@ -10,14 +13,17 @@ Item {
         sourceSize.width: 33
         sourceSize.height: 33
         source: "qrc:/img-play"
-        opacity: 0.1
         anchors.centerIn: parent
     }
+    */
 
     MouseArea {
+        hoverEnabled: true
+        onEntered: { preview.state = "in" }
+        onHoveredChanged: { preview.state = "out" }
         onClicked: {
-            if (icon.visible) {
-                icon.visible = false
+            if (!preview.downaloaded) {
+                preview.downaloaded = true
                 previewPlayer_loader.source = "PreviewPlayer.qml"
                 previewPlayer_loader.active = true
             }
@@ -40,5 +46,24 @@ Item {
             }
         }
     }
+
+    states: [
+        State {
+            name: "in"
+        },
+        State {
+            name: "out"
+        }
+    ]
+    transitions: [
+        Transition {
+            to: "in"
+            //NumberAnimation { target: viewerHandler; easing.amplitude: 1.7; properties: "boardOpacity"; to: 1.0; duration: 300; easing.type: Easing.OutQuart }
+        },
+        Transition {
+            to: "out"
+            //NumberAnimation { target: viewerHandler; easing.amplitude: 1.7; properties: "boardOpacity"; to: 1.0; duration: 300; easing.type: Easing.OutQuart }
+        }
+    ]
 }
 // Tabs hechos.

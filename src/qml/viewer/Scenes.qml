@@ -7,8 +7,8 @@ Item {
 
     Row {
         spacing: screen.width/192
-        anchors.top: parent.top
-        anchors.horizontalCenter: parent.horizontalCenter
+        anchors.left: parent.left
+        anchors.bottom: parent.bottom
         Repeater {
             id: repeater
             delegate:

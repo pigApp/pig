@@ -8,6 +8,8 @@ Item {
     width: screen.width
     height: screen.height
 
+    property string n
+
     Flickable {
         contentWidth: grid.width
         contentHeight: grid.height
@@ -47,6 +49,7 @@ Item {
                             "qrc:/img-star-"+pornstars[index+1]
                     }
                     onClicked: {
+                        filters.n = totalLabelText
                         if (onCategoryFilter)
                             set_filter(labelText)
                         else
@@ -55,6 +58,25 @@ Item {
                 }
             }
         }
+    }
+
+    Text {
+        id: checkLabel
+        text: "CHECK QUALITY FILTER"
+        color: "black"
+        font.family: globalFont.name
+        font.bold: true
+        font.pixelSize: screen.height/54
+        visible: false
+        anchors.right: parent.right
+        anchors.bottom: parent.bottom
+    }
+    Timer {
+        id: checkDelay
+        running: false
+        repeat: false
+        interval: 5000
+        onTriggered: { checkLabel.visible = false }
     }
 
     Keys.onPressed: {
@@ -68,6 +90,16 @@ Item {
     }
 
     onFocusChanged: { if (!filters.focus) filters.forceActiveFocus() }
+
+    Connections {
+        target: cppSignals
+        onSignal_ret_db: {
+            if (block_films === 0 && filters.n !== "000") {
+                checkLabel.visible = true
+                checkDelay.start()
+            }
+        }
+    }
 
     Component.onCompleted: filters.forceActiveFocus()
 }
