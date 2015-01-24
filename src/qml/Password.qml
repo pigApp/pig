@@ -1,81 +1,76 @@
 import QtQuick 2.4
 
-Item {
+Rectangle {
     id: password
+    color: "black"
 
-    Rectangle {
-        id: layer
-        color: "black"
+    TextInput {
+        id: user
+        color: "white"
+        font.family: globalFont.name
+        font.pixelSize: screen.height/43.2
+        echoMode: TextInput.Password
+        maximumLength: 16
+        cursorVisible: false
+        anchors.centerIn: parent
+        onCursorVisibleChanged: { if (user.cursorVisible) user.cursorVisible = false }
+        onCursorPositionChanged: {
+            if (failIcon.visible)
+                failIcon.visible = false
+            if (user.text === "")
+                label.opacity = 1
+            else
+                label.opacity = 0
+        }
+        onAccepted: {
+            if (user.text !== "") {
+                if (root.askPassword) {
+                    root.signal_qml_password_handler(user.text, false, true, false)
+                } else {
+                    root.signal_qml_password_handler(user.text, false, false, true)
+                    user.enabled = false
+                }
+            }
+        }
+        Keys.onPressed: {
+            if (event.key === Qt.Key_Escape && !root.askPassword) {
+                screen.state = "hide_password"
+                event.accepted = true
+            } else if (event.key === Qt.Key_Q && (event.modifiers & Qt.ControlModifier)) {
+                root.signal_qml_quit()
+                event.accepted = true;
+            }
+        }
+    }
+    Text {
+        id: label
+        text: "INTRO PASSWORD"
+        color: "white"
+        font.family: globalFont.name
+        font.pixelSize: screen.height/23
+        anchors.centerIn: parent
+    }
+    Image {
+        id: failIcon
+        width: screen.width/58.18
+        height: screen.height/32.72
+        sourceSize.width: 33
+        sourceSize.height: 33
+        source: "qrc:/img-err"
+        visible: false
+        anchors.left: user.right
+        anchors.leftMargin: parent.width/192
+        anchors.verticalCenter: user.verticalCenter
+        anchors.verticalCenterOffset: parent.height/360
+    }
+
+    MouseArea {
+        onClicked: { user.focus = true }
         anchors.fill: parent
-        Row {
-            spacing: parent.width/192
-            anchors.centerIn: parent
-            Text {
-                id: failLabel
-                text: "FAIL"
-                color: "red"
-                font.family: globalFont.name
-                font.bold: true
-                font.pixelSize: screen.height/23
-                visible: false
-                anchors.verticalCenter: label.verticalCenter
-                anchors.verticalCenterOffset: screen.height/540
-            }
-            Text {
-                id: label
-                text: "INTRO PASSWORD"
-                color: "white"
-                font.family: globalFont.name
-                font.pixelSize: screen.height/23
-            }
-        }
-        TextInput {
-            id: user
-            color: "white"
-            font.family: globalFont.name
-            font.pixelSize: screen.height/43.2
-            maximumLength: 16
-            echoMode: TextInput.Password
-            cursorVisible: false
-            anchors.centerIn: parent
-            anchors.verticalCenterOffset: -screen.height/720
-            onCursorVisibleChanged: { if (user.cursorVisible) user.cursorVisible = false }
-            onCursorPositionChanged: {
-                user.visible = true
-                if (user.text === "")
-                    label.text = "INTRO PASSWORD"
-                else
-                    label.text = ""
-            }
-            onAccepted: {
-                if (user.text !== "") {
-                    user.visible = false
-                    if (root.askPassword) {
-                        root.signal_qml_password_handler(user.text, false, true, false)
-                    } else {
-                        root.signal_qml_password_handler(user.text, false, false, true)
-                        user.enabled = false
-                    }
-                }
-            }
-            Keys.onPressed: {
-                if (event.key === Qt.Key_Escape && !root.askPassword) {
-                    screen.state = "hide_password"
-                    event.accepted = true
-                } else if (event.key === Qt.Key_Q && (event.modifiers & Qt.ControlModifier)) {
-                    root.signal_qml_quit()
-                    event.accepted = true;
-                }
-            }
-        }
-        MouseArea {
-            onClicked: { user.focus = true }
-            anchors.fill: parent
-        }
     }
 
     Timer {
-        id: hide
+        id: hideDelay
         running: false
         repeat: false
         interval: 5000
@@ -89,11 +84,14 @@ Item {
                 screen.state = "hide_password"
             } else {
                 if (root.askPassword) {
-                    label.text = "WRONG PASSWORD"
+                    failIcon.visible = true
                 } else {
-                    failLabel.visible = true
+                    user.text = ""
                     label.text = "CHECK PERMISSIONS"
-                    hide.start()
+                    label.opacity = 1
+                    failIcon.anchors.left = label.right
+                    failIcon.visible = true
+                    hideDelay.start()
                 }
             }
         }

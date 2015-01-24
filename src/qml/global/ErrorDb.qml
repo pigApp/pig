@@ -3,9 +3,9 @@ import QtQuick 2.4
 Rectangle {
     id: errorDatabase
     color: "black"
-    anchors.fill: parent
 
     Column {
+        spacing: -parent.height/216
         anchors.centerIn: parent
         Text {
             id: errorLabel
@@ -28,14 +28,14 @@ Rectangle {
             Text {
                 id: linkLabel
                 text: "<style type='text/css'> a:link{color:#161616;font-style:normal;text-decoration:none} </style>"+
-                      "<a href=\'http://google.com\'>DL.BINTRAY.COM/DB <font color='#ffffff'>➟</font></a>"
+                      "<a href=\'http://google.com\'>DL.BINTRAY.COM/DB <font color='#ffffff'>&nbsp;&nbsp;➟</font></a>"
+                textFormat: Text.RichText
                 font.family: globalFont.name
                 font.bold: true
                 font.pixelSize: screen.height/54
-                textFormat: Text.RichText
                 onLinkActivated: Qt.openUrlExternally(link)
                 anchors.verticalCenter: getLabel.verticalCenter
-                anchors.verticalCenterOffset: screen.height/360
+                anchors.verticalCenterOffset: screen.height/635
             }
         }
     }

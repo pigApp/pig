@@ -14,15 +14,14 @@ Item {
     }
 
     Row {
-        spacing: screen.width/96
+        spacing: screen.width/384
         anchors.left: parent.left
-        anchors.leftMargin: screen.width/384
+        anchors.leftMargin: screen.width/192
         anchors.verticalCenter: parent.verticalCenter
         Button {
             id: sd
             label: "SD"
             labelColor: { if (root.quality === "SD") "black"; else "white" }
-            labelLeftMargin: screen.width/384
             MouseArea {
                 onClicked: {
                     if (root.quality === "SD") {
@@ -72,7 +71,7 @@ Item {
         }
         Button {
             id: full
-            label: "FM"
+            label: "FULLMOVIE"
             labelColor: { if (root.full === "1") "black"; else "white" }
             MouseArea {
                 onClicked: {
@@ -87,6 +86,17 @@ Item {
                 anchors.fill: parent
             }
         }
+    }
+
+    Component.onCompleted: {
+        if (root.quality === "SD")
+            sd.lockColor = true
+        if (root.quality === "HD")
+            hd.lockColor = true
+        if (root.quality === "FHD")
+            fhd.lockColor = true
+        if (root.full === "1")
+            full.lockColor = true
     }
 }
 // Tabs hechos.

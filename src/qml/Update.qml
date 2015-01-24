@@ -4,47 +4,62 @@ import "global/"
 Item {
     id: update
 
-    Row {
-        id: labelsRow
-        spacing: parent.width/192
+    Column {
+        spacing: -parent.height/72
         anchors.centerIn: parent
-        Text {
-            id: statusLabel
-            text: root.status
-            color: { if(statusLabel.text === "FAIL") "red"; else "white" }
-            font.family: globalFont.name
-            font.bold: { statusLabel.text === "UPDATED" || statusLabel.text === "FAIL" }
-            font.pixelSize: screen.height/23
+        Row {
+            id: statesRow
+            spacing: screen.width/192
+            Text {
+                id: statusLabel
+                text: root.status
+                color: "white"
+                font.family: globalFont.name
+                font.bold: { statusLabel.text === "UPDATED" }
+                font.pixelSize: screen.height/23
+                visible: { statusLabel.text !== "FAIL" }
+            }
+            Text {
+                id: informationLabel
+                text: root.information
+                color: "white"
+                font.family: globalFont.name
+                font.pixelSize: screen.height/23
+            }
+            Image {
+                id: failIcon
+                width: screen.width/58.18
+                height: screen.height/32.72
+                sourceSize.width: 33
+                sourceSize.height: 33
+                source: "qrc:/img-err"
+                visible: { statusLabel.text === "FAIL" }
+                anchors.verticalCenter: informationLabel.verticalCenter
+                anchors.verticalCenterOffset: {
+                    if (informationLabel.text === "GKSU·KDESU NEEDED")
+                        screen.height/360
+                    else
+                        screen.height/635
+                }
+            }
         }
-        Text {
-            id: informationLabel
-            text: root.information
-            color: "white"
-            font.family: globalFont.name
-            font.pixelSize: screen.height/23
-        }
-    }
-    Row {
-        id: buttonsRow
-        spacing: parent.width/192
-        visible: { statusLabel.text === "UPDATE AVAILABLE" }
-        enabled: { statusLabel.text === "UPDATE AVAILABLE" }
-        anchors.top: labelsRow.bottom
-        anchors.horizontalCenter: labelsRow.horizontalCenter
-        anchors.horizontalCenterOffset: -parent.width/384
-        Button {
-            id: get
-            width: screen.width/25.6
-            height: screen.height/30.85
-            label: "GET"
-            onClicked: root.signal_qml_update_get()
-        }
-        Button {
-            id: skip
-            width: screen.width/22.58
-            height: screen.height/30.85
-            label: "SKIP"
-            onClicked: root.signal_qml_update_skip()
+        Row {
+            id: buttonsRow
+            spacing: screen.width/192
+            visible: { statusLabel.text === "UPDATE AVAILABLE" }
+            enabled: { statusLabel.text === "UPDATE AVAILABLE" }
+            anchors.horizontalCenter: statesRow.horizontalCenter
+            anchors.horizontalCenterOffset: -screen.width/384
+            Button {
+                id: get
+                label: "GET"
+                onClicked: root.signal_qml_update_get()
+            }
+            Button {
+                id: skip
+                label: "SKIP"
+                onClicked: root.signal_qml_update_skip()
+            }
         }
     }
 

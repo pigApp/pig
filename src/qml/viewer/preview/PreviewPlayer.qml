@@ -52,7 +52,7 @@ Item {
         running: false
         repeat: false
         interval: 50
-        onTriggered: { icon.source = "qrc:/img-download-err" }
+        onTriggered: { icon.source = "qrc:/img-err" }
     }
     Timer {
         id: startPlayerDelay

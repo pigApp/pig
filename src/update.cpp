@@ -222,7 +222,7 @@ void Update::check_exit(int exitCode)
         (*_root)->setProperty("information", "RESTART PIG");
     } else if (exitCode == -1) {
         (*_root)->setProperty("status", "FAIL");
-        (*_root)->setProperty("information", "GKSU OR KDESU NEEDED");
+        (*_root)->setProperty("information", "GKSU·KDESU NEEDED");
         QTimer::singleShot(10000, this, SLOT(error()));
     } else {
         (*_root)->setProperty("status", "FAIL");

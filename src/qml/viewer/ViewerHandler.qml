@@ -17,14 +17,17 @@ Item {
         id: view
         model: model
         delegate: delegate
+        cacheItemCount: 0// TODO: poner todos los iconos en cache, y no pasarle la url al bajar, fijarse si carga las peliculas de la cache.
+        maximumFlickVelocity: 700
         enabled: false
         anchors.fill: parent
 
         property int counter: 5
 
         path: Path {
-            startX: screen.width/2.4
+            startX: screen.width/2
             startY: screen.height/2
+
             PathAttribute {
                 name: "recipe_z"
                 value: 2
@@ -34,9 +37,9 @@ Item {
                 value: 1.0
             }
             PathQuad {
-                x: screen.width/2.4
+                x: screen.width/2
                 y: screen.height/2.16
-                controlX: screen.width*0.5
+                controlX: -screen.width/19.2
                 controlY: screen.height/1.9
             }
             PathAttribute {
@@ -45,12 +48,12 @@ Item {
             }
             PathAttribute {
                 name: "recipe_scale"
-                value: 0.5
+                value: 0.3
             }
             PathQuad {
-                x: screen.width/2.4
+                x: screen.width/2
                 y: screen.height/2
-                controlX: -screen.width/11
+                controlX: screen.width/1.55
                 controlY: screen.height/1.8
             }
         }
@@ -179,17 +182,24 @@ Item {
 
     Component {
         id: delegate
-        Item {
+        Item { // TODO: visible y enable si no se esta cargando un torrent (root.onShowTorrent)
+               // TODO: detener el player y descarga (preview) si se sale (Ctrl-V).
             id: recipe
             z: PathView.recipe_z
             width: view.width
             height: view.height
             scale: PathView.recipe_scale
-            //TODO: visible y enable si no se esta cargando un torrent (root.onShowTorrent)
-            //TODO: revisar que texto necesita usar contentWidth-contentHeight.
+            onScaleChanged:  {
+                if (recipe.scale === 1.0) {
+                    preview.visible = true
+                    preview.enabled = true
+                } else {
+                    preview.visible = false
+                    preview.enabled = false
+                }
+            }
             Text {
                 id: titleLabel
-                height: titleLabel.contentHeight
                 text: title
                 color: "white"
                 font.family: globalFont.name
@@ -201,15 +211,43 @@ Item {
             }
             Text {
                 id: castLabel
-                height: castLabel.contentHeight
                 text: cast
                 color: Qt.rgba(1, 1, 1, 0.5)
                 font.family: globalFont.name
                 font.bold: true
                 font.pixelSize: screen.height/54
+                visible: recipe.PathView.isCurrentItem
                 anchors.left: cover.left
                 anchors.bottom: cover.top
                 anchors.bottomMargin: parent.height/108
+            }
+            Row {
+                id: counterRow
+                visible: recipe.PathView.isCurrentItem
+                anchors.left: cover.right
+                anchors.leftMargin: 10
+                anchors.top: cover.top
+                anchors.topMargin: -15
+                Text {
+                    id: currentFilmLabel
+                    text: viewerHandler.current_film
+                    color: "white"
+                    font.family: globalFont.name
+                    font.pixelSize: screen.height/23
+                }
+                Text {
+                    text: "·"
+                    color: "white"
+                    font.family: globalFont.name
+                    font.pixelSize: screen.height/23
+                }
+                Text {
+                    id: totalFilmsLabel
+                    text: root.total_films
+                    color: "white"
+                    font.family: globalFont.name
+                    font.pixelSize: screen.height/23
+                }
             }
             Cover {
                 id: cover
@@ -225,62 +263,23 @@ Item {
                 anchors.top: cover.bottom
                 anchors.left: cover.left
             }
-            /*
-            Row {
-                id: counterRow
-                spacing: 0//screen.width/480
-                anchors.left: cover.right
-                anchors.leftMargin: 15
-                anchors.bottom: cover.bottom
-                anchors.bottomMargin: -12
-                Text {
-                    id: currentFilmLabel
-                    height: currentFilmLabel.contentHeight
-                    text: viewerHandler.current_film
-                    color: "white"
-                    font.family: globalFont.name
-                    font.pixelSize: screen.height/23
-                }
-                Text {
-                    id: currentFilmLabelx
-                    height: currentFilmLabel.contentHeight
-                    text: "»"
-                    color: "white"
-                    font.family: globalFont.name
-                    font.pixelSize: screen.height/23
-                }
-                Text {
-                    id: totalFilmsLabel
-                    height: totalFilmsLabel.contentHeight
-                    text: root.total_films
-                    color: "white"
-                    font.family: globalFont.name
-                    font.pixelSize: screen.height/23
-                }
-            }
-            */
-            /*
             Scenes {
                 id: scenesButtons
                 totalScenes: scenes
                 visible: recipe.PathView.isCurrentItem
                 enabled: recipe.PathView.isCurrentItem
                 anchors.left: cover.right
-                anchors.leftMargin: 13
-                anchors.bottom: cover.bottom
-                anchors.bottomMargin: -3
+                anchors.leftMargin: parent.width/112.94
+                anchors.bottom: cover.bottom 
             }
-            */
             Preview {
                 id: preview
                 width: parent.width/3
                 height: parent.height/2.25
-                visible: recipe.PathView.isCurrentItem
-                enabled: recipe.PathView.isCurrentItem
                 anchors.right: parent.right
-                anchors.rightMargin: parent.width/96
+                anchors.rightMargin: parent.width/16.69
                 anchors.verticalCenter: parent.verticalCenter
-                anchors.verticalCenterOffset: parent.height/108
+                anchors.verticalCenterOffset: -parent.height/27
             }
         }
     }
@@ -292,9 +291,9 @@ Item {
         sourceSize.height: 480
         source: "qrc:/img-board"
         anchors.right: parent.right
-        anchors.rightMargin: parent.width/10.66
+        anchors.rightMargin: parent.width/16.69
         anchors.verticalCenter: parent.verticalCenter
-        anchors.verticalCenterOffset: parent.height/108
+        anchors.verticalCenterOffset: -parent.height/27
     }
 
     Timer {

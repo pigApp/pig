@@ -5,11 +5,10 @@
         <file alias="img-download-dark">resources/images/network/download-dark.svg</file>
         <file alias="img-peers">resources/images/network/peers.svg</file>
         <file alias="img-peers-dark">resources/images/network/peers-dark.svg</file>
-        <file alias="img-network-err">resources/images/network/error/network-err.svg</file>
-        <file alias="img-download-err">resources/images/network/error/download-err.svg</file>
-        <file alias="img-quality-in">resources/images/finder/quality-in.svg</file>
-        <file alias="img-quality-out">resources/images/finder/quality-out.svg</file>
-        <file alias="img-quality-on">resources/images/finder/quality-on.svg</file>
+        <file alias="img-network-err">resources/images/network/network-err.svg</file>
+        <file alias="img-quality-in">resources/images/finder/quality/quality-in.svg</file>
+        <file alias="img-quality-out">resources/images/finder/quality/quality-out.svg</file>
+        <file alias="img-quality-on">resources/images/finder/quality/quality-on.svg</file>
         <file alias="img-find">resources/images/finder/find.svg</file>
         <file alias="img-null">resources/images/finder/null.svg</file>
         <file alias="img-grid-filters">resources/images/finder/filters/grid-filters.svg</file>
@@ -44,17 +43,18 @@
         <file alias="img-cat-TOYS">resources/images/finder/filters/categories/TOYS.jpg</file>
         <file alias="img-cat-VOYEUR">resources/images/finder/filters/categories/VOYEUR.jpg</file>
         <file alias="img-star-BELLADONNA">resources/images/finder/filters/pornstars/BELLADONNA.jpg</file>
-        <file alias="img-scene">resources/images/viewer/scene/scene.svg</file>
+        <file alias="img-scene">resources/images/viewer/scene.svg</file>
         <file alias="img-board">resources/images/viewer/preview/board.svg</file>
         <file alias="img-play">resources/images/viewer/preview/play.svg</file>
         <file alias="img-replay">resources/images/viewer/preview/replay.svg</file>
-        <file alias="img-cover-err">resources/images/viewer/error/cover-err.jpg</file>
+        <file alias="img-cover-err">resources/images/viewer/cover-err.jpg</file>
         <file alias="img-playing">resources/images/videoplayer/playing.svg</file>
         <file alias="img-paused">resources/images/videoplayer/paused.svg</file>
         <file alias="img-standby">resources/images/videoplayer/standby.svg</file>
         <file alias="img-volume">resources/images/videoplayer/volume.svg</file>
         <file alias="img-volume-off">resources/images/videoplayer/volume-off.svg</file>
         <file alias="img-background">resources/images/global/background.jpg</file>
+        <file alias="img-err">resources/images/global/err.svg</file>
         <file alias="img-grid-small">resources/images/global/grid-small.svg</file>
         <file>resources/images/global/icon.ico</file>
         <file>resources/images/global/icon.png</file>

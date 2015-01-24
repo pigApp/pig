@@ -3,7 +3,7 @@ import QtQuick 2.4
 Rectangle {
     id: button
     width: label.contentWidth
-    height: label.contentHeight/1.6
+    height: label.contentHeight
     color: "transparent"
 
     property alias label: label.text
@@ -30,6 +30,8 @@ Rectangle {
 
     Text {
         id: label
+        width: label.contentWidth
+        height: label.contentHeight
         color: "white"
         font.family: globalFont.name
         font.bold: true
@@ -55,6 +57,8 @@ Rectangle {
             }
             onClicked: button.clicked()
             anchors.fill: parent
+            anchors.topMargin: screen.height/108
+            anchors.bottomMargin: screen.height/108
         }
     }
 }

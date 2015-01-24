@@ -35,13 +35,13 @@ Rectangle {
         "THE MOVIE NOT DOWNLOAD<br/>"+
         "Probably are blocked the ports used<br/>"+
         "by BitTorrent in the firewall or ISP.<br/>"+
-        "<a href=\'http://google.com\'>READ MORE <font color='#ffffff'>➟</font></a>",
+        "<a href=\'http://google.com\'>READ MORE <font color='#ffffff'>&nbsp;&nbsp;➟</font></a>",
 
 
         "<style type='text/css'> a:link{color:#161616;font-style:normal;text-decoration:none} </style>"+
-        "MOVIES &nbsp; <a href=\'http://clarin.com\'>GITHUB.COM/PIGAPP/MOVIES <font color='#ffffff'>➟</font></a><br/>"+
-        "CODE &nbsp; <a href=\'http://google.com\'>GITHUB.COM/PIGAPP <font color='#ffffff'>➟</font></a><br/>"+
-        "BUGS &nbsp; <a href=\'http://google.com\'>GITHUB.COM/PIGAPP/BUGS <font color='#ffffff'>➟</font></a><br/>"+
+        "MOVIES &nbsp; <a href=\'http://clarin.com\'>GITHUB.COM/PIGAPP/MOVIES <font color='#ffffff'>&nbsp;&nbsp;➟</font></a><br/>"+
+        "CODE &nbsp; <a href=\'http://google.com\'>GITHUB.COM/PIGAPP <font color='#ffffff'>&nbsp;&nbsp;➟</font></a><br/>"+
+        "BUGS &nbsp; <a href=\'http://google.com\'>GITHUB.COM/PIGAPP/BUGS <font color='#ffffff'>&nbsp;&nbsp;➟</font></a><br/>"+
         "BTC &nbsp; <font color='#161616'>1LtU9rMsQ41rCqsJAvMtw89TA5XT2dW7f9</font><br/>",
 
         "LEFT RIGHT &nbsp; <font color='#161616'>MOVE ON MOVIES</font><br/>"+
@@ -51,7 +51,7 @@ Rectangle {
         "THE MOVIE NOT PLAY<br/>"+
         "Probably do not are installed<br/>"+
         "the necessary video codecs.<br/>"+
-        "<a href=\'http://google.com\'>READ MORE <font color='#ffffff'>➟</font></a>",
+        "<a href=\'http://google.com\'>READ MORE <font color='#ffffff'>&nbsp;&nbsp;➟</font></a>",
 
 
         "Those who create this software agree not to<br/>"+
@@ -88,27 +88,27 @@ Rectangle {
                 width: screen.width/3
                 height: screen.height/5
                 Column {
-                    spacing: screen.height/108
+                    spacing: screen.height/216
                     anchors.top: parent.top
                     anchors.left: parent.left
                     Text {
                         id: title
                         text: titles[index]
+                        textFormat: Text.RichText
                         color: "white"
                         font.family: globalFont.name
                         font.pixelSize: screen.height/23
-                        textFormat: Text.RichText
                         anchors.left: content.left
                         anchors.leftMargin: -screen.height/640
                     }
                     Text {
                         id: content
                         text: contents[index]
+                        textFormat: Text.RichText
                         color: "white"
                         font.family: globalFont.name
                         font.bold: true
                         font.pixelSize: screen.height/54
-                        textFormat: Text.RichText
                         onLinkActivated: Qt.openUrlExternally(link)
                     }
                 }

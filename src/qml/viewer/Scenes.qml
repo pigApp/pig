@@ -14,10 +14,10 @@ Item {
             delegate:
             Image {
                 id: icon
-                width: screen.width/58.18
-                height: screen.height/32.72
-                sourceSize.width: 33
-                sourceSize.height: 33
+                width: screen.width/29.53
+                height: screen.height/15.42
+                sourceSize.width: 65
+                sourceSize.height: 70
                 source: "qrc:/img-scene"
                 opacity: 0.5
                 property bool viewed

@@ -9,7 +9,6 @@ Item {
         anchors.left: parent.left
         Text {
             id: categoriesLabel
-            height: categoriesLabel.contentHeight
             text: categories
             color: "white"
             font.family: globalFont.name
@@ -17,7 +16,6 @@ Item {
         }
         Text {
             id: qualityLabel
-            height: qualityLabel.contentHeight
             text: quality
             color: "white"
             font.family: globalFont.name
@@ -25,7 +23,6 @@ Item {
         }
         Text {
             id: timeLabel
-            height: timeLabel.contentHeight
             text: time
             color: "white"
             font.family: globalFont.name
@@ -33,7 +30,6 @@ Item {
         }
         Text {
             id: fullLabel
-            height: fullLabel.contentHeight
             text: "FULL"
             color: { if (full === "1") "white"; else Qt.rgba(1, 1, 1, 0.2) }
             font.family: globalFont.name

@@ -13,6 +13,20 @@ Item {
         height: parent.height/21.6
         anchors.bottom: filtersColumn.top
         anchors.bottomMargin: parent.height/108
+        onXChanged: {
+            if (quality.x === (-parent.width/4.22)) {
+                if ((root.quality !== "") || (root.full === "1")) {
+                    stateQualityIcon.opacity = 1
+                    stateQualityIcon.source = "qrc:/img-quality-on"
+                } else {
+                    stateQualityIcon.opacity = 0.1
+                    stateQualityIcon.source = "qrc:/img-quality-in"
+                }
+            } else {
+                stateQualityIcon.opacity = 1
+                stateQualityIcon.source = "qrc:/img-quality-out"
+            }
+        }
     }
     Image {
         id: stateQualityIcon
@@ -20,25 +34,18 @@ Item {
         height: screen.height/32.72
         sourceSize.width: 33
         sourceSize.height: 33
-        source: {
-            if ((root.quality !== ""||root.full === "1")&&(quality.x === -screen.width/4.22))
-                "qrc:/img-quality-on" //TODO: No se pone amarillo.
-            else
-                "qrc:/img-quality-in"
-        }
+        source: "qrc:/img-quality-in"
+        opacity: 0.1
         visible: false
         anchors.left: quality.right
-        anchors.leftMargin: -screen.width/192
+        anchors.leftMargin: screen.width/192
         anchors.verticalCenter: quality.verticalCenter
         MouseArea {
             onClicked: {
-                if (quality.x === -screen.width/4.22) {
-                    stateQualityIcon.source = "qrc:/img-quality-out"
+                if (quality.x === (-screen.width/4.22))
                     finderHandler.state = "show_quality"
-                } else {
-                    stateQualityIcon.source = "qrc:/img-quality-in"
+                else
                     finderHandler.state = "hide_quality"
-                }
             }
             anchors.fill: parent
         }
@@ -148,7 +155,7 @@ Item {
                 PropertyAction { target: input; property: "enabled"; value: false }
                 PropertyAction { target: stateQualityIcon; property: "visible"; value: false }
                 ParallelAnimation {
-                    NumberAnimation { target: quality; properties: "x"; to: -screen.width/6.5; duration: 600; easing.type: Easing.InOutQuart }
+                    NumberAnimation { target: quality; properties: "x"; to: -screen.width/4.22; duration: 600; easing.type: Easing.InOutQuart }
                     NumberAnimation { target: filtersColumn; properties: "x"; to: -screen.width/4.22; duration: 600; easing.type: Easing.InOutQuart }
                     NumberAnimation { target: input; properties: "x"; to: -screen.width/4.22; duration: 300; easing.type: Easing.InOutQuart }
                 }
@@ -185,17 +192,22 @@ Item {
                     NumberAnimation { target: backgroundBlur; easing.amplitude: 1.7; properties: "radius"; to: 0; duration: 1200; easing.type: Easing.OutQuart }
                 }
                 PropertyAction { target: filter_loader; property: "active"; value: false }
-                PropertyAction { target: stateQualityIcon; property: "source"; value: "qrc:/img-quality-in" }
                 PropertyAction { target: stateQualityIcon; property: "visible"; value: true }
                 PropertyAction { target: input; property: "enabled"; value: true }
             }
         },
         Transition {
             to: "show_quality"
-            NumberAnimation { target: quality; properties: "x"; to: 0; duration: 600; easing.type: Easing.InOutQuart }
+            ParallelAnimation {
+                NumberAnimation { target: stateQualityIcon; properties: "anchors.leftMargin"; to: screen.width/384; duration: 600; easing.type: Easing.InOutQuart }
+                NumberAnimation { target: quality; properties: "x"; to: 0; duration: 600; easing.type: Easing.InOutQuart }
+            }
         },Transition {
             to: "hide_quality"
-            NumberAnimation { target: quality; properties: "x"; to: -screen.width/4.22; duration: 600; easing.type: Easing.InOutQuart }
+            ParallelAnimation {
+                NumberAnimation { target: stateQualityIcon; properties: "anchors.leftMargin"; to: screen.width/192; duration: 600; easing.type: Easing.InOutQuart }
+                NumberAnimation { target: quality; properties: "x"; to: -screen.width/4.22; duration: 600; easing.type: Easing.InOutQuart }
+            }
         },
         Transition {
             to: "hide_filter_finder"
