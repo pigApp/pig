@@ -51,13 +51,13 @@ Item {
                     id: playbackIcon
                     width: screen.width/58.18
                     height: screen.height/32.72
-                    sourceSize.width: 33
-                    sourceSize.height: 33
+                    sourceSize.width: playbackIcon.width
+                    sourceSize.height: playbackIcon.height
                     source: {
                         if (videoPlayerHandler.standby) {
                             "qrc:/img-standby"
                         } else {
-                            if (player.playbackState === MediaPlayer.PlayingState )
+                            if (player.playbackState === MediaPlayer.PlayingState)
                                 "qrc:/img-playing"
                             else if (player.playbackState === MediaPlayer.PausedState)
                                 "qrc:/img-paused"
@@ -73,9 +73,9 @@ Item {
                         id: volumeIcon
                         width: screen.width/58.18
                         height: screen.height/32.72
-                        sourceSize.width: 33
-                        sourceSize.height: 33
-                        source: { if (player.volume !== 0.0 && !player.muted) "qrc:/img-volume"; else "qrc:/img-volume-off" }
+                        sourceSize.width: volumeIcon.width
+                        sourceSize.height: volumeIcon.height
+                        source: { if ((player.volume !== 0.0) && !player.muted) "qrc:/img-volume"; else "qrc:/img-volume-off" }
                     }
                     Text {
                         id: volumeLabel
@@ -91,7 +91,7 @@ Item {
                                 "0.0"
                             }
                         }
-                        color: { if (player.muted || player.volume === 0.0) Qt.rgba(0.1, 0.1, 0.1, 1); else "white" }
+                        color: { if (player.muted || (player.volume === 0.0)) Qt.rgba(0.1, 0.1, 0.1, 1); else "white" }
                         font.family: globalFont.name
                         font.pixelSize: screen.height/23
                         anchors.verticalCenter: volumeIcon.verticalCenter
@@ -118,8 +118,8 @@ Item {
                         id: bitRateIcon
                         width: screen.width/58.18
                         height: screen.height/32.72
-                        sourceSize.width: 33
-                        sourceSize.height: 33
+                        sourceSize.width: bitRateIcon.width
+                        sourceSize.height: bitRateIcon.height
                         source: "qrc:/img-download-dark"
                     }
                     Text {
@@ -149,8 +149,8 @@ Item {
                         id: peersIcon
                         width: screen.width/58.18
                         height: screen.height/32.72
-                        sourceSize.width: 33
-                        sourceSize.height: 33
+                        sourceSize.width: peersIcon.width
+                        sourceSize.height: peersIcon.height
                         source: "qrc:/img-peers-dark"
                     }
                     Text {
@@ -168,7 +168,7 @@ Item {
     }
 
     function formatTime(timeMs) {
-        if (!timeMs || timeMs <= 0) return "00:00:00"
+        if (!timeMs || (timeMs <= 0)) return "00:00:00"
         var seconds = timeMs/1000;
         var minutes = Math.floor(seconds/60)
         var hours = Math.floor(minutes/60)

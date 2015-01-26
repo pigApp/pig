@@ -168,8 +168,8 @@ Item {
         onSignal_ret_db: {
             root.block_films = blockFilms
             root.data_films = dataFilms
-            if (blockFilms !== 0 && !updateData)
-                if (pornstar !== "" || category !== "")
+            if ((blockFilms !== 0) && !updateData)
+                if ((pornstar !== "") || (category !== ""))
                     root_loader_B.item.state = "hide_filter_finder"
                 else
                    root_loader_B.item.state = "hide"

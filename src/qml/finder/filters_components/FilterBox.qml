@@ -12,8 +12,8 @@ Item {
 
     Image {
         id: gridLayer
-        sourceSize.width: 480
-        sourceSize.height: 270
+        sourceSize.width: parent.width
+        sourceSize.height: parent.height
         source: "qrc:/img-grid-filters"
         anchors.fill: parent
     }

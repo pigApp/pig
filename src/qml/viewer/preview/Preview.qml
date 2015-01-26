@@ -7,8 +7,8 @@ Item {
         id: icon
         width: screen.width/58.18
         height: screen.height/32.72
-        sourceSize.width: 33
-        sourceSize.height: 33
+        sourceSize.width: icon.width
+        sourceSize.height: icon.height
         source: "qrc:/img-play"
         anchors.centerIn: parent
     }

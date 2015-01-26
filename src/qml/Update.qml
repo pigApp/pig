@@ -30,8 +30,8 @@ Item {
                 id: failIcon
                 width: screen.width/58.18
                 height: screen.height/32.72
-                sourceSize.width: 33
-                sourceSize.height: 33
+                sourceSize.width: failIcon.width
+                sourceSize.height: failIcon.height
                 source: "qrc:/img-err"
                 visible: { statusLabel.text === "FAIL" }
                 anchors.verticalCenter: informationLabel.verticalCenter
@@ -69,7 +69,7 @@ Item {
     }
 
     Keys.onPressed: {
-        if (event.key === Qt.Key_Q && (event.modifiers & Qt.ControlModifier)) {
+        if ((event.key === Qt.Key_Q) && (event.modifiers & Qt.ControlModifier)) {
             root.signal_qml_quit()
             event.accepted = true;
         }

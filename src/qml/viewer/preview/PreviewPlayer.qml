@@ -15,8 +15,8 @@ Item {
         id: icon
         width: screen.width/58.18
         height: screen.height/32.72
-        sourceSize.width: 33
-        sourceSize.height: 33
+        sourceSize.width: icon.width
+        sourceSize.height: icon.height
         source: "qrc:/img-download"
         anchors.centerIn: parent
     }
@@ -69,11 +69,11 @@ Item {
 
     MouseArea {
         onClicked: {
-            if (!downloading && player.playbackState === MediaPlayer.PlayingState) {
+            if (!downloading && (player.playbackState === MediaPlayer.PlayingState)) {
                 player.pause()
-            } else if (!downloading && player.playbackState === MediaPlayer.PausedState) {
+            } else if (!downloading && (player.playbackState === MediaPlayer.PausedState)) {
                 player.play()
-            } else if (!downloading && player.playbackState === MediaPlayer.StoppedState) {
+            } else if (!downloading && (player.playbackState === MediaPlayer.StoppedState)) {
                 icon.visible = false
                 player.visible = true
                 player.enabled = true
@@ -101,7 +101,7 @@ Item {
     }
 
     Component.onDestruction: {
-        if (player.playbackState === MediaPlayer.PlayingState || player.playbackState === MediaPlayer.PausedState) {
+        if ((player.playbackState === MediaPlayer.PlayingState) || (player.playbackState === MediaPlayer.PausedState)) {
             player.stop()
         } else if (downloading) {
             icon.visible = false

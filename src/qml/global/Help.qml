@@ -120,7 +120,7 @@ Rectangle {
         if (event.key === Qt.Key_Escape) {
             screen.state = "hide_help"
             event.accepted = true;
-        } else if (event.key === Qt.Key_Q && (event.modifiers & Qt.ControlModifier)) {
+        } else if ((event.key === Qt.Key_Q) && (event.modifiers & Qt.ControlModifier)) {
             root.signal_qml_quit()
             event.accepted = true;
         }

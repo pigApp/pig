@@ -83,7 +83,7 @@ Item {
         if (event.key === Qt.Key_Escape) {
             finderHandler.state = "hide_filter"
             event.accepted = true
-        } else if (event.key === Qt.Key_Q && (event.modifiers & Qt.ControlModifier)) {
+        } else if ((event.key === Qt.Key_Q) && (event.modifiers & Qt.ControlModifier)) {
             root.signal_qml_quit()
             event.accepted = true
         }
@@ -94,7 +94,7 @@ Item {
     Connections {
         target: cppSignals
         onSignal_ret_db: {
-            if (block_films === 0 && filters.n !== "000") {
+            if ((block_films === 0) && (filters.n !== "000")) {
                 checkLabel.visible = true
                 checkDelay.start()
             }

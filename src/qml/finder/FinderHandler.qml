@@ -32,8 +32,8 @@ Item {
         id: stateQualityIcon
         width: screen.width/58.18
         height: screen.height/32.72
-        sourceSize.width: 33
-        sourceSize.height: 33
+        sourceSize.width: stateQualityIcon.width
+        sourceSize.height: stateQualityIcon.height
         source: "qrc:/img-quality-in"
         opacity: 0.1
         visible: false
@@ -226,17 +226,17 @@ Item {
 
     Keys.onPressed: {
         root.init = false
-        if (event.key === Qt.Key_H && (event.modifiers & Qt.ControlModifier)) {
+        if ((event.key === Qt.Key_H) && (event.modifiers & Qt.ControlModifier)) {
             if (!filter_loader.active) {
                 screen.state = "show_help"
                 event.accepted = true
             }
-        } else if (event.key === Qt.Key_P && (event.modifiers & Qt.ControlModifier)) {
+        } else if ((event.key === Qt.Key_P) && (event.modifiers & Qt.ControlModifier)) {
             if (!filter_loader.active) {
                 screen.state = "show_password"
             }
             event.accepted = true
-        } else if (event.key === Qt.Key_Q && (event.modifiers & Qt.ControlModifier)) {
+        } else if ((event.key === Qt.Key_Q) && (event.modifiers & Qt.ControlModifier)) {
             root.signal_qml_quit()
             event.accepted = true
         }

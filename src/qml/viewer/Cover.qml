@@ -12,8 +12,8 @@ Item {
             id: front
             width: screen.width/4.58
             height: screen.height/1.8
-            sourceSize.width: screen.width/4.58
-            sourceSize.height: screen.height/1.8
+            sourceSize.width: front.width
+            sourceSize.height: front.height
             source: hostCover+urlFrontCover
             onStatusChanged: {
                 if (front.status === Image.Ready) {
@@ -31,8 +31,8 @@ Item {
             id: back
             width: front.width
             height: front.height
-            sourceSize.width: screen.width/4.58
-            sourceSize.height: screen.height/1.8
+            sourceSize.width: back.width
+            sourceSize.height: back.height
             source: {
                 if (urlBackCover !== "")
                     hostCover+urlBackCover

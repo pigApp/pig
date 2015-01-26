@@ -16,8 +16,8 @@ Item {
                 id: icon
                 width: screen.width/29.53
                 height: screen.height/15.42
-                sourceSize.width: 65
-                sourceSize.height: 70
+                sourceSize.width: icon.width
+                sourceSize.height: icon.height
                 source: "qrc:/img-scene"
                 opacity: 0.5
                 property bool viewed

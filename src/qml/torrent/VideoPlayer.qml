@@ -19,11 +19,11 @@ Rectangle {
         anchors.fill: parent
         onStatusChanged: {
             if (sandbox) {
-                if (player.status === MediaPlayer.Buffered && !player.error) {
+                if ((player.status === MediaPlayer.Buffered) && !player.error) {
                     torrentHandler.sandboxStatus = "success"
                     videoPlayerHandler.sandbox = false
                     controls.forceActiveFocus()
-                } else if (player.status === MediaPlayer.NoMedia || player.status === MediaPlayer.InvalidMedia) {
+                } else if ((player.status === MediaPlayer.NoMedia) || (player.status === MediaPlayer.InvalidMedia)) {
                     torrentHandler.sandboxStatus = "fail"
                     // Timer recheck video start -10
                 }
@@ -86,6 +86,8 @@ Rectangle {
 
     Component.onCompleted: { player.source = "file://"+root.videoPath }
 
-    Component.onDestruction: { if (player.playbackState === MediaPlayer.PlayingState || player.playbackState === MediaPlayer.PausedState) player.stop() }
+    Component.onDestruction: { if ((player.playbackState === MediaPlayer.PlayingState) ||
+                                   (player.playbackState === MediaPlayer.PausedState))
+                                   player.stop() }
 }
 // Tabs hechos.

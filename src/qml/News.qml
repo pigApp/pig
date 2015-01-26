@@ -71,7 +71,7 @@ Item {
     }
 
     Keys.onPressed: {
-        if (event.key === Qt.Key_Q && (event.modifiers & Qt.ControlModifier)) {
+        if ((event.key === Qt.Key_Q) && (event.modifiers & Qt.ControlModifier)) {
             root.signal_qml_quit()
             event.accepted = true;
         } else {

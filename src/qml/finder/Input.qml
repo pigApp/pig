@@ -7,8 +7,8 @@ Item {
         id: gridLayer
         width: parent.width
         height: parent.height
-        sourceSize.width: 455
-        sourceSize.height: 50
+        sourceSize.width: gridLayer.width
+        sourceSize.height: gridLayer.height
         source: "qrc:/img-grid-small"
     }
 
@@ -43,8 +43,8 @@ Item {
         id: icon
         width: screen.width/58.18
         height: screen.height/32.72
-        sourceSize.width: 33
-        sourceSize.height: 33
+        sourceSize.width: icon.width
+        sourceSize.height: icon.height
         source: "qrc:/img-find"
         visible: false
         anchors.left: gridLayer.right

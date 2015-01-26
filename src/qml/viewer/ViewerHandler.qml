@@ -17,8 +17,8 @@ Item {
         id: view
         model: model
         delegate: delegate
-        cacheItemCount: 0// TODO: poner todos los iconos en cache, y no pasarle la url al bajar, fijarse si carga las peliculas de la cache.
-        maximumFlickVelocity: 700
+        //cacheItemCount: 0
+        maximumFlickVelocity: 600
         enabled: false
         anchors.fill: parent
 
@@ -125,14 +125,14 @@ Item {
 
         Keys.onPressed: {
             if (event.key === Qt.Key_Up) {
-                if(root.total_films > 5 && view.counter < root.total_films) {
+                if((root.total_films > 5) && (view.counter < root.total_films)) {
                     viewerHandler.offset = viewerHandler.offset+5
                     view.counter = view.counter+5
                     current_film = view.counter-4
                     view.state = "hide"
                 }
             } else if (event.key === Qt.Key_Down) {
-                if(root.total_films > 5 && current_film-5 > 0) {
+                if((root.total_films > 5) && (current_film-5 > 0)) {
                     viewerHandler.offset = viewerHandler.offset-5
                     view.counter = view.counter-5
                     current_film = view.counter-4
@@ -142,7 +142,7 @@ Item {
                 view.enabled = false
                 enabledDelay.start()
                 incrementCurrentIndex()
-                if (location_global === root.data_films.length-13) {
+                if (location_global === (root.data_films.length-13)) {
                     location_global = 0
                     location_block = 0
                     current_film = current_film-root.block_films+1
@@ -164,13 +164,13 @@ Item {
                     --current_film
                     --location_block
                 }
-            } else if (event.key === Qt.Key_H && (event.modifiers & Qt.ControlModifier) && !networkTimeOut.running) {
+            } else if ((event.key === Qt.Key_H) && (event.modifiers & Qt.ControlModifier) && !networkTimeOut.running) {
                 screen.state = "show_help"
                 event.accepted = true
             } else if (event.key === Qt.Key_Escape) {
                 view.state = "hide_viewer_show_finder"
                 event.accepted = true;
-            } else if (event.key === Qt.Key_Q && (event.modifiers & Qt.ControlModifier)) {
+            } else if ((event.key === Qt.Key_Q) && (event.modifiers & Qt.ControlModifier)) {
                 root.signal_qml_quit()
                 event.accepted = true;
             }
@@ -287,9 +287,10 @@ Item {
         id: board
         width: parent.width/3
         height: parent.height/2.25
-        sourceSize.width: 640
-        sourceSize.height: 480
+        sourceSize.width: board.width
+        sourceSize.height: board.height
         source: "qrc:/img-board"
+        visible: false
         anchors.right: parent.right
         anchors.rightMargin: parent.width/16.69
         anchors.verticalCenter: parent.verticalCenter
@@ -308,7 +309,7 @@ Item {
         running: false
         repeat: false
         onTriggered: {
-            model.clear()
+            //model.clear()
             root.signal_qml_find(root.inputUser, root.pornstar, root.category, root.quality, root.full, viewerHandler.offset, false)
         }
     }
@@ -318,12 +319,12 @@ Item {
         var torrent
         var row = 0
         for (var i=0; i<root.block_films; i++) {
-           torrent = root.data_films[row+12].split(",")
-           model.append({ "title": root.data_films[row], "cast": root.data_films[row+1], "categories": root.data_films[row+2], "quality": root.data_films[row+3],
-                          "time": root.data_films[row+4], "full": root.data_films[row+5], "hostPreview": root.data_films[row+6], "urlPreview": root.data_films[row+7],
-                          "filePreview": root.data_films[row+8], "idPreview": i, "hostCover": root.data_films[row+9], "urlFrontCover": root.data_films[row+10],
-                          "urlBackCover": root.data_films[row+11], "urlTorrent": torrent[0], "scenes": Number(torrent[1]) })
-           row += 13
+            torrent = root.data_films[row+12].split(",")
+            model.append({ "title": root.data_films[row], "cast": root.data_films[row+1], "categories": root.data_films[row+2], "quality": root.data_films[row+3],
+                           "time": root.data_films[row+4], "full": root.data_films[row+5], "hostPreview": root.data_films[row+6], "urlPreview": root.data_films[row+7],
+                           "filePreview": root.data_films[row+8], "idPreview": i, "hostCover": root.data_films[row+9], "urlFrontCover": root.data_films[row+10],
+                           "urlBackCover": root.data_films[row+11], "urlTorrent": torrent[0], "scenes": Number(torrent[1]) })
+            row += 13
         }
         root_loader_A.source = "../global/Network.qml"
         networkTimeOut.start()

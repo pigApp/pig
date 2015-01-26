@@ -21,8 +21,8 @@ Rectangle {
         id: gridLayer
         width: parent.width
         height: parent.height
-        sourceSize.width: 455
-        sourceSize.height: 50
+        sourceSize.width: gridLayer.width
+        sourceSize.height: gridLayer.height
         source: { if (gridLayer.visible) "qrc:/img-grid-small"; else "" }
         visible: false
         anchors.verticalCenter: parent.verticalCenter

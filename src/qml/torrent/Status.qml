@@ -16,8 +16,8 @@ Item {
                 id: bitRateIcon
                 width: screen.width/58.18
                 height: screen.height/32.72
-                sourceSize.width: 33
-                sourceSize.height: 33
+                sourceSize.width: bitRateIcon.width
+                sourceSize.height: bitRateIcon.height
                 source: "qrc:/img-download"
                 visible: { bitRateLabel.text !== "CONNECTING" }
             }
@@ -49,8 +49,8 @@ Item {
                 id: peersIcon
                 width: screen.width/58.18
                 height: screen.height/32.72
-                sourceSize.width: 33
-                sourceSize.height: 33
+                sourceSize.width: peersIcon.width
+                sourceSize.height: peersIcon.height
                 source: "qrc:/img-peers"
                 visible: { bitRateLabel.text !== "CONNECTING" }
             }
@@ -113,7 +113,7 @@ Item {
             torrentHandler.state = "hide"
             root.signal_qml_torrent_handler("", 0, true)
             event.accepted = true;
-        } else if (event.key === Qt.Key_Q && (event.modifiers & Qt.ControlModifier)) {
+        } else if ((event.key === Qt.Key_Q) && (event.modifiers & Qt.ControlModifier)) {
             root.signal_qml_quit()
             event.accepted = true;
         }
