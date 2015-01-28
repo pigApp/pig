@@ -1,7 +1,7 @@
 import QtQuick 2.4
 
 Item {
-    id: scenesButtons
+    id: btnScenes
 
     property alias totalScenes: repeater.model
 
@@ -28,7 +28,7 @@ Item {
                     onClicked: {
                         icon.viewed = true
                         screen.state = "show_torrent"
-                        root.signal_qml_torrent_handler(urlTorrent, index, false)
+                        root.sig_qml_torrent_handler(urlTorrent, index, false)
                     }
                     anchors.fill: parent
                 }

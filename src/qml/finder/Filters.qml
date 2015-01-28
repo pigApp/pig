@@ -3,7 +3,7 @@ import "filters_components/"
 
 Item {
     id: filters
-    x: root.xA-(screen.width/192)
+    x: root.xa-(screen.width/192)
     y: -screen.height/360
     width: screen.width
     height: screen.height
@@ -21,39 +21,39 @@ Item {
             spacing: screen.height/360
             Repeater {
                 model: {
-                    if (onCategoryFilter)
-                        categories[0]
+                    if (onFilterCategory)
+                        root.categories[0]
                     else
-                        pornstars[0]
+                        root.pornstars[0]
                 }
                 delegate:
                 FilterBox {
                     id: filterBox
                     width: filters.width/4
-                    labelText: {
-                        if (onCategoryFilter)
-                            categories[index+1]
+                    label: {
+                        if (onFilterCategory)
+                            root.categories[index+1]
                         else
-                            pornstars[index+1]
+                            root.pornstars[index+1]
                     }
-                    totalLabelText: {
-                        if (onCategoryFilter)
-                            totalCategories[index]
+                    label_n: {
+                        if (onFilterCategory)
+                            root.n_categories[index]
                         else
-                            totalPornstars[index]
+                            root.n_pornstars[index]
                     }
-                    sourceImage: {
-                        if (onCategoryFilter)
+                    source: {
+                        if (onFilterCategory)
                             "qrc:/img-cat-"+categories[index+1]
                         else
                             "qrc:/img-star-"+pornstars[index+1]
                     }
                     onClicked: {
-                        filters.n = totalLabelText
-                        if (onCategoryFilter)
-                            set_filter(labelText)
+                        filters.n = label_n
+                        if (onFilterCategory)
+                            set_filter(label)
                         else
-                            set_filter(labelText)
+                            set_filter(label)
                     }
                 }
             }
@@ -61,10 +61,10 @@ Item {
     }
 
     Text {
-        id: checkLabel
-        text: "CHECK QUALITY FILTER"
+        id: labelCheckFilters
+        text: "CHECK QUALITY FILTERS"
         color: "black"
-        font.family: globalFont.name
+        font.family: fontGlobal.name
         font.bold: true
         font.pixelSize: screen.height/54
         visible: false
@@ -72,11 +72,11 @@ Item {
         anchors.bottom: parent.bottom
     }
     Timer {
-        id: checkDelay
+        id: delayCheckFilters
         running: false
         repeat: false
         interval: 5000
-        onTriggered: { checkLabel.visible = false }
+        onTriggered: { labelCheckFilters.visible = false }
     }
 
     Keys.onPressed: {
@@ -84,7 +84,7 @@ Item {
             finderHandler.state = "hide_filter"
             event.accepted = true
         } else if ((event.key === Qt.Key_Q) && (event.modifiers & Qt.ControlModifier)) {
-            root.signal_qml_quit()
+            root.sig_qml_quit()
             event.accepted = true
         }
     }
@@ -93,10 +93,10 @@ Item {
 
     Connections {
         target: cppSignals
-        onSignal_ret_db: {
-            if ((block_films === 0) && (filters.n !== "000")) {
-                checkLabel.visible = true
-                checkDelay.start()
+        onSig_ret_db: {
+            if ((n_films === 0) && (filters.n !== "000")) {
+                labelCheckFilters.visible = true
+                delayCheckFilters.start()
             }
         }
     }

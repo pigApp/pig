@@ -17,25 +17,25 @@ Item {
         onClicked: {
             if (icon.visible) {
                 icon.visible = false
-                previewPlayer_loader.source = "PreviewPlayer.qml"
-                previewPlayer_loader.active = true
+                loader_previewPlayer.source = "PreviewPlayer.qml"
+                loader_previewPlayer.active = true
             }
         }
         anchors.fill: parent
     }
 
     Loader {
-        id: previewPlayer_loader
+        id: loader_previewPlayer
         active: false
         asynchronous: true
         visible: { status === Loader.Ready }
         anchors.fill: parent
         onStatusChanged: {
             if (status === Loader.Ready) {
-                previewPlayer_loader.item.host = hostPreview
-                previewPlayer_loader.item.url = urlPreview
-                previewPlayer_loader.item.target = filePreview
-                previewPlayer_loader.item.id = idPreview
+                loader_previewPlayer.item.host = hostPreview
+                loader_previewPlayer.item.url = urlPreview
+                loader_previewPlayer.item.target = filePreview
+                loader_previewPlayer.item.id = idPreview
             }
         }
     }

@@ -5,30 +5,30 @@ Rectangle {
     color: "black"
 
     TextInput {
-        id: user
+        id: userInput
         color: "white"
-        font.family: globalFont.name
+        font.family: fontGlobal.name
         font.pixelSize: screen.height/43.2
         echoMode: TextInput.Password
         maximumLength: 16
         cursorVisible: false
         anchors.centerIn: parent
-        onCursorVisibleChanged: { if (user.cursorVisible) user.cursorVisible = false }
+        onCursorVisibleChanged: { if (userInput.cursorVisible) userInput.cursorVisible = false }
         onCursorPositionChanged: {
-            if (failIcon.visible)
-                failIcon.visible = false
-            if (user.text === "")
+            if (icon.visible)
+                icon.visible = false
+            if (userInput.text === "")
                 label.opacity = 1
             else
                 label.opacity = 0
         }
         onAccepted: {
-            if (user.text !== "") {
+            if (userInput.text !== "") {
                 if (root.askPassword) {
-                    root.signal_qml_password_handler(user.text, false, true, false)
+                    root.sig_qml_password_handler(false, userInput.text, true, false)
                 } else {
-                    root.signal_qml_password_handler(user.text, false, false, true)
-                    user.enabled = false
+                    root.sig_qml_password_handler(false, userInput.text, false, true)
+                    userInput.enabled = false
                 }
             }
         }
@@ -37,7 +37,7 @@ Rectangle {
                 screen.state = "hide_password"
                 event.accepted = true
             } else if ((event.key === Qt.Key_Q) && (event.modifiers & Qt.ControlModifier)) {
-                root.signal_qml_quit()
+                root.sig_qml_quit()
                 event.accepted = true;
             }
         }
@@ -46,31 +46,31 @@ Rectangle {
         id: label
         text: "INTRO PASSWORD"
         color: "white"
-        font.family: globalFont.name
+        font.family: fontGlobal.name
         font.pixelSize: screen.height/23
         anchors.centerIn: parent
     }
     Image {
-        id: failIcon
+        id: icon
         width: screen.width/58.18
         height: screen.height/32.72
-        sourceSize.width: failIcon.width
-        sourceSize.height: failIcon.height
-        source: "qrc:/img-err"
+        sourceSize.width: icon.width
+        sourceSize.height: icon.height
+        source: "qrc:/img_err"
         visible: false
-        anchors.left: user.right
+        anchors.left: userInput.right
         anchors.leftMargin: parent.width/192
-        anchors.verticalCenter: user.verticalCenter
+        anchors.verticalCenter: userInput.verticalCenter
         anchors.verticalCenterOffset: parent.height/360
     }
 
     MouseArea {
-        onClicked: { user.focus = true }
+        onClicked: { userInput.focus = true }
         anchors.fill: parent
     }
 
     Timer {
-        id: hideDelay
+        id: delayHide
         running: false
         repeat: false
         interval: 5000
@@ -79,24 +79,24 @@ Rectangle {
 
     Connections {
         target: cppSignals
-        onSignal_ret_password: {
+        onSig_ret_password: {
             if (success) {
                 screen.state = "hide_password"
             } else {
                 if (root.askPassword) {
-                    failIcon.visible = true
+                    icon.visible = true
                 } else {
-                    user.text = ""
+                    userInput.text = ""
                     label.text = "CHECK PERMISSIONS"
                     label.opacity = 1
-                    failIcon.anchors.left = label.right
-                    failIcon.visible = true
-                    hideDelay.start()
+                    icon.anchors.left = label.right
+                    icon.visible = true
+                    delayHide.start()
                 }
             }
         }
     }
 
-    Component.onCompleted: user.forceActiveFocus()
+    Component.onCompleted: userInput.forceActiveFocus()
 }
 // Tabs hechos.

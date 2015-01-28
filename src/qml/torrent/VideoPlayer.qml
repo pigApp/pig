@@ -20,11 +20,11 @@ Rectangle {
         onStatusChanged: {
             if (sandbox) {
                 if ((player.status === MediaPlayer.Buffered) && !player.error) {
-                    torrentHandler.sandboxStatus = "success"
+                    torrentHandler.sandboxStatus = "SUCCESS"
                     videoPlayerHandler.sandbox = false
                     controls.forceActiveFocus()
                 } else if ((player.status === MediaPlayer.NoMedia) || (player.status === MediaPlayer.InvalidMedia)) {
-                    torrentHandler.sandboxStatus = "fail"
+                    torrentHandler.sandboxStatus = "FAIL"
                     // Timer recheck video start -10
                 }
             } else {
@@ -59,22 +59,22 @@ Rectangle {
 
     states: [
         State {
-            name: "showControls"
+            name: "show_controls"
         },
         State {
-            name: "hideControls"
+            name: "hide_controls"
         }
     ]
     transitions: [
         Transition {
-            to: "showControls"
+            to: "show_controls"
             ParallelAnimation {
                 NumberAnimation { target: videoPlayerHandler; easing.amplitude: 1.7; properties: "sideBoxMargin"; to: 0; duration: 500; easing.type: Easing.OutQuart }
                 NumberAnimation { target: videoPlayerHandler; easing.amplitude: 1.7; properties: "barsMargin"; to: 0; duration: 200; easing.type: Easing.OutQuart }
             }
         },
         Transition {
-            to: "hideControls"
+            to: "hide_controls"
             ParallelAnimation {
                 NumberAnimation { target: videoPlayerHandler; easing.amplitude: 1.7; properties: "sideBoxMargin"; to: -screen.width/9.6; duration: 500; easing.type: Easing.OutQuart }
                 NumberAnimation { target: videoPlayerHandler; easing.amplitude: 1.7; properties: "barsMargin"; to: -screen.height/54; duration: 500; easing.type: Easing.OutQuart }
@@ -88,6 +88,6 @@ Rectangle {
 
     Component.onDestruction: { if ((player.playbackState === MediaPlayer.PlayingState) ||
                                    (player.playbackState === MediaPlayer.PausedState))
-                                   player.stop() }
+                                    player.stop() }
 }
 // Tabs hechos.

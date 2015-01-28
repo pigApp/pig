@@ -92,21 +92,21 @@ Rectangle {
                     anchors.top: parent.top
                     anchors.left: parent.left
                     Text {
-                        id: title
+                        id: labelTitle
                         text: titles[index]
                         textFormat: Text.RichText
                         color: "white"
-                        font.family: globalFont.name
+                        font.family: fontGlobal.name
                         font.pixelSize: screen.height/23
-                        anchors.left: content.left
+                        anchors.left: labelContent.left
                         anchors.leftMargin: -screen.height/640
                     }
                     Text {
-                        id: content
+                        id: labelContent
                         text: contents[index]
                         textFormat: Text.RichText
                         color: "white"
-                        font.family: globalFont.name
+                        font.family: fontGlobal.name
                         font.bold: true
                         font.pixelSize: screen.height/54
                         onLinkActivated: Qt.openUrlExternally(link)
@@ -121,7 +121,7 @@ Rectangle {
             screen.state = "hide_help"
             event.accepted = true;
         } else if ((event.key === Qt.Key_Q) && (event.modifiers & Qt.ControlModifier)) {
-            root.signal_qml_quit()
+            root.sig_qml_quit()
             event.accepted = true;
         }
     }

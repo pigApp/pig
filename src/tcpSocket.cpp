@@ -6,7 +6,7 @@
 
 TcpSocket::TcpSocket(QTcpSocket *parent) : QTcpSocket(parent)
 {
-    abortedPreview = false;
+    abortPreview = false;
     offset = 0;
     connect (this, SIGNAL(connected()), this, SLOT(connected()));
     connect (this, SIGNAL(disconnected()), this, SLOT(disconnected()));
@@ -26,7 +26,7 @@ void TcpSocket::start()
 
     timeOut = new QTimer(this);
     timeOut->setSingleShot(true);
-    connect (timeOut, SIGNAL(timeout()), this, SLOT(error()));
+    connect (timeOut, SIGNAL(timeout()), this, SLOT(err()));
     timeOut->start(15000);
 }
 
@@ -74,7 +74,7 @@ void TcpSocket::write()
 
     if (request == "VERSIONS") {
         const QString str(data.constData());
-        emit signal_ret_str(&str);
+        emit sig_ret_str(&str);
     } else if (request == "UPDATE") {
         QFile file(path+"update_file-"+QString::number(offset)+".zip");
         file.open(QIODevice::WriteOnly);
@@ -85,25 +85,25 @@ void TcpSocket::write()
             ++offset;
             start();
         } else {
-            emit signal_ret_files(&path, &files);
+            emit sig_ret_files(&path, &files);
         }
-    } else if (request == "PREVIEW" && !abortedPreview) {
+    } else if (request == "PREVIEW" && !abortPreview) {
         QFile file(path+target);
         file.open(QIODevice::WriteOnly);
         file.write(data);
         file.close();
-        emit signal_ret_preview("", "", path, "", id, true, false);
+        emit sig_ret_preview("", "", path, "", id, true, false);
     }
 }
 
-void TcpSocket::error()
+void TcpSocket::err()
 {
     timeOut->stop();
 
-    if (request == "PREVIEW" && !abortedPreview) {
-        abortedPreview = true;
-        emit signal_ret_preview("", "", "", "", id, false, false);
+    if (request == "PREVIEW" && !abortPreview) {
+        abortPreview = true;
+        emit sig_ret_preview("", "", "", "", id, false, false);
     } else {
-        emit signal_fail_socket();
+        emit sig_socket_err();
     }
 }

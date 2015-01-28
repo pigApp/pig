@@ -8,31 +8,31 @@ Item {
         anchors.top: parent.top
         anchors.left: parent.left
         Text {
-            id: categoriesLabel
+            id: labelCategories
             text: categories
             color: "white"
-            font.family: globalFont.name
+            font.family: fontGlobal.name
             font.pixelSize: screen.height/23
         }
         Text {
-            id: qualityLabel
+            id: labelQuality
             text: quality
             color: "white"
-            font.family: globalFont.name
+            font.family: fontGlobal.name
             font.pixelSize: screen.height/23
         }
         Text {
-            id: timeLabel
+            id: labelTime
             text: time
             color: "white"
-            font.family: globalFont.name
+            font.family: fontGlobal.name
             font.pixelSize: screen.height/23
         }
         Text {
-            id: fullLabel
+            id: labelFull
             text: "FULL"
             color: { if (full === "1") "white"; else Qt.rgba(1, 1, 1, 0.2) }
-            font.family: globalFont.name
+            font.family: fontGlobal.name
             font.pixelSize: screen.height/23
         }
     }

@@ -3,11 +3,10 @@ import "preview/"
 
 Item {
     id: viewerHandler
-    x: root.xB
+    x: root.xb
 
-    property int location_block: 0
-    property int location_global
-    property int offset: 0
+    property int n_block_films: 5
+    property int block_films_location: 0
     property int current_film: 1
     property var coverStatus: []
 
@@ -17,7 +16,7 @@ Item {
         id: view
         model: model
         delegate: delegate
-        //cacheItemCount: 0
+        cacheItemCount: 0
         maximumFlickVelocity: 600
         enabled: false
         anchors.fill: parent
@@ -59,7 +58,7 @@ Item {
         }
 
         Timer {
-            id: enabledDelay
+            id: delayEnabled
             running: false
             repeat: false
             interval: 300
@@ -86,13 +85,12 @@ Item {
             Transition {
                 to: "show"
                 SequentialAnimation {
-                    PropertyAction { target: root_loader_A; property: "source"; value: "" }
-                    PropertyAction { target: networkTimeOut; property: "running"; value: false }
-                    PropertyAction { target: viewerHandler; property: "location_block"; value: 0 }
-                    PropertyAction { target: viewerHandler; property: "location_global"; value: 0 }
+                    PropertyAction { target: loader_root; property: "source"; value: "" }
+                    PropertyAction { target: timeOutNetwork; property: "running"; value: false }
+                    PropertyAction { target: viewerHandler; property: "block_films_location"; value: 0 }
                     NumberAnimation { duration: 250 }
                     ParallelAnimation {
-                        NumberAnimation { target: root; easing.amplitude: 1.7; properties: "xB"; to: 0; duration: 1200; easing.type: Easing.OutQuart }
+                        NumberAnimation { target: root; easing.amplitude: 1.7; properties: "xb"; to: 0; duration: 1200; easing.type: Easing.OutQuart }
                         NumberAnimation { target: root; easing.amplitude: 1.7; properties: "screenOpacity"; to: 0; duration: 1200; easing.type: Easing.OutQuart }
                         NumberAnimation { target: backgroundBlur; easing.amplitude: 1.7; properties: "radius"; to: 96; duration: 1200; easing.type: Easing.OutQuart }
                     }
@@ -104,7 +102,7 @@ Item {
                 SequentialAnimation {
                     PropertyAction { target: view; property: "enabled"; value: false }
                     ParallelAnimation {
-                        NumberAnimation { target: root; easing.amplitude: 1.7; properties: "xB"; to: screen.width+50; duration: 600; easing.type: Easing.OutQuart }
+                        NumberAnimation { target: root; easing.amplitude: 1.7; properties: "xb"; to: screen.width+50; duration: 600; easing.type: Easing.OutQuart }
                         NumberAnimation { target: root; easing.amplitude: 1.7; properties: "screenOpacity"; to: 0.4; duration: 600; easing.type: Easing.OutQuart }
                         NumberAnimation { target: backgroundBlur; easing.amplitude: 1.7; properties: "radius"; to: 32; duration: 600; easing.type: Easing.OutQuart }
                     }
@@ -115,7 +113,7 @@ Item {
                 to: "hide_viewer_show_finder"
                 SequentialAnimation {
                     ParallelAnimation {
-                        NumberAnimation { target: root; easing.amplitude: 1.7; properties: "xB"; to: screen.width+50; duration: 600; easing.type: Easing.OutQuart }
+                        NumberAnimation { target: root; easing.amplitude: 1.7; properties: "xb"; to: screen.width+50; duration: 600; easing.type: Easing.OutQuart }
                         NumberAnimation { target: backgroundBlur; easing.amplitude: 1.7; properties: "radius"; to: 0; duration: 600; easing.type: Easing.OutQuart }
                     }
                     PropertyAction { target: screen; property: "state"; value: "show_finder" }
@@ -125,53 +123,53 @@ Item {
 
         Keys.onPressed: {
             if (event.key === Qt.Key_Up) {
-                if((root.total_films > 5) && (view.counter < root.total_films)) {
-                    viewerHandler.offset = viewerHandler.offset+5
-                    view.counter = view.counter+5
-                    current_film = view.counter-4
+                if ((root.n_films > 5) && (view.counter < root.n_films)) {
+                    if ((root.n_films-view.counter) >= 5 ) {
+                        view.counter = view.counter+5
+                    } else {
+                        n_block_films = root.n_films-view.counter
+                        view.counter = view.counter+n_block_films
+                    }
+                    current_film = (view.counter-n_block_films)+1
                     view.state = "hide"
                 }
             } else if (event.key === Qt.Key_Down) {
-                if((root.total_films > 5) && (current_film-5 > 0)) {
-                    viewerHandler.offset = viewerHandler.offset-5
-                    view.counter = view.counter-5
+                if ((root.n_films > 5) && ((view.counter-5) > 0)) {
+                    view.counter = view.counter-n_block_films
                     current_film = view.counter-4
+                    n_block_films = 5
                     view.state = "hide"
                 }
             } else if (event.key === Qt.Key_Right) {
                 view.enabled = false
-                enabledDelay.start()
+                delayEnabled.start()
                 incrementCurrentIndex()
-                if (location_global === (root.data_films.length-13)) {
-                    location_global = 0
-                    location_block = 0
-                    current_film = current_film-root.block_films+1
+                if (block_films_location === (n_block_films-1)) {
+                    block_films_location = 0
+                    current_film = (view.counter-n_block_films)+1
                 } else {
-                    location_global = location_global+13
+                    ++block_films_location
                     ++current_film
-                    ++location_block
                 }
-            } else if (event.key === Qt.Key_Left) {
+            } else if (event.key === Qt.Key_Left) { // TODO: Hacia la izquierda funciona mal.
                 view.enabled = false
-                enabledDelay.start()
+                delayEnabled.start()
                 decrementCurrentIndex()
-                if (location_global === 0) {
-                    location_global = root.data_films.length-13
-                    location_block = root.block_films-1
-                    current_film = current_film+root.block_films-1
+                if (block_films_location === 0) {
+                    block_films_location = view.counter-1
+                    current_film = view.counter
                 } else {
-                    location_global = location_global-13
+                    --block_films_location
                     --current_film
-                    --location_block
                 }
-            } else if ((event.key === Qt.Key_H) && (event.modifiers & Qt.ControlModifier) && !networkTimeOut.running) {
+            } else if ((event.key === Qt.Key_H) && (event.modifiers & Qt.ControlModifier) && !timeOutNetwork.running) {
                 screen.state = "show_help"
                 event.accepted = true
             } else if (event.key === Qt.Key_Escape) {
                 view.state = "hide_viewer_show_finder"
                 event.accepted = true;
             } else if ((event.key === Qt.Key_Q) && (event.modifiers & Qt.ControlModifier)) {
-                root.signal_qml_quit()
+                root.sig_qml_quit()
                 event.accepted = true;
             }
         }
@@ -199,21 +197,21 @@ Item {
                 }
             }
             Text {
-                id: titleLabel
+                id: labelTitle
                 text: title
                 color: "white"
-                font.family: globalFont.name
+                font.family: fontGlobal.name
                 font.pixelSize: screen.height/10
                 visible: recipe.PathView.isCurrentItem
                 anchors.left: cover.left
-                anchors.bottom: castLabel.top
+                anchors.bottom: labelCast.top
                 anchors.bottomMargin: -parent.height/54
             }
             Text {
-                id: castLabel
+                id: labelCast
                 text: cast
                 color: Qt.rgba(1, 1, 1, 0.5)
-                font.family: globalFont.name
+                font.family: fontGlobal.name
                 font.bold: true
                 font.pixelSize: screen.height/54
                 visible: recipe.PathView.isCurrentItem
@@ -222,35 +220,34 @@ Item {
                 anchors.bottomMargin: parent.height/108
             }
             Row {
-                id: counterRow
                 visible: recipe.PathView.isCurrentItem
                 anchors.left: cover.right
                 anchors.leftMargin: 10
                 anchors.top: cover.top
                 anchors.topMargin: -15
                 Text {
-                    id: currentFilmLabel
-                    text: viewerHandler.current_film
+                    id: labelCurrentFilm
+                    text: current_film
                     color: "white"
-                    font.family: globalFont.name
+                    font.family: fontGlobal.name
                     font.pixelSize: screen.height/23
                 }
                 Text {
                     text: "·"
                     color: "white"
-                    font.family: globalFont.name
+                    font.family: fontGlobal.name
                     font.pixelSize: screen.height/23
                 }
                 Text {
-                    id: totalFilmsLabel
-                    text: root.total_films
+                    id: labelTotalFilms
+                    text: root.n_films
                     color: "white"
-                    font.family: globalFont.name
+                    font.family: fontGlobal.name
                     font.pixelSize: screen.height/23
                 }
             }
             Cover {
-                id: cover
+                id: cover // TODO: cache false
                 width: parent.width/4.58
                 height: parent.height/1.8
                 anchors.centerIn: parent
@@ -264,7 +261,7 @@ Item {
                 anchors.left: cover.left
             }
             Scenes {
-                id: scenesButtons
+                id: btnScenes
                 totalScenes: scenes
                 visible: recipe.PathView.isCurrentItem
                 enabled: recipe.PathView.isCurrentItem
@@ -298,27 +295,31 @@ Item {
     }
 
     Timer {
-        id: networkTimeOut
+        id: timeOutNetwork
         running: false
         repeat: false
         interval: 60000
-        onTriggered: { root.errorNetwork = true }
+        onTriggered: { root.network_err = true }
     }
     Timer {
         id: update_data
         running: false
         repeat: false
         onTriggered: {
-            //model.clear()
-            root.signal_qml_find(root.inputUser, root.pornstar, root.category, root.quality, root.full, viewerHandler.offset, false)
+            model.clear()
+            append_data()
         }
     }
 
     function append_data() {
         coverStatus = []
         var torrent
-        var row = 0
-        for (var i=0; i<root.block_films; i++) {
+        var row = (current_film-1)*13
+        if (root.n_films < 5) {
+            n_block_films = root.n_films
+            view.counter = root.n_films
+        }
+        for (var i=0; i<n_block_films; i++) {
             torrent = root.data_films[row+12].split(",")
             model.append({ "title": root.data_films[row], "cast": root.data_films[row+1], "categories": root.data_films[row+2], "quality": root.data_films[row+3],
                            "time": root.data_films[row+4], "full": root.data_films[row+5], "hostPreview": root.data_films[row+6], "urlPreview": root.data_films[row+7],
@@ -326,8 +327,8 @@ Item {
                            "urlBackCover": root.data_films[row+11], "urlTorrent": torrent[0], "scenes": Number(torrent[1]) })
             row += 13
         }
-        root_loader_A.source = "../global/Network.qml"
-        networkTimeOut.start()
+        loader_root.source = "../global/Network.qml"
+        timeOutNetwork.start()
     }
 
     onVisibleChanged: { if (viewerHandler.visible) view.forceActiveFocus() }

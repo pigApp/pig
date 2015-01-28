@@ -19,18 +19,18 @@ public:
     QString target;
     QString request;
 
-    bool abortedPreview;
+    bool abortPreview;
     int id;
 
 public slots:
     void start();
 
 signals:
-    void signal_ret_str(const QString *const str);
-    void signal_ret_files(const QString *const path, const QStringList *const files);
-    void signal_ret_preview(const QString, const QString, const QString path, const QString file,
-                            const int id, const bool success, const bool abort);
-    void signal_fail_socket();
+    void sig_ret_str(const QString *const str);
+    void sig_ret_files(const QString *const path, const QStringList *const files);
+    void sig_ret_preview(const QString, const QString, const QString path, const QString file,
+                         const int id, const bool success, const bool abort);
+    void sig_socket_err();
 
 private:
     QByteArray data;
@@ -44,7 +44,7 @@ private slots:
     void disconnected();
     void ready_to_read();
     void write();
-    void error();
+    void err();
 };
 
 #endif

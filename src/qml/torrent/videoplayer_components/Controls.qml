@@ -5,15 +5,15 @@ Item {
     id: constrols
 
     Timer {
-        id: hideControlsDelay
+        id: delayHideControls
         running: !videoPlayerHandler.sandbox
         repeat: false
         interval: 4000
         onTriggered: {
             if ((mouseArea.mouseX < (parent.width-(parent.width/9.6))) && (mouseArea.mouseY < (parent.height-(parent.height/54))))
-                videoPlayerHandler.state = "hideControls"
+                videoPlayerHandler.state = "hide_controls"
             else
-                hideControlsDelay.restart()
+                delayHideControls.restart()
         }
     }
 
@@ -23,8 +23,8 @@ Item {
         onClicked: playback(true)
         onPositionChanged: {
             if (videoPlayerHandler.sideBoxMargin !== 0) {
-                videoPlayerHandler.state = "showControls"
-                hideControlsDelay.start()
+                videoPlayerHandler.state = "show_controls"
+                delayHideControls.start()
             }
         }
         anchors.fill: parent
@@ -55,7 +55,7 @@ Item {
             console.log("//// ESC")
             event.accepted = true;
         } else if ((event.key === Qt.Key_Q) && (event.modifiers & Qt.ControlModifier)) {
-            root.signal_qml_quit()
+            root.sig_qml_quit()
             event.accepted = true;
         }
     }

@@ -32,25 +32,32 @@ PIG::~PIG()
     exit(0);
 }
 
+//QUIT
+void PIG::quit()
+{
+    this->~PIG();
+}
+
+//QML_GUI
 void PIG::set_root_object(QObject *root)
 {
     if (mRoot != NULL)
         mRoot->disconnect(this);
     mRoot = root;
     if (mRoot != NULL) {
-        connect (mRoot, SIGNAL(signal_qml_password_handler(const QString, const bool, const bool, const bool)), this,
-                        SLOT(password_handler(const QString, const bool, const bool, const bool)));
-        connect (mRoot, SIGNAL(signal_qml_find(const QString, const QString, const QString, const QString, const QString, const int, const bool)), this,
-                        SLOT(find(const QString, const QString, const QString, const QString, const QString, const int, const bool)));
-        connect (mRoot, SIGNAL(signal_qml_preview_handler(const QString, const QString, const QString, const QString, const int, const bool, const bool)), this,
-                        SLOT(preview_handler(const QString, const QString, const QString, const QString, const int, const bool, const bool)));
-        connect (mRoot, SIGNAL(signal_qml_torrent_handler(const QString, const int, const bool)), this, SLOT(torrent_handler(const QString, const int, const bool)));
-        connect (mRoot, SIGNAL(signal_qml_quit()), this, SLOT(quit()));
+        connect (mRoot, SIGNAL(sig_qml_password_handler(const bool, const QString, const bool, const bool)), this,
+            SLOT(password_handler(const bool, const QString, const bool, const bool)));
+        connect (mRoot, SIGNAL(sig_qml_find(const QString, const QString, const QString, const QString, const QString)), this,
+            SLOT(find(const QString, const QString, const QString, const QString, const QString)));
+        connect (mRoot, SIGNAL(sig_qml_preview_handler(const QString, const QString, const QString, const QString, const int, const bool, const bool)), this,
+            SLOT(preview_handler(const QString, const QString, const QString, const QString, const int, const bool, const bool)));
+        connect (mRoot, SIGNAL(sig_qml_torrent_handler(const QString, const int, const bool)), this, SLOT(torrent_handler(const QString, const int, const bool)));
+        connect (mRoot, SIGNAL(sig_qml_quit()), this, SLOT(quit()));
     }
 }
 
 //PASSWORD
-void PIG::password_handler(const QString plain, const bool require, const bool check, const bool write)
+void PIG::password_handler(const bool require, const QString plain, const bool check, const bool write)
 {
     if (require) {
 #ifdef __linux__
@@ -60,7 +67,7 @@ void PIG::password_handler(const QString plain, const bool require, const bool c
 #endif
        QFile file;
        if (file.exists(target))
-           emit signal_ret_password(true);
+           emit sig_ret_password(true);
        else
            update_handler();
        file.close();
@@ -69,13 +76,13 @@ void PIG::password_handler(const QString plain, const bool require, const bool c
         if (mPassword.check(&plain))
             update_handler();
         else
-            emit signal_ret_password();
+            emit sig_ret_password();
     } else if (write) {
         Password mPassword;
         if (mPassword.write(&plain))
-            emit signal_ret_password(false, true);
+            emit sig_ret_password(false, true);
         else
-            emit signal_ret_password();
+            emit sig_ret_password();
     }
 }
 
@@ -96,18 +103,18 @@ void PIG::update_handler()
         mUpdate->_root = &mRoot;
         mUpdate->db = &db;
         mUpdate->start();
-        connect (mRoot, SIGNAL(signal_qml_update_get()), mUpdate, SLOT(user_confirmation()));
-        connect (mRoot, SIGNAL(signal_qml_update_skip()), this, SLOT(start_pig()));
-        connect (mUpdate, SIGNAL(signal_continue()), this, SLOT(start_pig()));
-        connect (mUpdate, SIGNAL(signal_fail_database()), this, SLOT(error_database()));
-        emit signal_show_update();
+        connect (mRoot, SIGNAL(sig_qml_update_get()), mUpdate, SLOT(user_confirmation()));
+        connect (mRoot, SIGNAL(sig_qml_update_skip()), this, SLOT(start()));
+        connect (mUpdate, SIGNAL(sig_continue()), this, SLOT(start()));
+        connect (mUpdate, SIGNAL(sig_fail_database()), this, SLOT(db_err()));
+        emit sig_show_update();
     } else {
-        error_database();
+        db_err();
     }
 }
 
 //START
-void PIG::start_pig()
+void PIG::start()
 {
     mUpdate->deleteLater();
     mUpdate = NULL;
@@ -117,16 +124,16 @@ void PIG::start_pig()
         query.prepare("SELECT Binary, Release, Database, Categories, NCategories, Pornstars, NPornstars FROM PigData, FiltersData");
         if (!query.exec()) {
             db.close();
-            error_database();
+            db_err();
         } else {
             query.next();
             const int binary = query.value(0).toInt();
             const int release = query.value(1).toInt();
             const int database = query.value(2).toInt();
             QStringList categories = query.value(3).toString().split(",");
-            const QStringList totalCategories = query.value(4).toString().split(",");
+            const QStringList nCategories = query.value(4).toString().split(",");
             QStringList pornstars = query.value(5).toString().split(",");
-            const QStringList totalPornstars = query.value(6).toString().split(",");
+            const QStringList nPornstars = query.value(6).toString().split(",");
             db.close();
 
             const QString strBinary = QString::number(binary);
@@ -139,9 +146,9 @@ void PIG::start_pig()
             mRoot->setProperty("release", strRelease);
             mRoot->setProperty("database", strDatabase);
             mRoot->setProperty("categories", categories);
-            mRoot->setProperty("totalCategories", totalCategories);
+            mRoot->setProperty("n_categories", nCategories);
             mRoot->setProperty("pornstars", pornstars);
-            mRoot->setProperty("totalPornstars", totalPornstars);
+            mRoot->setProperty("n_pornstars", nPornstars);
 
 #ifdef __linux__
     const QString init = QDir::homePath()+"/.pig/.init";
@@ -175,19 +182,19 @@ void PIG::start_pig()
                         binaryData = false;
                 }
                 file.rename(tmp+"news.trash");
-                emit signal_show_news(binaryNews, databaseNews);
+                emit sig_show_news(binaryNews, databaseNews);
             } else {
-                emit signal_show_finder();
+                emit sig_show_finder();
             }
         }
     } else {
-        error_database();
+        db_err();
     }
 }
 
 //PREVIEW
 void PIG::preview_handler(const QString host, const QString url, const QString path, const QString target,
-                          const int id, const bool success, const bool abort)
+    const int id, const bool success, const bool abort)
 {
     if (!target.isEmpty()) {
         mSocket[id] = new TcpSocket();
@@ -197,14 +204,14 @@ void PIG::preview_handler(const QString host, const QString url, const QString p
         mSocket[id]->id = id;
         mSocket[id]->request = "PREVIEW";
         mSocket[id]->start();
-        connect (mSocket[id], SIGNAL(signal_ret_preview(const QString, const QString, const QString, const QString, const int, const bool, const bool)),this,
-                              SLOT(preview_handler(const QString, const QString, const QString, const QString, const int, const bool, const bool)));
+        connect (mSocket[id], SIGNAL(sig_ret_preview(const QString, const QString, const QString, const QString, const int, const bool, const bool)),this,
+            SLOT(preview_handler(const QString, const QString, const QString, const QString, const int, const bool, const bool)));
     } else if (target.isEmpty() && !abort) {
-        emit signal_ret__preview(path, id, success);
+        emit sig_ret_preview(path, id, success);
         mSocket[id]->deleteLater();
         mSocket[id] = NULL;
     } else if (abort) {
-        mSocket[id]->abortedPreview = true;
+        mSocket[id]->abortPreview = true;
         mSocket[id]->deleteLater();
         mSocket[id] = NULL;
     }
@@ -225,27 +232,21 @@ void PIG::torrent_handler(const QString url, const int scene, const bool abort)
 }
 
 //FIND
-void PIG::find(const QString inputUser, const QString pornstar, const QString category,
-               const QString quality, const QString full, const int offset, const bool init)
+void PIG::find(const QString userInput, const QString pornstar, const QString category,
+    const QString quality, const QString full)
 {
     if (db.open()) {
         QSqlQuery query;
-            query.prepare("SELECT Title, Cas, Category, Quality, Time, Full, HostPreview, UrlPreview, FilePreview, HostCover, UrlFrontCover, UrlBackCover, Torrent \
-                           FROM Films WHERE Title LIKE '%"+inputUser+"%' AND Cas LIKE '%"+pornstar+"%' AND Category LIKE '%"+category+"%' \
-                           AND Quality LIKE '%"+quality+"%' AND Full LIKE '%"+full+"%' ORDER BY Title ASC LIMIT 1000 OFFSET '"+QString::number(offset)+"'");
+        query.prepare("SELECT Title, Cas, Category, Quality, Time, Full, HostPreview, UrlPreview, FilePreview, HostCover, UrlFrontCover, UrlBackCover, Torrent \
+            FROM Films WHERE Title LIKE '%"+userInput+"%' AND Cas LIKE '%"+pornstar+"%' AND Category LIKE '%"+category+"%' \
+            AND Quality LIKE '%"+quality+"%' AND Full LIKE '%"+full+"%' ORDER BY Title ASC LIMIT 1000");
         if (!query.exec()) {
             db.close();
-            error_database();
+            db_err();
         } else {
-            if (init) {
-                query.last();
-                mRoot->setProperty("total_films", query.at()+1);
-                query.first();
-                query.previous();
-            }
-            int i = 0;
+            int nFilms = 0;
             QStringList dataFilms;
-            for (i=0; query.next() && i<5; i++) {
+            for (int i=0; query.next(); i++) {
                 const QString strTitle = query.value(0).toString();
                 const QString strCast = query.value(1).toString();
                 const QString strCategories = query.value(2).toString();
@@ -259,21 +260,19 @@ void PIG::find(const QString inputUser, const QString pornstar, const QString ca
                 const QString strUrlFrontCover = query.value(10).toString();
                 const QString strUrlBackCover = query.value(11).toString();
                 const QString strTorrent = query.value(12).toString();
-                dataFilms << strTitle << strCast << strCategories << strQuality << strTime << strFull << strHostPreview << strUrlPreview << strFilePreview
-                          << strHostCover << strUrlFrontCover << strUrlBackCover << strTorrent;
+                dataFilms << strTitle << strCast << strCategories << strQuality << strTime << strFull << strHostPreview << strUrlPreview
+                    << strFilePreview << strHostCover << strUrlFrontCover << strUrlBackCover << strTorrent;
             }
             db.close();
-            if (!query.last() && init) {
-                emit signal_ret_db(0, dataFilms, false);
+            if (!query.last()) {
+                emit sig_ret_db(nFilms, dataFilms);
             } else {
-                if (init)
-                    emit signal_ret_db(i, dataFilms, false);
-                else
-                    emit signal_ret_db(i, dataFilms, true);
+                nFilms = query.at()+1;
+                emit sig_ret_db(nFilms, dataFilms);
             }
         }
     } else {
-        error_database();
+        db_err();
     }
 }
 
@@ -301,14 +300,8 @@ void PIG::cleanup()
     }
 }
 
-//ERROR_DB
-void PIG::error_database()
+//DB_ERROR
+void PIG::db_err()
 {
-    emit signal_show_errorDatabase();
-}
-
-//QUIT
-void PIG::quit()
-{
-    this->~PIG();
+    emit sig_show_db_err();
 }

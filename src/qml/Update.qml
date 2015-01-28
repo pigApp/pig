@@ -8,35 +8,35 @@ Item {
         spacing: -parent.height/72
         anchors.centerIn: parent
         Row {
-            id: statesRow
+            id: rowState
             spacing: screen.width/192
             Text {
-                id: statusLabel
+                id: labelStatus
                 text: root.status
                 color: "white"
-                font.family: globalFont.name
-                font.bold: { statusLabel.text === "UPDATED" }
+                font.family: fontGlobal.name
+                font.bold: { labelStatus.text === "UPDATED" }
                 font.pixelSize: screen.height/23
-                visible: { statusLabel.text !== "FAIL" }
+                visible: { labelStatus.text !== "FAIL" }
             }
             Text {
-                id: informationLabel
+                id: labelInformation
                 text: root.information
                 color: "white"
-                font.family: globalFont.name
+                font.family: fontGlobal.name
                 font.pixelSize: screen.height/23
             }
             Image {
-                id: failIcon
+                id: icon
                 width: screen.width/58.18
                 height: screen.height/32.72
-                sourceSize.width: failIcon.width
-                sourceSize.height: failIcon.height
-                source: "qrc:/img-err"
-                visible: { statusLabel.text === "FAIL" }
-                anchors.verticalCenter: informationLabel.verticalCenter
+                sourceSize.width: icon.width
+                sourceSize.height: icon.height
+                source: "qrc:/img_err"
+                visible: { labelStatus.text === "FAIL" }
+                anchors.verticalCenter: labelInformation.verticalCenter
                 anchors.verticalCenterOffset: {
-                    if (informationLabel.text === "GKSU·KDESU NEEDED")
+                    if (labelInformation.text === "GKSU·KDESU NEEDED")
                         screen.height/360
                     else
                         screen.height/635
@@ -44,21 +44,20 @@ Item {
             }
         }
         Row {
-            id: buttonsRow
             spacing: screen.width/192
-            visible: { statusLabel.text === "UPDATE AVAILABLE" }
-            enabled: { statusLabel.text === "UPDATE AVAILABLE" }
-            anchors.horizontalCenter: statesRow.horizontalCenter
+            visible: { labelStatus.text === "UPDATE AVAILABLE" }
+            enabled: { labelStatus.text === "UPDATE AVAILABLE" }
+            anchors.horizontalCenter: rowState.horizontalCenter
             anchors.horizontalCenterOffset: -screen.width/384
             Button {
-                id: get
+                id: btnGet
                 label: "GET"
-                onClicked: root.signal_qml_update_get()
+                onClicked: root.sig_qml_update_get()
             }
             Button {
-                id: skip
+                id: btnSkip
                 label: "SKIP"
-                onClicked: root.signal_qml_update_skip()
+                onClicked: root.sig_qml_update_skip()
             }
         }
     }
@@ -70,7 +69,7 @@ Item {
 
     Keys.onPressed: {
         if ((event.key === Qt.Key_Q) && (event.modifiers & Qt.ControlModifier)) {
-            root.signal_qml_quit()
+            root.sig_qml_quit()
             event.accepted = true;
         }
     }

@@ -42,7 +42,7 @@ void Update::start()
         query.prepare("SELECT Binary, Release, Database, Library, Host, "+Url+" FROM PigData, UpdateData");
         if (!query.exec()) {
             db->close();
-            emit signal_fail_database();
+            emit sig_fail_database();
         } else {
             query.next();
             binary = query.value(0).toInt();
@@ -56,7 +56,7 @@ void Update::start()
             get(&host, &urls, "VERSIONS");
         }
     } else {
-        emit signal_fail_database();
+        emit sig_fail_database();
     }
 }
 
@@ -64,10 +64,10 @@ void Update::get(const QString *const host, const QStringList *const urls, const
 {
     if (request == "VERSIONS") {
         mSocket = new TcpSocket();
-        connect (mSocket, SIGNAL(signal_ret_str(const QString *const)), this, SLOT(check_versions(const QString *const)));
-        connect (mSocket, SIGNAL(signal_ret_files(const QString *const, const QStringList *const)), this,
-                          SLOT(unzip_files(const QString *const, const QStringList *const)));
-        connect (mSocket, SIGNAL(signal_fail_socket()), this, SLOT(error()));
+        connect (mSocket, SIGNAL(sig_ret_str(const QString *const)), this, SLOT(check_versions(const QString *const)));
+        connect (mSocket, SIGNAL(sig_ret_files(const QString *const, const QStringList *const)), this,
+            SLOT(unzip_files(const QString *const, const QStringList *const)));
+        connect (mSocket, SIGNAL(sig_socket_err()), this, SLOT(err()));
     }
     mSocket->host = *host;
     mSocket->urls = *urls;
@@ -106,7 +106,7 @@ void Update::check_versions(const QString *const str)
         (*_root)->setProperty("showNetwork", false);
         (*_root)->setProperty("status", "UPDATE AVAILABLE");
     } else {
-        emit signal_continue();
+        emit sig_continue();
     }
 }
 
@@ -127,7 +127,7 @@ void Update::unzip_files(const QString *const path, const QStringList *const fil
     } else {
         (*_root)->setProperty("status", "FAIL");
         (*_root)->setProperty("information", "TRY LATER");
-        QTimer::singleShot(5000, this, SLOT(error()));
+        QTimer::singleShot(5000, this, SLOT(err()));
     }
 }
 
@@ -162,24 +162,24 @@ void Update::update_files()
             file.rename(target, target_backup);
         if (file.copy(origin, target)) {
             if (!binaryAvailable && !libraryAvailable)
-                emit signal_continue();
+                emit sig_continue();
         } else {
             (*_root)->setProperty("status", "FAIL");
             (*_root)->setProperty("information", "TRY LATER");
-            QTimer::singleShot(5000, this, SLOT(error()));
+            QTimer::singleShot(5000, this, SLOT(err()));
         }
     }
 
-//COPY BIN_LIB
+//COPY BIN/LIB
     if (binaryAvailable) {
 #ifdef __linux__
     mSu = new Su();
-    connect (mSu, SIGNAL(signal_ret_su(int)), this, SLOT(check_exit(int)));
+    connect (mSu, SIGNAL(sig_ret_su(int)), this, SLOT(check_exit(int)));
     if (!libraryAvailable)
         mSu->update("'mv "+QDir::homePath()+"/.pig/tmp/pig /usr/bin/ ; chown root.root /usr/bin/pig ; chmod +x /usr/bin/pig'");
     else
         mSu->update("'mv "+QDir::homePath()+"/.pig/tmp/pig /usr/bin/ ; mv "+QDir::homePath()+"/.pig/tmp/*.so* /usr/lib/pig/ ; \
-                    chown root.root /usr/bin/pig ; chown root.root /usr/lib/pig/* ; chmod +x /usr/bin/pig ; chmod +x /usr/lib/pig/*'");
+            chown root.root /usr/bin/pig ; chown root.root /usr/lib/pig/* ; chmod +x /usr/bin/pig ; chmod +x /usr/lib/pig/*'");
 #else
     QProcess proc;
     if (!libraryAvailable)
@@ -223,11 +223,11 @@ void Update::check_exit(int exitCode)
     } else if (exitCode == -1) {
         (*_root)->setProperty("status", "FAIL");
         (*_root)->setProperty("information", "GKSU·KDESU NEEDED");
-        QTimer::singleShot(10000, this, SLOT(error()));
+        QTimer::singleShot(10000, this, SLOT(err()));
     } else {
         (*_root)->setProperty("status", "FAIL");
         (*_root)->setProperty("information", "TRY LATER");
-        QTimer::singleShot(5000, this, SLOT(error()));
+        QTimer::singleShot(5000, this, SLOT(err()));
     }
 #else
     if (exitCode == 0) {
@@ -253,12 +253,12 @@ void Update::check_exit(int exitCode)
     } else {
         (*_root)->setProperty("status", "FAIL");
         (*_root)->setProperty("information", "TRY LATER");
-        QTimer::singleShot(5000, this, SLOT(error()));
+        QTimer::singleShot(5000, this, SLOT(err()));
     }
 #endif
 }
 
-void Update::error()
+void Update::err()
 {
     QFile file;
     QString target;
@@ -285,5 +285,5 @@ void Update::error()
             file.rename(target, tmp+"db.trash");
         file.rename(target_backup, target);
     }
-    emit signal_continue();
+    emit sig_continue();
 }

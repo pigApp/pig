@@ -4,14 +4,14 @@ Item {
     id: filterBox
     height: screen.height/4
 
-    property alias labelText: label.text
-    property alias totalLabelText: totalLabel.text
-    property alias sourceImage: pic.source
+    property alias label: label.text
+    property alias label_n: label_n.text
+    property alias source: pic.source
 
     signal clicked()
 
     Image {
-        id: gridLayer
+        id: layerGrid
         sourceSize.width: parent.width
         sourceSize.height: parent.height
         source: "qrc:/img-grid-filters"
@@ -27,14 +27,14 @@ Item {
     Text {
         id: label
         color: "white"
-        font.family: globalFont.name
+        font.family: fontGlobal.name
         font.pixelSize: screen.height/23
         anchors.centerIn: parent
     }
     Text {
-        id: totalLabel
+        id: label_n
         color: "white"
-        font.family: globalFont.name
+        font.family: fontGlobal.name
         font.pixelSize: screen.height/23
         opacity: 0
         anchors.right: parent.right
@@ -65,7 +65,7 @@ Item {
             ParallelAnimation {
                 NumberAnimation { target: pic; properties: "opacity"; to: 1; duration: 1000; easing.type: Easing.InOutQuart }
                 NumberAnimation { target: label; properties: "opacity"; to: 0; duration: 200; easing.type: Easing.InOutQuart }
-                NumberAnimation { target: totalLabel; properties: "opacity"; to: 1; duration: 800; easing.type: Easing.InOutQuart }
+                NumberAnimation { target: label_n; properties: "opacity"; to: 1; duration: 800; easing.type: Easing.InOutQuart }
             }
         },
         Transition {
@@ -73,7 +73,7 @@ Item {
             ParallelAnimation {
                 NumberAnimation { target: pic; properties: "opacity"; to: 0; duration: 100; easing.type: Easing.InOutQuart }
                 NumberAnimation { target: label; properties: "opacity"; to: 1; duration: 200; easing.type: Easing.InOutQuart }
-                NumberAnimation { target: totalLabel; properties: "opacity"; to: 0; duration: 100; easing.type: Easing.InOutQuart }
+                NumberAnimation { target: label_n; properties: "opacity"; to: 0; duration: 100; easing.type: Easing.InOutQuart }
             }
         }
     ]

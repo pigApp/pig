@@ -4,15 +4,15 @@ Item {
     id: bars
 
     Rectangle {
-       id: downloadBar
-       width: { (parent.width*root.downloaded)/root.total }
+       id: barDownload
+       width: { (parent.width*root.mb_downloaded)/root.n_mb }
        height: screen.height/540
        color: "gray"
        opacity: 0.5
        anchors.bottom: parent.bottom
     }
     Rectangle {
-        id: timeBar
+        id: barTime
         width: { (parent.width*player.position)/player.duration }
         height: screen.height/540
         color: { if (videoPlayerHandler.standby) "yellow"; else "white" }

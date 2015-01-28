@@ -5,11 +5,11 @@ Item {
     id: quality
 
     Image {
-        id: gridLayer
+        id: layerGrid
         width: parent.width
         height: parent.height
-        sourceSize.width: gridLayer.width
-        sourceSize.height: gridLayer.height
+        sourceSize.width: layerGrid.width
+        sourceSize.height: layerGrid.height
         source: "qrc:/img-grid-small"
     }
 
@@ -19,16 +19,16 @@ Item {
         anchors.leftMargin: screen.width/192
         anchors.verticalCenter: parent.verticalCenter
         Button {
-            id: sd
+            id: btnSd
             label: "SD"
             labelColor: { if (root.quality === "SD") "black"; else "white" }
             MouseArea {
                 onClicked: {
                     if (root.quality === "SD") {
-                        sd.lockColor = false
+                        btnSd.lockColor = false
                         root.quality = ""
                     } else {
-                        sd.lockColor = true
+                        btnSd.lockColor = true
                         root.quality = "SD"
                     }
                 }
@@ -36,16 +36,16 @@ Item {
             }
         }
         Button {
-            id: hd
+            id: btnHd
             label: "HD"
             labelColor: { if (root.quality === "HD") "black"; else "white" }
             MouseArea {
                 onClicked: {
                     if (root.quality === "HD") {
-                        hd.lockColor = false
+                        btnHd.lockColor = false
                         root.quality = ""
                     } else {
-                        hd.lockColor = true
+                        btnHd.lockColor = true
                         root.quality = "HD"
                     }
                 }
@@ -53,16 +53,16 @@ Item {
             }
         }
         Button {
-            id: fhd
+            id: btnFhd
             label: "FHD"
             labelColor: { if (root.quality === "FHD") "black"; else "white" }
             MouseArea {
                 onClicked: {
                     if (root.quality === "FHD") {
-                        fhd.lockColor = false
+                        btnFhd.lockColor = false
                         root.quality = ""
                     } else {
-                        fhd.lockColor = true
+                        btnFhd.lockColor = true
                         root.quality = "FHD"
                     }
                 }
@@ -70,16 +70,16 @@ Item {
             }
         }
         Button {
-            id: full
+            id: btnFull
             label: "FULLMOVIE"
             labelColor: { if (root.full === "1") "black"; else "white" }
             MouseArea {
                 onClicked: {
                     if (root.full === "1") {
-                        full.lockColor = false
+                        btnFull.lockColor = false
                         root.full = ""
                     } else {
-                        full.lockColor = true
+                        btnFull.lockColor = true
                         root.full = "1"
                     }
                 }
@@ -90,13 +90,13 @@ Item {
 
     Component.onCompleted: {
         if (root.quality === "SD")
-            sd.lockColor = true
+            btnSd.lockColor = true
         if (root.quality === "HD")
-            hd.lockColor = true
+            btnHd.lockColor = true
         if (root.quality === "FHD")
-            fhd.lockColor = true
+            btnFhd.lockColor = true
         if (root.full === "1")
-            full.lockColor = true
+            btnFull.lockColor = true
     }
 }
 // Tabs hechos.

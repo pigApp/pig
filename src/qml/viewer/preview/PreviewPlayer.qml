@@ -38,24 +38,17 @@ Item {
     }
 
     Timer {
-        id: startDownloadDelay
+        id: delayStartDownload
         running: false
         repeat: false
         interval: 50
         onTriggered: {
             downloading = true
-            root.signal_qml_preview_handler(host, url, "", target, id, false, false)
+            root.sig_qml_preview_handler(host, url, "", target, id, false, false)
         }
     }
     Timer {
-        id: errorDownloadDelay
-        running: false
-        repeat: false
-        interval: 50
-        onTriggered: { icon.source = "qrc:/img-err" }
-    }
-    Timer {
-        id: startPlayerDelay
+        id: delayStartPlayer
         running: false
         repeat: false
         interval: 50
@@ -65,6 +58,13 @@ Item {
             player.visible = true
             player.enabled = true
         }
+    }
+    Timer {
+        id: delayDownload_err
+        running: false
+        repeat: false
+        interval: 50
+        onTriggered: { icon.source = "qrc:/img_err" }
     }
 
     MouseArea {
@@ -86,15 +86,15 @@ Item {
 
     Connections {
         target: cppSignals
-        onSignal_ret__preview: {
+        onSig_ret_preview: {
             if (id === previewPlayer.id) {
                 if (success) {
                     downloading = false
                     previewPlayer.path = path
-                    startPlayerDelay.start()
+                    delayStartPlayer.start()
                 } else {
                     downloading = false
-                    errorDownloadDelay.start()
+                    delayDownload_err.start()
                 }
             }
         }
@@ -106,10 +106,10 @@ Item {
         } else if (downloading) {
             icon.visible = false
             downloading = false
-            root.signal_qml_preview_handler("", "", "", "", id, false, true)
+            root.sig_qml_preview_handler("", "", "", "", id, false, true)
         }
     }
 
-    Component.onCompleted: startDownloadDelay.start()
+    Component.onCompleted: delayStartDownload.start()
 }
 // Tabs hechos.

@@ -17,7 +17,7 @@ public slots:
     void password(const QString arg);
 
 signals:
-    void signal_ret_su(int exitCode);
+    void sig_ret_su(int exitCode);
 
 private:
     QString manager;

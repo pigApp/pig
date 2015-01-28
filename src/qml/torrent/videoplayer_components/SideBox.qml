@@ -5,39 +5,37 @@ Item {
     id: sidebox
 
     Column {
-        id: globalColumn
         spacing: parent.height/540
         anchors.left: parent.left
         anchors.verticalCenter: parent.verticalCenter
         Rectangle {
-            id: timeLayer
+            id: layerTime
             width: sidebox.width
             height: screen.height/10.8
             color: Qt.rgba(0, 0, 0, 0.5)
             Column {
-                id: timeColumn
                 spacing: -screen.height/54
                 anchors.left: parent.left
                 anchors.leftMargin: screen.width/87.27
                 anchors.verticalCenter: parent.verticalCenter
                 Text {
-                    id: currentLabel
+                    id: labelCurrentTime
                     text: formatTime(player.position)
                     color: "white"
-                    font.family: globalFont.name
+                    font.family: fontGlobal.name
                     font.pixelSize: screen.height/23
                 }
                 Text {
-                    id: totalLabel
+                    id: labelTotalTime
                     text: formatTime(player.duration)
                     color: Qt.rgba(0.1, 0.1, 0.1, 1)
-                    font.family: globalFont.name
+                    font.family: fontGlobal.name
                     font.pixelSize: screen.height/23
                 }
             }
         }
         Rectangle {
-            id: playerStateLayer
+            id: layerPlayerState
             width: sidebox.width
             height: screen.height/10.8
             color: Qt.rgba(0, 0, 0, 0.5)
@@ -48,11 +46,11 @@ Item {
                 anchors.verticalCenter: parent.verticalCenter
                 anchors.verticalCenterOffset: screen.height/72
                 Image {
-                    id: playbackIcon
+                    id: iconPlayback
                     width: screen.width/58.18
                     height: screen.height/32.72
-                    sourceSize.width: playbackIcon.width
-                    sourceSize.height: playbackIcon.height
+                    sourceSize.width: iconPlayback.width
+                    sourceSize.height: iconPlayback.height
                     source: {
                         if (videoPlayerHandler.standby) {
                             "qrc:/img-standby"
@@ -67,18 +65,17 @@ Item {
                     }
                 }
                 Row {
-                    id: volumeRow
                     spacing: screen.width/192
                     Image {
-                        id: volumeIcon
+                        id: iconVolume
                         width: screen.width/58.18
                         height: screen.height/32.72
-                        sourceSize.width: volumeIcon.width
-                        sourceSize.height: volumeIcon.height
+                        sourceSize.width: iconVolume.width
+                        sourceSize.height: iconVolume.height
                         source: { if ((player.volume !== 0.0) && !player.muted) "qrc:/img-volume"; else "qrc:/img-volume-off" }
                     }
                     Text {
-                        id: volumeLabel
+                        id: labelVolume
                         text: {
                             if (!player.muted) {
                                 if (player.volume === 0.0)
@@ -92,16 +89,16 @@ Item {
                             }
                         }
                         color: { if (player.muted || (player.volume === 0.0)) Qt.rgba(0.1, 0.1, 0.1, 1); else "white" }
-                        font.family: globalFont.name
+                        font.family: fontGlobal.name
                         font.pixelSize: screen.height/23
-                        anchors.verticalCenter: volumeIcon.verticalCenter
+                        anchors.verticalCenter: iconVolume.verticalCenter
                         anchors.verticalCenterOffset: -screen.height/360
                     }
                 }
             }
         }
         Rectangle {
-            id: statusLayer
+            id: layerStatus
             width: sidebox.width
             height: screen.height/10.8
             color: Qt.rgba(0, 0, 0, 0.5)
@@ -112,54 +109,52 @@ Item {
                 anchors.verticalCenter: parent.verticalCenter
                 anchors.verticalCenterOffset: screen.height/72
                 Row {
-                    id: bitRateRow
                     spacing: screen.width/192
                     Image {
-                        id: bitRateIcon
+                        id: iconBitRate
                         width: screen.width/58.18
                         height: screen.height/32.72
-                        sourceSize.width: bitRateIcon.width
-                        sourceSize.height: bitRateIcon.height
+                        sourceSize.width: iconBitRate.width
+                        sourceSize.height: iconBitRate.height
                         source: "qrc:/img-download-dark"
                     }
                     Text {
-                        id: bitRateLabel
+                        id: labelBitRate
                         text: { if (root.bitRate !== "") root.bitRate }
                         color: Qt.rgba(0.1, 0.1, 0.1, 1)
-                        font.family: globalFont.name
+                        font.family: fontGlobal.name
                         font.pixelSize: screen.height/23
-                        anchors.verticalCenter: bitRateIcon.verticalCenter
+                        anchors.verticalCenter: iconBitRate.verticalCenter
                         anchors.verticalCenterOffset: -screen.height/432
                     }
                     Text {
-                        id: kbLabel
+                        id: labelKb
                         text: { if (root.bitRate !== "") "Kb/s" }
                         color: Qt.rgba(0.1, 0.1, 0.1, 1)
-                        font.family: globalFont.name
+                        font.family: fontGlobal.name
                         font.bold: true
                         font.pixelSize: screen.height/54
-                        anchors.bottom: bitRateLabel.bottom
+                        anchors.bottom: labelBitRate.bottom
                         anchors.bottomMargin: screen.height/154.28
                     }
                 }
                 Row {
-                    id: peersRow
                     spacing: screen.width/192
                     Image {
-                        id: peersIcon
+                        id: iconPeers
                         width: screen.width/58.18
                         height: screen.height/32.72
-                        sourceSize.width: peersIcon.width
-                        sourceSize.height: peersIcon.height
+                        sourceSize.width: iconPeers.width
+                        sourceSize.height: iconPeers.height
                         source: "qrc:/img-peers-dark"
                     }
                     Text {
-                        id: peersLabel
+                        id: labelPeers
                         text: { if (root.peers !== "") root.peers }
                         color: Qt.rgba(0.1, 0.1, 0.1, 1)
-                        font.family: globalFont.name
+                        font.family: fontGlobal.name
                         font.pixelSize: screen.height/23
-                        anchors.verticalCenter: peersIcon.verticalCenter
+                        anchors.verticalCenter: iconPeers.verticalCenter
                         anchors.verticalCenterOffset: -screen.height/432
                     }
                 }

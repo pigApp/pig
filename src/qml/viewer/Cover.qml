@@ -75,7 +75,7 @@ Item {
     }
 
     function check_cover_status() {
-        if (viewerHandler.coverStatus.length === root.block_films)
+        if (viewerHandler.coverStatus.length === viewerHandler.n_block_films)
             view.state = "show"
     }
 }

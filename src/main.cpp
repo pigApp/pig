@@ -7,9 +7,7 @@
 int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);
-
     QQuickView *view = new QQuickView();
-
     PIG pig;
 
     view->rootContext()->setContextProperty("cppSignals", &pig);
@@ -21,7 +19,7 @@ int main(int argc, char *argv[])
     pig.container = QWidget::createWindowContainer(view);
     pig.container->setFocusPolicy(Qt::TabFocus);
     pig.layout->addWidget(pig.container);
-    pig.password_handler("", true, false, false);
+    pig.password_handler(true, "", false, false);
 
     pig.showFullScreen();
 

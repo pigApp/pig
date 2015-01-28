@@ -9,21 +9,21 @@ Item {
         height: screen.height/25.11
         sourceSize.width: icon.width
         sourceSize.height: icon.height
-        source:  { if (!root.errorNetwork) "qrc:/img-network"; else "qrc:/img-network-err" }
+        source:  { if (!root.network_err) "qrc:/img-network"; else "qrc:/img-network_err" }
         anchors.right: parent.right
         anchors.rightMargin: parent.width/128
         anchors.bottom: parent.bottom
         anchors.bottomMargin: parent.height/108
-        onSourceChanged: { if (root.errorNetwork) backDelay.start() }
+        onSourceChanged: { if (root.network_err) delayBack.start() }
     }
 
     Timer {
-        id: backDelay
+        id: delayBack
         running: false
         repeat: false
         interval: 5000
         onTriggered: {
-            root.errorNetwork = false
+            root.network_err = false
             screen.state = "show_finder"
         }
     }

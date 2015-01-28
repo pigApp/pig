@@ -7,7 +7,7 @@ Item {
         id: label
         text: "WELCOME &nbsp; <font color='#000000'>CTRL H TO HELP</font></a>"
         color: "white"
-        font.family: globalFont.name
+        font.family: fontGlobal.name
         font.bold: true
         font.pixelSize: screen.height/54
         opacity: 0

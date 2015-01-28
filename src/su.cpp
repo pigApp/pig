@@ -25,15 +25,16 @@ Su::~Su()
 void Su::update(const QString arg)
 {
     if (manager.isEmpty())
-        emit signal_ret_su(-1);
+        emit sig_ret_su(-1);
     else
         if (manager == "gksu")
             proc->start("/bin/bash", QStringList() << "-c" << manager+" -m 'root password' "+arg);
         else
             proc->start("/bin/bash", QStringList() << "-c" << manager+" -c "+arg);
-    connect (proc, SIGNAL(finished(int)), this, SIGNAL(signal_ret_su(int)));
+    connect (proc, SIGNAL(finished(int)), this, SIGNAL(sig_ret_su(int)));
 }
 
 void Su::password(const QString)
 {
+    // TODO: Set permissions to password file.
 }

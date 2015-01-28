@@ -4,39 +4,39 @@ Item {
     id: input
 
     Image {
-        id: gridLayer
+        id: layerGrid
         width: parent.width
         height: parent.height
-        sourceSize.width: gridLayer.width
-        sourceSize.height: gridLayer.height
+        sourceSize.width: layerGrid.width
+        sourceSize.height: layerGrid.height
         source: "qrc:/img-grid-small"
     }
 
     TextInput {
-        id: user
+        id: userInput
         width: parent.width-(screen.width/76.8)
-        text: root.inputUser
+        text: root.userInput
         color: "white"
-        font.family: globalFont.name
+        font.family: fontGlobal.name
         font.capitalization: Font.AllUppercase
         font.bold: true
         font.pixelSize: screen.height/23
         wrapMode: TextInput.WordWrap
         cursorVisible: false
-        anchors.left: gridLayer.left
+        anchors.left: layerGrid.left
         anchors.leftMargin: screen.width/192
-        anchors.verticalCenter: gridLayer.verticalCenter
+        anchors.verticalCenter: layerGrid.verticalCenter
         onCursorPositionChanged: {
             if (icon.source !== "qrc:/img-find")
                 icon.source = "qrc:/img-find"
-            if (user.text !== "")
-                user.cursorVisible = true
+            if (userInput.text !== "")
+                userInput.cursorVisible = true
             else
-                user.cursorVisible = false
+                userInput.cursorVisible = false
         }
         onAccepted: {
-            root.inputUser = user.text
-            root.signal_qml_find(root.inputUser, root.pornstar, root.category, root.quality, root.full, 0, true)
+            root.userInput = userInput.text
+            root.sig_qml_find(root.userInput, root.pornstar, root.category, root.quality, root.full)
         }
     }
     Image {
@@ -47,9 +47,9 @@ Item {
         sourceSize.height: icon.height
         source: "qrc:/img-find"
         visible: false
-        anchors.left: gridLayer.right
+        anchors.left: layerGrid.right
         anchors.leftMargin: screen.width/384
-        anchors.verticalCenter: gridLayer.verticalCenter
+        anchors.verticalCenter: layerGrid.verticalCenter
     }
 
     onXChanged: {
@@ -59,14 +59,14 @@ Item {
             icon.visible = false
     }
     onEnabledChanged: {
-        user.forceActiveFocus()
-        user.cursorVisible = false
+        userInput.forceActiveFocus()
+        userInput.cursorVisible = false
     }
 
     Connections {
         target: cppSignals
-        onSignal_ret_db: {
-            if ((block_films === 0) && (!filter_loader.active))
+        onSig_ret_db: {
+            if ((n_films === 0) && (!loader_filter.active))
                 icon.source = "qrc:/img-null"
             else
                 icon.source = "qrc:/img-find"

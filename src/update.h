@@ -22,8 +22,8 @@ public slots:
     void start();
 
 signals:
-    void signal_continue();
-    void signal_fail_database();
+    void sig_continue();
+    void sig_fail_database();
 
 private:
     TcpSocket *mSocket;
@@ -43,7 +43,7 @@ private slots:
     void unzip_files(const QString * const path, const QStringList * const files);
     void update_files();
     void check_exit(int exitCode);
-    void error();
+    void err();
 };
 
 #endif
