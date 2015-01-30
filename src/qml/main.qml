@@ -8,6 +8,7 @@ Item {
     property bool askPassword
     property bool showNetwork
     property bool network_err
+    property string tmp
     property string status
     property string information
     property string binary
@@ -21,28 +22,23 @@ Item {
     property string full: ""
     property string quality: ""
     property string bitRate: ""
-    property string videoPath: ""
+    property string video_file: ""
     property int xa: screen.width
     property int xb: 0
     property int n_films
-    property var data_films
     property int mb_required: 0
     property int mb_downloaded: 0
     property int n_mb: 0
     property int peers: 0
+    property var data_films
     property var categories
     property var pornstars
     property var n_categories
     property var n_pornstars
     property real screenOpacity: 0.4
 
-    signal sig_qml_password_handler(bool require, string userInput, bool check, bool write)
     signal sig_qml_update_get()
     signal sig_qml_update_skip()
-    signal sig_qml_find(string userInput, string pornstar, string category, string quality, string full)
-    signal sig_qml_preview_handler(string host, string url, string path, string target, int id, bool success, bool abort)
-    signal sig_qml_torrent_handler(string url, int scene, bool abort)
-    signal sig_qml_quit()
 
     FontLoader { id: fontGlobal; source: "qrc:/font-global" }
 
@@ -146,7 +142,7 @@ Item {
     }
 
     Connections {
-        target: cppSignals
+        target: cpp
         onSig_ret_password: {
             if (require) {
                 askPassword = true

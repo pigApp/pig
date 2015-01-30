@@ -109,10 +109,10 @@ Item {
     Keys.onPressed: {
         if (event.key === Qt.Key_Escape) {
             torrentHandler.state = "hide"
-            root.sig_qml_torrent_handler("", 0, true)
+            cpp.torrent_handler("", 0, true)
             event.accepted = true;
         } else if ((event.key === Qt.Key_Q) && (event.modifiers & Qt.ControlModifier)) {
-            root.sig_qml_quit()
+            cpp.quit()
             event.accepted = true;
         }
     }

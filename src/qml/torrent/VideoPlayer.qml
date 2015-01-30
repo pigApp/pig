@@ -84,7 +84,7 @@ Rectangle {
     
     onStandbyChanged: { if (standby) player.pause(); else player.play() } 
 
-    Component.onCompleted: { player.source = "file://"+root.videoPath }
+    Component.onCompleted: { player.source = "file://"+root.video_file }
 
     Component.onDestruction: { if ((player.playbackState === MediaPlayer.PlayingState) ||
                                    (player.playbackState === MediaPlayer.PausedState))

@@ -84,7 +84,7 @@ Item {
             finderHandler.state = "hide_filter"
             event.accepted = true
         } else if ((event.key === Qt.Key_Q) && (event.modifiers & Qt.ControlModifier)) {
-            root.sig_qml_quit()
+            cpp.quit()
             event.accepted = true
         }
     }
@@ -92,7 +92,7 @@ Item {
     onFocusChanged: { if (!filters.focus) filters.forceActiveFocus() }
 
     Connections {
-        target: cppSignals
+        target: cpp
         onSig_ret_db: {
             if ((n_films === 0) && (filters.n !== "000")) {
                 labelCheckFilters.visible = true

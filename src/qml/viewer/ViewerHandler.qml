@@ -169,7 +169,7 @@ Item {
                 view.state = "hide_viewer_show_finder"
                 event.accepted = true;
             } else if ((event.key === Qt.Key_Q) && (event.modifiers & Qt.ControlModifier)) {
-                root.sig_qml_quit()
+                cpp.quit()
                 event.accepted = true;
             }
         }
@@ -321,9 +321,9 @@ Item {
         }
         for (var i=0; i<n_block_films; i++) {
             torrent = root.data_films[row+12].split(",")
-            model.append({ "title": root.data_films[row], "cast": root.data_films[row+1], "categories": root.data_films[row+2], "quality": root.data_films[row+3],
-                           "time": root.data_films[row+4], "full": root.data_films[row+5], "hostPreview": root.data_films[row+6], "urlPreview": root.data_films[row+7],
-                           "filePreview": root.data_films[row+8], "idPreview": i, "hostCover": root.data_films[row+9], "urlFrontCover": root.data_films[row+10],
+            model.append({ "id_film": root.data_films[row], "title": root.data_films[row+1], "cast": root.data_films[row+2], "categories": root.data_films[row+3],
+                           "quality": root.data_films[row+4], "time": root.data_films[row+5], "full": root.data_films[row+6], "hostPreview": root.data_films[row+7],
+                           "urlPreview": root.data_films[row+8], "id_preview": i, "hostCover": root.data_films[row+9], "urlFrontCover": root.data_films[row+10],
                            "urlBackCover": root.data_films[row+11], "urlTorrent": torrent[0], "scenes": Number(torrent[1]) })
             row += 13
         }

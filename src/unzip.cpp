@@ -14,7 +14,7 @@ Unzip::~Unzip()
 {
 }
 
-bool Unzip::unzip(const QString* const *path, const QStringList* const *files, const QStringList *sums)
+bool Unzip::unzip(const QString* const *tmp, const QStringList* const *files, const QStringList *sums)
 {
     QFile file;
     for (int i=0; i<(*files)->count(); i++) {
@@ -26,7 +26,7 @@ bool Unzip::unzip(const QString* const *path, const QStringList* const *files, c
                 QuaZipFile zipFile(&zip);
                 for(bool f=zip.goToFirstFile(); f; f=zip.goToNextFile()) {
                     zipFile.open(QIODevice::ReadOnly);
-                    QFile outFile(**path+zipFile.getActualFileName());
+                    QFile outFile(**tmp+zipFile.getActualFileName());
                     outFile.open(QIODevice::WriteOnly);
                     if (outFile.write(zipFile.readAll()) == -1) {
                         zipFile.close();

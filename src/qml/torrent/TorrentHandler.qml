@@ -6,7 +6,7 @@ Item {
     width: screen.width
     height: screen.height
 
-    property string videoPath: root.videoPath
+    property string video_file: root.video_file
     property string sandboxStatus: ""
 
     Loader {
@@ -61,8 +61,8 @@ Item {
         }
     ]
 
-    onVideoPathChanged: {
-        if (videoPath !== "") {
+    onVideo_fileChanged: {
+        if (video_file !== "") {
             loader_videoPlayer.source = "VideoPlayer.qml"
             loader_videoPlayer.active = true
         }

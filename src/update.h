@@ -40,7 +40,7 @@ private slots:
     void get(const QString *const host, const QStringList *const urls, const QString request);
     void check_versions(const QString *const str);
     void user_confirmation();
-    void unzip_files(const QString * const path, const QStringList * const files);
+    void unzip_files(const QString * const tmp, const QStringList * const files);
     void update_files();
     void check_exit(int exitCode);
     void err();

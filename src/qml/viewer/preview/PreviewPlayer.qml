@@ -8,7 +8,6 @@ Item {
     property string host
     property string url
     property string target
-    property string path
     property int id
 
     Image {
@@ -44,7 +43,7 @@ Item {
         interval: 50
         onTriggered: {
             downloading = true
-            root.sig_qml_preview_handler(host, url, "", target, id, false, false)
+            cpp.preview_handler(id, host, url, target, false, false)
         }
     }
     Timer {
@@ -54,7 +53,7 @@ Item {
         interval: 50
         onTriggered: {
             icon.visible = false
-            player.source = "file://"+path+target
+            player.source = "file://"+root.tmp+target
             player.visible = true
             player.enabled = true
         }
@@ -85,12 +84,11 @@ Item {
     }
 
     Connections {
-        target: cppSignals
+        target: cpp
         onSig_ret_preview: {
             if (id === previewPlayer.id) {
                 if (success) {
                     downloading = false
-                    previewPlayer.path = path
                     delayStartPlayer.start()
                 } else {
                     downloading = false
@@ -106,7 +104,7 @@ Item {
         } else if (downloading) {
             icon.visible = false
             downloading = false
-            root.sig_qml_preview_handler("", "", "", "", id, false, true)
+            cpp.preview_handler(id, "", "", "", false, true)
         }
     }
 

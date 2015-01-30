@@ -33,12 +33,7 @@ Item {
             height: front.height
             sourceSize.width: back.width
             sourceSize.height: back.height
-            source: {
-                if (urlBackCover !== "")
-                    hostCover+urlBackCover
-                else
-                    front.source
-            }
+            source: { if (urlBackCover !== "") hostCover+urlBackCover; else front.source }
             onStatusChanged: {
                 if (back.status === Image.Error)
                     back.source = front.source

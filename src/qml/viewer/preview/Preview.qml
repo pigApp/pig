@@ -32,10 +32,10 @@ Item {
         anchors.fill: parent
         onStatusChanged: {
             if (status === Loader.Ready) {
+                loader_previewPlayer.item.id = id_preview
                 loader_previewPlayer.item.host = hostPreview
                 loader_previewPlayer.item.url = urlPreview
-                loader_previewPlayer.item.target = filePreview
-                loader_previewPlayer.item.id = idPreview
+                loader_previewPlayer.item.target = id_film+"p.mp4"
             }
         }
     }

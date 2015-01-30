@@ -25,9 +25,9 @@ Rectangle {
         onAccepted: {
             if (userInput.text !== "") {
                 if (root.askPassword) {
-                    root.sig_qml_password_handler(false, userInput.text, true, false)
+                    cpp.password_handler(false, userInput.text, true, false)
                 } else {
-                    root.sig_qml_password_handler(false, userInput.text, false, true)
+                    cpp.password_handler(false, userInput.text, false, true)
                     userInput.enabled = false
                 }
             }
@@ -37,7 +37,7 @@ Rectangle {
                 screen.state = "hide_password"
                 event.accepted = true
             } else if ((event.key === Qt.Key_Q) && (event.modifiers & Qt.ControlModifier)) {
-                root.sig_qml_quit()
+                cpp.quit()
                 event.accepted = true;
             }
         }
@@ -78,7 +78,7 @@ Rectangle {
     }
 
     Connections {
-        target: cppSignals
+        target: cpp
         onSig_ret_password: {
             if (success) {
                 screen.state = "hide_password"

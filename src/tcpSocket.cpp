@@ -6,8 +6,9 @@
 
 TcpSocket::TcpSocket(QTcpSocket *parent) : QTcpSocket(parent)
 {
-    abortPreview = false;
+    force_abort = false;
     offset = 0;
+
     connect (this, SIGNAL(connected()), this, SLOT(connected()));
     connect (this, SIGNAL(disconnected()), this, SLOT(disconnected()));
     connect (this, SIGNAL(readyRead()), this, SLOT(ready_to_read()));
@@ -54,13 +55,14 @@ void TcpSocket::ready_to_read()
 void TcpSocket::write()
 {    
 #ifdef __linux__
-    const QString path = QDir::homePath()+"/.pig/tmp/";
+    const QString tmp = QDir::homePath()+"/.pig/tmp/";
 #else
-    const QString path = "C:/PIG/.pig/tmp/";
+    const QString tmp = "C:/PIG/.pig/tmp/";
 #endif
     bool header = true;
     QByteArray initPayload;
     const QDataStream in(data);
+
     while (!in.atEnd()) {
         const QByteArray line = in.device()->readLine();
         if (!header) {
@@ -76,7 +78,7 @@ void TcpSocket::write()
         const QString str(data.constData());
         emit sig_ret_str(&str);
     } else if (request == "UPDATE") {
-        QFile file(path+"update_file-"+QString::number(offset)+".zip");
+        QFile file(tmp+"update_file-"+QString::number(offset)+".zip");
         file.open(QIODevice::WriteOnly);
         file.write(data);
         file.close();
@@ -85,14 +87,14 @@ void TcpSocket::write()
             ++offset;
             start();
         } else {
-            emit sig_ret_files(&path, &files);
+            emit sig_ret_files(&tmp, &files);
         }
-    } else if (request == "PREVIEW" && !abortPreview) {
-        QFile file(path+target);
+    } else if (request == "PREVIEW" && !force_abort) {
+        QFile file(tmp+target);
         file.open(QIODevice::WriteOnly);
         file.write(data);
         file.close();
-        emit sig_ret_preview("", "", path, "", id, true, false);
+        emit sig_ret_preview(id, "", "", "", true, false);
     }
 }
 
@@ -100,9 +102,9 @@ void TcpSocket::err()
 {
     timeOut->stop();
 
-    if (request == "PREVIEW" && !abortPreview) {
-        abortPreview = true;
-        emit sig_ret_preview("", "", "", "", id, false, false);
+    if (request == "PREVIEW" && !force_abort) {
+        force_abort = true;
+        emit sig_ret_preview(id, "", "", "", false, false);
     } else {
         emit sig_socket_err();
     }

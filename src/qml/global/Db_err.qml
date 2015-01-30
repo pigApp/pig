@@ -42,7 +42,7 @@ Rectangle {
 
     Keys.onPressed: {
         if ((event.key === Qt.Key_Q) && (event.modifiers & Qt.ControlModifier)) {
-            root.sig_qml_quit()
+            cpp.quit()
             event.accepted = true;
         }
     }

@@ -36,7 +36,7 @@ Item {
         }
         onAccepted: {
             root.userInput = userInput.text
-            root.sig_qml_find(root.userInput, root.pornstar, root.category, root.quality, root.full)
+            cpp.find(root.userInput, root.pornstar, root.category, root.quality, root.full)
         }
     }
     Image {
@@ -64,7 +64,7 @@ Item {
     }
 
     Connections {
-        target: cppSignals
+        target: cpp
         onSig_ret_db: {
             if ((n_films === 0) && (!loader_filter.active))
                 icon.source = "qrc:/img-null"

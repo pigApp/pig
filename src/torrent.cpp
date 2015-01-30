@@ -1,8 +1,7 @@
 #include "torrent.h"
 
-#include <libtorrent/extensions/ut_pex.hpp>
-
 #include <stdlib.h>
+#include <libtorrent/extensions/ut_pex.hpp>
 
 #include <QDir>
 #include <QTimer>
@@ -19,14 +18,12 @@ Torrent::Torrent(QObject *parent, const QString *url) : QObject(parent)
     mb_required = 10;
     mb_skip_global = 0;
     piece_offset_global = 0;
-
 #ifdef __linux__
     const QString home = QDir::homePath();
-    const std::string path = home.toStdString()+"/.pig/tmp/";
+    const std::string tmp = home.toStdString()+"/.pig/tmp/";
 #else
-    const std::string path = "C:/PIG/.pig/tmp/";
+    const std::string tmp = "C:/PIG/.pig/tmp/";
 #endif
-
     //TODO: Compilar libtorrent sin deprecated.
 
     libtorrent::session_settings ss;
@@ -40,7 +37,7 @@ Torrent::Torrent(QObject *parent, const QString *url) : QObject(parent)
     s->listen_on(std::make_pair(6881, 6889), ec);
     s->start_dht();
     s->start_upnp();
-    p.save_path = path;
+    p.save_path = tmp;
     p.url = url->toStdString();
     h = s->add_torrent(p);
     h.set_sequential_download(true);
@@ -146,7 +143,7 @@ void Torrent::progress()
                     QDir dir(QString::fromStdString(h.status(128).save_path)+QString::fromStdString(h.status(64).name));
                     if (!dir.exists())
                         dir.setPath(QString::fromStdString(h.status(128).save_path));
-                    (*_root)->setProperty("videoPath", dir.absolutePath()+"/"+file);
+                    (*_root)->setProperty("video_file", dir.absolutePath()+"/"+file);
                 } else {
                     dump = false;
                     skip = false;

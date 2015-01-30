@@ -69,9 +69,9 @@ void Update::get(const QString *const host, const QStringList *const urls, const
             SLOT(unzip_files(const QString *const, const QStringList *const)));
         connect (mSocket, SIGNAL(sig_socket_err()), this, SLOT(err()));
     }
+    mSocket->request = request;
     mSocket->host = *host;
     mSocket->urls = *urls;
-    mSocket->request = request;
     mSocket->start();
 
     (*_root)->setProperty("showNetwork", true);
@@ -117,12 +117,12 @@ void Update::user_confirmation()
     get(&host, &urls, "UPDATE");
 }
 
-void Update::unzip_files(const QString *const path, const QStringList *const files)
+void Update::unzip_files(const QString *const tmp, const QStringList *const files)
 {
     (*_root)->setProperty("showNetwork", false);
 
     Unzip mUnzip;
-    if (mUnzip.unzip(&path, &files, &sums)) {
+    if (mUnzip.unzip(&tmp, &files, &sums)) {
         update_files();
     } else {
         (*_root)->setProperty("status", "FAIL");

@@ -237,7 +237,7 @@ Item {
             }
             event.accepted = true
         } else if ((event.key === Qt.Key_Q) && (event.modifiers & Qt.ControlModifier)) {
-            root.sig_qml_quit()
+            cpp.quit()
             event.accepted = true
         }
     }
@@ -247,7 +247,7 @@ Item {
             root.category = label.toUpperCase()
         else
             root.pornstar = label.toUpperCase()
-        root.sig_qml_find("", root.pornstar, root.category, root.quality, root.full)
+        cpp.find("", root.pornstar, root.category, root.quality, root.full)
     }
 
     onFocusChanged: { if (!input.focus) input.forceActiveFocus() }

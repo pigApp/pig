@@ -12,7 +12,7 @@ public:
     ~Unzip();
 
 public slots:
-    bool unzip(const QString* const *path, const QStringList* const *files, const QStringList *sums);
+    bool unzip(const QString* const *tmp, const QStringList* const *files, const QStringList *sums);
 };
 
 #endif
