@@ -3,13 +3,16 @@ import QtQuick 2.4
 Item {
     id: preview
 
+    property bool cached: false
+    property int int_id_film: id_film
+
     Image {
         id: icon
         width: screen.width/58.18
         height: screen.height/32.72
         sourceSize.width: icon.width
         sourceSize.height: icon.height
-        source: "qrc:/img-play"
+        source: { if (!cached) "qrc:/img-play"; else "qrc:/img-replay" }
         anchors.centerIn: parent
     }
 
@@ -32,12 +35,19 @@ Item {
         anchors.fill: parent
         onStatusChanged: {
             if (status === Loader.Ready) {
-                loader_previewPlayer.item.id = id_preview
+                loader_previewPlayer.item.id_private = id_preview
+                loader_previewPlayer.item.id_cache = id_film
                 loader_previewPlayer.item.host = hostPreview
                 loader_previewPlayer.item.url = urlPreview
-                loader_previewPlayer.item.target = id_film+"p.mp4"
+                loader_previewPlayer.item.cached = preview.cached
+                viewerHandler.previewStatus.push(0)
             }
         }
+    }
+
+    Component.onCompleted: {
+        if (root.previewCache.indexOf(int_id_film) !== -1)
+            preview.cached = true
     }
 }
 // Tabs hechos.

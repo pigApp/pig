@@ -9,8 +9,6 @@ PIG::PIG(QObject *parent) : QObject(parent), mRoot(0)
 {
     mUpdate = NULL;
     mTorrent = NULL;
-    for (int i=0; i<5; i++)
-        mSocket[i] = NULL;
 }
 
 PIG::~PIG()
@@ -19,9 +17,6 @@ PIG::~PIG()
         delete mUpdate;
     if (mTorrent != NULL)
         delete mTorrent;
-    for (int i=0; i<5; i++)
-        if (mSocket[i] != NULL)
-            delete mSocket[i];
     mRoot->disconnect(this);
     exit(0);
 }
@@ -194,11 +189,9 @@ void PIG::preview_handler(const int id, const QString host, const QString url, c
     } else if (target.isEmpty() && !abort) {
         emit sig_ret_preview(id, success);
         mSocket[id]->deleteLater();
-        mSocket[id] = NULL;
     } else if (abort) {
         mSocket[id]->force_abort = true;
         mSocket[id]->deleteLater();
-        mSocket[id] = NULL;
     }
 }
 

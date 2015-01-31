@@ -9,6 +9,7 @@ Item {
     property int block_films_location: 0
     property int current_film: 1
     property var coverStatus: []
+    property var previewStatus: []
 
     ListModel { id: model }
 
@@ -169,7 +170,10 @@ Item {
                 view.state = "hide_viewer_show_finder"
                 event.accepted = true;
             } else if ((event.key === Qt.Key_Q) && (event.modifiers & Qt.ControlModifier)) {
-                cpp.quit()
+                if (previewStatus.length !== 0)
+                    root.abort_preview_quit = true
+                else
+                    cpp.quit()
                 event.accepted = true;
             }
         }
@@ -247,7 +251,7 @@ Item {
                 }
             }
             Cover {
-                id: cover // TODO: cache false
+                id: cover
                 width: parent.width/4.58
                 height: parent.height/1.8
                 anchors.centerIn: parent
@@ -313,6 +317,7 @@ Item {
 
     function append_data() {
         coverStatus = []
+        previewStatus = []
         var torrent
         var row = (current_film-1)*13
         if (root.n_films < 5) {

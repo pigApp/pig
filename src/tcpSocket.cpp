@@ -41,7 +41,10 @@ void TcpSocket::connected()
 
 void TcpSocket::disconnected()
 {
-    write();
+    if (data.isEmpty()) // TODO: comprobar si hubo error this.error()
+        err();
+    else
+        write();
 }
 
 void TcpSocket::ready_to_read()

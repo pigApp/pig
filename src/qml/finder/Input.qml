@@ -19,7 +19,6 @@ Item {
         color: "white"
         font.family: fontGlobal.name
         font.capitalization: Font.AllUppercase
-        font.bold: true
         font.pixelSize: screen.height/23
         wrapMode: TextInput.WordWrap
         cursorVisible: false

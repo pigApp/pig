@@ -8,7 +8,6 @@ Rectangle {
 
     property alias label: label.text
     property alias labelColor: label.color
-    property alias labelBold: label.font.bold
     property alias labelLeftMargin: button.margin
     property alias layerGridVisible: layerGrid.visible
 

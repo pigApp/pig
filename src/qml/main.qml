@@ -8,6 +8,7 @@ Item {
     property bool askPassword
     property bool showNetwork
     property bool network_err
+    property bool abort_preview_quit 
     property string tmp
     property string status
     property string information
@@ -35,6 +36,7 @@ Item {
     property var pornstars
     property var n_categories
     property var n_pornstars
+    property var previewCache: []
     property real screenOpacity: 0.4
 
     signal sig_qml_update_get()

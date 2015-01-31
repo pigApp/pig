@@ -4,11 +4,14 @@ import QtMultimedia 5.4
 Item {
     id: previewPlayer
 
+    property bool quit: root.abort_preview_quit
+    property bool cached: false
     property bool downloading
     property string host
     property string url
-    property string target
-    property int id
+    property string target: id_cache+"p.mp4"
+    property int id_private
+    property int id_cache
 
     Image {
         id: icon
@@ -16,7 +19,7 @@ Item {
         height: screen.height/32.72
         sourceSize.width: icon.width
         sourceSize.height: icon.height
-        source: "qrc:/img-download"
+        source:  { if (!cached) "qrc:/img-download"; else "qrc:/img-replay" }
         anchors.centerIn: parent
     }
     Video {
@@ -37,29 +40,23 @@ Item {
     }
 
     Timer {
-        id: delayStartDownload
+        id: delay
         running: false
         repeat: false
         interval: 50
         onTriggered: {
-            downloading = true
-            cpp.preview_handler(id, host, url, target, false, false)
+            if (cached) {
+                player.source = "file://"+root.tmp+target
+                player.visible = true
+                player.enabled = true
+            } else {
+                cpp.preview_handler(id_private, host, url, target, false, false)
+                downloading = true
+            }
         }
     }
     Timer {
-        id: delayStartPlayer
-        running: false
-        repeat: false
-        interval: 50
-        onTriggered: {
-            icon.visible = false
-            player.source = "file://"+root.tmp+target
-            player.visible = true
-            player.enabled = true
-        }
-    }
-    Timer {
-        id: delayDownload_err
+        id: delay_err
         running: false
         repeat: false
         interval: 50
@@ -68,46 +65,61 @@ Item {
 
     MouseArea {
         onClicked: {
-            if (!downloading && (player.playbackState === MediaPlayer.PlayingState)) {
-                player.pause()
-            } else if (!downloading && (player.playbackState === MediaPlayer.PausedState)) {
-                player.play()
-            } else if (!downloading && (player.playbackState === MediaPlayer.StoppedState)) {
-                icon.visible = false
-                player.visible = true
-                player.enabled = true
-                player.play()
+            if (!downloading) {
+                if (player.playbackState === MediaPlayer.PlayingState) {
+                    player.pause()
+                } else if (player.playbackState === MediaPlayer.PausedState) {
+                    player.play()
+                } else if (player.playbackState === MediaPlayer.StoppedState) {
+                    icon.visible = false
+                    player.visible = true
+                    player.enabled = true
+                    player.play()
+                }
             }
             view.forceActiveFocus()
         }
         anchors.fill: parent
     }
 
-    Connections {
-        target: cpp
-        onSig_ret_preview: {
-            if (id === previewPlayer.id) {
-                if (success) {
-                    downloading = false
-                    delayStartPlayer.start()
-                } else {
-                    downloading = false
-                    delayDownload_err.start()
-                }
-            }
-        }
-    }
-
-    Component.onDestruction: {
+    function abort() {
         if ((player.playbackState === MediaPlayer.PlayingState) || (player.playbackState === MediaPlayer.PausedState)) {
             player.stop()
         } else if (downloading) {
             icon.visible = false
             downloading = false
-            cpp.preview_handler(id, "", "", "", false, true)
+            cpp.preview_handler(id_private, "", "", "", false, true)
+        }
+        if (quit) {
+            var sts = viewerHandler.previewStatus.indexOf(0)
+            if (sts !== -1) {
+                viewerHandler.previewStatus.splice(sts, 1);
+                if (viewerHandler.previewStatus.indexOf(0) === -1)
+                    cpp.quit()
+            }
         }
     }
 
-    Component.onCompleted: delayStartDownload.start()
+    onQuitChanged: abort()
+
+    Connections {
+        target: cpp
+        onSig_ret_preview: {
+            if (id === id_private) {
+                downloading = false
+                if (success) {
+                    icon.visible = false
+                    root.previewCache.push(id_cache)
+                    cached = true
+                    delay.start()
+                } else {
+                    delay_err.start()
+                }
+            }
+        }
+    }
+
+    Component.onDestruction: { if (!quit) abort() }
+    Component.onCompleted: delay.start()
 }
 // Tabs hechos.
