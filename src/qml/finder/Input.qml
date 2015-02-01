@@ -20,8 +20,8 @@ Item {
         font.family: fontGlobal.name
         font.capitalization: Font.AllUppercase
         font.pixelSize: screen.height/23
-        wrapMode: TextInput.WordWrap
         cursorVisible: false
+        wrapMode: TextInput.NoWrap
         anchors.left: layerGrid.left
         anchors.leftMargin: screen.width/192
         anchors.verticalCenter: layerGrid.verticalCenter

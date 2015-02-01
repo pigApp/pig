@@ -3,6 +3,9 @@ import QtQuick 2.4
 Item {
     id: cover
 
+    property bool cached
+    property int id_cache: id_film
+
     Flipable {
         id: flipable
         width: front.width
@@ -14,15 +17,15 @@ Item {
             height: screen.height/1.8
             sourceSize.width: front.width
             sourceSize.height: front.height
-            source: hostCover+urlFrontCover
+            source: { if (!cached) hostCover+urlFrontCover; else "file://"+root.tmp+id_cache+"f.jpg" }
             onStatusChanged: {
                 if (front.status === Image.Ready) {
                     viewerHandler.coverStatus.push(0)
-                    check_cover_status();
+                    check_status_cache();
                 } else if (front.status === Image.Error) {
                     front.source = "qrc:/img-cover-err"
                     viewerHandler.coverStatus.push(1)
-                    check_cover_status();
+                    check_status_cache();
                 }
             }
         }
@@ -33,7 +36,15 @@ Item {
             height: front.height
             sourceSize.width: back.width
             sourceSize.height: back.height
-            source: { if (urlBackCover !== "") hostCover+urlBackCover; else front.source }
+            source: {
+                if (urlBackCover !== "")
+                    if (!cached)
+                        hostCover+urlBackCover
+                    else
+                        "file://"+root.tmp+id_cache+"b.jpg"
+                else
+                    front.source
+            }
             onStatusChanged: {
                 if (back.status === Image.Error)
                     back.source = front.source
@@ -69,9 +80,18 @@ Item {
         }
     }
 
-    function check_cover_status() {
+    function check_status_cache() {
         if (viewerHandler.coverStatus.length === viewerHandler.n_block_films)
             view.state = "show"
+        if (!cached) {
+            front.grabToImage(function(result) { if (result.saveToFile(root.tmp+id_cache+"f.jpg")) root.coverCache.push(id_cache) })
+            back.grabToImage(function(result) { result.saveToFile(root.tmp+id_cache+"b.jpg") })
+        }
+    }
+
+    Component.onCompleted: {
+        if (root.coverCache.indexOf(id_cache) !== -1)
+            cached = true
     }
 }
 // Tabs hechos.

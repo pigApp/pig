@@ -40,19 +40,19 @@ Item {
                 PropertyAction { target: loader_status; property: "source"; value: "Status.qml" }
                 PropertyAction { target: loader_status; property: "active"; value: true }
                 ParallelAnimation {
-                    NumberAnimation { target: root; easing.amplitude: 1.7; properties: "screenOpacity"; to: 1; duration: 900; easing.type: Easing.InSine }
                     NumberAnimation { target: root; easing.amplitude: 1.7; properties: "xa"; to: 0; duration: 1100; easing.type: Easing.OutQuart }
                     NumberAnimation { target: root; easing.amplitude: 1.7; properties: "xb"; to: -screen.width; duration: 1100; easing.type: Easing.OutQuart }
                 }
                 PropertyAction { target: loader_root_b; property: "visible"; value: false }
+                PropertyAction { target: loader_root_b; property: "enabled"; value: false }
             }
         },
         Transition {
             to: "hide"
             SequentialAnimation {
                 PropertyAction { target: loader_root_b; property: "visible"; value: true }
+                PropertyAction { target: loader_root_b; property: "enabled"; value: true }
                 ParallelAnimation {
-                    NumberAnimation { target: root; easing.amplitude: 1.7; properties: "screenOpacity"; to: 0.5; duration: 1100; easing.type: Easing.OutQuart }
                     NumberAnimation { target: root; easing.amplitude: 1.7; properties: "xa"; to: screen.width; duration: 1100; easing.type: Easing.OutQuart }
                     NumberAnimation { target: root; easing.amplitude: 1.7; properties: "xb"; to: 0; duration: 1100; easing.type: Easing.OutQuart }
                  }

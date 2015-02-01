@@ -5,6 +5,7 @@ Item {
     id: viewerHandler
     x: root.xb
 
+    property bool updateData
     property int n_block_films: 5
     property int block_films_location: 0
     property int current_film: 1
@@ -107,7 +108,7 @@ Item {
                         NumberAnimation { target: root; easing.amplitude: 1.7; properties: "screenOpacity"; to: 0.4; duration: 600; easing.type: Easing.OutQuart }
                         NumberAnimation { target: backgroundBlur; easing.amplitude: 1.7; properties: "radius"; to: 32; duration: 600; easing.type: Easing.OutQuart }
                     }
-                    PropertyAction { target: update_data; property: "running"; value: true }
+                    PropertyAction { target: viewerHandler; property: "updateData"; value: true }
                 }
             },
             Transition {
@@ -184,8 +185,7 @@ Item {
 
     Component {
         id: delegate
-        Item { // TODO: visible y enable si no se esta cargando un torrent (root.onShowTorrent)
-               // TODO: detener el player y descarga (preview) si se sale (Ctrl-V).
+        Item {
             id: recipe
             z: PathView.recipe_z
             width: view.width
@@ -305,15 +305,6 @@ Item {
         interval: 60000
         onTriggered: { root.network_err = true }
     }
-    Timer {
-        id: update_data
-        running: false
-        repeat: false
-        onTriggered: {
-            model.clear()
-            append_data()
-        }
-    }
 
     function append_data() {
         coverStatus = []
@@ -337,5 +328,13 @@ Item {
     }
 
     onVisibleChanged: { if (viewerHandler.visible) view.forceActiveFocus() }
+    onUpdateDataChanged: {
+        if (updateData) {
+            updateData = false
+            model.clear()
+            append_data()
+        }
+    }
+
     Component.onCompleted: append_data()
 }

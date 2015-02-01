@@ -36,6 +36,7 @@ Item {
     property var pornstars
     property var n_categories
     property var n_pornstars
+    property var coverCache: []
     property var previewCache: []
     property real screenOpacity: 0.4
 

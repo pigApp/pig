@@ -5,7 +5,7 @@ Item {
     id: previewPlayer
 
     property bool quit: root.abort_preview_quit
-    property bool cached: false
+    property bool cached
     property bool downloading
     property string host
     property string url

@@ -1,7 +1,8 @@
 import QtQuick 2.4
 
-Item {
+Rectangle {
     id: status
+    color: "black"
 
     property int timeLeft: 9
 

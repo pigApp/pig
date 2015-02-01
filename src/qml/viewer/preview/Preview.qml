@@ -3,8 +3,8 @@ import QtQuick 2.4
 Item {
     id: preview
 
-    property bool cached: false
-    property int int_id_film: id_film
+    property bool cached
+    property int id_cache: id_film
 
     Image {
         id: icon
@@ -36,7 +36,7 @@ Item {
         onStatusChanged: {
             if (status === Loader.Ready) {
                 loader_previewPlayer.item.id_private = id_preview
-                loader_previewPlayer.item.id_cache = id_film
+                loader_previewPlayer.item.id_cache = id_cache
                 loader_previewPlayer.item.host = hostPreview
                 loader_previewPlayer.item.url = urlPreview
                 loader_previewPlayer.item.cached = preview.cached
@@ -46,7 +46,7 @@ Item {
     }
 
     Component.onCompleted: {
-        if (root.previewCache.indexOf(int_id_film) !== -1)
+        if (root.previewCache.indexOf(id_cache) !== -1)
             preview.cached = true
     }
 }
