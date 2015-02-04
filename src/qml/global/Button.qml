@@ -33,8 +33,8 @@ Rectangle {
         height: label.contentHeight
         color: "white"
         font.family: fontGlobal.name
-        font.bold: true
-        font.pixelSize: screen.height/23
+        //font.bold: true
+        font.pixelSize: screen.height/10 //23
         anchors.left: parent.left
         anchors.leftMargin: margin
         anchors.verticalCenter: parent.verticalCenter

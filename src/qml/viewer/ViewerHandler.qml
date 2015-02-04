@@ -93,8 +93,8 @@ Item {
                     NumberAnimation { duration: 250 }
                     ParallelAnimation {
                         NumberAnimation { target: root; easing.amplitude: 1.7; properties: "xb"; to: 0; duration: 1200; easing.type: Easing.OutQuart }
-                        NumberAnimation { target: root; easing.amplitude: 1.7; properties: "screenOpacity"; to: 0; duration: 1200; easing.type: Easing.OutQuart }
-                        NumberAnimation { target: backgroundBlur; easing.amplitude: 1.7; properties: "radius"; to: 96; duration: 1200; easing.type: Easing.OutQuart }
+                        NumberAnimation { target: root; easing.amplitude: 1.7; properties: "screenA"; to: 0.8; duration: 1200; easing.type: Easing.OutQuart }
+                        //NumberAnimation { target: backgroundBlur; easing.amplitude: 1.7; properties: "radius"; to: 96; duration: 1200; easing.type: Easing.OutQuart }
                     }
                     PropertyAction { target: view; property: "enabled"; value: true }
                 }
@@ -105,8 +105,8 @@ Item {
                     PropertyAction { target: view; property: "enabled"; value: false }
                     ParallelAnimation {
                         NumberAnimation { target: root; easing.amplitude: 1.7; properties: "xb"; to: screen.width+50; duration: 600; easing.type: Easing.OutQuart }
-                        NumberAnimation { target: root; easing.amplitude: 1.7; properties: "screenOpacity"; to: 0.4; duration: 600; easing.type: Easing.OutQuart }
-                        NumberAnimation { target: backgroundBlur; easing.amplitude: 1.7; properties: "radius"; to: 32; duration: 600; easing.type: Easing.OutQuart }
+                        NumberAnimation { target: root; easing.amplitude: 1.7; properties: "screenA"; to: 0.4; duration: 600; easing.type: Easing.OutQuart }
+                        //NumberAnimation { target: backgroundBlur; easing.amplitude: 1.7; properties: "radius"; to: 32; duration: 600; easing.type: Easing.OutQuart }
                     }
                     PropertyAction { target: viewerHandler; property: "updateData"; value: true }
                 }

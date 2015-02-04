@@ -4,17 +4,25 @@ Item {
     id: filterBox
     height: screen.height/4
 
+    property alias color: layer.color
     property alias label: label.text
     property alias label_n: label_n.text
     property alias source: pic.source
 
     signal clicked()
 
+    /*
     Image {
         id: layerGrid
         sourceSize.width: parent.width
         sourceSize.height: parent.height
         source: "qrc:/img-grid-filters"
+        anchors.fill: parent
+    }
+    */
+
+    Rectangle {
+        id: layer
         anchors.fill: parent
     }
 

@@ -54,6 +54,7 @@
         <file alias="img-volume">resources/images/videoplayer/volume.svg</file>
         <file alias="img-volume-off">resources/images/videoplayer/volume-off.svg</file>
         <file alias="img-background">resources/images/global/background.jpg</file>
+        <file alias="img_warning">resources/images/global/warning.svg</file>
         <file alias="img_err">resources/images/global/err.svg</file>
         <file alias="img-grid-small">resources/images/global/grid-small.svg</file>
         <file>resources/images/global/icon.ico</file>

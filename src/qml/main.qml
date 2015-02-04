@@ -38,7 +38,10 @@ Item {
     property var n_pornstars
     property var coverCache: []
     property var previewCache: []
-    property real screenOpacity: 0.4
+    property real screenR: 0
+    property real screenG: 0
+    property real screenB: 0
+    property real screenA: 0.4
 
     signal sig_qml_update_get()
     signal sig_qml_update_skip()
@@ -62,7 +65,7 @@ Item {
 
     Rectangle {
         id: screen
-        color: Qt.rgba(0, 0, 0, screenOpacity)
+        color: Qt.rgba(screenR, screenG, screenB, screenA)
         anchors.fill: parent
 
         Loader {

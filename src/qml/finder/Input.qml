@@ -10,6 +10,20 @@ Item {
         sourceSize.width: layerGrid.width
         sourceSize.height: layerGrid.height
         source: "qrc:/img-grid-small"
+        visible: false //
+    }
+
+    Image {
+        id: icon
+        width: screen.width/58.18
+        height: screen.height/32.72
+        sourceSize.width: icon.width
+        sourceSize.height: icon.height
+        source: "qrc:/img-find"
+        visible: false
+        anchors.left: layerGrid.right
+        anchors.leftMargin: screen.width/384
+        anchors.verticalCenter: layerGrid.verticalCenter
     }
 
     TextInput {
@@ -37,18 +51,6 @@ Item {
             root.userInput = userInput.text
             cpp.find(root.userInput, root.pornstar, root.category, root.quality, root.full)
         }
-    }
-    Image {
-        id: icon
-        width: screen.width/58.18
-        height: screen.height/32.72
-        sourceSize.width: icon.width
-        sourceSize.height: icon.height
-        source: "qrc:/img-find"
-        visible: false
-        anchors.left: layerGrid.right
-        anchors.leftMargin: screen.width/384
-        anchors.verticalCenter: layerGrid.verticalCenter
     }
 
     onXChanged: {

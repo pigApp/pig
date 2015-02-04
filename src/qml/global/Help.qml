@@ -2,7 +2,7 @@ import QtQuick 2.4
 
 Rectangle {
     id: help
-    color: "black"
+    color: "#00490c"
 
     property var titles: [
         "LICENSE",

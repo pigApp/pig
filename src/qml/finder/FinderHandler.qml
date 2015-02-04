@@ -11,6 +11,7 @@ Item {
         x: -parent.width/4.22
         width: parent.width/4.22
         height: parent.height/21.6
+        //opacity: 0 //
         anchors.bottom: columnFilters.top
         anchors.bottomMargin: parent.height/108
         onXChanged: {
@@ -54,16 +55,16 @@ Item {
     Column {
         id: columnFilters
         x: -parent.width/4.22
-        spacing: parent.height/108
+        spacing: -60 //parent.height/108
         anchors.verticalCenter: parent.verticalCenter
         anchors.verticalCenterOffset: -parent.height/27
         Button {
             id: btnFilterCategory
-            width: screen.width/4.22
-            height: screen.height/21.6
+            //width: 200//screen.width/4.22
+            //height: -300//screen.height/21.6
             label: "CATEGORY"
             labelLeftMargin: screen.width/192
-            layerGridVisible: true
+            //layerGridVisible: true
             onClicked: {
                 finderHandler.state = "show_filter"
                 onFilterCategory = true
@@ -71,11 +72,11 @@ Item {
         }
         Button {
             id: btnFilterPornstar
-            width: screen.width/4.22
-            height: screen.height/21.6
+            //width: 200//screen.width/4.22
+            //height: -300//screen.height/21.6
             label: "PORNSTAR"
             labelLeftMargin: screen.width/192
-            layerGridVisible: true
+            //layerGridVisible: true
             onClicked: {
                 finderHandler.state = "show_filter"
                 onFilterCategory = false
@@ -138,7 +139,10 @@ Item {
             to: "show"
             SequentialAnimation {
                 ParallelAnimation {
-                    NumberAnimation { target: root; easing.amplitude: 1.7; properties: "screenOpacity"; to: 0; duration: 600; easing.type: Easing.OutQuart }
+                    NumberAnimation { target: root; easing.amplitude: 1.7; properties: "screenR"; to: 0; duration: 600; easing.type: Easing.OutQuart }
+                    NumberAnimation { target: root; easing.amplitude: 1.7; properties: "screenG"; to: 0; duration: 600; easing.type: Easing.OutQuart }
+                    NumberAnimation { target: root; easing.amplitude: 1.7; properties: "screenB"; to: 0; duration: 600; easing.type: Easing.OutQuart }
+                    NumberAnimation { target: root; easing.amplitude: 1.7; properties: "screenA"; to: 0; duration: 600; easing.type: Easing.OutQuart }
                     NumberAnimation { target: backgroundBlur; easing.amplitude: 1.7; properties: "radius"; to: 0; duration: 600; easing.type: Easing.OutQuart }
                 }
                 ParallelAnimation {
@@ -160,7 +164,7 @@ Item {
                     NumberAnimation { target: input; properties: "x"; to: -screen.width/4.22; duration: 300; easing.type: Easing.InOutQuart }
                 }
                 ParallelAnimation {
-                    NumberAnimation { target: root; easing.amplitude: 1.7; properties: "screenOpacity"; to: 0.4; duration: 600; easing.type: Easing.OutQuart }
+                    NumberAnimation { target: root; easing.amplitude: 1.7; properties: "screenA"; to: 0.4; duration: 600; easing.type: Easing.OutQuart }
                     NumberAnimation { target: backgroundBlur; easing.amplitude: 1.7; properties: "radius"; to: 32; duration: 600; easing.type: Easing.OutQuart }
                 }
                 PropertyAction { target: loader_filter; property: "source"; value: "" }
@@ -178,7 +182,7 @@ Item {
                     NumberAnimation { target: columnFilters; properties: "x"; to: -screen.width/4.22; duration: 300; easing.type: Easing.InOutQuart }
                     NumberAnimation { target: input; properties: "x"; to: -screen.width/4.22; duration: 300; easing.type: Easing.InOutQuart }
                     NumberAnimation { target: root; easing.amplitude: 1.7; properties: "xa"; to: 0; duration: 1200; easing.type: Easing.OutQuart }
-                    NumberAnimation { target: backgroundBlur; easing.amplitude: 1.7; properties: "radius"; to: 96; duration: 2000; easing.type: Easing.OutQuart }
+                    //NumberAnimation { target: backgroundBlur; easing.amplitude: 1.7; properties: "radius"; to: 96; duration: 2000; easing.type: Easing.OutQuart }
                 }
             }
         },
@@ -189,7 +193,7 @@ Item {
                     NumberAnimation { target: columnFilters; properties: "x"; to: 0; duration: 600; easing.type: Easing.InOutQuart }
                     NumberAnimation { target: input; properties: "x"; to: 0; duration: 1200; easing.type: Easing.InOutQuart }
                     NumberAnimation { target: root; easing.amplitude: 1.7; properties: "xa"; to: screen.width; duration: 1200; easing.type: Easing.OutQuart }
-                    NumberAnimation { target: backgroundBlur; easing.amplitude: 1.7; properties: "radius"; to: 0; duration: 1200; easing.type: Easing.OutQuart }
+                    //NumberAnimation { target: backgroundBlur; easing.amplitude: 1.7; properties: "radius"; to: 0; duration: 1200; easing.type: Easing.OutQuart }
                 }
                 PropertyAction { target: loader_filter; property: "active"; value: false }
                 PropertyAction { target: iconQuality; property: "visible"; value: true }
@@ -216,7 +220,7 @@ Item {
                     NumberAnimation { target: root; easing.amplitude: 1.7; properties: "xa"; to: screen.width; duration: 1200; easing.type: Easing.OutQuart }
                     NumberAnimation { target: backgroundBlur; easing.amplitude: 1.7; properties: "radius"; to: 32; duration: 1200; easing.type: Easing.OutQuart }
                 }
-                NumberAnimation { target: root; easing.amplitude: 1.7; properties: "screenOpacity"; to: 0.4; duration: 600; easing.type: Easing.OutQuart }
+                NumberAnimation { target: root; easing.amplitude: 1.7; properties: "screenA"; to: 0.4; duration: 600; easing.type: Easing.OutQuart }
                 PropertyAction { target: loader_filter; property: "source"; value: "" }
                 PropertyAction { target: root; property: "userInput"; value: "" }
                 PropertyAction { target: screen; property: "state"; value: "show_viewer" }

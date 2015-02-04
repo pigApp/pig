@@ -15,20 +15,20 @@ Rectangle {
         anchors.centerIn: parent
         onCursorVisibleChanged: { if (userInput.cursorVisible) userInput.cursorVisible = false }
         onCursorPositionChanged: {
-            if (icon.visible)
-                icon.visible = false
+            if ((password.color == "#ff0000") && root.askPassword)
+                password.color = "black"
             if (userInput.text === "")
-                label.opacity = 1
+                label.visible = true
             else
-                label.opacity = 0
+                label.visible = false
         }
         onAccepted: {
             if (userInput.text !== "") {
                 if (root.askPassword) {
                     cpp.password_handler(false, userInput.text, true, false)
                 } else {
-                    cpp.password_handler(false, userInput.text, false, true)
                     userInput.enabled = false
+                    cpp.password_handler(false, userInput.text, false, true)
                 }
             }
         }
@@ -42,26 +42,25 @@ Rectangle {
             }
         }
     }
-    Text {
-        id: label
-        text: "INTRO PASSWORD"
-        color: "white"
-        font.family: fontGlobal.name
-        font.pixelSize: screen.height/23
+    Row {
+        spacing: screen.width/192
         anchors.centerIn: parent
-    }
-    Image {
-        id: icon
-        width: screen.width/58.18
-        height: screen.height/32.72
-        sourceSize.width: icon.width
-        sourceSize.height: icon.height
-        source: "qrc:/img_err"
-        visible: false
-        anchors.left: userInput.right
-        anchors.leftMargin: parent.width/192
-        anchors.verticalCenter: userInput.verticalCenter
-        anchors.verticalCenterOffset: parent.height/360
+        Text {
+            id: label
+            text: "INTRO PASSWORD"
+            color: "white"
+            font.family: fontGlobal.name
+            font.bold: { label.text === "FAIL" }
+            font.pixelSize: screen.height/23
+        }
+        Text {
+            id: labelInformation
+            text: "CHECK PERMISSIONS"
+            color: "white"
+            font.family: fontGlobal.name
+            font.pixelSize: screen.height/23
+            visible: { label.text === "FAIL" }
+        }
     }
 
     MouseArea {
@@ -81,16 +80,15 @@ Rectangle {
         target: cpp
         onSig_ret_password: {
             if (success) {
+                if (root.askPassword)
+                    root.askPassword = false
                 screen.state = "hide_password"
             } else {
-                if (root.askPassword) {
-                    icon.visible = true
-                } else {
+                password.color = "red"
+                if (!root.askPassword) {
                     userInput.text = ""
-                    label.text = "CHECK PERMISSIONS"
-                    label.opacity = 1
-                    icon.anchors.left = label.right
-                    icon.visible = true
+                    label.text = "FAIL"
+                    label.visible = true
                     delayHide.start()
                 }
             }

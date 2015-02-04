@@ -2,6 +2,7 @@ import QtQuick 2.4
 
 Item {
     id: news
+    visible: false
 
     Row {
         spacing: parent.width/96
@@ -16,7 +17,7 @@ Item {
                 font.pixelSize: screen.height/23
             }
             Text {
-                text: labelBinaryNews
+                text: root.binaryNews
                 textFormat: Text.RichText
                 color: "white"
                 font.family: fontGlobal.name
@@ -34,7 +35,7 @@ Item {
                 font.pixelSize: screen.height/23
             }
             Text {
-                text: labelDatabaseNews
+                text: root.databaseNews
                 textFormat: Text.RichText
                 color: "white"
                 font.family: fontGlobal.name
@@ -80,6 +81,29 @@ Item {
         }
     }
 
-    Component.onCompleted: news.forceActiveFocus()
+    states: [
+        State {
+            name: "show"
+        }
+    ]
+    transitions: [
+        Transition {
+            to: "show"
+            SequentialAnimation {
+                ParallelAnimation {
+                    NumberAnimation { target: root; easing.amplitude: 1.7; properties: "screenR"; to: 0; duration: 600; easing.type: Easing.OutQuart }
+                    NumberAnimation { target: root; easing.amplitude: 1.7; properties: "screenG"; to: 0.28; duration: 600; easing.type: Easing.OutQuart }
+                    NumberAnimation { target: root; easing.amplitude: 1.7; properties: "screenB"; to: 0.047; duration: 600; easing.type: Easing.OutQuart }
+                    NumberAnimation { target: root; easing.amplitude: 1.7; properties: "screenA"; to: 0.9; duration: 600; easing.type: Easing.OutQuart }
+                }
+                PropertyAction { target: news; property: "visible"; value: true }
+            }
+        }
+    ]
+
+    Component.onCompleted: {
+        news.state = "show"
+        news.forceActiveFocus()
+    }
 }
 // Tabs hechos.

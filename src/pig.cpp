@@ -118,8 +118,6 @@ void PIG::start()
             const QString strBinary = QString::number(binary);
             const QString strRelease= QString::number(release);
             const QString strDatabase = QString::number(database);
-            categories.prepend(QString::number(categories.count()));
-            pornstars.prepend(QString::number(pornstars.count()));
 
 #ifdef __linux__
     const QString init = QDir::homePath()+"/.pig/.init";

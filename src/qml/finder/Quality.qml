@@ -11,6 +11,7 @@ Item {
         sourceSize.width: layerGrid.width
         sourceSize.height: layerGrid.height
         source: "qrc:/img-grid-small"
+        visible: false //
     }
 
     Row {
@@ -71,7 +72,7 @@ Item {
         }
         Button {
             id: btnFull
-            label: "FULLMOVIE"
+            label: "FM"//"FULLMOVIE"
             labelColor: { if (root.full === "1") "black"; else "white" }
             MouseArea {
                 onClicked: {
