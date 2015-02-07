@@ -18,7 +18,7 @@ Item {
                 text: root.status
                 color: "white"
                 font.family: fontGlobal.name
-                font.bold: { label.text === "UPDATED" || label.text === "FAIL"}
+                font.bold: { label.text === "UPDATED" || label.text === "FAIL" }
                 font.pixelSize: screen.height/23
                 onTextChanged: {
                     if (label.text === "UPDATE AVAILABLE")
@@ -46,6 +46,9 @@ Item {
             Button {
                 id: btnGet
                 label: "GET"
+                labelBold: true
+                labelSize: screen.height/23
+                mouseAreaMargin: screen.height/108
                 onClicked: {
                     columnStatus.visible = false
                     columnStatus.enabled = false
@@ -55,6 +58,9 @@ Item {
             Button {
                 id: btnSkip
                 label: "SKIP"
+                labelBold: true
+                labelSize: screen.height/23
+                mouseAreaMargin: screen.height/108
                 onClicked: root.sig_qml_update_skip()
             }
         }
@@ -125,3 +131,4 @@ Item {
 
     Component.onCompleted: update.forceActiveFocus()
 }
+// Tabs hechos.

@@ -9,9 +9,6 @@
         <file alias="img-quality-in">resources/images/finder/quality/quality-in.svg</file>
         <file alias="img-quality-out">resources/images/finder/quality/quality-out.svg</file>
         <file alias="img-quality-on">resources/images/finder/quality/quality-on.svg</file>
-        <file alias="img-find">resources/images/finder/find.svg</file>
-        <file alias="img-null">resources/images/finder/null.svg</file>
-        <file alias="img-grid-filters">resources/images/finder/filters/grid-filters.svg</file>
         <file alias="img-cat-AMATEUR">resources/images/finder/filters/categories/AMATEUR.jpg</file>
         <file alias="img-cat-ANAL">resources/images/finder/filters/categories/ANAL.jpg</file>
         <file alias="img-cat-ASIAN">resources/images/finder/filters/categories/ASIAN.jpg</file>
@@ -56,7 +53,6 @@
         <file alias="img-background">resources/images/global/background.jpg</file>
         <file alias="img_warning">resources/images/global/warning.svg</file>
         <file alias="img_err">resources/images/global/err.svg</file>
-        <file alias="img-grid-small">resources/images/global/grid-small.svg</file>
         <file>resources/images/global/icon.ico</file>
         <file>resources/images/global/icon.png</file>
         <file>resources/images/global/icon.rc</file>
@@ -72,7 +68,7 @@
         <file>src/qml/finder/Filters.qml</file>
         <file>src/qml/finder/Input.qml</file>
         <file>src/qml/finder/Welcome.qml</file>
-        <file>src/qml/finder/filters_components/FilterBox.qml</file>
+        <file>src/qml/finder/filters_components/Box.qml</file>
         <file>src/qml/viewer/ViewerHandler.qml</file>
         <file>src/qml/viewer/Cover.qml</file>
         <file>src/qml/viewer/Dates.qml</file>

@@ -17,6 +17,7 @@ Item {
                 font.pixelSize: screen.height/23
             }
             Text {
+                id: labelBinaryNews
                 text: root.binaryNews
                 textFormat: Text.RichText
                 color: "white"
@@ -35,6 +36,7 @@ Item {
                 font.pixelSize: screen.height/23
             }
             Text {
+                id: labelDatabaseNews
                 text: root.databaseNews
                 textFormat: Text.RichText
                 color: "white"

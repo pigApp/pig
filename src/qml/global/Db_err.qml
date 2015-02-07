@@ -47,7 +47,7 @@ Rectangle {
                 font.pixelSize: screen.height/54
                 onLinkActivated: Qt.openUrlExternally(link)
                 anchors.verticalCenter: labelGet.verticalCenter
-                anchors.verticalCenterOffset: 0.7 //screen.height/635
+                anchors.verticalCenterOffset: screen.height/1300
             }
         }
     }

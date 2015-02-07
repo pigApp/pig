@@ -1,31 +1,20 @@
 import QtQuick 2.4
 
-Rectangle {
+Item {
     id: button
     width: label.contentWidth
     height: label.contentHeight
-    color: "transparent"
 
     property alias label: label.text
     property alias labelColor: label.color
-    property alias labelLeftMargin: button.margin
-    property alias layerGridVisible: layerGrid.visible
+    property alias labelBold: label.font.bold
+    property alias labelSize: label.font.pixelSize
 
-    property int margin: 0
     property bool lockColor
+    property int labelMargin: 0
+    property int mouseAreaMargin: screen.height/36
 
     signal clicked()
-
-    Image {
-        id: layerGrid
-        width: parent.width
-        height: parent.height
-        sourceSize.width: layerGrid.width
-        sourceSize.height: layerGrid.height
-        source: { if (layerGrid.visible) "qrc:/img-grid-small"; else "" }
-        visible: false
-        anchors.verticalCenter: parent.verticalCenter
-    }
 
     Text {
         id: label
@@ -33,10 +22,10 @@ Rectangle {
         height: label.contentHeight
         color: "white"
         font.family: fontGlobal.name
-        //font.bold: true
-        font.pixelSize: screen.height/10 //23
+        font.bold: false
+        font.pixelSize: screen.height/10
         anchors.left: parent.left
-        anchors.leftMargin: margin
+        anchors.leftMargin: labelMargin
         anchors.verticalCenter: parent.verticalCenter
         ColorAnimation on color { id: inLabel; running: false; to: "black"; duration: 100 }
         ColorAnimation on color { id: outLabel; running: false; to: "white"; duration: 100 }
@@ -56,8 +45,8 @@ Rectangle {
             }
             onClicked: button.clicked()
             anchors.fill: parent
-            anchors.topMargin: screen.height/108
-            anchors.bottomMargin: screen.height/108
+            anchors.topMargin: mouseAreaMargin
+            anchors.bottomMargin: mouseAreaMargin
         }
     }
 }

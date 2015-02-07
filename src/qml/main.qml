@@ -71,8 +71,8 @@ Item {
         Loader {
             id: loader_root
             z: 2
-            asynchronous: true
             focus: true
+            asynchronous: true
             visible: { status === Loader.Ready }
             anchors.fill: parent
         }
@@ -155,28 +155,22 @@ Item {
                 screen.state = "show_password"
             }
         }
-        onSig_show_update: {
-            screen.state = "show_update"
-        }
+        onSig_show_update: { screen.state = "show_update" }
         onSig_show_news: {
             root.binaryNews = binaryNews
             root.databaseNews = databaseNews
             screen.state = "show_news"
         }
-        onSig_show_finder: {
-            screen.state = "show_finder"
-        }
+        onSig_show_finder: { screen.state = "show_finder" }
         onSig_ret_db: {
             root.n_films = nFilms
             root.data_films = dataFilms
             if (nFilms !== 0)
-                if ((pornstar !== "") || (category !== ""))
+                if ((category !== "") || (pornstar !== ""))
                     loader_root_b.item.state = "hide_filter_finder"
                 else
                     loader_root_b.item.state = "hide"
         }
-        onSig_show_db_err: {
-            screen.state = "show_db_err"
-        }
+        onSig_show_db_err: { screen.state = "show_db_err" }
     }
 }

@@ -10,7 +10,7 @@ Item {
         height: parent.height
         sourceSize.width: layerGrid.width
         sourceSize.height: layerGrid.height
-        source: "qrc:/img-grid-small"
+        source: ""
         visible: false //
     }
 
@@ -54,33 +54,33 @@ Item {
             }
         }
         Button {
-            id: btnFhd
+            id: btnFd
             label: "FHD"
-            labelColor: { if (root.quality === "FHD") "black"; else "white" }
+            labelColor: { if (root.quality === "FD") "black"; else "white" }
             MouseArea {
                 onClicked: {
-                    if (root.quality === "FHD") {
-                        btnFhd.lockColor = false
+                    if (root.quality === "FD") {
+                        btnFd.lockColor = false
                         root.quality = ""
                     } else {
-                        btnFhd.lockColor = true
-                        root.quality = "FHD"
+                        btnFd.lockColor = true
+                        root.quality = "FD"
                     }
                 }
                 anchors.fill: parent
             }
         }
         Button {
-            id: btnFull
+            id: btnFm
             label: "FM"//"FULLMOVIE"
             labelColor: { if (root.full === "1") "black"; else "white" }
             MouseArea {
                 onClicked: {
                     if (root.full === "1") {
-                        btnFull.lockColor = false
+                        btnFm.lockColor = false
                         root.full = ""
                     } else {
-                        btnFull.lockColor = true
+                        btnFm.lockColor = true
                         root.full = "1"
                     }
                 }
@@ -94,10 +94,10 @@ Item {
             btnSd.lockColor = true
         if (root.quality === "HD")
             btnHd.lockColor = true
-        if (root.quality === "FHD")
-            btnFhd.lockColor = true
+        if (root.quality === "FD")
+            btnFd.lockColor = true
         if (root.full === "1")
-            btnFull.lockColor = true
+            btnFm.lockColor = true
     }
 }
 // Tabs hechos.

@@ -5,7 +5,7 @@ Item {
 
     Text {
         id: label
-        text: "WELCOME &nbsp; <font color='#000000'>CTRL H TO HELP</font></a>"
+        text: "WELCOME &nbsp; <font color='#000000'>CTRL H TO HELP</font>"
         color: "white"
         font.family: fontGlobal.name
         font.bold: true
@@ -17,3 +17,4 @@ Item {
 
     NumberAnimation { target: label; running: root.init; properties: "opacity"; to: 1.0; duration: 1400; easing.type: Easing.InOutQuart }
 }
+// Tabs hechos.

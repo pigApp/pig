@@ -8,7 +8,7 @@ Item {
     width: screen.width
     height: screen.height
 
-    property string n
+    property int n_box
 
     Flickable {
         contentWidth: grid.width
@@ -20,64 +20,52 @@ Item {
             id: grid
             spacing: screen.height/360
             Repeater {
-                model: {
-                    if (onFilterCategory)
-                        if (root.categories.length >= 32) root.categories.length; else 32
-                    else
-                        if (root.pornstars.length >= 32) root.pornstars.length; else 32
-                }
+                model: n_box
                 delegate:
-                FilterBox {
-                    id: filterBox
-                    width: filters.width/4
-                    color: { if (onFilterCategory) "#FA6900"; else "#FD2790" }
-                    label: {
-                        if (onFilterCategory)
-                            if (index < root.categories.length) root.categories[index]; else ""
-                        else
-                            if (index < root.pornstars.length) root.pornstars[index]; else ""
+                    Box {
+                        id: box
+                        width: filters.width/4
+                        color: { if (onCategory) "#FA6900"; else "#FD2790" }
+                        label: {
+                            if (onCategory)
+                                if (index < root.categories.length) root.categories[index]; else ""
+                            else
+                                if (index < root.pornstars.length) root.pornstars[index]; else ""
+                        }
+                        label_n: {
+                            if (onCategory)
+                                if (index < root.categories.length) root.n_categories[index]; else ""
+                            else
+                                if (index < root.pornstars.length) root.n_pornstars[index]; else ""
+                        }
+                        source: {
+                            if (onCategory)
+                                if (index < root.categories.length) "qrc:/img-cat-"+categories[index]; else ""
+                            else
+                                if (index < root.pornstars.length) "qrc:/img-star-"+pornstars[index]; else ""
+                        }
                     }
-                    label_n: {
-                        if (onFilterCategory)
-                            if (index < root.categories.length) root.n_categories[index]; else ""
-                        else
-                            if (index < root.pornstars.length) root.n_pornstars[index]; else ""
-                    }
-                    source: {
-                        if (onFilterCategory)
-                            if (index < root.categories.length) "qrc:/img-cat-"+categories[index]; else ""
-                        else
-                            if (index < root.pornstars.length) "qrc:/img-star-"+pornstars[index]; else ""
-                    }
-                    onClicked: {
-                        filters.n = label_n
-                        if (onFilterCategory)
-                            set_filter(label)
-                        else
-                            set_filter(label)
-                    } //TODO: ponerlos disables si estan vacios. No es 32, en la pantalla entran 16, tiene que ser multiplo de 16.
-                }
             }
         }
     }
 
     Row {
-        id: rowCheckFilter
+        id: rowCheck
         spacing: screen.width/384
         visible: false
         anchors.right: parent.right
         anchors.bottom: parent.bottom
         Image {
-            id: iconCheckFilter
+            id: iconCheck
             width: screen.width/58.18
             height: screen.height/32.72
-            sourceSize.width: iconCheckFilter.width
-            sourceSize.height: iconCheckFilter.height
+            sourceSize.width: iconCheck.width
+            sourceSize.height: iconCheck.height
             source: "qrc:/img_warning"
-            anchors.verticalCenter: labelCheckFilter.verticalCenter
+            anchors.verticalCenter: labelCheck.verticalCenter
         }
         Text {
-            id: labelCheckFilter
+            id: labelCheck
             text: "CHECK QUALITY FILTER"
             color: "white"
             font.family: fontGlobal.name
@@ -86,11 +74,11 @@ Item {
         }
     }
     Timer {
-        id: delayCheckFilter
+        id: delayCheck
         running: false
         repeat: false
         interval: 5000
-        onTriggered: { rowCheckFilter.visible = false }
+        onTriggered: { rowCheck.visible = false }
     }
 
     Keys.onPressed: {
@@ -103,18 +91,34 @@ Item {
         }
     }
 
+    function set_filter(label) {
+        if (onCategory)
+            root.category = label.toUpperCase()
+        else
+            root.pornstar = label.toUpperCase()
+        cpp.find("", root.pornstar, root.category, root.quality, root.full)
+    }
+
     onFocusChanged: { if (!filters.focus) filters.forceActiveFocus() }
 
     Connections {
         target: cpp
         onSig_ret_db: {
-            if ((n_films === 0) && (filters.n !== "000")) {
-                rowCheckFilter.visible = true
-                delayCheckFilter.start()
+            if (n_films === 0) {
+                root.category = ""
+                root.pornstar = ""
+                rowCheck.visible = true
+                delayCheck.start()
             }
         }
     }
 
-    Component.onCompleted: filters.forceActiveFocus()
+    Component.onCompleted: {
+        if (onCategory)
+            n_box = (Math.ceil(root.categories.length/16))*16
+        else
+            n_box = (Math.ceil(root.pornstars.length/16))*16
+        filters.forceActiveFocus()
+    }
 }
 // Tabs hechos.

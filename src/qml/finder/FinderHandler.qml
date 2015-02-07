@@ -4,18 +4,17 @@ import "../global/"
 Item {
     id: finderHandler
 
-    property bool onFilterCategory
+    property bool onCategory
 
     Quality {
         id: quality
-        x: -parent.width/4.22
-        width: parent.width/4.22
+        x: -parent.width/3.17
+        width: parent.width/3.17
         height: parent.height/21.6
-        //opacity: 0 //
         anchors.bottom: columnFilters.top
-        anchors.bottomMargin: parent.height/108
+        //anchors.bottomMargin: parent.height/108
         onXChanged: {
-            if (quality.x === (-parent.width/4.22)) {
+            if (quality.x === (-parent.width/3.17)) {
                 if ((root.quality !== "") || (root.full === "1")) {
                     iconQuality.opacity = 1
                     iconQuality.source = "qrc:/img-quality-on"
@@ -39,11 +38,11 @@ Item {
         opacity: 0.1
         visible: false
         anchors.left: quality.right
-        anchors.leftMargin: screen.width/192
+        anchors.leftMargin: parent.width/192
         anchors.verticalCenter: quality.verticalCenter
         MouseArea {
             onClicked: {
-                if (quality.x === (-screen.width/4.22))
+                if (quality.x === (-screen.width/3.17))
                     finderHandler.state = "show_quality"
                 else
                     finderHandler.state = "hide_quality"
@@ -54,51 +53,45 @@ Item {
 
     Column {
         id: columnFilters
-        x: -parent.width/4.22
-        spacing: -60 //parent.height/108
+        x: -parent.width/3.96
+        spacing: -50 //parent.height/108
         anchors.verticalCenter: parent.verticalCenter
         anchors.verticalCenterOffset: -parent.height/27
         Button {
             id: btnFilterCategory
-            //width: 200//screen.width/4.22
-            //height: -300//screen.height/21.6
             label: "CATEGORY"
-            labelLeftMargin: screen.width/192
-            //layerGridVisible: true
+            labelMargin: screen.width/192
             onClicked: {
                 finderHandler.state = "show_filter"
-                onFilterCategory = true
+                onCategory = true
             }
         }
         Button {
             id: btnFilterPornstar
-            //width: 200//screen.width/4.22
-            //height: -300//screen.height/21.6
             label: "PORNSTAR"
-            labelLeftMargin: screen.width/192
-            //layerGridVisible: true
+            labelMargin: screen.width/192
             onClicked: {
                 finderHandler.state = "show_filter"
-                onFilterCategory = false
+                onCategory = false
             }
         }
     }
     Loader {
         id: loader_filter
         z: 2
-        source: "Filters.qml"
+        source: ""
         asynchronous: true
-        active: false
+        visible: { status === Loader.Ready }
     }
 
     Input {
         id: input
-        x: -parent.width/4.22
-        width: parent.width/4.22
+        x: -parent.width/3.96
+        width: parent.width/3.96
         height: screen.height/21.6
         enabled: false
         anchors.top: columnFilters.bottom
-        anchors.topMargin: parent.height/108
+        anchors.topMargin: -parent.height/108
     }
 
     Welcome {
@@ -159,15 +152,14 @@ Item {
                 PropertyAction { target: input; property: "enabled"; value: false }
                 PropertyAction { target: iconQuality; property: "visible"; value: false }
                 ParallelAnimation {
-                    NumberAnimation { target: quality; properties: "x"; to: -screen.width/4.22; duration: 600; easing.type: Easing.InOutQuart }
-                    NumberAnimation { target: columnFilters; properties: "x"; to: -screen.width/4.22; duration: 600; easing.type: Easing.InOutQuart }
-                    NumberAnimation { target: input; properties: "x"; to: -screen.width/4.22; duration: 300; easing.type: Easing.InOutQuart }
+                    NumberAnimation { target: quality; properties: "x"; to: -screen.width/3.17; duration: 600; easing.type: Easing.InOutQuart }
+                    NumberAnimation { target: columnFilters; properties: "x"; to: -screen.width/3.96; duration: 600; easing.type: Easing.InOutQuart }
+                    NumberAnimation { target: input; properties: "x"; to: -screen.width/3.96; duration: 300; easing.type: Easing.InOutQuart }
                 }
                 ParallelAnimation {
                     NumberAnimation { target: root; easing.amplitude: 1.7; properties: "screenA"; to: 0.4; duration: 600; easing.type: Easing.OutQuart }
                     NumberAnimation { target: backgroundBlur; easing.amplitude: 1.7; properties: "radius"; to: 32; duration: 600; easing.type: Easing.OutQuart }
                 }
-                PropertyAction { target: loader_filter; property: "source"; value: "" }
                 PropertyAction { target: screen; property: "state"; value: "show_viewer" }
             }
         },
@@ -176,11 +168,11 @@ Item {
             SequentialAnimation {
                 PropertyAction { target: input; property: "enabled"; value: false }
                 PropertyAction { target: iconQuality; property: "visible"; value: false }
-                PropertyAction { target: loader_filter; property: "active"; value: true }
+                PropertyAction { target: loader_filter; property: "source"; value: "Filters.qml" }
                 ParallelAnimation {
-                    NumberAnimation { target: quality; properties: "x"; to: -screen.width/4.22; duration: 300; easing.type: Easing.InOutQuart }
-                    NumberAnimation { target: columnFilters; properties: "x"; to: -screen.width/4.22; duration: 300; easing.type: Easing.InOutQuart }
-                    NumberAnimation { target: input; properties: "x"; to: -screen.width/4.22; duration: 300; easing.type: Easing.InOutQuart }
+                    NumberAnimation { target: quality; properties: "x"; to: -screen.width/3.17; duration: 300; easing.type: Easing.InOutQuart }
+                    NumberAnimation { target: columnFilters; properties: "x"; to: -screen.width/3.96; duration: 300; easing.type: Easing.InOutQuart }
+                    NumberAnimation { target: input; properties: "x"; to: -screen.width/3.96; duration: 300; easing.type: Easing.InOutQuart }
                     NumberAnimation { target: root; easing.amplitude: 1.7; properties: "xa"; to: 0; duration: 1200; easing.type: Easing.OutQuart }
                     //NumberAnimation { target: backgroundBlur; easing.amplitude: 1.7; properties: "radius"; to: 96; duration: 2000; easing.type: Easing.OutQuart }
                 }
@@ -195,7 +187,7 @@ Item {
                     NumberAnimation { target: root; easing.amplitude: 1.7; properties: "xa"; to: screen.width; duration: 1200; easing.type: Easing.OutQuart }
                     //NumberAnimation { target: backgroundBlur; easing.amplitude: 1.7; properties: "radius"; to: 0; duration: 1200; easing.type: Easing.OutQuart }
                 }
-                PropertyAction { target: loader_filter; property: "active"; value: false }
+                PropertyAction { target: loader_filter; property: "source"; value: "" }
                 PropertyAction { target: iconQuality; property: "visible"; value: true }
                 PropertyAction { target: input; property: "enabled"; value: true }
             }
@@ -210,7 +202,7 @@ Item {
             to: "hide_quality"
             ParallelAnimation {
                 NumberAnimation { target: iconQuality; properties: "anchors.leftMargin"; to: screen.width/192; duration: 600; easing.type: Easing.InOutQuart }
-                NumberAnimation { target: quality; properties: "x"; to: -screen.width/4.22; duration: 600; easing.type: Easing.InOutQuart }
+                NumberAnimation { target: quality; properties: "x"; to: -screen.width/3.17; duration: 600; easing.type: Easing.InOutQuart }
             }
         },
         Transition {
@@ -231,12 +223,12 @@ Item {
     Keys.onPressed: {
         root.init = false
         if ((event.key === Qt.Key_H) && (event.modifiers & Qt.ControlModifier)) {
-            if (!loader_filter.active) {
+            if (finderHandler.state !== "show_filter") {
                 screen.state = "show_help"
                 event.accepted = true
             }
         } else if ((event.key === Qt.Key_P) && (event.modifiers & Qt.ControlModifier)) {
-            if (!loader_filter.active) {
+            if (finderHandler.state !== "show_filter") {
                 screen.state = "show_password"
             }
             event.accepted = true
@@ -244,14 +236,6 @@ Item {
             cpp.quit()
             event.accepted = true
         }
-    }
-
-    function set_filter(label) {
-        if (onFilterCategory)
-            root.category = label.toUpperCase()
-        else
-            root.pornstar = label.toUpperCase()
-        cpp.find("", root.pornstar, root.category, root.quality, root.full)
     }
 
     onFocusChanged: { if (!input.focus) input.forceActiveFocus() }

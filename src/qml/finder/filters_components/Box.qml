@@ -1,34 +1,17 @@
 import QtQuick 2.4
 
-Item {
-    id: filterBox
+Rectangle {
+    id: box
     height: screen.height/4
 
-    property alias color: layer.color
+    property alias color: box.color
     property alias label: label.text
     property alias label_n: label_n.text
-    property alias source: pic.source
 
-    signal clicked()
-
-    /*
-    Image {
-        id: layerGrid
-        sourceSize.width: parent.width
-        sourceSize.height: parent.height
-        source: "qrc:/img-grid-filters"
-        anchors.fill: parent
-    }
-    */
-
-    Rectangle {
-        id: layer
-        anchors.fill: parent
-    }
+    property string source: ""
 
     Image {
         id: pic
-        enabled: { pic.source !== "" }
         opacity: 0
         anchors.fill: parent
     }
@@ -52,10 +35,14 @@ Item {
     }
 
     MouseArea {
+        enabled: { label.text !== "" }
         hoverEnabled: true
-        onEntered: { filterBox.state = "in" }
-        onHoveredChanged: { filterBox.state = "out" }
-        onClicked: filterBox.clicked()
+        onEntered: {
+            pic.source = source
+            box.state = "in"
+        }
+        onHoveredChanged: { box.state = "out" }
+        onClicked: { if (label_n.text !== "000") filters.set_filter(label.text) }
         anchors.fill: parent
     }
 
