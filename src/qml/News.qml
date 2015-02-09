@@ -83,11 +83,9 @@ Item {
         }
     }
 
-    states: [
-        State {
-            name: "show"
-        }
-    ]
+    states: State {
+        name: "show"
+    }
     transitions: [
         Transition {
             to: "show"

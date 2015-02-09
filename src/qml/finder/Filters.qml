@@ -21,30 +21,29 @@ Item {
             spacing: screen.height/360
             Repeater {
                 model: n_box
-                delegate:
-                    Box {
-                        id: box
-                        width: filters.width/4
-                        color: { if (onCategory) "#FA6900"; else "#FD2790" }
-                        label: {
-                            if (onCategory)
-                                if (index < root.categories.length) root.categories[index]; else ""
-                            else
-                                if (index < root.pornstars.length) root.pornstars[index]; else ""
-                        }
-                        label_n: {
-                            if (onCategory)
-                                if (index < root.categories.length) root.n_categories[index]; else ""
-                            else
-                                if (index < root.pornstars.length) root.n_pornstars[index]; else ""
-                        }
-                        source: {
-                            if (onCategory)
-                                if (index < root.categories.length) "qrc:/img-cat-"+categories[index]; else ""
-                            else
-                                if (index < root.pornstars.length) "qrc:/img-star-"+pornstars[index]; else ""
-                        }
+                delegate: Box {
+                    id: box
+                    width: filters.width/4
+                    color: { if (onCategory) "#FA6900"; else "#FD2790" }
+                    label: {
+                        if (onCategory)
+                            if (index < root.categories.length) root.categories[index]; else ""
+                        else
+                            if (index < root.pornstars.length) root.pornstars[index]; else ""
                     }
+                    label_n: {
+                        if (onCategory)
+                            if (index < root.categories.length) root.n_categories[index]; else ""
+                        else
+                            if (index < root.pornstars.length) root.n_pornstars[index]; else ""
+                    }
+                    source: {
+                        if (onCategory)
+                            if (index < root.categories.length) "qrc:/img-cat-"+categories[index]; else ""
+                        else
+                            if (index < root.pornstars.length) "qrc:/img-star-"+pornstars[index]; else ""
+                    }
+                }
             }
         }
     }

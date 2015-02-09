@@ -8,7 +8,7 @@ Item {
     property bool askPassword
     property bool showNetwork
     property bool network_err
-    property bool abort_preview_quit 
+    property bool preview_quit 
     property string tmp
     property string status
     property string information

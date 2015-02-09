@@ -6,13 +6,27 @@ Item {
     x: root.xb
 
     property bool updateData
-    property int n_block_films: 5
-    property int block_films_location: 0
-    property int current_film: 1
+    property int n_blockFilms: 5
+    property int locationOnBlockFilms: 0
+    property int currentFilm: 1
     property var coverStatus: []
     property var previewStatus: []
 
     ListModel { id: model }
+
+    Image {
+        id: previewBoard
+        width: parent.width/3
+        height: parent.height/2.25
+        sourceSize.width: previewBoard.width
+        sourceSize.height: previewBoard.height
+        source: "qrc:/img-board"
+        opacity: 0.5
+        anchors.right: parent.right
+        anchors.rightMargin: parent.width/16.69
+        anchors.verticalCenter: parent.verticalCenter
+        anchors.verticalCenterOffset: -parent.height/270
+    }
 
     PathView {
         id: view
@@ -60,7 +74,7 @@ Item {
         }
 
         Timer {
-            id: delayEnabled
+            id: delayEnable
             running: false
             repeat: false
             interval: 300
@@ -89,12 +103,12 @@ Item {
                 SequentialAnimation {
                     PropertyAction { target: loader_root; property: "source"; value: "" }
                     PropertyAction { target: timeOutNetwork; property: "running"; value: false }
-                    PropertyAction { target: viewerHandler; property: "block_films_location"; value: 0 }
+                    PropertyAction { target: viewerHandler; property: "locationOnBlockFilms"; value: 0 }
                     NumberAnimation { duration: 250 }
                     ParallelAnimation {
                         NumberAnimation { target: root; easing.amplitude: 1.7; properties: "xb"; to: 0; duration: 1200; easing.type: Easing.OutQuart }
                         NumberAnimation { target: root; easing.amplitude: 1.7; properties: "screenA"; to: 0.8; duration: 1200; easing.type: Easing.OutQuart }
-                        //NumberAnimation { target: backgroundBlur; easing.amplitude: 1.7; properties: "radius"; to: 96; duration: 1200; easing.type: Easing.OutQuart }
+                        NumberAnimation { target: backgroundBlur; easing.amplitude: 1.7; properties: "radius"; to: 64; duration: 1200; easing.type: Easing.OutQuart } //
                     }
                     PropertyAction { target: view; property: "enabled"; value: true }
                 }
@@ -106,7 +120,7 @@ Item {
                     ParallelAnimation {
                         NumberAnimation { target: root; easing.amplitude: 1.7; properties: "xb"; to: screen.width+50; duration: 600; easing.type: Easing.OutQuart }
                         NumberAnimation { target: root; easing.amplitude: 1.7; properties: "screenA"; to: 0.4; duration: 600; easing.type: Easing.OutQuart }
-                        //NumberAnimation { target: backgroundBlur; easing.amplitude: 1.7; properties: "radius"; to: 32; duration: 600; easing.type: Easing.OutQuart }
+                        NumberAnimation { target: backgroundBlur; easing.amplitude: 1.7; properties: "radius"; to: 32; duration: 600; easing.type: Easing.OutQuart }
                     }
                     PropertyAction { target: viewerHandler; property: "updateData"; value: true }
                 }
@@ -116,7 +130,8 @@ Item {
                 SequentialAnimation {
                     ParallelAnimation {
                         NumberAnimation { target: root; easing.amplitude: 1.7; properties: "xb"; to: screen.width+50; duration: 600; easing.type: Easing.OutQuart }
-                        NumberAnimation { target: backgroundBlur; easing.amplitude: 1.7; properties: "radius"; to: 0; duration: 600; easing.type: Easing.OutQuart }
+                        NumberAnimation { target: backgroundBlur; easing.amplitude: 1.7; properties: "radius"; to: 0; duration: 600; easing.type: Easing.OutQuart } //
+                        //NumberAnimation { target: backgroundBlur; easing.amplitude: 1.7; properties: "radius"; to: 0; duration: 600; easing.type: Easing.OutQuart } //
                     }
                     PropertyAction { target: screen; property: "state"; value: "show_finder" }
                 }
@@ -129,40 +144,40 @@ Item {
                     if ((root.n_films-view.counter) >= 5 ) {
                         view.counter = view.counter+5
                     } else {
-                        n_block_films = root.n_films-view.counter
-                        view.counter = view.counter+n_block_films
+                        n_blockFilms = root.n_films-view.counter
+                        view.counter = view.counter+n_blockFilms
                     }
-                    current_film = (view.counter-n_block_films)+1
+                    currentFilm = (view.counter-n_blockFilms)+1
                     view.state = "hide"
                 }
             } else if (event.key === Qt.Key_Down) {
                 if ((root.n_films > 5) && ((view.counter-5) > 0)) {
-                    view.counter = view.counter-n_block_films
-                    current_film = view.counter-4
-                    n_block_films = 5
+                    view.counter = view.counter-n_blockFilms
+                    currentFilm = view.counter-4
+                    n_blockFilms = 5
                     view.state = "hide"
                 }
             } else if (event.key === Qt.Key_Right) {
                 view.enabled = false
-                delayEnabled.start()
+                delayEnable.start()
                 incrementCurrentIndex()
-                if (block_films_location === (n_block_films-1)) {
-                    block_films_location = 0
-                    current_film = (view.counter-n_block_films)+1
+                if (locationOnBlockFilms === (n_blockFilms-1)) {
+                    locationOnBlockFilms = 0
+                    currentFilm = (view.counter-n_blockFilms)+1
                 } else {
-                    ++block_films_location
-                    ++current_film
+                    ++locationOnBlockFilms
+                    ++currentFilm
                 }
             } else if (event.key === Qt.Key_Left) { // TODO: Hacia la izquierda funciona mal.
                 view.enabled = false
-                delayEnabled.start()
+                delayEnable.start()
                 decrementCurrentIndex()
-                if (block_films_location === 0) {
-                    block_films_location = view.counter-1
-                    current_film = view.counter
+                if (locationOnBlockFilms === 0) {
+                    locationOnBlockFilms = view.counter-1
+                    currentFilm = view.counter
                 } else {
-                    --block_films_location
-                    --current_film
+                    --locationOnBlockFilms
+                    --currentFilm
                 }
             } else if ((event.key === Qt.Key_H) && (event.modifiers & Qt.ControlModifier) && !timeOutNetwork.running) {
                 screen.state = "show_help"
@@ -172,7 +187,7 @@ Item {
                 event.accepted = true;
             } else if ((event.key === Qt.Key_Q) && (event.modifiers & Qt.ControlModifier)) {
                 if (previewStatus.length !== 0)
-                    root.abort_preview_quit = true
+                    root.preview_quit = true
                 else
                     cpp.quit()
                 event.accepted = true;
@@ -214,7 +229,7 @@ Item {
             Text {
                 id: labelCast
                 text: cast
-                color: Qt.rgba(1, 1, 1, 0.5)
+                color: "#FD2790"
                 font.family: fontGlobal.name
                 font.bold: true
                 font.pixelSize: screen.height/54
@@ -222,33 +237,6 @@ Item {
                 anchors.left: cover.left
                 anchors.bottom: cover.top
                 anchors.bottomMargin: parent.height/108
-            }
-            Row {
-                visible: recipe.PathView.isCurrentItem
-                anchors.left: cover.right
-                anchors.leftMargin: 10
-                anchors.top: cover.top
-                anchors.topMargin: -15
-                Text {
-                    id: labelCurrentFilm
-                    text: current_film
-                    color: "white"
-                    font.family: fontGlobal.name
-                    font.pixelSize: screen.height/23
-                }
-                Text {
-                    text: "·"
-                    color: "white"
-                    font.family: fontGlobal.name
-                    font.pixelSize: screen.height/23
-                }
-                Text {
-                    id: labelTotalFilms
-                    text: root.n_films
-                    color: "white"
-                    font.family: fontGlobal.name
-                    font.pixelSize: screen.height/23
-                }
             }
             Cover {
                 id: cover
@@ -270,8 +258,9 @@ Item {
                 visible: recipe.PathView.isCurrentItem
                 enabled: recipe.PathView.isCurrentItem
                 anchors.left: cover.right
-                anchors.leftMargin: parent.width/112.94
-                anchors.bottom: cover.bottom 
+                anchors.leftMargin: parent.width/274.28
+                anchors.bottom: cover.bottom
+                anchors.bottomMargin: -parent.height/830.76
             }
             Preview {
                 id: preview
@@ -279,23 +268,9 @@ Item {
                 height: parent.height/2.25
                 anchors.right: parent.right
                 anchors.rightMargin: parent.width/16.69
-                anchors.verticalCenter: parent.verticalCenter
-                anchors.verticalCenterOffset: -parent.height/27
+                anchors.verticalCenter: cover.verticalCenter
             }
         }
-    }
-    Image {
-        id: board
-        width: parent.width/3
-        height: parent.height/2.25
-        sourceSize.width: board.width
-        sourceSize.height: board.height
-        source: "qrc:/img-board"
-        visible: false
-        anchors.right: parent.right
-        anchors.rightMargin: parent.width/16.69
-        anchors.verticalCenter: parent.verticalCenter
-        anchors.verticalCenterOffset: -parent.height/27
     }
 
     Timer {
@@ -310,17 +285,17 @@ Item {
         coverStatus = []
         previewStatus = []
         var torrent
-        var row = (current_film-1)*13
+        var row = (currentFilm-1)*13
         if (root.n_films < 5) {
-            n_block_films = root.n_films
+            n_blockFilms = root.n_films
             view.counter = root.n_films
         }
-        for (var i=0; i<n_block_films; i++) {
+        for (var i=0; i<n_blockFilms; i++) {
             torrent = root.data_films[row+12].split(",")
             model.append({ "id_film": root.data_films[row], "title": root.data_films[row+1], "cast": root.data_films[row+2], "categories": root.data_films[row+3],
                            "quality": root.data_films[row+4], "time": root.data_films[row+5], "full": root.data_films[row+6], "hostPreview": root.data_films[row+7],
-                           "urlPreview": root.data_films[row+8], "id_preview": i, "hostCover": root.data_films[row+9], "urlFrontCover": root.data_films[row+10],
-                           "urlBackCover": root.data_films[row+11], "urlTorrent": torrent[0], "scenes": Number(torrent[1]) })
+                           "urlPreview": root.data_films[row+8], "id_preview": i, "hostCover": root.data_films[row+9], "urlCover": root.data_films[row+10],
+                           "urlCoverBack": root.data_films[row+11], "urlTorrent": torrent[0], "scenes": Number(torrent[1]) })
             row += 13
         }
         loader_root.source = "../global/Network.qml"

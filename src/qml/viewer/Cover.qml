@@ -10,48 +10,45 @@ Item {
         id: flipable
         width: front.width
         height: front.height
-        front:
-        Image {
+        front: Image {
             id: front
             width: screen.width/4.58
             height: screen.height/1.8
             sourceSize.width: front.width
             sourceSize.height: front.height
-            source: { if (!cached) hostCover+urlFrontCover; else "file://"+root.tmp+id_cache+"f.jpg" }
+            source: { if (!cached) hostCover+urlCover; else "file://"+root.tmp+id_cache+"f.jpg" }
             onStatusChanged: {
                 if (front.status === Image.Ready) {
                     viewerHandler.coverStatus.push(0)
-                    check_status_cache();
+                    check_cache_status();
                 } else if (front.status === Image.Error) {
                     front.source = "qrc:/img-cover-err"
                     viewerHandler.coverStatus.push(1)
-                    check_status_cache();
+                    check_cache_status();
                 }
             }
         }
-        back:
-        Image {
+        back: Image {
             id: back
             width: front.width
             height: front.height
             sourceSize.width: back.width
             sourceSize.height: back.height
             source: {
-                if (urlBackCover !== "")
+                if (urlCoverBack !== "")
                     if (!cached)
-                        hostCover+urlBackCover
+                        hostCover+urlCoverBack
                     else
                         "file://"+root.tmp+id_cache+"b.jpg"
                 else
                     front.source
             }
-            onStatusChanged: {
-                if (back.status === Image.Error)
-                    back.source = front.source
-            }
+            onStatusChanged: { if (back.status === Image.Error) back.source = front.source }
         }
         anchors.centerIn: parent
+
         property bool flipped
+
         transform: Rotation {
             id: rotation
             origin.x: flipable.width/2
@@ -60,10 +57,12 @@ Item {
             axis.y: 1
             axis.z: 0
         }
+
         MouseArea {
             anchors.fill: parent
             onClicked: { flipable.flipped = !flipable.flipped }
         }
+
         states: State {
             name: "back"
             when: flipable.flipped
@@ -80,8 +79,8 @@ Item {
         }
     }
 
-    function check_status_cache() {
-        if (viewerHandler.coverStatus.length === viewerHandler.n_block_films)
+    function check_cache_status() {
+        if (viewerHandler.coverStatus.length === viewerHandler.n_blockFilms)
             view.state = "show"
         if (!cached) {
             front.grabToImage(function(result) { if (result.saveToFile(root.tmp+id_cache+"f.jpg")) root.coverCache.push(id_cache) })
@@ -89,9 +88,6 @@ Item {
         }
     }
 
-    Component.onCompleted: {
-        if (root.coverCache.indexOf(id_cache) !== -1)
-            cached = true
-    }
+    Component.onCompleted: { if (root.coverCache.indexOf(id_cache) !== -1) cached = true }
 }
 // Tabs hechos.

@@ -15,6 +15,7 @@ Rectangle {
         opacity: 0
         anchors.fill: parent
     }
+
     Text {
         id: label
         color: "white"
@@ -28,10 +29,8 @@ Rectangle {
         font.family: fontGlobal.name
         font.pixelSize: screen.height/23
         opacity: 0
-        anchors.right: parent.right
-        anchors.rightMargin: screen.width/192
-        anchors.bottom: parent.bottom
-        anchors.bottomMargin: -screen.height/216
+        anchors.centerIn: parent
+        anchors.horizontalCenterOffset: screen.width/960
     }
 
     MouseArea {

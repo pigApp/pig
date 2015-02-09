@@ -22,7 +22,7 @@ Item {
         Button {
             id: btnSd
             label: "SD"
-            labelColor: { if (root.quality === "SD") "black"; else "white" }
+            labelColor: { if (root.quality === "SD") Qt.rgba(0, 0.28, 0.047, 1); else "white" }
             MouseArea {
                 onClicked: {
                     if (root.quality === "SD") {
@@ -39,7 +39,7 @@ Item {
         Button {
             id: btnHd
             label: "HD"
-            labelColor: { if (root.quality === "HD") "black"; else "white" }
+            labelColor: { if (root.quality === "HD") Qt.rgba(0, 0.28, 0.047, 1); else "white" }
             MouseArea {
                 onClicked: {
                     if (root.quality === "HD") {
@@ -56,7 +56,7 @@ Item {
         Button {
             id: btnFd
             label: "FHD"
-            labelColor: { if (root.quality === "FD") "black"; else "white" }
+            labelColor: { if (root.quality === "FD") Qt.rgba(0, 0.28, 0.047, 1); else "white" }
             MouseArea {
                 onClicked: {
                     if (root.quality === "FD") {
@@ -72,8 +72,8 @@ Item {
         }
         Button {
             id: btnFm
-            label: "FM"//"FULLMOVIE"
-            labelColor: { if (root.full === "1") "black"; else "white" }
+            label: "FULL"//"FULLMOVIE"
+            labelColor: { if (root.full === "1") Qt.rgba(0, 0.28, 0.047, 1); else "white" }
             MouseArea {
                 onClicked: {
                     if (root.full === "1") {

@@ -13,10 +13,10 @@ Rectangle {
         font.capitalization: Font.AllUppercase
         font.bold: true
         font.pixelSize: screen.height/23
-        cursorVisible: false
         wrapMode: TextInput.NoWrap
+        cursorVisible: false
         anchors.left: parent.left
-        anchors.leftMargin: screen.width/192
+        anchors.leftMargin: screen.width/120
         anchors.verticalCenter: parent.verticalCenter
         onCursorPositionChanged: {
             if (input.color == "#ff0000")

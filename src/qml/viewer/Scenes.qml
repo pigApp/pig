@@ -11,16 +11,17 @@ Item {
         anchors.bottom: parent.bottom
         Repeater {
             id: repeater
-            delegate:
-            Image {
+            delegate: Image {
                 id: icon
-                width: screen.width/29.53
-                height: screen.height/15.42
+                width: screen.width/38.4
+                height: screen.height/19.63
                 sourceSize.width: icon.width
                 sourceSize.height: icon.height
                 source: "qrc:/img-scene"
                 opacity: 0.5
+
                 property bool viewed
+
                 MouseArea {
                     hoverEnabled: true
                     onEntered: { if (!icon.viewed) icon.state = "in" }
@@ -32,6 +33,7 @@ Item {
                     }
                     anchors.fill: parent
                 }
+
                 states: [
                     State {
                         name: "in"

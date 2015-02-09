@@ -76,7 +76,6 @@ Item {
     }
 
     Component.onCompleted: { torrentHandler.state = "show" }
-
     Component.onDestruction: {
         loader_status.source = ""
         loader_videoPlayer.source = ""

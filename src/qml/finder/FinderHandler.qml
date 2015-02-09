@@ -12,7 +12,7 @@ Item {
         width: parent.width/3.17
         height: parent.height/21.6
         anchors.bottom: columnFilters.top
-        //anchors.bottomMargin: parent.height/108
+        anchors.bottomMargin: -7 //parent.height/108
         onXChanged: {
             if (quality.x === (-parent.width/3.17)) {
                 if ((root.quality !== "") || (root.full === "1")) {
@@ -54,7 +54,7 @@ Item {
     Column {
         id: columnFilters
         x: -parent.width/3.96
-        spacing: -50 //parent.height/108
+        spacing: -parent.height/21.6
         anchors.verticalCenter: parent.verticalCenter
         anchors.verticalCenterOffset: -parent.height/27
         Button {
@@ -86,12 +86,12 @@ Item {
 
     Input {
         id: input
-        x: -parent.width/3.96
-        width: parent.width/3.96
+        x: -parent.width/3.84
+        width: parent.width/3.84
         height: screen.height/21.6
         enabled: false
         anchors.top: columnFilters.bottom
-        anchors.topMargin: -parent.height/108
+        anchors.topMargin: -parent.height/72
     }
 
     Welcome {
@@ -154,7 +154,7 @@ Item {
                 ParallelAnimation {
                     NumberAnimation { target: quality; properties: "x"; to: -screen.width/3.17; duration: 600; easing.type: Easing.InOutQuart }
                     NumberAnimation { target: columnFilters; properties: "x"; to: -screen.width/3.96; duration: 600; easing.type: Easing.InOutQuart }
-                    NumberAnimation { target: input; properties: "x"; to: -screen.width/3.96; duration: 300; easing.type: Easing.InOutQuart }
+                    NumberAnimation { target: input; properties: "x"; to: -screen.width/3.84; duration: 300; easing.type: Easing.InOutQuart }
                 }
                 ParallelAnimation {
                     NumberAnimation { target: root; easing.amplitude: 1.7; properties: "screenA"; to: 0.4; duration: 600; easing.type: Easing.OutQuart }
@@ -172,9 +172,8 @@ Item {
                 ParallelAnimation {
                     NumberAnimation { target: quality; properties: "x"; to: -screen.width/3.17; duration: 300; easing.type: Easing.InOutQuart }
                     NumberAnimation { target: columnFilters; properties: "x"; to: -screen.width/3.96; duration: 300; easing.type: Easing.InOutQuart }
-                    NumberAnimation { target: input; properties: "x"; to: -screen.width/3.96; duration: 300; easing.type: Easing.InOutQuart }
+                    NumberAnimation { target: input; properties: "x"; to: -screen.width/3.84; duration: 300; easing.type: Easing.InOutQuart }
                     NumberAnimation { target: root; easing.amplitude: 1.7; properties: "xa"; to: 0; duration: 1200; easing.type: Easing.OutQuart }
-                    //NumberAnimation { target: backgroundBlur; easing.amplitude: 1.7; properties: "radius"; to: 96; duration: 2000; easing.type: Easing.OutQuart }
                 }
             }
         },
@@ -185,7 +184,6 @@ Item {
                     NumberAnimation { target: columnFilters; properties: "x"; to: 0; duration: 600; easing.type: Easing.InOutQuart }
                     NumberAnimation { target: input; properties: "x"; to: 0; duration: 1200; easing.type: Easing.InOutQuart }
                     NumberAnimation { target: root; easing.amplitude: 1.7; properties: "xa"; to: screen.width; duration: 1200; easing.type: Easing.OutQuart }
-                    //NumberAnimation { target: backgroundBlur; easing.amplitude: 1.7; properties: "radius"; to: 0; duration: 1200; easing.type: Easing.OutQuart }
                 }
                 PropertyAction { target: loader_filter; property: "source"; value: "" }
                 PropertyAction { target: iconQuality; property: "visible"; value: true }

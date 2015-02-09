@@ -4,7 +4,7 @@ import QtMultimedia 5.4
 Item {
     id: previewPlayer
 
-    property bool quit: root.abort_preview_quit
+    property bool quit: root.preview_quit
     property bool cached
     property bool downloading
     property string host
@@ -22,6 +22,7 @@ Item {
         source:  { if (!cached) "qrc:/img-download"; else "qrc:/img-replay" }
         anchors.centerIn: parent
     }
+
     Video {
         id: player
         autoPlay: true
@@ -31,8 +32,8 @@ Item {
         anchors.fill: parent
         onPlaybackStateChanged: {
             if (player.playbackState === MediaPlayer.StoppedState) {
-                player.visible = false
                 player.enabled = false
+                player.visible = false
                 icon.source = "qrc:/img-replay"
                 icon.visible = true
             }
@@ -47,8 +48,8 @@ Item {
         onTriggered: {
             if (cached) {
                 player.source = "file://"+root.tmp+target
-                player.visible = true
                 player.enabled = true
+                player.visible = true
             } else {
                 cpp.preview_handler(id_private, host, url, target, false, false)
                 downloading = true
@@ -72,8 +73,8 @@ Item {
                     player.play()
                 } else if (player.playbackState === MediaPlayer.StoppedState) {
                     icon.visible = false
-                    player.visible = true
                     player.enabled = true
+                    player.visible = true
                     player.play()
                 }
             }
@@ -119,7 +120,7 @@ Item {
         }
     }
 
-    Component.onDestruction: { if (!quit) abort() }
     Component.onCompleted: delay.start()
+    Component.onDestruction: { if (!quit) abort() }
 }
 // Tabs hechos.
