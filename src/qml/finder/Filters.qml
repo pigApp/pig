@@ -1,4 +1,5 @@
 import QtQuick 2.4
+
 import "filters_components/"
 
 Item {
@@ -58,8 +59,8 @@ Item {
             id: iconCheck
             width: screen.width/58.18
             height: screen.height/32.72
-            sourceSize.width: iconCheck.width
-            sourceSize.height: iconCheck.height
+            sourceSize.width: width
+            sourceSize.height: height
             source: "qrc:/img_warning"
             anchors.verticalCenter: labelCheck.verticalCenter
         }
@@ -98,7 +99,7 @@ Item {
         cpp.find("", root.pornstar, root.category, root.quality, root.full)
     }
 
-    onFocusChanged: { if (!filters.focus) filters.forceActiveFocus() }
+    onFocusChanged: { if (!focus) forceActiveFocus() }
 
     Connections {
         target: cpp
@@ -117,7 +118,7 @@ Item {
             n_box = (Math.ceil(root.categories.length/16))*16
         else
             n_box = (Math.ceil(root.pornstars.length/16))*16
-        filters.forceActiveFocus()
+        forceActiveFocus()
     }
 }
 // Tabs hechos.

@@ -1,4 +1,5 @@
 import QtQuick 2.4
+
 import "preview/"
 
 Item {
@@ -18,10 +19,8 @@ Item {
         id: previewBoard
         width: parent.width/3
         height: parent.height/2.25
-        sourceSize.width: previewBoard.width
-        sourceSize.height: previewBoard.height
         source: "qrc:/img-board"
-        opacity: 0.5
+        opacity: 0.7
         anchors.right: parent.right
         anchors.rightMargin: parent.width/16.69
         anchors.verticalCenter: parent.verticalCenter
@@ -108,7 +107,7 @@ Item {
                     ParallelAnimation {
                         NumberAnimation { target: root; easing.amplitude: 1.7; properties: "xb"; to: 0; duration: 1200; easing.type: Easing.OutQuart }
                         NumberAnimation { target: root; easing.amplitude: 1.7; properties: "screenA"; to: 0.8; duration: 1200; easing.type: Easing.OutQuart }
-                        NumberAnimation { target: backgroundBlur; easing.amplitude: 1.7; properties: "radius"; to: 64; duration: 1200; easing.type: Easing.OutQuart } //
+                        NumberAnimation { target: backgroundBlur; easing.amplitude: 1.7; properties: "radius"; to: 64; duration: 1200; easing.type: Easing.OutQuart }
                     }
                     PropertyAction { target: view; property: "enabled"; value: true }
                 }
@@ -130,8 +129,7 @@ Item {
                 SequentialAnimation {
                     ParallelAnimation {
                         NumberAnimation { target: root; easing.amplitude: 1.7; properties: "xb"; to: screen.width+50; duration: 600; easing.type: Easing.OutQuart }
-                        NumberAnimation { target: backgroundBlur; easing.amplitude: 1.7; properties: "radius"; to: 0; duration: 600; easing.type: Easing.OutQuart } //
-                        //NumberAnimation { target: backgroundBlur; easing.amplitude: 1.7; properties: "radius"; to: 0; duration: 600; easing.type: Easing.OutQuart } //
+                        NumberAnimation { target: backgroundBlur; easing.amplitude: 1.7; properties: "radius"; to: 0; duration: 600; easing.type: Easing.OutQuart }
                     }
                     PropertyAction { target: screen; property: "state"; value: "show_finder" }
                 }
@@ -207,12 +205,12 @@ Item {
             height: view.height
             scale: PathView.recipe_scale
             onScaleChanged:  {
-                if (recipe.scale === 1.0) {
-                    preview.visible = true
+                if (scale === 1.0) {
                     preview.enabled = true
+                    preview.visible = true
                 } else {
-                    preview.visible = false
                     preview.enabled = false
+                    preview.visible = false
                 }
             }
             Text {
@@ -232,7 +230,7 @@ Item {
                 color: "#FD2790"
                 font.family: fontGlobal.name
                 font.bold: true
-                font.pixelSize: screen.height/54
+                font.pixelSize: screen.height/46
                 visible: recipe.PathView.isCurrentItem
                 anchors.left: cover.left
                 anchors.bottom: cover.top
@@ -258,7 +256,7 @@ Item {
                 visible: recipe.PathView.isCurrentItem
                 enabled: recipe.PathView.isCurrentItem
                 anchors.left: cover.right
-                anchors.leftMargin: parent.width/274.28
+                anchors.leftMargin: 15 //parent.width/274.28
                 anchors.bottom: cover.bottom
                 anchors.bottomMargin: -parent.height/830.76
             }
@@ -302,7 +300,7 @@ Item {
         timeOutNetwork.start()
     }
 
-    onVisibleChanged: { if (viewerHandler.visible) view.forceActiveFocus() }
+    onVisibleChanged: { if (visible) view.forceActiveFocus() }
     onUpdateDataChanged: {
         if (updateData) {
             updateData = false

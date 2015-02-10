@@ -16,8 +16,8 @@ Rectangle {
                 id: iconBitRate
                 width: screen.width/58.18
                 height: screen.height/32.72
-                sourceSize.width: iconBitRate.width
-                sourceSize.height: iconBitRate.height
+                sourceSize.width: width
+                sourceSize.height: height
                 source: "qrc:/img-download"
                 visible: { labelBitRate.text !== "CONNECTING" }
             }
@@ -48,8 +48,8 @@ Rectangle {
                 id: iconPeers
                 width: screen.width/58.18
                 height: screen.height/32.72
-                sourceSize.width: iconPeers.width
-                sourceSize.height: iconPeers.height
+                sourceSize.width: width
+                sourceSize.height: height
                 source: "qrc:/img-peers"
                 visible: { labelBitRate.text !== "CONNECTING" }
             }
@@ -95,11 +95,7 @@ Rectangle {
         repeat: true
         interval: 1000
         onTriggered: {
-            if (timeLeft > 0)
-                timeLeft -= 1
-            else
-                timeLeft = 9
-
+            if (timeLeft > 0) timeLeft -= 1; else timeLeft = 9
             if (timeLeft !== 0)
                 labelSandbox.text = "<font color='#ffff00'>FILE NOT READY</font> RECHECK "+timeLeft
             else
@@ -118,6 +114,6 @@ Rectangle {
         }
     }
 
-    Component.onCompleted: status.forceActiveFocus()
+    Component.onCompleted: forceActiveFocus()
 }
 // Tabs hechos.

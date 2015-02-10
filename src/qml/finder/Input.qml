@@ -2,11 +2,11 @@ import QtQuick 2.4
 
 Rectangle {
     id: input
-    color: Qt.rgba(1, 1, 1, 0.5)
+    color: "white"
 
     TextInput {
         id: userInput
-        width: parent.width-(screen.width/76.8)
+        width: parent.width-(screen.width/54.85)
         text: root.userInput
         color: "black"
         font.family: fontGlobal.name
@@ -14,20 +14,24 @@ Rectangle {
         font.bold: true
         font.pixelSize: screen.height/23
         wrapMode: TextInput.NoWrap
+        persistentSelection: true
+        selectByMouse: true
+        selectedTextColor: "white"
+        selectionColor: "gray"
         cursorVisible: false
         anchors.left: parent.left
         anchors.leftMargin: screen.width/120
         anchors.verticalCenter: parent.verticalCenter
         onCursorPositionChanged: {
-            if (input.color == "#ff0000")
-                input.color = Qt.rgba(1, 1, 1, 0.5)
-            if (userInput.text !== "")
-                userInput.cursorVisible = true
+            if (finderHandler.inputEffectColor === "red")
+                finderHandler.inputEffectColor = "black"
+            if (text !== "")
+                cursorVisible = true
             else
-                userInput.cursorVisible = false
+                cursorVisible = false
         }
         onAccepted: {
-            root.userInput = userInput.text
+            root.userInput = text
             cpp.find(root.userInput, root.pornstar, root.category, root.quality, root.full)
         }
     }
@@ -39,7 +43,7 @@ Rectangle {
 
     Connections {
         target: cpp
-        onSig_ret_db: { if ((n_films === 0) && (loader_filter.source == "")) input.color = "red" }
+        onSig_ret_db: { if ((n_films === 0) && (loader_filter.source == "")) finderHandler.inputEffectColor = "red" }
     }
 }
 // Tabs hechos.

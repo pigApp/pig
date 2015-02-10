@@ -1,4 +1,5 @@
 import QtQuick 2.4
+
 import "global/"
 
 Item {
@@ -18,14 +19,14 @@ Item {
                 text: root.status
                 color: "white"
                 font.family: fontGlobal.name
-                font.bold: { label.text === "UPDATED" || label.text === "FAIL" }
+                font.bold: { text === "UPDATED" || text === "FAIL" }
                 font.pixelSize: screen.height/23
                 onTextChanged: {
-                    if (label.text === "UPDATE AVAILABLE")
+                    if (text === "UPDATE AVAILABLE")
                         update.state = "available"
-                    else if (label.text === "UPDATED")
+                    else if (text === "UPDATED")
                         update.state = "success"
-                    else if (label.text === "FAIL")
+                    else if (text === "FAIL")
                         update.state = "err"
                 }
             }
@@ -84,9 +85,19 @@ Item {
         },
         State {
             name: "success"
+            PropertyChanges { target: root; screenR: 0; restoreEntryValues: false }
+            PropertyChanges { target: root; screenG: 0.28; restoreEntryValues: false }
+            PropertyChanges { target: root; screenB: 0.047; restoreEntryValues: false }
+            PropertyChanges { target: root; screenA: 1; restoreEntryValues: false }
+            PropertyChanges { target: columnStatus; visible: true; restoreEntryValues: false }
         },
         State {
             name: "err"
+            PropertyChanges { target: root; screenR: 1; restoreEntryValues: false }
+            PropertyChanges { target: root; screenG: 0; restoreEntryValues: false }
+            PropertyChanges { target: root; screenB: 0; restoreEntryValues: false }
+            PropertyChanges { target: root; screenA: 0.9; restoreEntryValues: false }
+            PropertyChanges { target: columnStatus; visible: true; restoreEntryValues: false }
         }
     ]
     transitions: [
@@ -94,41 +105,17 @@ Item {
             to: "available"
             SequentialAnimation {
                 ParallelAnimation {
-                    NumberAnimation { target: root; easing.amplitude: 1.7; properties: "screenR"; to: 1; duration: 300; easing.type: Easing.OutQuart }
-                    NumberAnimation { target: root; easing.amplitude: 1.7; properties: "screenG"; to: 1; duration: 300; easing.type: Easing.OutQuart }
-                    NumberAnimation { target: root; easing.amplitude: 1.7; properties: "screenB"; to: 0; duration: 300; easing.type: Easing.OutQuart }
-                    NumberAnimation { target: root; easing.amplitude: 1.7; properties: "screenA"; to: 0.2; duration: 300; easing.type: Easing.OutQuart }
+                    NumberAnimation { target: root; easing.amplitude: 1.7; properties: "screenR"; to: 1; duration: 600; easing.type: Easing.OutQuart }
+                    NumberAnimation { target: root; easing.amplitude: 1.7; properties: "screenG"; to: 1; duration: 600; easing.type: Easing.OutQuart }
+                    NumberAnimation { target: root; easing.amplitude: 1.7; properties: "screenB"; to: 0; duration: 600; easing.type: Easing.OutQuart }
+                    NumberAnimation { target: root; easing.amplitude: 1.7; properties: "screenA"; to: 0.2; duration: 600; easing.type: Easing.OutQuart }
                 }
                 PropertyAction { target: columnStatus; property: "visible"; value: true }
                 PropertyAction { target: columnStatus; property: "enabled"; value: true }
             }
-        },
-        Transition {
-            to: "success"
-            SequentialAnimation {
-                ParallelAnimation {
-                    NumberAnimation { target: root; easing.amplitude: 1.7; properties: "screenR"; to: 0; duration: 300; easing.type: Easing.OutQuart }
-                    NumberAnimation { target: root; easing.amplitude: 1.7; properties: "screenG"; to: 0.28; duration: 300; easing.type: Easing.OutQuart }
-                    NumberAnimation { target: root; easing.amplitude: 1.7; properties: "screenB"; to: 0.047; duration: 300; easing.type: Easing.OutQuart }
-                    NumberAnimation { target: root; easing.amplitude: 1.7; properties: "screenA"; to: 1; duration: 300; easing.type: Easing.OutQuart }
-                }
-                PropertyAction { target: columnStatus; property: "visible"; value: true }
-            }
-        },
-        Transition {
-            to: "err"
-            SequentialAnimation {
-                ParallelAnimation {
-                    NumberAnimation { target: root; easing.amplitude: 1.7; properties: "screenR"; to: 1; duration: 300; easing.type: Easing.OutQuart }
-                    NumberAnimation { target: root; easing.amplitude: 1.7; properties: "screenG"; to: 0; duration: 300; easing.type: Easing.OutQuart }
-                    NumberAnimation { target: root; easing.amplitude: 1.7; properties: "screenB"; to: 0; duration: 300; easing.type: Easing.OutQuart }
-                    NumberAnimation { target: root; easing.amplitude: 1.7; properties: "screenA"; to: 0.9; duration: 300; easing.type: Easing.OutQuart }
-                }
-                PropertyAction { target: columnStatus; property: "visible"; value: true }
-            }
         }
     ]
 
-    Component.onCompleted: update.forceActiveFocus()
+    Component.onCompleted: forceActiveFocus()
 }
 // Tabs hechos.

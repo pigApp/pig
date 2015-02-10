@@ -7,8 +7,8 @@ Item {
         id: icon
         width: screen.width/30
         height: screen.height/25.11
-        sourceSize.width: icon.width
-        sourceSize.height: icon.height
+        sourceSize.width: width
+        sourceSize.height: height
         source:  { if (!root.network_err) "qrc:/img-network"; else "qrc:/img-network_err" }
         anchors.right: parent.right
         anchors.rightMargin: parent.width/128

@@ -10,9 +10,10 @@ Item {
         id: icon
         width: screen.width/58.18
         height: screen.height/32.72
-        sourceSize.width: icon.width
-        sourceSize.height: icon.height
+        sourceSize.width: width
+        sourceSize.height: height
         source: { if (!cached) "qrc:/img-play"; else "qrc:/img-replay" }
+        opacity: 0.7
         anchors.centerIn: parent
     }
 

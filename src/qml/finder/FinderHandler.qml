@@ -1,20 +1,24 @@
 import QtQuick 2.4
+import QtGraphicalEffects 1.0
+
 import "../global/"
 
 Item {
     id: finderHandler
 
     property bool onCategory
+    property string inputEffectColor: "black"
 
     Quality {
         id: quality
         x: -parent.width/3.17
         width: parent.width/3.17
         height: parent.height/21.6
+        visible: false//
         anchors.bottom: columnFilters.top
         anchors.bottomMargin: -7 //parent.height/108
         onXChanged: {
-            if (quality.x === (-parent.width/3.17)) {
+            if (x === (-parent.width/3.17)) {
                 if ((root.quality !== "") || (root.full === "1")) {
                     iconQuality.opacity = 1
                     iconQuality.source = "qrc:/img-quality-on"
@@ -32,8 +36,8 @@ Item {
         id: iconQuality
         width: screen.width/58.18
         height: screen.height/32.72
-        sourceSize.width: iconQuality.width
-        sourceSize.height: iconQuality.height
+        sourceSize.width: width
+        sourceSize.height: height
         source: "qrc:/img-quality-in"
         opacity: 0.1
         visible: false
@@ -84,14 +88,22 @@ Item {
         visible: { status === Loader.Ready }
     }
 
+    RectangularGlow {
+        id: inputEffect
+        color: inputEffectColor
+        spread: 0
+        glowRadius: 20
+        cornerRadius: 25
+        anchors.fill: input
+    }
     Input {
         id: input
-        x: -parent.width/3.84
-        width: parent.width/3.84
+        x: -parent.width/3.76
+        width: parent.width/3.76
         height: screen.height/21.6
         enabled: false
         anchors.top: columnFilters.bottom
-        anchors.topMargin: -parent.height/72
+        anchors.topMargin: 0 //-parent.height/72
     }
 
     Welcome {
@@ -154,7 +166,7 @@ Item {
                 ParallelAnimation {
                     NumberAnimation { target: quality; properties: "x"; to: -screen.width/3.17; duration: 600; easing.type: Easing.InOutQuart }
                     NumberAnimation { target: columnFilters; properties: "x"; to: -screen.width/3.96; duration: 600; easing.type: Easing.InOutQuart }
-                    NumberAnimation { target: input; properties: "x"; to: -screen.width/3.84; duration: 300; easing.type: Easing.InOutQuart }
+                    NumberAnimation { target: input; properties: "x"; to: -screen.width/3.76; duration: 300; easing.type: Easing.InOutQuart }
                 }
                 ParallelAnimation {
                     NumberAnimation { target: root; easing.amplitude: 1.7; properties: "screenA"; to: 0.4; duration: 600; easing.type: Easing.OutQuart }
@@ -172,7 +184,7 @@ Item {
                 ParallelAnimation {
                     NumberAnimation { target: quality; properties: "x"; to: -screen.width/3.17; duration: 300; easing.type: Easing.InOutQuart }
                     NumberAnimation { target: columnFilters; properties: "x"; to: -screen.width/3.96; duration: 300; easing.type: Easing.InOutQuart }
-                    NumberAnimation { target: input; properties: "x"; to: -screen.width/3.84; duration: 300; easing.type: Easing.InOutQuart }
+                    NumberAnimation { target: input; properties: "x"; to: -screen.width/3.76; duration: 300; easing.type: Easing.InOutQuart }
                     NumberAnimation { target: root; easing.amplitude: 1.7; properties: "xa"; to: 0; duration: 1200; easing.type: Easing.OutQuart }
                 }
             }

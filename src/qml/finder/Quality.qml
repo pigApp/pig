@@ -1,4 +1,5 @@
 import QtQuick 2.4
+
 import "../global/"
 
 Item {
@@ -8,8 +9,8 @@ Item {
         id: layerGrid
         width: parent.width
         height: parent.height
-        sourceSize.width: layerGrid.width
-        sourceSize.height: layerGrid.height
+        sourceSize.width: width
+        sourceSize.height: height
         source: ""
         visible: false //
     }
@@ -26,10 +27,10 @@ Item {
             MouseArea {
                 onClicked: {
                     if (root.quality === "SD") {
-                        btnSd.lockColor = false
+                        lockColor = false
                         root.quality = ""
                     } else {
-                        btnSd.lockColor = true
+                        lockColor = true
                         root.quality = "SD"
                     }
                 }
@@ -43,10 +44,10 @@ Item {
             MouseArea {
                 onClicked: {
                     if (root.quality === "HD") {
-                        btnHd.lockColor = false
+                        lockColor = false
                         root.quality = ""
                     } else {
-                        btnHd.lockColor = true
+                        lockColor = true
                         root.quality = "HD"
                     }
                 }
@@ -60,10 +61,10 @@ Item {
             MouseArea {
                 onClicked: {
                     if (root.quality === "FD") {
-                        btnFd.lockColor = false
+                        lockColor = false
                         root.quality = ""
                     } else {
-                        btnFd.lockColor = true
+                        lockColor = true
                         root.quality = "FD"
                     }
                 }
@@ -77,10 +78,10 @@ Item {
             MouseArea {
                 onClicked: {
                     if (root.full === "1") {
-                        btnFm.lockColor = false
+                        lockColor = false
                         root.full = ""
                     } else {
-                        btnFm.lockColor = true
+                        lockColor = true
                         root.full = "1"
                     }
                 }

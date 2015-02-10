@@ -13,22 +13,22 @@ Rectangle {
         maximumLength: 16
         cursorVisible: false
         anchors.centerIn: parent
-        onCursorVisibleChanged: { if (userInput.cursorVisible) userInput.cursorVisible = false }
+        onCursorVisibleChanged: { if (cursorVisible) cursorVisible = false }
         onCursorPositionChanged: {
             if ((password.color == "#ff0000") && root.askPassword)
                 password.color = "black"
-            if (userInput.text === "")
+            if (text === "")
                 label.visible = true
             else
                 label.visible = false
         }
         onAccepted: {
-            if (userInput.text !== "") {
+            if (text !== "") {
                 if (root.askPassword) {
-                    cpp.password_handler(false, userInput.text, true, false)
+                    cpp.password_handler(false, text, true, false)
                 } else {
-                    userInput.enabled = false
-                    cpp.password_handler(false, userInput.text, false, true)
+                    enabled = false
+                    cpp.password_handler(false, text, false, true)
                 }
             }
         }
@@ -50,7 +50,7 @@ Rectangle {
             text: "INTRO PASSWORD"
             color: "white"
             font.family: fontGlobal.name
-            font.bold: { label.text === "FAIL" }
+            font.bold: { text === "FAIL" }
             font.pixelSize: screen.height/23
         }
         Text {
@@ -84,7 +84,7 @@ Rectangle {
                     root.askPassword = false
                 screen.state = "hide_password"
             } else {
-                password.color = "red"
+                color = "red"
                 if (!root.askPassword) {
                     userInput.text = ""
                     label.text = "FAIL"

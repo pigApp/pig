@@ -49,8 +49,8 @@ Item {
                     id: iconPlayback
                     width: screen.width/58.18
                     height: screen.height/32.72
-                    sourceSize.width: iconPlayback.width
-                    sourceSize.height: iconPlayback.height
+                    sourceSize.width: width
+                    sourceSize.height: height
                     source: {
                         if (videoPlayerHandler.standby) {
                             "qrc:/img-standby"
@@ -70,8 +70,8 @@ Item {
                         id: iconVolume
                         width: screen.width/58.18
                         height: screen.height/32.72
-                        sourceSize.width: iconVolume.width
-                        sourceSize.height: iconVolume.height
+                        sourceSize.width: width
+                        sourceSize.height: height
                         source: { if ((player.volume !== 0.0) && !player.muted) "qrc:/img-volume"; else "qrc:/img-volume-off" }
                     }
                     Text {
@@ -114,8 +114,8 @@ Item {
                         id: iconBitRate
                         width: screen.width/58.18
                         height: screen.height/32.72
-                        sourceSize.width: iconBitRate.width
-                        sourceSize.height: iconBitRate.height
+                        sourceSize.width: width
+                        sourceSize.height: height
                         source: "qrc:/img-download-dark"
                     }
                     Text {
@@ -144,8 +144,8 @@ Item {
                         id: iconPeers
                         width: screen.width/58.18
                         height: screen.height/32.72
-                        sourceSize.width: iconPeers.width
-                        sourceSize.height: iconPeers.height
+                        sourceSize.width: width
+                        sourceSize.height: height
                         source: "qrc:/img-peers-dark"
                     }
                     Text {

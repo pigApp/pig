@@ -13,7 +13,7 @@ Item {
             if ((mouseArea.mouseX < (parent.width-(parent.width/9.6))) && (mouseArea.mouseY < (parent.height-(parent.height/54))))
                 videoPlayerHandler.state = "hide_controls"
             else
-                delayHideControls.restart()
+                restart()
         }
     }
 

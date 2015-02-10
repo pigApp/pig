@@ -14,14 +14,14 @@ Item {
             id: front
             width: screen.width/4.58
             height: screen.height/1.8
-            sourceSize.width: front.width
-            sourceSize.height: front.height
+            sourceSize.width: width
+            sourceSize.height: height
             source: { if (!cached) hostCover+urlCover; else "file://"+root.tmp+id_cache+"f.jpg" }
             onStatusChanged: {
-                if (front.status === Image.Ready) {
+                if (status === Image.Ready) {
                     viewerHandler.coverStatus.push(0)
                     check_cache_status();
-                } else if (front.status === Image.Error) {
+                } else if (status === Image.Error) {
                     front.source = "qrc:/img-cover-err"
                     viewerHandler.coverStatus.push(1)
                     check_cache_status();
@@ -32,8 +32,8 @@ Item {
             id: back
             width: front.width
             height: front.height
-            sourceSize.width: back.width
-            sourceSize.height: back.height
+            sourceSize.width: width
+            sourceSize.height: height
             source: {
                 if (urlCoverBack !== "")
                     if (!cached)
@@ -43,7 +43,7 @@ Item {
                 else
                     front.source
             }
-            onStatusChanged: { if (back.status === Image.Error) back.source = front.source }
+            onStatusChanged: { if (status === Image.Error) source = front.source }
         }
         anchors.centerIn: parent
 
@@ -83,8 +83,8 @@ Item {
         if (viewerHandler.coverStatus.length === viewerHandler.n_blockFilms)
             view.state = "show"
         if (!cached) {
-            front.grabToImage(function(result) { if (result.saveToFile(root.tmp+id_cache+"f.jpg")) root.coverCache.push(id_cache) })
-            back.grabToImage(function(result) { result.saveToFile(root.tmp+id_cache+"b.jpg") })
+            front.grabToImage(function(result) { result.saveToFile(root.tmp+id_cache+"f.jpg") })
+            back.grabToImage(function(result) { if (result.saveToFile(root.tmp+id_cache+"b.jpg")) root.coverCache.push(id_cache) })
         }
     }
 

@@ -103,7 +103,7 @@ Item {
 
     Component.onCompleted: {
         news.state = "show"
-        news.forceActiveFocus()
+        forceActiveFocus()
     }
 }
 // Tabs hechos.

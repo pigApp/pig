@@ -13,12 +13,11 @@ Item {
             id: repeater
             delegate: Image {
                 id: icon
-                width: screen.width/38.4
-                height: screen.height/19.63
-                sourceSize.width: icon.width
-                sourceSize.height: icon.height
+                width: screen.width/29.53
+                height: screen.height/21.61
+                sourceSize.width: width
+                sourceSize.height: height
                 source: "qrc:/img-scene"
-                opacity: 0.5
 
                 property bool viewed
 
@@ -45,11 +44,11 @@ Item {
                 transitions: [
                     Transition {
                         to: "in"
-                        NumberAnimation { target: icon; easing.amplitude: 1.7; properties: "opacity"; to: 1; duration: 100; easing.type: Easing.OutQuart }
+                        NumberAnimation { target: icon; easing.amplitude: 1.7; properties: "opacity"; to: 0.5; duration: 100; easing.type: Easing.OutQuart }
                     },
                     Transition {
                         to: "out"
-                        NumberAnimation { target: icon; easing.amplitude: 1.7; properties: "opacity"; to: 0.5; duration: 100; easing.type: Easing.OutQuart }
+                        NumberAnimation { target: icon; easing.amplitude: 1.7; properties: "opacity"; to: 1; duration: 100; easing.type: Easing.OutQuart }
                     }
                 ]
             }

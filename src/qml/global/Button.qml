@@ -18,8 +18,8 @@ Item {
 
     Text {
         id: label
-        width: label.contentWidth
-        height: label.contentHeight
+        width: contentWidth
+        height: contentHeight
         color: "white"
         font.family: fontGlobal.name
         font.bold: false

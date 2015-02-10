@@ -59,6 +59,6 @@ Rectangle {
         }
     }
 
-    Component.onCompleted: db_err.forceActiveFocus()
+    Component.onCompleted: forceActiveFocus()
 }
 // Tabs hechos.

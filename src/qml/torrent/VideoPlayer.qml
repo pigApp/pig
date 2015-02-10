@@ -1,5 +1,6 @@
 import QtQuick 2.4
 import QtMultimedia 5.4
+
 import "videoplayer_components/"
 
 Rectangle {
@@ -85,8 +86,6 @@ Rectangle {
     onStandbyChanged: { if (standby) player.pause(); else player.play() } 
 
     Component.onCompleted: { player.source = "file://"+root.video_file }
-    Component.onDestruction: { if ((player.playbackState === MediaPlayer.PlayingState) ||
-                                   (player.playbackState === MediaPlayer.PausedState))
-                                    player.stop() }
+    Component.onDestruction: { if ((player.playbackState === MediaPlayer.PlayingState) || (player.playbackState === MediaPlayer.PausedState)) player.stop() }
 }
 // Tabs hechos.
