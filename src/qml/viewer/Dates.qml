@@ -16,7 +16,7 @@ Item {
         }
         Text {
             id: labelQuality
-            text: quality
+            text: { if (quality === "FD") "FHD"; else quality }
             color: "white"
             font.family: fontGlobal.name
             font.pixelSize: screen.height/23

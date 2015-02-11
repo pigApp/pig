@@ -83,7 +83,7 @@ Rectangle {
        id: barDownload
        width: { (parent.width*root.mb_downloaded)/root.mb_required }
        height: parent.height/540
-       color: { if (torrentHandler.sandboxStatus === "FAIL") "yellow"; else "white" }
+       color: { if (torrentHandler.sandboxStatus === "FAIL") "gold"; else "white" }
        visible: { labelBitRate.text !== "CONNECTING" && labelPeers !== "PEERS 0" }
        anchors.bottom: parent.bottom
        anchors.bottomMargin: parent.height/540

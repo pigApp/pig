@@ -117,7 +117,7 @@ Item {
                 SequentialAnimation {
                     PropertyAction { target: view; property: "enabled"; value: false }
                     ParallelAnimation {
-                        NumberAnimation { target: root; easing.amplitude: 1.7; properties: "xb"; to: screen.width+50; duration: 600; easing.type: Easing.OutQuart }
+                        NumberAnimation { target: root; easing.amplitude: 1.7; properties: "xb"; to: screen.width+10; duration: 600; easing.type: Easing.OutQuart }
                         NumberAnimation { target: root; easing.amplitude: 1.7; properties: "screenA"; to: 0.4; duration: 600; easing.type: Easing.OutQuart }
                         NumberAnimation { target: backgroundBlur; easing.amplitude: 1.7; properties: "radius"; to: 32; duration: 600; easing.type: Easing.OutQuart }
                     }
@@ -128,7 +128,7 @@ Item {
                 to: "hide_viewer_show_finder"
                 SequentialAnimation {
                     ParallelAnimation {
-                        NumberAnimation { target: root; easing.amplitude: 1.7; properties: "xb"; to: screen.width+50; duration: 600; easing.type: Easing.OutQuart }
+                        NumberAnimation { target: root; easing.amplitude: 1.7; properties: "xb"; to: screen.width+10; duration: 600; easing.type: Easing.OutQuart }
                         NumberAnimation { target: backgroundBlur; easing.amplitude: 1.7; properties: "radius"; to: 0; duration: 600; easing.type: Easing.OutQuart }
                     }
                     PropertyAction { target: screen; property: "state"; value: "show_finder" }

@@ -2,7 +2,7 @@ import QtQuick 2.4
 
 Rectangle {
     id: input
-    color: "white"
+    color: "gold"
 
     TextInput {
         id: userInput
@@ -23,8 +23,8 @@ Rectangle {
         anchors.leftMargin: screen.width/120
         anchors.verticalCenter: parent.verticalCenter
         onCursorPositionChanged: {
-            if (finderHandler.inputEffectColor === "red")
-                finderHandler.inputEffectColor = "black"
+            if (input.color == "#ff0000")
+                input.color = "gold"
             if (text !== "")
                 cursorVisible = true
             else
@@ -43,7 +43,7 @@ Rectangle {
 
     Connections {
         target: cpp
-        onSig_ret_db: { if ((n_films === 0) && (loader_filter.source == "")) finderHandler.inputEffectColor = "red" }
+        onSig_ret_db: { if ((n_films === 0) && (loader_filter.source == "")) input.color = "red" }
     }
 }
 // Tabs hechos.

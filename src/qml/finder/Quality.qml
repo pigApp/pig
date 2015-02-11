@@ -5,16 +5,6 @@ import "../global/"
 Item {
     id: quality
 
-    Image {
-        id: layerGrid
-        width: parent.width
-        height: parent.height
-        sourceSize.width: width
-        sourceSize.height: height
-        source: ""
-        visible: false //
-    }
-
     Row {
         spacing: screen.width/384
         anchors.left: parent.left
@@ -27,10 +17,10 @@ Item {
             MouseArea {
                 onClicked: {
                     if (root.quality === "SD") {
-                        lockColor = false
+                        btnSd.lockColor = false
                         root.quality = ""
                     } else {
-                        lockColor = true
+                        btnSd.lockColor = true
                         root.quality = "SD"
                     }
                 }
@@ -44,10 +34,10 @@ Item {
             MouseArea {
                 onClicked: {
                     if (root.quality === "HD") {
-                        lockColor = false
+                        btnHd.lockColor = false
                         root.quality = ""
                     } else {
-                        lockColor = true
+                        btnHd.lockColor = true
                         root.quality = "HD"
                     }
                 }
@@ -61,10 +51,10 @@ Item {
             MouseArea {
                 onClicked: {
                     if (root.quality === "FD") {
-                        lockColor = false
+                        btnFd.lockColor = false
                         root.quality = ""
                     } else {
-                        lockColor = true
+                        btnFd.lockColor = true
                         root.quality = "FD"
                     }
                 }
@@ -73,15 +63,15 @@ Item {
         }
         Button {
             id: btnFm
-            label: "FULL"//"FULLMOVIE"
+            label: "FM"
             labelColor: { if (root.full === "1") Qt.rgba(0, 0.28, 0.047, 1); else "white" }
             MouseArea {
                 onClicked: {
                     if (root.full === "1") {
-                        lockColor = false
+                        btnFm.lockColor = false
                         root.full = ""
                     } else {
-                        lockColor = true
+                        btnFm.lockColor = true
                         root.full = "1"
                     }
                 }
