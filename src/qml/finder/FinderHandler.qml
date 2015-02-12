@@ -14,18 +14,14 @@ Item {
         width: parent.width/3.17
         height: parent.height/21.6
         anchors.bottom: columnFilters.top
-        anchors.bottomMargin: -7 //parent.height/108
+        anchors.bottomMargin: parent.height/360
         onXChanged: {
             if (x === (-parent.width/3.17)) {
-                if ((root.quality !== "") || (root.full === "1")) {
-                    iconQuality.opacity = 1
+                if ((root.quality !== "") || (root.full === "1"))
                     iconQuality.source = "qrc:/img-quality-on"
-                } else {
-                    iconQuality.opacity = 0.1
+                else
                     iconQuality.source = "qrc:/img-quality-in"
-                }
             } else {
-                iconQuality.opacity = 1
                 iconQuality.source = "qrc:/img-quality-out"
             }
         }
@@ -37,10 +33,8 @@ Item {
         sourceSize.width: width
         sourceSize.height: height
         source: "qrc:/img-quality-in"
-        opacity: 0.1
         visible: false
         anchors.left: quality.right
-        anchors.leftMargin: parent.width/192
         anchors.verticalCenter: quality.verticalCenter
         MouseArea {
             onClicked: {
@@ -62,7 +56,8 @@ Item {
         Button {
             id: btnFilterCategory
             label: "CATEGORY"
-            labelMargin: screen.width/192
+            labelBold: true
+            labelMargin: screen.width/384
             onClicked: {
                 finderHandler.state = "show_filter"
                 onCategory = true
@@ -71,7 +66,8 @@ Item {
         Button {
             id: btnFilterPornstar
             label: "PORNSTAR"
-            labelMargin: screen.width/192
+            labelBold: true
+            labelMargin: screen.width/384
             onClicked: {
                 finderHandler.state = "show_filter"
                 onCategory = false
@@ -89,7 +85,7 @@ Item {
     RectangularGlow {
         id: inputEffect
         color: "black"
-        glowRadius: 0
+        glowRadius: 2
         cornerRadius: 40
         anchors.fill: input
     }
@@ -100,6 +96,7 @@ Item {
         height: screen.height/21.6
         enabled: false
         anchors.top: columnFilters.bottom
+        anchors.topMargin: -parent.height/360
     }
 
     Welcome {
@@ -201,13 +198,13 @@ Item {
         Transition {
             to: "show_quality"
             ParallelAnimation {
-                NumberAnimation { target: iconQuality; properties: "anchors.leftMargin"; to: screen.width/384; duration: 600; easing.type: Easing.InOutQuart }
+                NumberAnimation { target: iconQuality; properties: "anchors.leftMargin"; to: -screen.width/128; duration: 600; easing.type: Easing.InOutQuart }
                 NumberAnimation { target: quality; properties: "x"; to: 0; duration: 600; easing.type: Easing.InOutQuart }
             }
         },Transition {
             to: "hide_quality"
             ParallelAnimation {
-                NumberAnimation { target: iconQuality; properties: "anchors.leftMargin"; to: screen.width/192; duration: 600; easing.type: Easing.InOutQuart }
+                NumberAnimation { target: iconQuality; properties: "anchors.leftMargin"; to: 0; duration: 600; easing.type: Easing.InOutQuart }
                 NumberAnimation { target: quality; properties: "x"; to: -screen.width/3.17; duration: 600; easing.type: Easing.InOutQuart }
             }
         },

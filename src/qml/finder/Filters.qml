@@ -66,7 +66,7 @@ Item {
         }
         Text {
             id: labelCheck
-            text: "CHECK QUALITY FILTER"
+            text: "CHECK QUALITY SELECTOR"
             color: "white"
             font.family: fontGlobal.name
             font.bold: true

@@ -46,6 +46,6 @@ Item {
         }
     }
 
-    Component.onCompleted: { if (root.previewCache.indexOf(id_cache) !== -1)  preview.cached = true }
+    Component.onCompleted: { if (root.cache_preview.indexOf(id_cache) !== -1)  preview.cached = true }
 }
 // Tabs hechos.

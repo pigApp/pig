@@ -36,8 +36,9 @@ Item {
     property var pornstars
     property var n_categories
     property var n_pornstars
-    property var coverCache: []
-    property var previewCache: []
+    property var cache_cover_front: []
+    property var cache_cover_back: []
+    property var cache_preview: []
     property real screenR: 0
     property real screenG: 0
     property real screenB: 0

@@ -213,7 +213,7 @@ void PIG::find(const QString userInput, const QString pornstar, const QString ca
 {
     if (db.open()) {
         QSqlQuery query;
-        query.prepare("SELECT id, Title, Cas, Category, Quality, Time, Full, HostPreview, UrlPreview, HostCover, UrlCover, UrlCoverBack, Torrent \
+        query.prepare("SELECT id, Title, Cas, Category, Quality, Time, Full, HostPreview, UrlPreview, HostCover, UrlCoverFront, UrlCoverBack, Torrent \
             FROM Films WHERE Title LIKE '%"+userInput+"%' AND Cas LIKE '%"+pornstar+"%' AND Category LIKE '%"+category+"%' \
             AND Quality LIKE '%"+quality+"%' AND Full LIKE '%"+full+"%' ORDER BY Title ASC LIMIT 1000");
         if (!query.exec()) {
@@ -233,11 +233,11 @@ void PIG::find(const QString userInput, const QString pornstar, const QString ca
                 const QString strHostPreview = query.value(7).toString();
                 const QString strUrlPreview = query.value(8).toString();
                 const QString strHostCover = query.value(9).toString();
-                const QString strUrlCover = query.value(10).toString();
+                const QString strUrlCoverFront = query.value(10).toString();
                 const QString strUrlCoverBack = query.value(11).toString();
                 const QString strTorrent = query.value(12).toString();
                 dataFilms << strId << strTitle << strCast << strCategories << strQuality << strTime << strFull << strHostPreview << strUrlPreview
-                    << strHostCover << strUrlCover << strUrlCoverBack << strTorrent;
+                    << strHostCover << strUrlCoverFront << strUrlCoverBack << strTorrent;
             }
             db.close();
             if (!query.last()) {

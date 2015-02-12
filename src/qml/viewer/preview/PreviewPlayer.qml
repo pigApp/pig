@@ -110,7 +110,7 @@ Item {
                 downloading = false
                 if (success) {
                     icon.visible = false
-                    root.previewCache.push(id_cache)
+                    root.cache_preview.push(id_cache)
                     cached = true
                     delay.start()
                 } else {

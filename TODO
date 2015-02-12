@@ -1,4 +1,3 @@
-- FIX: Cover y back deben estar descargados ambos para cachearlos.
 - View hacia la izquierda falla.
 - Verificar los enleces simbolicos al actualizar librerias.
 - Agregar UNSIGNED SHORT a int

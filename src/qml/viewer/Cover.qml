@@ -3,7 +3,8 @@ import QtQuick 2.4
 Item {
     id: cover
 
-    property bool cached
+    property bool front_cached
+    property bool back_cached
     property int id_cache: id_film
 
     Flipable {
@@ -16,15 +17,15 @@ Item {
             height: screen.height/1.8
             sourceSize.width: width
             sourceSize.height: height
-            source: { if (!cached) hostCover+urlCover; else "file://"+root.tmp+id_cache+"f.jpg" }
+            source: { if (!front_cached) hostCover+urlCoverFront; else "file://"+root.tmp+id_cache+"f.jpg" }
             onStatusChanged: {
                 if (status === Image.Ready) {
                     viewerHandler.coverStatus.push(0)
-                    check_cache_status();
+                    check_state("front");
                 } else if (status === Image.Error) {
                     front.source = "qrc:/img-cover-err"
                     viewerHandler.coverStatus.push(1)
-                    check_cache_status();
+                    check_state("front");
                 }
             }
         }
@@ -36,14 +37,19 @@ Item {
             sourceSize.height: height
             source: {
                 if (urlCoverBack !== "")
-                    if (!cached)
+                    if (!back_cached)
                         hostCover+urlCoverBack
                     else
                         "file://"+root.tmp+id_cache+"b.jpg"
                 else
                     front.source
             }
-            onStatusChanged: { if (status === Image.Error) source = front.source }
+            onStatusChanged: {
+                if (status === Image.Ready)
+                    check_state("back");
+                else if (status === Image.Error)
+                    source = front.source
+            }
         }
         anchors.centerIn: parent
 
@@ -79,15 +85,23 @@ Item {
         }
     }
 
-    function check_cache_status() {
-        if (viewerHandler.coverStatus.length === viewerHandler.n_blockFilms)
-            view.state = "show"
-        if (!cached) {
-            front.grabToImage(function(result) { result.saveToFile(root.tmp+id_cache+"f.jpg") })
-            back.grabToImage(function(result) { if (result.saveToFile(root.tmp+id_cache+"b.jpg")) root.coverCache.push(id_cache) })
+    function check_state(cover) {
+        if (cover === "front") {
+            if (viewerHandler.coverStatus.length === viewerHandler.n_blockFilms)
+                view.state = "show"
+            if (!front_cached)
+                front.grabToImage(function(result) { if (result.saveToFile(root.tmp+id_cache+"f.jpg")) root.cache_cover_front.push(id_cache) })
+        } else {
+            if(!back_cached)
+                back.grabToImage(function(result) { if (result.saveToFile(root.tmp+id_cache+"b.jpg")) root.cache_cover_back.push(id_cache) })
         }
     }
 
-    Component.onCompleted: { if (root.coverCache.indexOf(id_cache) !== -1) cached = true }
+    Component.onCompleted: {
+        if (root.cache_cover_front.indexOf(id_cache) !== -1)
+            front_cached = true
+        if (root.cache_cover_back.indexOf(id_cache) !== -1)
+            back_cached = true
+    }
 }
 // Tabs hechos.

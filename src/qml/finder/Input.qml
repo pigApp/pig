@@ -6,7 +6,7 @@ Rectangle {
 
     TextInput {
         id: userInput
-        width: parent.width-(screen.width/54.85)
+        width: parent.width-(screen.width/76.8)
         text: root.userInput
         color: "black"
         font.family: fontGlobal.name
@@ -17,10 +17,10 @@ Rectangle {
         persistentSelection: true
         selectByMouse: true
         selectedTextColor: "white"
-        selectionColor: "gray"
+        selectionColor: "black"
         cursorVisible: false
         anchors.left: parent.left
-        anchors.leftMargin: screen.width/120
+        anchors.leftMargin: screen.width/192
         anchors.verticalCenter: parent.verticalCenter
         onCursorPositionChanged: {
             if (input.color == "#ff0000")
