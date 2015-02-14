@@ -140,7 +140,7 @@ void PIG::start()
             QFile file;
             if (file.exists(init)) {
                 file.rename(init, tmp+"init.trash");
-                mRoot->setProperty("init", true);
+                mRoot->setProperty("onInit", true);
             }
             file.setFileName(news);
             if (file.exists()) {
@@ -214,14 +214,14 @@ void PIG::find(const QString userInput, const QString pornstar, const QString ca
     if (db.open()) {
         QSqlQuery query;
         query.prepare("SELECT id, Title, Cas, Category, Quality, Time, Full, HostPreview, UrlPreview, HostCover, UrlCoverFront, UrlCoverBack, Torrent \
-            FROM Films WHERE Title LIKE '%"+userInput+"%' AND Cas LIKE '%"+pornstar+"%' AND Category LIKE '%"+category+"%' \
+            FROM Movies WHERE Title LIKE '%"+userInput+"%' AND Cas LIKE '%"+pornstar+"%' AND Category LIKE '%"+category+"%' \
             AND Quality LIKE '%"+quality+"%' AND Full LIKE '%"+full+"%' ORDER BY Title ASC LIMIT 1000");
         if (!query.exec()) {
             db.close();
             db_err();
         } else {
-            int nFilms = 0;
-            QStringList dataFilms;
+            int nMovies = 0;
+            QStringList dataMovies;
             for (int i=0; query.next(); i++) {
                 const QString strId = query.value(0).toString();
                 const QString strTitle = query.value(1).toString();
@@ -236,15 +236,15 @@ void PIG::find(const QString userInput, const QString pornstar, const QString ca
                 const QString strUrlCoverFront = query.value(10).toString();
                 const QString strUrlCoverBack = query.value(11).toString();
                 const QString strTorrent = query.value(12).toString();
-                dataFilms << strId << strTitle << strCast << strCategories << strQuality << strTime << strFull << strHostPreview << strUrlPreview
+                dataMovies << strId << strTitle << strCast << strCategories << strQuality << strTime << strFull << strHostPreview << strUrlPreview
                     << strHostCover << strUrlCoverFront << strUrlCoverBack << strTorrent;
             }
             db.close();
             if (!query.last()) {
-                emit sig_ret_db(nFilms, dataFilms);
+                emit sig_ret_db(nMovies, dataMovies);
             } else {
-                nFilms = query.at()+1;
-                emit sig_ret_db(nFilms, dataFilms);
+                nMovies = query.at()+1;
+                emit sig_ret_db(nMovies, dataMovies);
             }
         }
     } else {

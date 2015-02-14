@@ -4,7 +4,7 @@ import QtGraphicalEffects 1.0
 import "../global/"
 
 Item {
-    id: finderHandler
+    id: finder
 
     property bool onCategory
 
@@ -12,9 +12,9 @@ Item {
         id: quality
         x: -parent.width/3.17
         width: parent.width/3.17
-        height: parent.height/21.6
+        height: parent.height/14.4
         anchors.bottom: columnFilters.top
-        anchors.bottomMargin: parent.height/360
+        anchors.bottomMargin: -parent.height/54
         onXChanged: {
             if (x === (-parent.width/3.17)) {
                 if ((root.quality !== "") || (root.full === "1"))
@@ -36,12 +36,13 @@ Item {
         visible: false
         anchors.left: quality.right
         anchors.verticalCenter: quality.verticalCenter
+        anchors.verticalCenterOffset: parent.height/540
         MouseArea {
             onClicked: {
                 if (quality.x === (-screen.width/3.17))
-                    finderHandler.state = "show_quality"
+                    finder.state = "show_quality"
                 else
-                    finderHandler.state = "hide_quality"
+                    finder.state = "hide_quality"
             }
             anchors.fill: parent
         }
@@ -59,7 +60,7 @@ Item {
             labelBold: true
             labelMargin: screen.width/384
             onClicked: {
-                finderHandler.state = "show_filter"
+                finder.state = "show_filter"
                 onCategory = true
             }
         }
@@ -69,7 +70,7 @@ Item {
             labelBold: true
             labelMargin: screen.width/384
             onClicked: {
-                finderHandler.state = "show_filter"
+                finder.state = "show_filter"
                 onCategory = false
             }
         }
@@ -101,7 +102,7 @@ Item {
 
     Welcome {
         id: welcome
-        visible: root.init
+        visible: root.onInit
         anchors.right: parent.right
         anchors.rightMargin: parent.width/128
         anchors.bottom: parent.bottom
@@ -117,7 +118,7 @@ Item {
         },
         State {
             name: "show_filter"
-            PropertyChanges { target: root; init: false; restoreEntryValues: false }
+            PropertyChanges { target: root; onInit: false; restoreEntryValues: false }
         },
         State {
             name: "hide_filter"
@@ -224,14 +225,15 @@ Item {
     ]
 
     Keys.onPressed: {
-        root.init = false
+        root.onInit = false
         if ((event.key === Qt.Key_H) && (event.modifiers & Qt.ControlModifier)) {
-            if (finderHandler.state !== "show_filter") {
+            if (finder.state !== "show_filter") {
+                root.onHelpFinder = true
                 screen.state = "show_help"
                 event.accepted = true
             }
         } else if ((event.key === Qt.Key_P) && (event.modifiers & Qt.ControlModifier)) {
-            if (finderHandler.state !== "show_filter") {
+            if (finder.state !== "show_filter") {
                 screen.state = "show_password"
             }
             event.accepted = true
@@ -243,6 +245,6 @@ Item {
 
     onFocusChanged: { if (!input.focus) input.forceActiveFocus() }
 
-    Component.onCompleted: { finderHandler.state = "show" }
+    Component.onCompleted: { finder.state = "show" }
 }
 // Tabs hechos.

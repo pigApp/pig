@@ -37,8 +37,8 @@ Item {
         }
         Row {
             Text {
-                id: labelCurrentFilm
-                text: currentFilm
+                id: labelCurrentMovie
+                text: currentMovie
                 color: "white"
                 font.family: fontGlobal.name
                 font.pixelSize: screen.height/23
@@ -50,8 +50,8 @@ Item {
                 font.pixelSize: screen.height/23
             }
             Text {
-                id: labelTotalFilms
-                text: root.n_films
+                id: labelTotalMovies
+                text: root.n_movies
                 color: "white"
                 font.family: fontGlobal.name
                 font.pixelSize: screen.height/23

@@ -3,13 +3,13 @@ import QtQuick 2.4
 import "preview/"
 
 Item {
-    id: viewerHandler
+    id: viewer
     x: root.xb
 
     property bool updateData
-    property int n_blockFilms: 5
-    property int locationOnBlockFilms: 0
-    property int currentFilm: 1
+    property int n_blockMovies: 5
+    property int locationOnBlockMovies: 0
+    property int currentMovie: 1
     property var coverStatus: []
     property var previewStatus: []
 
@@ -102,7 +102,7 @@ Item {
                 SequentialAnimation {
                     PropertyAction { target: loader_root; property: "source"; value: "" }
                     PropertyAction { target: timeOutNetwork; property: "running"; value: false }
-                    PropertyAction { target: viewerHandler; property: "locationOnBlockFilms"; value: 0 }
+                    PropertyAction { target: viewer; property: "locationOnBlockMovies"; value: 0 }
                     NumberAnimation { duration: 250 }
                     ParallelAnimation {
                         NumberAnimation { target: root; easing.amplitude: 1.7; properties: "xb"; to: 0; duration: 1200; easing.type: Easing.OutQuart }
@@ -121,7 +121,7 @@ Item {
                         NumberAnimation { target: root; easing.amplitude: 1.7; properties: "screenA"; to: 0.4; duration: 600; easing.type: Easing.OutQuart }
                         NumberAnimation { target: backgroundBlur; easing.amplitude: 1.7; properties: "radius"; to: 32; duration: 600; easing.type: Easing.OutQuart }
                     }
-                    PropertyAction { target: viewerHandler; property: "updateData"; value: true }
+                    PropertyAction { target: viewer; property: "updateData"; value: true }
                 }
             },
             Transition {
@@ -138,44 +138,44 @@ Item {
 
         Keys.onPressed: {
             if (event.key === Qt.Key_Up) {
-                if ((root.n_films > 5) && (view.counter < root.n_films)) {
-                    if ((root.n_films-view.counter) >= 5 ) {
+                if ((root.n_movies > 5) && (view.counter < root.n_movies)) {
+                    if ((root.n_movies-view.counter) >= 5 ) {
                         view.counter = view.counter+5
                     } else {
-                        n_blockFilms = root.n_films-view.counter
-                        view.counter = view.counter+n_blockFilms
+                        n_blockMovies = root.n_movies-view.counter
+                        view.counter = view.counter+n_blockMovies
                     }
-                    currentFilm = (view.counter-n_blockFilms)+1
+                    currentMovie = (view.counter-n_blockMovies)+1
                     view.state = "hide"
                 }
             } else if (event.key === Qt.Key_Down) {
-                if ((root.n_films > 5) && ((view.counter-5) > 0)) {
-                    view.counter = view.counter-n_blockFilms
-                    currentFilm = view.counter-4
-                    n_blockFilms = 5
+                if ((root.n_movies > 5) && ((view.counter-5) > 0)) {
+                    view.counter = view.counter-n_blockMovies
+                    currentMovie = view.counter-4
+                    n_blockMovies = 5
                     view.state = "hide"
                 }
             } else if (event.key === Qt.Key_Right) {
                 view.enabled = false
                 delayEnable.start()
                 incrementCurrentIndex()
-                if (locationOnBlockFilms === (n_blockFilms-1)) {
-                    locationOnBlockFilms = 0
-                    currentFilm = (view.counter-n_blockFilms)+1
+                if (locationOnBlockMovies === (n_blockMovies-1)) {
+                    locationOnBlockMovies = 0
+                    currentMovie = (view.counter-n_blockMovies)+1
                 } else {
-                    ++locationOnBlockFilms
-                    ++currentFilm
+                    ++locationOnBlockMovies
+                    ++currentMovie
                 }
             } else if (event.key === Qt.Key_Left) { // TODO: Hacia la izquierda funciona mal.
                 view.enabled = false
                 delayEnable.start()
                 decrementCurrentIndex()
-                if (locationOnBlockFilms === 0) {
-                    locationOnBlockFilms = view.counter-1
-                    currentFilm = view.counter
+                if (locationOnBlockMovies === 0) {
+                    locationOnBlockMovies = view.counter-1
+                    currentMovie = view.counter
                 } else {
-                    --locationOnBlockFilms
-                    --currentFilm
+                    --locationOnBlockMovies
+                    --currentMovie
                 }
             } else if ((event.key === Qt.Key_H) && (event.modifiers & Qt.ControlModifier) && !timeOutNetwork.running) {
                 screen.state = "show_help"
@@ -283,17 +283,17 @@ Item {
         coverStatus = []
         previewStatus = []
         var torrent
-        var row = (currentFilm-1)*13
-        if (root.n_films < 5) {
-            n_blockFilms = root.n_films
-            view.counter = root.n_films
+        var row = (currentMovie-1)*13
+        if (root.n_movies < 5) {
+            n_blockMovies = root.n_movies
+            view.counter = root.n_movies
         }
-        for (var i=0; i<n_blockFilms; i++) {
-            torrent = root.data_films[row+12].split(",")
-            model.append({ "id_film": root.data_films[row], "title": root.data_films[row+1], "cast": root.data_films[row+2], "categories": root.data_films[row+3],
-                           "quality": root.data_films[row+4], "time": root.data_films[row+5], "full": root.data_films[row+6], "hostPreview": root.data_films[row+7],
-                           "urlPreview": root.data_films[row+8], "id_preview": i, "hostCover": root.data_films[row+9], "urlCoverFront": root.data_films[row+10],
-                           "urlCoverBack": root.data_films[row+11], "urlTorrent": torrent[0], "scenes": Number(torrent[1]) })
+        for (var i=0; i<n_blockMovies; i++) {
+            torrent = root.data_movies[row+12].split(",")
+            model.append({ "id_movie": root.data_movies[row], "title": root.data_movies[row+1], "cast": root.data_movies[row+2], "categories": root.data_movies[row+3],
+                           "quality": root.data_movies[row+4], "time": root.data_movies[row+5], "full": root.data_movies[row+6], "hostPreview": root.data_movies[row+7],
+                           "urlPreview": root.data_movies[row+8], "id_preview": i, "hostCover": root.data_movies[row+9], "urlCoverFront": root.data_movies[row+10],
+                           "urlCoverBack": root.data_movies[row+11], "urlTorrent": torrent[0], "scenes": Number(torrent[1]) })
             row += 13
         }
         loader_root.source = "../global/Network.qml"

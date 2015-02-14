@@ -1,11 +1,5 @@
 <RCC>
     <qresource prefix="/">
-        <file alias="img-network">resources/images/network/network.svg</file>
-        <file alias="img-download">resources/images/network/download.svg</file>
-        <file alias="img-download-dark">resources/images/network/download-dark.svg</file>
-        <file alias="img-peers">resources/images/network/peers.svg</file>
-        <file alias="img-peers-dark">resources/images/network/peers-dark.svg</file>
-        <file alias="img-network_err">resources/images/network/network_err.svg</file>
         <file alias="img-quality-in">resources/images/finder/quality/quality-in.svg</file>
         <file alias="img-quality-out">resources/images/finder/quality/quality-out.svg</file>
         <file alias="img-quality-on">resources/images/finder/quality/quality-on.svg</file>
@@ -45,16 +39,22 @@
         <file alias="img-play">resources/images/viewer/preview/play.svg</file>
         <file alias="img-replay">resources/images/viewer/preview/replay.svg</file>
         <file alias="img-cover_err">resources/images/viewer/cover_err.jpg</file>
-        <file alias="img-playing">resources/images/videoplayer/playing.svg</file>
-        <file alias="img-paused">resources/images/videoplayer/paused.svg</file>
-        <file alias="img-standby">resources/images/videoplayer/standby.svg</file>
-        <file alias="img-volume">resources/images/videoplayer/volume.svg</file>
-        <file alias="img-volume-off">resources/images/videoplayer/volume-off.svg</file>
+        <file alias="img-playing">resources/images/movie/videoPlayer/playing.svg</file>
+        <file alias="img-paused">resources/images/movie/videoPlayer/paused.svg</file>
+        <file alias="img-standby">resources/images/movie/videoPlayer/standby.svg</file>
+        <file alias="img-volume">resources/images/movie/videoPlayer/volume.svg</file>
+        <file alias="img-volume-off">resources/images/movie/videoPlayer/volume-off.svg</file>
         <file alias="img-background">resources/images/global/background.jpg</file>
+        <file alias="img-network">resources/images/global/network/network.svg</file>
+        <file alias="img-download">resources/images/global/network/download.svg</file>
+        <file alias="img-download-dark">resources/images/global/network/download-dark.svg</file>
+        <file alias="img-peers">resources/images/global/network/peers.svg</file>
+        <file alias="img-peers-dark">resources/images/global/network/peers-dark.svg</file>
+        <file alias="img-network_err">resources/images/global/network/network_err.svg</file>
         <file alias="img_warning">resources/images/global/warning.svg</file>
         <file alias="img_err">resources/images/global/err.svg</file>
         <file>resources/images/global/icon.ico</file>
-        <file>resources/images/global/icon.png</file>
+        <file>resources/images/global/icon.jpg</file>
         <file>resources/images/global/icon.rc</file>
         <file alias="font-global">resources/fonts/global.ttf</file>
     </qresource>
@@ -63,28 +63,30 @@
         <file>src/qml/Password.qml</file>
         <file>src/qml/Update.qml</file>
         <file>src/qml/News.qml</file>
-        <file>src/qml/finder/FinderHandler.qml</file>
+        <file>src/qml/finder/Finder.qml</file>
+        <file>src/qml/finder/Welcome.qml</file>
         <file>src/qml/finder/Quality.qml</file>
         <file>src/qml/finder/Filters.qml</file>
+        <file>src/qml/finder/_filters/Box.qml</file>
         <file>src/qml/finder/Input.qml</file>
-        <file>src/qml/finder/Welcome.qml</file>
-        <file>src/qml/finder/filters_components/Box.qml</file>
-        <file>src/qml/viewer/ViewerHandler.qml</file>
+        <file>src/qml/viewer/Viewer.qml</file>
         <file>src/qml/viewer/Cover.qml</file>
         <file>src/qml/viewer/Dates.qml</file>
         <file>src/qml/viewer/Scenes.qml</file>
         <file>src/qml/viewer/preview/Preview.qml</file>
         <file>src/qml/viewer/preview/PreviewPlayer.qml</file>
-        <file>src/qml/torrent/TorrentHandler.qml</file>
-        <file>src/qml/torrent/Status.qml</file>
-        <file>src/qml/torrent/VideoPlayer.qml</file>
-        <file>src/qml/torrent/videoplayer_components/SideBox.qml</file>
-        <file>src/qml/torrent/videoplayer_components/Bars.qml</file>
-        <file>src/qml/torrent/videoplayer_components/Controls.qml</file>
-        <file>src/qml/torrent/videoplayer_components/Control.qml</file>
+        <file>src/qml/movie/Movie.qml</file>
+        <file>src/qml/movie/torrentStatus.qml</file>
+        <file>src/qml/movie/VideoPlayer.qml</file>
+        <file>src/qml/movie/_videoPlayer/SideBox.qml</file>
+        <file>src/qml/movie/_videoPlayer/Bars.qml</file>
+        <file>src/qml/movie/_videoPlayer/Controls.qml</file>
+        <file>src/qml/movie/_videoPlayer/Control.qml</file>
         <file>src/qml/global/Network.qml</file>
-        <file>src/qml/global/Help.qml</file>
-        <file>src/qml/global/Db_err.qml</file>
         <file>src/qml/global/Button.qml</file>
+        <file>src/qml/global/Help.qml</file>
+        <file>src/qml/global/_help/Help_finder.qml</file>
+        <file>src/qml/global/_help/Help_viewer.qml</file>
+        <file>src/qml/global/Db_err.qml</file>
     </qresource>
 </RCC>

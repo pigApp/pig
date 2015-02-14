@@ -43,7 +43,7 @@ Rectangle {
 
     Connections {
         target: cpp
-        onSig_ret_db: { if ((n_films === 0) && (loader_filter.source == "")) input.color = "red" }
+        onSig_ret_db: { if ((n_movies === 0) && (loader_filter.source == "")) input.color = "red" }
     }
 }
 // Tabs hechos.

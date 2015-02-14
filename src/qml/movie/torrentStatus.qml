@@ -1,13 +1,13 @@
 import QtQuick 2.4
 
 Rectangle {
-    id: status
+    id: torrentStatus
     color: "black"
 
     property int timeLeft: 9
 
     Row {
-        id: rowStatus
+        id: rowTorrentStatus
         spacing: parent.width/96
         anchors.centerIn: parent
         Row {
@@ -67,14 +67,14 @@ Rectangle {
     }
     Text {
         id: labelSandbox
-        text: "<font color='#ffff00'>FILE NOT READY</font> RECHECK "+timeLeft
+        text: "<font color='#ffd700'>FILE NOT READY</font> RECHECK "+timeLeft
         color: "white"
         font.family: fontGlobal.name
         font.bold: true
         font.pixelSize: screen.height/54
         textFormat: Text.RichText
-        visible: { torrentHandler.sandboxStatus === "FAIL" }
-        anchors.top: rowStatus.bottom
+        visible: { movie.sandboxStatus === "FAIL" }
+        anchors.top: rowTorrentStatus.bottom
         anchors.topMargin: -screen.height/72
         anchors.horizontalCenter: parent.horizontalCenter
     }
@@ -83,7 +83,7 @@ Rectangle {
        id: barDownload
        width: { (parent.width*root.mb_downloaded)/root.mb_required }
        height: parent.height/540
-       color: { if (torrentHandler.sandboxStatus === "FAIL") "gold"; else "white" }
+       color: { if (movie.sandboxStatus === "FAIL") "gold"; else "white" }
        visible: { labelBitRate.text !== "CONNECTING" && labelPeers !== "PEERS 0" }
        anchors.bottom: parent.bottom
        anchors.bottomMargin: parent.height/540
@@ -91,21 +91,21 @@ Rectangle {
 
     Timer {
         id: delayRecheck
-        running: { torrentHandler.sandboxStatus === "FAIL" }
+        running: { movie.sandboxStatus === "FAIL" }
         repeat: true
         interval: 1000
         onTriggered: {
             if (timeLeft > 0) timeLeft -= 1; else timeLeft = 9
             if (timeLeft !== 0)
-                labelSandbox.text = "<font color='#ffff00'>FILE NOT READY</font> RECHECK "+timeLeft
+                labelSandbox.text = "<font color='#ffd700'>FILE NOT READY</font> RECHECK "+timeLeft
             else
-                labelSandbox.text = "<font color='#ffff00'>FILE NOT READY</font> RECHECK <font color='#ffff00'>checking</font>"
+                labelSandbox.text = "<font color='#ffd700'>FILE NOT READY</font> CHECKING"
         }
     }
     
     Keys.onPressed: {
         if (event.key === Qt.Key_Escape) {
-            torrentHandler.state = "hide"
+            movie.state = "hide"
             cpp.torrent_handler("", 0, true)
             event.accepted = true;
         } else if ((event.key === Qt.Key_Q) && (event.modifiers & Qt.ControlModifier)) {

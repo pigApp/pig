@@ -4,22 +4,22 @@ Rectangle {
     id: help
     color: Qt.rgba(1, 1, 1, 0.5)
 
-    Text {
-        text: "FILTERS"
-        color: "black"
-        font.family: fontGlobal.name
-        font.pixelSize: screen.height/23
-        anchors.left: parent.left
-        anchors.leftMargin: 700
-        anchors.verticalCenter: parent.verticalCenter
+    Loader {
+        id: loader_help
+        source: { if (root.onHelpFinder) "_help/Help_finder.qml"; else "_help/Help_viewer.qml" }
+        focus: true
+        asynchronous: true
+        visible: { status === Loader.Ready }
+        anchors.fill: parent
     }
 
     Keys.onPressed: {
-        if (event.key === Qt.Key_Escape) {
-            screen.state = "hide_help"
-            event.accepted = true;
-        } else if ((event.key === Qt.Key_Q) && (event.modifiers & Qt.ControlModifier)) {
+        loader_help.source = ""
+        if ((event.key === Qt.Key_Q) && (event.modifiers & Qt.ControlModifier)) {
             cpp.quit()
+            event.accepted = true;
+        } else {
+            screen.state = "hide_help"
             event.accepted = true;
         }
     }

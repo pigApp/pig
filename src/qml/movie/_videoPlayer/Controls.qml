@@ -2,16 +2,16 @@ import QtQuick 2.4
 import QtMultimedia 5.4
 
 Item {
-    id: constrols
+    id: controls
 
     Timer {
         id: delayHideControls
-        running: !videoPlayerHandler.sandbox
+        running: !videoPlayer.sandbox
         repeat: false
         interval: 4000
         onTriggered: {
             if ((mouseArea.mouseX < (parent.width-(parent.width/9.6))) && (mouseArea.mouseY < (parent.height-(parent.height/54))))
-                videoPlayerHandler.state = "hide_controls"
+                videoPlayer.state = "hide_controls"
             else
                 restart()
         }
@@ -22,8 +22,8 @@ Item {
         hoverEnabled: true
         onClicked: playback(true)
         onPositionChanged: {
-            if (videoPlayerHandler.sideBoxMargin !== 0) {
-                videoPlayerHandler.state = "show_controls"
+            if (videoPlayer.sideBoxMargin !== 0) {
+                videoPlayer.state = "show_controls"
                 delayHideControls.start()
             }
         }
@@ -61,7 +61,7 @@ Item {
     }
     
     function playback(state, offset) {
-        if (!videoPlayerHandler.standby) {
+        if (!videoPlayer.standby) {
             if (state) {
                 if ((player.playbackState === MediaPlayer.PausedState) || (player.playbackState === MediaPlayer.StoppedState))
                     player.play()

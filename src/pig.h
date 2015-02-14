@@ -30,7 +30,7 @@ signals:
     void sig_show_update();
     void sig_show_news(const QString binaryNews, const QString databaseNews);
     void sig_show_finder();
-    void sig_ret_db(int nFilms, QStringList dataFilms);
+    void sig_ret_db(int nMovies, QStringList dataMovies);
     void sig_ret_preview(const int id, const bool success);
     void sig_show_db_err();
 

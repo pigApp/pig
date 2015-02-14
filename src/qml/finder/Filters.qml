@@ -1,6 +1,6 @@
 import QtQuick 2.4
 
-import "filters_components/"
+import "_filters/"
 
 Item {
     id: filters
@@ -83,7 +83,7 @@ Item {
 
     Keys.onPressed: {
         if (event.key === Qt.Key_Escape) {
-            finderHandler.state = "hide_filter"
+            finder.state = "hide_filter"
             event.accepted = true
         } else if ((event.key === Qt.Key_Q) && (event.modifiers & Qt.ControlModifier)) {
             cpp.quit()
@@ -104,7 +104,7 @@ Item {
     Connections {
         target: cpp
         onSig_ret_db: {
-            if (n_films === 0) {
+            if (n_movies === 0) {
                 root.category = ""
                 root.pornstar = ""
                 rowCheck.visible = true

@@ -4,7 +4,7 @@ Item {
     id: preview
 
     property bool cached
-    property int id_cache: id_film
+    property int id_cache: id_movie
 
     Image {
         id: icon
@@ -41,7 +41,7 @@ Item {
                 loader_previewPlayer.item.host = hostPreview
                 loader_previewPlayer.item.url = urlPreview
                 loader_previewPlayer.item.cached = preview.cached
-                viewerHandler.previewStatus.push(0)
+                viewer.previewStatus.push(0)
             }
         }
     }

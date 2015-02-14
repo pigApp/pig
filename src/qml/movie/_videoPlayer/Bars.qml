@@ -7,7 +7,7 @@ Item {
         id: barTime
         width: { (parent.width*player.position)/player.duration }
         height: screen.height/540
-        color: { if (videoPlayerHandler.standby) "gold"; else "white" }
+        color: { if (videoPlayer.standby) "gold"; else "white" }
         anchors.bottom: parent.bottom
     }
     Rectangle {

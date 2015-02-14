@@ -15,7 +15,7 @@ Torrent::Torrent(QObject *parent, const QString *url) : QObject(parent)
     dump = true;
     skip = false;
     abort = false;
-    mb_required = 10;
+    mb_required = 2;
     mb_skip_global = 0;
     piece_offset_global = 0;
 #ifdef __linux__
@@ -143,7 +143,7 @@ void Torrent::progress()
                     QDir dir(QString::fromStdString(h.status(128).save_path)+QString::fromStdString(h.status(64).name));
                     if (!dir.exists())
                         dir.setPath(QString::fromStdString(h.status(128).save_path));
-                    (*_root)->setProperty("video_file", dir.absolutePath()+"/"+file);
+                    (*_root)->setProperty("movie_file", dir.absolutePath()+"/"+file);
                 } else {
                     dump = false;
                     skip = false;

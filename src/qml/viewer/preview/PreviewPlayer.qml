@@ -92,10 +92,10 @@ Item {
             cpp.preview_handler(id_private, "", "", "", false, true)
         }
         if (quit) {
-            var sts = viewerHandler.previewStatus.indexOf(0)
+            var sts = viewer.previewStatus.indexOf(0)
             if (sts !== -1) {
-                viewerHandler.previewStatus.splice(sts, 1);
-                if (viewerHandler.previewStatus.indexOf(0) === -1)
+                viewer.previewStatus.splice(sts, 1);
+                if (viewer.previewStatus.indexOf(0) === -1)
                     cpp.quit()
             }
         }

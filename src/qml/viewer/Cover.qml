@@ -5,7 +5,7 @@ Item {
 
     property bool front_cached
     property bool back_cached
-    property int id_cache: id_film
+    property int id_cache: id_movie
 
     Flipable {
         id: flipable
@@ -20,11 +20,11 @@ Item {
             source: { if (!front_cached) hostCover+urlCoverFront; else "file://"+root.tmp+id_cache+"f.jpg" }
             onStatusChanged: {
                 if (status === Image.Ready) {
-                    viewerHandler.coverStatus.push(0)
+                    viewer.coverStatus.push(0)
                     check_state("front");
                 } else if (status === Image.Error) {
                     front.source = "qrc:/img-cover-err"
-                    viewerHandler.coverStatus.push(1)
+                    viewer.coverStatus.push(1)
                     check_state("front");
                 }
             }
@@ -87,7 +87,7 @@ Item {
 
     function check_state(cover) {
         if (cover === "front") {
-            if (viewerHandler.coverStatus.length === viewerHandler.n_blockFilms)
+            if (viewer.coverStatus.length === viewer.n_blockMovies)
                 view.state = "show"
             if (!front_cached)
                 front.grabToImage(function(result) { if (result.saveToFile(root.tmp+id_cache+"f.jpg")) root.cache_cover_front.push(id_cache) })

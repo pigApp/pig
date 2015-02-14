@@ -5,7 +5,7 @@ Item {
 
     property alias totalScenes: repeater.model
 
-    Row {
+    Column {
         spacing: screen.width/192
         anchors.left: parent.left
         anchors.bottom: parent.bottom
@@ -14,7 +14,7 @@ Item {
             delegate: Image {
                 id: icon
                 width: screen.width/29.53
-                height: screen.height/21.61
+                height: screen.height/27
                 sourceSize.width: width
                 sourceSize.height: height
                 source: "qrc:/img-scene"
@@ -27,7 +27,7 @@ Item {
                     onHoveredChanged: { if (!icon.viewed) icon.state = "out" }
                     onClicked: {
                         icon.viewed = true
-                        screen.state = "show_torrent"
+                        screen.state = "show_movie"
                         cpp.torrent_handler(urlTorrent, index, false)
                     }
                     anchors.fill: parent

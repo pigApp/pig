@@ -52,7 +52,7 @@ Item {
                     sourceSize.width: width
                     sourceSize.height: height
                     source: {
-                        if (videoPlayerHandler.standby) {
+                        if (videoPlayer.standby) {
                             "qrc:/img-standby"
                         } else {
                             if (player.playbackState === MediaPlayer.PlayingState)
@@ -72,7 +72,7 @@ Item {
                         height: screen.height/32.72
                         sourceSize.width: width
                         sourceSize.height: height
-                        source: { if ((player.volume !== 0.0) && !player.muted) "qrc:/img-volume"; else "qrc:/img-volume-off" }
+                        source: { if ((player.volume === 0.0) || player.muted) "qrc:/img-volume-off"; else "qrc:/img-volume" }
                     }
                     Text {
                         id: labelVolume
@@ -98,7 +98,7 @@ Item {
             }
         }
         Rectangle {
-            id: layerStatus
+            id: layerTorrentStatus
             width: sidebox.width
             height: screen.height/10.8
             color: Qt.rgba(0, 0, 0, 0.5)

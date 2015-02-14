@@ -1,16 +1,16 @@
 import QtQuick 2.4
 
 Item {
-    id: torrentHandler
+    id: movie
     x: root.xa
     width: screen.width
     height: screen.height
 
-    property string video_file: root.video_file
+    property string movie_file: root.movie_file
     property string sandboxStatus: ""
 
     Loader {
-        id: loader_status
+        id: loader_torrentStatus
         active: false
         asynchronous: true
         visible: { status === Loader.Ready }
@@ -37,8 +37,8 @@ Item {
         Transition {
             to: "show"
             SequentialAnimation {
-                PropertyAction { target: loader_status; property: "source"; value: "Status.qml" }
-                PropertyAction { target: loader_status; property: "active"; value: true }
+                PropertyAction { target: loader_torrentStatus; property: "source"; value: "torrentStatus.qml" }
+                PropertyAction { target: loader_torrentStatus; property: "active"; value: true }
                 ParallelAnimation {
                     NumberAnimation { target: root; easing.amplitude: 1.7; properties: "xa"; to: 0; duration: 1100; easing.type: Easing.OutQuart }
                     NumberAnimation { target: root; easing.amplitude: 1.7; properties: "xb"; to: -screen.width; duration: 1100; easing.type: Easing.OutQuart }
@@ -56,13 +56,13 @@ Item {
                     NumberAnimation { target: root; easing.amplitude: 1.7; properties: "xa"; to: screen.width; duration: 1100; easing.type: Easing.OutQuart }
                     NumberAnimation { target: root; easing.amplitude: 1.7; properties: "xb"; to: 0; duration: 1100; easing.type: Easing.OutQuart }
                  }
-                PropertyAction { target: screen; property: "state"; value: "hide_torrent" }
+                PropertyAction { target: screen; property: "state"; value: "hide_movie" }
             }
         }
     ]
 
-    onVideo_fileChanged: {
-        if (video_file !== "") {
+    onMovie_fileChanged:  {
+        if (movie_file !== "") {
             loader_videoPlayer.source = "VideoPlayer.qml"
             loader_videoPlayer.active = true
         }
@@ -70,14 +70,14 @@ Item {
     onSandboxStatusChanged:  {
         if (sandboxStatus === "SUCCESS") {
             loader_videoPlayer.visible = true
-            loader_status.source = ""
-            loader_status.active = false
+            loader_torrentStatus.source = ""
+            loader_torrentStatus.active = false
         }
     }
 
-    Component.onCompleted: { torrentHandler.state = "show" }
+    Component.onCompleted: { movie.state = "show" }
     Component.onDestruction: {
-        loader_status.source = ""
+        loader_torrentStatus.source = ""
         loader_videoPlayer.source = ""
     }
 }

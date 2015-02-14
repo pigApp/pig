@@ -1,10 +1,10 @@
 import QtQuick 2.4
 import QtMultimedia 5.4
 
-import "videoplayer_components/"
+import "_videoPlayer/"
 
 Rectangle {
-    id: videoPlayerHandler
+    id: videoPlayer
     color: "black"
 
     property bool sandbox: true
@@ -21,11 +21,11 @@ Rectangle {
         onStatusChanged: {
             if (sandbox) {
                 if ((player.status === MediaPlayer.Buffered) && !player.error) {
-                    torrentHandler.sandboxStatus = "SUCCESS"
-                    videoPlayerHandler.sandbox = false
+                    movie.sandboxStatus = "SUCCESS"
+                    videoPlayer.sandbox = false
                     controls.forceActiveFocus()
                 } else if ((player.status === MediaPlayer.NoMedia) || (player.status === MediaPlayer.InvalidMedia)) {
-                    torrentHandler.sandboxStatus = "FAIL"
+                    movie.sandboxStatus = "FAIL"
                     // Timer recheck video start -10
                 }
             } else {
@@ -70,22 +70,22 @@ Rectangle {
         Transition {
             to: "show_controls"
             ParallelAnimation {
-                NumberAnimation { target: videoPlayerHandler; easing.amplitude: 1.7; properties: "sideBoxMargin"; to: 0; duration: 500; easing.type: Easing.OutQuart }
-                NumberAnimation { target: videoPlayerHandler; easing.amplitude: 1.7; properties: "barsMargin"; to: 0; duration: 200; easing.type: Easing.OutQuart }
+                NumberAnimation { target: videoPlayer; easing.amplitude: 1.7; properties: "sideBoxMargin"; to: 0; duration: 500; easing.type: Easing.OutQuart }
+                NumberAnimation { target: videoPlayer; easing.amplitude: 1.7; properties: "barsMargin"; to: 0; duration: 200; easing.type: Easing.OutQuart }
             }
         },
         Transition {
             to: "hide_controls"
             ParallelAnimation {
-                NumberAnimation { target: videoPlayerHandler; easing.amplitude: 1.7; properties: "sideBoxMargin"; to: -screen.width/9.6; duration: 500; easing.type: Easing.OutQuart }
-                NumberAnimation { target: videoPlayerHandler; easing.amplitude: 1.7; properties: "barsMargin"; to: -screen.height/54; duration: 500; easing.type: Easing.OutQuart }
+                NumberAnimation { target: videoPlayer; easing.amplitude: 1.7; properties: "sideBoxMargin"; to: -screen.width/9.6; duration: 500; easing.type: Easing.OutQuart }
+                NumberAnimation { target: videoPlayer; easing.amplitude: 1.7; properties: "barsMargin"; to: -screen.height/54; duration: 500; easing.type: Easing.OutQuart }
             }
         }
     ]
     
     onStandbyChanged: { if (standby) player.pause(); else player.play() } 
 
-    Component.onCompleted: { player.source = "file://"+root.video_file }
+    Component.onCompleted: { player.source = "file://"+root.movie_file }
     Component.onDestruction: { if ((player.playbackState === MediaPlayer.PlayingState) || (player.playbackState === MediaPlayer.PausedState)) player.stop() }
 }
 // Tabs hechos.
