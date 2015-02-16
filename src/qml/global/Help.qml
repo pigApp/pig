@@ -5,16 +5,15 @@ Rectangle {
     color: Qt.rgba(1, 1, 1, 0.5)
 
     Loader {
-        id: loader_help
-        source: { if (root.onHelpFinder) "_help/Help_finder.qml"; else "_help/Help_viewer.qml" }
-        focus: true
+        id: loader
+        source: { if (root.help_finder) "_help/Help_finder.qml"; else "_help/Help_viewer.qml" }
         asynchronous: true
         visible: { status === Loader.Ready }
         anchors.fill: parent
     }
 
     Keys.onPressed: {
-        loader_help.source = ""
+        loader.source = ""
         if ((event.key === Qt.Key_Q) && (event.modifiers & Qt.ControlModifier)) {
             cpp.quit()
             event.accepted = true;

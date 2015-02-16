@@ -23,7 +23,7 @@ Item {
                     viewer.coverStatus.push(0)
                     check_state("front");
                 } else if (status === Image.Error) {
-                    front.source = "qrc:/img-cover-err"
+                    front.source = "qrc:/img-cover_err"
                     viewer.coverStatus.push(1)
                     check_state("front");
                 }

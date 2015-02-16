@@ -5,6 +5,7 @@ import "../global/"
 
 Item {
     id: finder
+    enabled: { screen.state !== "show_help" }
 
     property bool onCategory
 
@@ -102,7 +103,7 @@ Item {
 
     Welcome {
         id: welcome
-        visible: root.onInit
+        visible: root.init
         anchors.right: parent.right
         anchors.rightMargin: parent.width/128
         anchors.bottom: parent.bottom
@@ -118,7 +119,7 @@ Item {
         },
         State {
             name: "show_filter"
-            PropertyChanges { target: root; onInit: false; restoreEntryValues: false }
+            PropertyChanges { target: root; init: false; restoreEntryValues: false }
         },
         State {
             name: "hide_filter"
@@ -225,18 +226,17 @@ Item {
     ]
 
     Keys.onPressed: {
-        root.onInit = false
-        if ((event.key === Qt.Key_H) && (event.modifiers & Qt.ControlModifier)) {
+        root.init = false
+        if ((event.key === Qt.Key_S) && (event.modifiers & Qt.ControlModifier)) {
+            if (finder.state !== "show_filter")
+                screen.state = "show_setting"
+            event.accepted = true
+        } else if ((event.key === Qt.Key_H) && (event.modifiers & Qt.ControlModifier)) {
             if (finder.state !== "show_filter") {
-                root.onHelpFinder = true
+                root.help_finder = true
                 screen.state = "show_help"
                 event.accepted = true
             }
-        } else if ((event.key === Qt.Key_P) && (event.modifiers & Qt.ControlModifier)) {
-            if (finder.state !== "show_filter") {
-                screen.state = "show_password"
-            }
-            event.accepted = true
         } else if ((event.key === Qt.Key_Q) && (event.modifiers & Qt.ControlModifier)) {
             cpp.quit()
             event.accepted = true

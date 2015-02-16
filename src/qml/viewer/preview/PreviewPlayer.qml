@@ -57,7 +57,7 @@ Item {
         }
     }
     Timer {
-        id: delay_err
+        id: delay_error
         running: false
         repeat: false
         interval: 50
@@ -114,7 +114,7 @@ Item {
                     cached = true
                     delay.start()
                 } else {
-                    delay_err.start()
+                    delay_error.start()
                 }
             }
         }

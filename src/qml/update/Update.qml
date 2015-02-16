@@ -1,6 +1,6 @@
 import QtQuick 2.4
 
-import "global/"
+import "../global/"
 
 Item {
     id: update

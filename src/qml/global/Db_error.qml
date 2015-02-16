@@ -1,7 +1,7 @@
 import QtQuick 2.4
 
 Rectangle {
-    id: db_err
+    id: db_error
     color: "red"
 
     Column {

@@ -85,10 +85,10 @@ void PIG::update_handler()
         connect (mRoot, SIGNAL(sig_qml_update_get()), mUpdate, SLOT(user_confirmation()));
         connect (mRoot, SIGNAL(sig_qml_update_skip()), this, SLOT(start()));
         connect (mUpdate, SIGNAL(sig_continue()), this, SLOT(start()));
-        connect (mUpdate, SIGNAL(sig_fail_database()), this, SLOT(db_err()));
+        connect (mUpdate, SIGNAL(sig_fail_database()), this, SLOT(db_error()));
         emit sig_show_update();
     } else {
-        db_err();
+        db_error();
     }
 }
 
@@ -103,7 +103,7 @@ void PIG::start()
         query.prepare("SELECT Binary, Release, Database, Categories, NCategories, Pornstars, NPornstars FROM PigData, FiltersData");
         if (!query.exec()) {
             db.close();
-            db_err();
+            db_error();
         } else {
             query.next();
             const int binary = query.value(0).toInt();
@@ -140,7 +140,7 @@ void PIG::start()
             QFile file;
             if (file.exists(init)) {
                 file.rename(init, tmp+"init.trash");
-                mRoot->setProperty("onInit", true);
+                mRoot->setProperty("init", true);
             }
             file.setFileName(news);
             if (file.exists()) {
@@ -166,7 +166,7 @@ void PIG::start()
             }
         }
     } else {
-        db_err();
+        db_error();
     }
 }
 
@@ -218,7 +218,7 @@ void PIG::find(const QString userInput, const QString pornstar, const QString ca
             AND Quality LIKE '%"+quality+"%' AND Full LIKE '%"+full+"%' ORDER BY Title ASC LIMIT 1000");
         if (!query.exec()) {
             db.close();
-            db_err();
+            db_error();
         } else {
             int nMovies = 0;
             QStringList dataMovies;
@@ -248,7 +248,7 @@ void PIG::find(const QString userInput, const QString pornstar, const QString ca
             }
         }
     } else {
-        db_err();
+        db_error();
     }
 }
 
@@ -276,7 +276,7 @@ void PIG::cleanup()
 }
 
 //DB_ERROR
-void PIG::db_err()
+void PIG::db_error()
 {
     emit sig_show_db_err();
 }

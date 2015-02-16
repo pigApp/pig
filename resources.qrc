@@ -60,9 +60,8 @@
     </qresource>
     <qresource prefix="QML">
         <file>src/qml/main.qml</file>
-        <file>src/qml/Password.qml</file>
-        <file>src/qml/Update.qml</file>
-        <file>src/qml/News.qml</file>
+        <file>src/qml/update/Update.qml</file>
+        <file>src/qml/update/News.qml</file>
         <file>src/qml/finder/Finder.qml</file>
         <file>src/qml/finder/Welcome.qml</file>
         <file>src/qml/finder/Quality.qml</file>
@@ -83,10 +82,13 @@
         <file>src/qml/movie/_videoPlayer/Controls.qml</file>
         <file>src/qml/movie/_videoPlayer/Control.qml</file>
         <file>src/qml/global/Network.qml</file>
-        <file>src/qml/global/Button.qml</file>
+        <file>src/qml/global/Setting.qml</file>
+        <file>src/qml/global/_setting/About.qml</file>
+        <file>src/qml/global/_setting/Password.qml</file>
         <file>src/qml/global/Help.qml</file>
         <file>src/qml/global/_help/Help_finder.qml</file>
         <file>src/qml/global/_help/Help_viewer.qml</file>
-        <file>src/qml/global/Db_err.qml</file>
+        <file>src/qml/global/Button.qml</file>
+        <file>src/qml/global/Db_error.qml</file>
     </qresource>
 </RCC>

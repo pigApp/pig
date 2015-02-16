@@ -4,6 +4,8 @@ Rectangle {
     id: password
     color: "black"
 
+    property bool set
+
     TextInput {
         id: userInput
         color: "white"
@@ -15,7 +17,7 @@ Rectangle {
         anchors.centerIn: parent
         onCursorVisibleChanged: { if (cursorVisible) cursorVisible = false }
         onCursorPositionChanged: {
-            if ((password.color == "#ff0000") && root.askPassword)
+            if ((password.color == "#ff0000") && !set)
                 password.color = "black"
             if (text === "")
                 label.visible = true
@@ -24,21 +26,22 @@ Rectangle {
         }
         onAccepted: {
             if (text !== "") {
-                if (root.askPassword) {
+                if (!set) {
                     cpp.password_handler(false, text, true, false)
                 } else {
                     enabled = false
                     cpp.password_handler(false, text, false, true)
+                    setting.forceActiveFocus()
                 }
             }
         }
         Keys.onPressed: {
-            if ((event.key === Qt.Key_Escape) && (!root.askPassword)) {
-                screen.state = "hide_password"
+            if (event.key === Qt.Key_Escape && set) {
+                screen.state = "hide_setting"
                 event.accepted = true
             } else if ((event.key === Qt.Key_Q) && (event.modifiers & Qt.ControlModifier)) {
                 cpp.quit()
-                event.accepted = true;
+                event.accepted = true
             }
         }
     }
@@ -47,15 +50,15 @@ Rectangle {
         anchors.centerIn: parent
         Text {
             id: label
-            text: "INTRO PASSWORD"
+            text: "PASSWORD"
             color: "white"
             font.family: fontGlobal.name
-            font.bold: { text === "FAIL" }
+            font.bold: { text === "DONE" || text === "FAIL" }
             font.pixelSize: screen.height/23
         }
         Text {
             id: labelInformation
-            text: "CHECK PERMISSIONS"
+            text: "PERMISSIONS"
             color: "white"
             font.family: fontGlobal.name
             font.pixelSize: screen.height/23
@@ -64,32 +67,24 @@ Rectangle {
     }
 
     MouseArea {
-        onClicked: { userInput.focus = true }
+        onClicked: { if (userInput.enabled) userInput.focus = true }
         anchors.fill: parent
-    }
-
-    Timer {
-        id: delayHide
-        running: false
-        repeat: false
-        interval: 5000
-        onTriggered: { screen.state = "hide_password" }
     }
 
     Connections {
         target: cpp
         onSig_ret_password: {
-            if (success) {
-                if (root.askPassword)
-                    root.askPassword = false
-                screen.state = "hide_password"
+            if (success && set) {
+                color = Qt.rgba(0, 0.28, 0.047, 1)
+                userInput.text = ""
+                label.text = "DONE" 
+                label.visible = true
             } else {
                 color = "red"
-                if (!root.askPassword) {
+                if (set) {
                     userInput.text = ""
                     label.text = "FAIL"
                     label.visible = true
-                    delayHide.start()
                 }
             }
         }

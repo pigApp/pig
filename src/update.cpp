@@ -67,7 +67,7 @@ void Update::get(const QString *const host, const QStringList *const urls, const
         connect (mSocket, SIGNAL(sig_ret_str(const QString *const)), this, SLOT(check_versions(const QString *const)));
         connect (mSocket, SIGNAL(sig_ret_files(const QString *const, const QStringList *const)), this,
             SLOT(unzip_files(const QString *const, const QStringList *const)));
-        connect (mSocket, SIGNAL(sig_socket_err()), this, SLOT(err()));
+        connect (mSocket, SIGNAL(sig_socket_err()), this, SLOT(error()));
     }
     mSocket->request = request;
     mSocket->host = *host;
@@ -127,7 +127,7 @@ void Update::unzip_files(const QString *const tmp, const QStringList *const file
     } else {
         (*_root)->setProperty("status", "FAIL");
         (*_root)->setProperty("information", "TRY LATER");
-        QTimer::singleShot(5000, this, SLOT(err()));
+        QTimer::singleShot(5000, this, SLOT(error()));
     }
 }
 
@@ -166,7 +166,7 @@ void Update::update_files()
         } else {
             (*_root)->setProperty("status", "FAIL");
             (*_root)->setProperty("information", "TRY LATER");
-            QTimer::singleShot(5000, this, SLOT(err()));
+            QTimer::singleShot(5000, this, SLOT(error()));
         }
     }
 
@@ -223,11 +223,11 @@ void Update::check_exit(int exitCode)
     } else if (exitCode == -1) {
         (*_root)->setProperty("status", "FAIL");
         (*_root)->setProperty("information", "GKSU·KDESU NEEDED");
-        QTimer::singleShot(10000, this, SLOT(err()));
+        QTimer::singleShot(10000, this, SLOT(error()));
     } else {
         (*_root)->setProperty("status", "FAIL");
         (*_root)->setProperty("information", "TRY LATER");
-        QTimer::singleShot(5000, this, SLOT(err()));
+        QTimer::singleShot(5000, this, SLOT(error()));
     }
 #else
     if (exitCode == 0) {
@@ -253,12 +253,12 @@ void Update::check_exit(int exitCode)
     } else {
         (*_root)->setProperty("status", "FAIL");
         (*_root)->setProperty("information", "TRY LATER");
-        QTimer::singleShot(5000, this, SLOT(err()));
+        QTimer::singleShot(5000, this, SLOT(error()));
     }
 #endif
 }
 
-void Update::err()
+void Update::error()
 {
     QFile file;
     QString target;

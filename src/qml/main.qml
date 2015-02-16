@@ -4,10 +4,9 @@ import QtGraphicalEffects 1.0
 Item {
     id: root
 
-    property bool onInit
-    property bool askPassword
+    property bool init
     property bool showNetwork
-    property bool onHelpFinder
+    property bool help_finder
     property bool preview_quit
     property bool network_err
     property string tmp
@@ -87,26 +86,30 @@ Item {
 
         states: [
             State {
-                name: "show_password"
-                PropertyChanges { target: loader_root; source: "Password.qml"; restoreEntryValues: false }
-            },
-            State {
-                name: "hide_password"
-                PropertyChanges { target: loader_root; source: ""; restoreEntryValues: false }
-                PropertyChanges { target: loader_root_b; focus: true; restoreEntryValues: false }
+                name: "ask_password"
+                PropertyChanges { target: loader_root; source: "global/_setting/Password.qml"; restoreEntryValues: false }
             },
             State {
                 name: "show_update"
-                PropertyChanges { target: root; askPassword: false; restoreEntryValues: false }
                 PropertyChanges { target: background; visible: true; restoreEntryValues: false }
                 PropertyChanges { target: backgroundBlur; visible: true; restoreEntryValues: false }
                 PropertyChanges { target: loader_root; source: ""; restoreEntryValues: false }
-                PropertyChanges { target: loader_root; source: "Update.qml"; restoreEntryValues: false }
+                PropertyChanges { target: loader_root; source: "update/Update.qml"; restoreEntryValues: false }
             },
             State {
                 name: "show_news"
                 PropertyChanges { target: loader_root; source: ""; restoreEntryValues: false }
-                PropertyChanges { target: loader_root; source: "News.qml"; restoreEntryValues: false }
+                PropertyChanges { target: loader_root; source: "update/News.qml"; restoreEntryValues: false }
+            },
+            State {
+                name: "show_setting"
+                PropertyChanges { target: loader_root; source: "global/Setting.qml"; restoreEntryValues: false }
+            },
+            State {
+                name: "hide_setting"
+                PropertyChanges { target: loader_root; source: ""; restoreEntryValues: false }
+                PropertyChanges { target: loader_root_b; focus: true; restoreEntryValues: false }
+
             },
             State {
                 name: "show_help"
@@ -114,6 +117,7 @@ Item {
             },
             State {
                 name: "hide_help"
+                PropertyChanges { target: root; help_finder: false; restoreEntryValues: false }
                 PropertyChanges { target: loader_root; source: ""; restoreEntryValues: false }
                 PropertyChanges { target: loader_root_b; focus: true; restoreEntryValues: false }
 
@@ -142,21 +146,16 @@ Item {
                 PropertyChanges { target: loader_root; source: ""; restoreEntryValues: false }
             },
             State {
-                name: "show_db_err"
+                name: "show_db_error"
                 PropertyChanges { target: loader_root_b; source: ""; restoreEntryValues: false }
-                PropertyChanges { target: loader_root; source: "global/Db_err.qml"; restoreEntryValues: false }
+                PropertyChanges { target: loader_root; source: "global/Db_error.qml"; restoreEntryValues: false }
             }
         ]
     }
 
     Connections {
         target: cpp
-        onSig_ret_password: {
-            if (require) {
-                askPassword = true
-                screen.state = "show_password"
-            }
-        }
+        onSig_ret_password: { if (require) screen.state = "ask_password" }
         onSig_show_update: { screen.state = "show_update" }
         onSig_show_news: {
             root.binaryNews = binaryNews
@@ -173,6 +172,6 @@ Item {
                 else
                     loader_root_b.item.state = "hide"
         }
-        onSig_show_db_err: { screen.state = "show_db_err" }
+        onSig_show_db_err: { screen.state = "show_db_error" }
     }
 }

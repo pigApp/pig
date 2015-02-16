@@ -10,7 +10,7 @@ Item {
         Column {
             Text {
                 id: labelBinary
-                text: "PIG "+root.binary+"."+root.release
+                text: " PIG "+root.binary+"."+root.release
                 color: "white"
                 font.family: fontGlobal.name
                 font.bold: true
@@ -29,7 +29,7 @@ Item {
         Column {
             Text {
                 id: labelDatabase
-                text: "DB "+root.database
+                text: " DB "+root.database
                 color: "white"
                 font.family: fontGlobal.name
                 font.bold: true

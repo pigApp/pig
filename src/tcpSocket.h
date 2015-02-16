@@ -44,7 +44,7 @@ private slots:
     void disconnected();
     void ready_to_read();
     void write();
-    void err();
+    void socket_error();
 };
 
 #endif

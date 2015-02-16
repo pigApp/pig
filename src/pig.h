@@ -46,7 +46,7 @@ private slots:
     void update_handler();
     void start();
     void cleanup();
-    void db_err();
+    void db_error();
 };
 
 #endif

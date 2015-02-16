@@ -27,7 +27,7 @@ void TcpSocket::start()
 
     timeOut = new QTimer(this);
     timeOut->setSingleShot(true);
-    connect (timeOut, SIGNAL(timeout()), this, SLOT(err()));
+    connect (timeOut, SIGNAL(timeout()), this, SLOT(socket_error()));
     timeOut->start(15000);
 }
 
@@ -42,7 +42,7 @@ void TcpSocket::connected()
 void TcpSocket::disconnected()
 {
     if (this->error() != 1)
-        err();
+        socket_error();
     else
         write();
 }
@@ -101,7 +101,7 @@ void TcpSocket::write()
     }
 }
 
-void TcpSocket::err()
+void TcpSocket::socket_error()
 {
     timeOut->stop();
 

@@ -43,7 +43,7 @@ private slots:
     void unzip_files(const QString * const tmp, const QStringList * const files);
     void update_files();
     void check_exit(int exitCode);
-    void err();
+    void error();
 };
 
 #endif
