@@ -67,8 +67,8 @@ Rectangle {
     }
 
     MouseArea {
-        onClicked: { if (userInput.enabled) userInput.focus = true }
         anchors.fill: parent
+        onClicked: { if (userInput.enabled) userInput.focus = true }
     }
 
     Connections {

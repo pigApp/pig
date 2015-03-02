@@ -68,18 +68,18 @@ Item {
             font.family: fontGlobal.name
             font.bold: true
             font.pixelSize: screen.height/54
-            onLinkActivated: Qt.openUrlExternally(link)
             anchors.verticalCenter: labelReadMore.verticalCenter
+            onLinkActivated: Qt.openUrlExternally(link)
         }
     }
 
     Keys.onPressed: {
         if ((event.key === Qt.Key_Q) && (event.modifiers & Qt.ControlModifier)) {
             cpp.quit()
-            event.accepted = true;
+            event.accepted = true
         } else {
             screen.state = "show_finder"
-            event.accepted = true;
+            event.accepted = true
         }
     }
 

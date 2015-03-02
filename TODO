@@ -1,4 +1,10 @@
+
+- Help,
+- Icono scenes.
 - View hacia la izquierda falla.
+- Esconder el puntero del mouse en el reproductor.
+- Descomentar ComponentOnComplete en cover.
+
 - Crear db limpia y copiar la actual.
 - Verificar los enleces simbolicos al actualizar librerias.
 - Agregar UNSIGNED SHORT a int

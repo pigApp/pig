@@ -16,10 +16,10 @@ Rectangle {
         loader.source = ""
         if ((event.key === Qt.Key_Q) && (event.modifiers & Qt.ControlModifier)) {
             cpp.quit()
-            event.accepted = true;
+            event.accepted = true
         } else {
             screen.state = "hide_help"
-            event.accepted = true;
+            event.accepted = true
         }
     }
 

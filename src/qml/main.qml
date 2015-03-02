@@ -5,11 +5,10 @@ Item {
     id: root
 
     property bool init
-    property bool showNetwork
+    property bool network
+    property bool network_err
     property bool help_finder
     property bool preview_quit
-    property bool network_err
-    property string tmp
     property string status
     property string information
     property string binary
@@ -19,11 +18,13 @@ Item {
     property string databaseNews: ""
     property string quality: ""
     property string full: ""
+    property string userInput: ""
     property string category: ""
     property string pornstar: ""
-    property string userInput: ""
     property string bitRate: ""
-    property string movie_file: ""
+    property string debug: ""
+    property string tmp
+    property string movie_file_path: ""
     property int xa: screen.width
     property int xb: 0
     property int n_movies
@@ -72,8 +73,8 @@ Item {
         Loader {
             id: loader_root
             z: 2
-            focus: true
             asynchronous: true
+            focus: true
             visible: { status === Loader.Ready }
             anchors.fill: parent
         }
@@ -124,8 +125,8 @@ Item {
             },
             State {
                 name: "show_finder"
-                PropertyChanges { target: root; pornstar: ""; restoreEntryValues: false }
                 PropertyChanges { target: root; category: ""; restoreEntryValues: false }
+                PropertyChanges { target: root; pornstar: ""; restoreEntryValues: false }
                 PropertyChanges { target: loader_root; source: ""; restoreEntryValues: false }
                 PropertyChanges { target: loader_root_b; source: ""; restoreEntryValues: false }
                 PropertyChanges { target: loader_root_b; source: "finder/Finder.qml"; restoreEntryValues: false }
@@ -139,11 +140,17 @@ Item {
             },
             State {
                 name: "show_movie"
+                PropertyChanges { target: root; status: "GETTING TORRENT FILE"; restoreEntryValues: false }
                 PropertyChanges { target: loader_root; source: "movie/Movie.qml"; restoreEntryValues: false }
             },
             State {
                 name: "hide_movie"
                 PropertyChanges { target: loader_root; source: ""; restoreEntryValues: false }
+                PropertyChanges { target: root; bitRate: ""; restoreEntryValues: false }
+                PropertyChanges { target: root; mb_required: 0; restoreEntryValues: false }
+                PropertyChanges { target: root; mb_downloaded: 0; restoreEntryValues: false }
+                PropertyChanges { target: root; debug: ""; restoreEntryValues: false }
+                PropertyChanges { target: root; movie_file_path: ""; restoreEntryValues: false }
             },
             State {
                 name: "show_db_error"

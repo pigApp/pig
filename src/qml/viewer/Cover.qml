@@ -98,9 +98,9 @@ Item {
     }
 
     Component.onCompleted: {
-        if (root.cache_cover_front.indexOf(id_cache) !== -1)
+        //if (root.cache_cover_front.indexOf(id_cache) !== -1)
             front_cached = true
-        if (root.cache_cover_back.indexOf(id_cache) !== -1)
+        //if (root.cache_cover_back.indexOf(id_cache) !== -1)
             back_cached = true
     }
 }

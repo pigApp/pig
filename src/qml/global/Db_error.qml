@@ -45,9 +45,9 @@ Rectangle {
                 font.family: fontGlobal.name
                 font.bold: true
                 font.pixelSize: screen.height/54
-                onLinkActivated: Qt.openUrlExternally(link)
                 anchors.verticalCenter: labelGet.verticalCenter
                 anchors.verticalCenterOffset: screen.height/1300
+                onLinkActivated: Qt.openUrlExternally(link)
             }
         }
     }
@@ -55,7 +55,7 @@ Rectangle {
     Keys.onPressed: {
         if ((event.key === Qt.Key_Q) && (event.modifiers & Qt.ControlModifier)) {
             cpp.quit()
-            event.accepted = true;
+            event.accepted = true
         }
     }
 

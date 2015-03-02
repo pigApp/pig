@@ -8,8 +8,8 @@ Item {
     Column {
         id: columnStatus
         spacing: -parent.height/72
-        visible: false
         enabled: false
+        visible: false
         anchors.centerIn: parent
         Row {
             id: rowStatus
@@ -39,43 +39,36 @@ Item {
             }
         }
         Row {
-            spacing: screen.width/192
-            visible: { label.text === "UPDATE AVAILABLE" }
+            spacing: screen.width/384
             enabled: { label.text === "UPDATE AVAILABLE" }
+            visible: { label.text === "UPDATE AVAILABLE" }
             anchors.horizontalCenter: rowStatus.horizontalCenter
-            anchors.horizontalCenterOffset: -screen.width/384
             Button {
                 id: btnGet
                 label: "GET"
-                labelBold: true
-                labelSize: screen.height/23
-                mouseAreaMargin: screen.height/108
                 onClicked: {
-                    columnStatus.visible = false
                     columnStatus.enabled = false
+                    columnStatus.visible = false
                     root.sig_qml_update_get()
                 }
             }
             Button {
                 id: btnSkip
                 label: "SKIP"
-                labelBold: true
-                labelSize: screen.height/23
-                mouseAreaMargin: screen.height/108
                 onClicked: root.sig_qml_update_skip()
             }
         }
     }
 
     Network {
-        visible: root.showNetwork
+        visible: root.network
         anchors.fill: parent
     }
 
     Keys.onPressed: {
         if ((event.key === Qt.Key_Q) && (event.modifiers & Qt.ControlModifier)) {
             cpp.quit()
-            event.accepted = true;
+            event.accepted = true
         }
     }
 

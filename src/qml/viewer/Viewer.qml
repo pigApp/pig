@@ -20,7 +20,7 @@ Item {
         width: parent.width/3
         height: parent.height/2.25
         source: "qrc:/img-board"
-        opacity: 0.7
+        opacity: 0
         anchors.right: parent.right
         anchors.rightMargin: parent.width/16.69
         anchors.verticalCenter: parent.verticalCenter
@@ -32,7 +32,7 @@ Item {
         model: model
         delegate: delegate
         cacheItemCount: 0
-        maximumFlickVelocity: 600
+        interactive: false
         enabled: false
         anchors.fill: parent
 
@@ -81,8 +81,8 @@ Item {
         }
 
         MouseArea {
-            onClicked: view.forceActiveFocus()
             anchors.fill: parent
+            onClicked: view.forceActiveFocus()
         }
 
         states: [
@@ -182,13 +182,13 @@ Item {
                 event.accepted = true
             } else if (event.key === Qt.Key_Escape) {
                 view.state = "hide_viewer_show_finder"
-                event.accepted = true;
+                event.accepted = true
             } else if ((event.key === Qt.Key_Q) && (event.modifiers & Qt.ControlModifier)) {
                 if (previewStatus.length !== 0)
                     root.preview_quit = true
                 else
                     cpp.quit()
-                event.accepted = true;
+                event.accepted = true
             }
         }
     
@@ -253,12 +253,12 @@ Item {
             Scenes {
                 id: btnScenes
                 totalScenes: scenes
-                visible: recipe.PathView.isCurrentItem
                 enabled: recipe.PathView.isCurrentItem
+                visible: recipe.PathView.isCurrentItem
                 anchors.left: cover.right
-                anchors.leftMargin: 15 //parent.width/274.28
+                anchors.leftMargin: parent.width/128
                 anchors.bottom: cover.bottom
-                anchors.bottomMargin: -parent.height/830.76
+                anchors.bottomMargin: -35 //-parent.height/830.76
             }
             Preview {
                 id: preview

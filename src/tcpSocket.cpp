@@ -33,7 +33,8 @@ void TcpSocket::start()
 
 void TcpSocket::connected()
 {
-    const QString strGet = "GET "+urls[offset]+" HTTP/1.1\r\nConnection: Close\r\nHost: "+host+"\r\n\r\n\r\n";
+    const QString strGet = "GET "+urls[offset]
+        +" HTTP/1.1\r\nConnection: Close\r\nHost: "+host+"\r\n\r\n\r\n";
     const QByteArray baGet = strGet.toUtf8();
     const char *get = baGet.constData();
     writeData(get, baGet.size());

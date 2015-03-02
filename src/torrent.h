@@ -12,10 +12,8 @@ class Torrent : public QObject
     Q_OBJECT
 
 public:
-    explicit Torrent(QObject *parent = 0, const QString *url = NULL);
+    explicit Torrent(QObject *parent = 0, QObject **root = NULL, const QString *url = NULL);
     ~Torrent();
-
-    QObject **_root;
 
     int scene;
 
@@ -24,6 +22,7 @@ public slots:
     //void piece_update(qint64 total_msec, qint64 offset_msec);
 
 private:
+    QObject **_root;
     libtorrent::session *s;
     libtorrent::torrent_handle h;
 
@@ -32,13 +31,15 @@ private:
     qint64 piece_offset_global, n_pieces_global;
     qint64 offset, mb_skip_global, n_mb;
 
-    bool dump, skip, abort;
+    bool metadata_ready, dump, skip, abort;
     int mb_required;
 
 private slots:
-    void get();
-    void filter();
+    void main_loop();
+    void filter_files();
     void progress();
+
+    void call_player();//
 };
 
 #endif

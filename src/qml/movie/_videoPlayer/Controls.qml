@@ -20,43 +20,43 @@ Item {
     MouseArea {
         id: mouseArea
         hoverEnabled: true
-        onClicked: playback(true)
+        anchors.fill: parent
         onPositionChanged: {
             if (videoPlayer.sideBoxMargin !== 0) {
                 videoPlayer.state = "show_controls"
                 delayHideControls.start()
             }
         }
-        anchors.fill: parent
+        onClicked: playback(true)
     }
 
     Keys.onPressed: {
         if ((event.key === Qt.Key_Space) || (event.key === Qt.Key_MediaPlay) ||
             (event.key === Qt.Key_MediaPause) || (event.key === Qt.Key_MediaStop)) {
             playback(true)
-            event.accepted = true;
+            event.accepted = true
         } else if (event.key === Qt.Key_Right) {
             playback(false, 10000)
-            event.accepted = true;
+            event.accepted = true
         } else if (event.key === Qt.Key_Left) {
             playback(false, -10000)
-            event.accepted = true;
+            event.accepted = true
         } else if ((event.key === Qt.Key_Up) || (event.key === Qt.Key_VolumeUp)) {
             volume(false, 0.1)
-            event.accepted = true;
+            event.accepted = true
         } else if ((event.key === Qt.Key_Down) || (event.key === Qt.Key_VolumeDown)) {
             volume(false, -0.1)
-            event.accepted = true;
+            event.accepted = true
         } else if ((event.key === Qt.Key_M) || (event.key === Qt.Key_VolumeMute)) {
             volume(true)
-            event.accepted = true;
+            event.accepted = true
         } else if (event.key === Qt.Key_Escape) {
-            //screen.state = "show_finder"
-            console.log("//// ESC")
-            event.accepted = true;
+            cpp.torrent_handler("", 0, true)
+            movie.state = "hide"
+            event.accepted = true
         } else if ((event.key === Qt.Key_Q) && (event.modifiers & Qt.ControlModifier)) {
             cpp.quit()
-            event.accepted = true;
+            event.accepted = true
         }
     }
     

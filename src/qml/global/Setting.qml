@@ -15,7 +15,7 @@ Rectangle {
         }
         Password {
             id: password
-            color: "gold"
+            color: "#202020"
             width: screen.width/4
             height: screen.height
             set: true

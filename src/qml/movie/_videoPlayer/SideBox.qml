@@ -120,7 +120,7 @@ Item {
                     }
                     Text {
                         id: labelBitRate
-                        text: { if (root.bitRate !== "") root.bitRate }
+                        text: { if (root.bitRate !== "") root.bitRate; else "" }
                         color: Qt.rgba(0.1, 0.1, 0.1, 1)
                         font.family: fontGlobal.name
                         font.pixelSize: screen.height/23
@@ -129,7 +129,7 @@ Item {
                     }
                     Text {
                         id: labelKb
-                        text: { if (root.bitRate !== "") "Kb/s" }
+                        text: { if (root.bitRate !== "") "Kb/s"; else "" }
                         color: Qt.rgba(0.1, 0.1, 0.1, 1)
                         font.family: fontGlobal.name
                         font.bold: true

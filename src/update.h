@@ -12,23 +12,19 @@ class Update : public QObject
     Q_OBJECT
 
 public:
-    explicit Update(QObject *parent = 0);
+    explicit Update(QObject *parent = 0, QObject **root = NULL, QSqlDatabase *db = NULL);
     ~Update();
-
-    QObject **_root;
-    QSqlDatabase *db;
-
-public slots:
-    void start();
 
 signals:
     void sig_continue();
     void sig_fail_database();
 
 private:
+    QObject **_root;
     TcpSocket *mSocket;
     Su *mSu;
 
+    QSqlDatabase *_db;
     QString host;
     QStringList urls, sums;
 
@@ -37,6 +33,7 @@ private:
     int newBinary, newRelease, newDatabase, newLibrary;
 
 private slots:
+    void start();
     void get(const QString *const host, const QStringList *const urls, const QString request);
     void check_versions(const QString *const str);
     void user_confirmation();

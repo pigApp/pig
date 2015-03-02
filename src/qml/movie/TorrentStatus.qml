@@ -4,11 +4,30 @@ Rectangle {
     id: torrentStatus
     color: "black"
 
+    property bool downloading: {
+        // if ((root.status !== "GETTING TORRENT FILE") && (root.status !== "CONNECTING") && (root.bitRate !== 0))
+        if ((root.status !== "GETTING TORRENT FILE") && (root.status !== "CONNECTING"))
+            true
+        else
+            false
+    }
+    property string debug: root.debug
     property int timeLeft: 9
 
+    Text {
+        id: labelStatus
+        text: root.status
+        color: "white"
+        font.family: fontGlobal.name
+        font.pixelSize: screen.height/23
+        visible: !downloading
+        anchors.centerIn: parent
+    }
+
     Row {
-        id: rowTorrentStatus
+        id: rowStatus
         spacing: parent.width/96
+        visible: downloading
         anchors.centerIn: parent
         Row {
             spacing: screen.width/192
@@ -19,11 +38,10 @@ Rectangle {
                 sourceSize.width: width
                 sourceSize.height: height
                 source: "qrc:/img-download"
-                visible: { labelBitRate.text !== "CONNECTING" }
             }
             Text {
                 id: labelBitRate
-                text: { if (root.bitRate !== "") root.bitRate; else "CONNECTING" }
+                text: root.bitRate
                 color: "white"
                 font.family: fontGlobal.name
                 font.pixelSize: screen.height/23
@@ -37,7 +55,6 @@ Rectangle {
                 font.family: fontGlobal.name
                 font.bold: true
                 font.pixelSize: screen.height/54
-                visible: { labelBitRate.text !== "CONNECTING" }
                 anchors.bottom: labelBitRate.bottom
                 anchors.bottomMargin: screen.height/135
             }
@@ -51,7 +68,6 @@ Rectangle {
                 sourceSize.width: width
                 sourceSize.height: height
                 source: "qrc:/img-peers"
-                visible: { labelBitRate.text !== "CONNECTING" }
             }
             Text {
                 id: labelPeers
@@ -59,58 +75,80 @@ Rectangle {
                 color: "white"
                 font.family: fontGlobal.name
                 font.pixelSize: screen.height/23
-                visible: { labelBitRate.text !== "CONNECTING" }
                 anchors.verticalCenter: iconPeers.verticalCenter
                 anchors.verticalCenterOffset: -screen.height/432
             }
         }
     }
+    TextEdit {
+        id: labelDebug
+        width: parent.width
+        color: Qt.rgba(0.1, 0.1, 0.1, 0.5)
+        font.family: fontGlobal.name
+        font.bold: true
+        font.pixelSize: screen.height/75
+        enabled: false
+        readOnly: true
+        cursorVisible: false
+        wrapMode: Text.Wrap
+        horizontalAlignment: TextEdit.AlignHCenter
+        anchors.top: rowStatus.bottom
+        anchors.topMargin: { if (movie.sandboxStatus === "FAIL") parent.height/54 }
+        anchors.horizontalCenter: parent.horizontalCenter
+    }
+    onDebugChanged: {
+        if (labelDebug.lineCount > 5)
+            labelDebug.remove(0, labelDebug.text.length)
+        labelDebug.append(root.debug)
+    }
+
     Text {
         id: labelSandbox
         text: "<font color='#ffd700'>FILE NOT READY</font> RECHECK "+timeLeft
+        textFormat: Text.RichText
         color: "white"
         font.family: fontGlobal.name
         font.bold: true
         font.pixelSize: screen.height/54
-        textFormat: Text.RichText
         visible: { movie.sandboxStatus === "FAIL" }
-        anchors.top: rowTorrentStatus.bottom
+        anchors.top: rowStatus.bottom
         anchors.topMargin: -screen.height/72
         anchors.horizontalCenter: parent.horizontalCenter
+    }
+    Timer {
+        id: delaySandbox
+        running: { movie.sandboxStatus === "FAIL" }
+        repeat: true
+        interval: 1000
+        onTriggered: {
+            if (timeLeft > 0) { 
+                labelSandbox.text = "<font color='#ffd700'>FILE NOT READY</font> RECHECK "+timeLeft
+                timeLeft -= 1
+            } else { 
+                labelSandbox.text = "<font color='#ffd700'>FILE NOT READY</font> CHECKING"
+                timeLeft = 9
+            }
+        }
     }
 
     Rectangle {
        id: barDownload
        width: { (parent.width*root.mb_downloaded)/root.mb_required }
        height: parent.height/540
-       color: { if (movie.sandboxStatus === "FAIL") "gold"; else "white" }
-       visible: { labelBitRate.text !== "CONNECTING" && labelPeers !== "PEERS 0" }
+       color: { if (movie.sandboxStatus !== "FAIL") "white"; else "gold" }
+       visible: { downloading && (labelPeers !== "PEERS 0") }
        anchors.bottom: parent.bottom
        anchors.bottomMargin: parent.height/540
-    }
-
-    Timer {
-        id: delayRecheck
-        running: { movie.sandboxStatus === "FAIL" }
-        repeat: true
-        interval: 1000
-        onTriggered: {
-            if (timeLeft > 0) timeLeft -= 1; else timeLeft = 9
-            if (timeLeft !== 0)
-                labelSandbox.text = "<font color='#ffd700'>FILE NOT READY</font> RECHECK "+timeLeft
-            else
-                labelSandbox.text = "<font color='#ffd700'>FILE NOT READY</font> CHECKING"
-        }
     }
     
     Keys.onPressed: {
         if (event.key === Qt.Key_Escape) {
-            movie.state = "hide"
             cpp.torrent_handler("", 0, true)
-            event.accepted = true;
+            movie.state = "hide"
+            event.accepted = true
         } else if ((event.key === Qt.Key_Q) && (event.modifiers & Qt.ControlModifier)) {
             cpp.quit()
-            event.accepted = true;
+            event.accepted = true
         }
     }
 

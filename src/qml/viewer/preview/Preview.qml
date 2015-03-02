@@ -18,6 +18,7 @@ Item {
     }
 
     MouseArea {
+        anchors.fill: parent
         onClicked: {
             if (icon.visible) {
                 icon.visible = false
@@ -25,7 +26,6 @@ Item {
                 loader_previewPlayer.active = true
             }
         }
-        anchors.fill: parent
     }
 
     Loader {

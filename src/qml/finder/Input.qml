@@ -2,7 +2,7 @@ import QtQuick 2.4
 
 Rectangle {
     id: input
-    color: "gold"
+    color: "white"
 
     TextInput {
         id: userInput
@@ -24,7 +24,7 @@ Rectangle {
         anchors.verticalCenter: parent.verticalCenter
         onCursorPositionChanged: {
             if (input.color == "#ff0000")
-                input.color = "gold"
+                input.color = "white"
             if (text !== "")
                 cursorVisible = true
             else

@@ -34,15 +34,15 @@ Rectangle {
     }
 
     MouseArea {
-        enabled: { label.text !== "" }
         hoverEnabled: true
+        enabled: { label.text !== "" }
+        anchors.fill: parent
         onEntered: {
             pic.source = source
             box.state = "in"
         }
         onHoveredChanged: { box.state = "out" }
         onClicked: { if (label_n.text !== "000") filters.set_filter(label.text) }
-        anchors.fill: parent
     }
 
     states: [

@@ -15,8 +15,8 @@ Item {
         contentWidth: grid.width
         contentHeight: grid.height
         flickableDirection: Flickable.VerticalFlick
-        anchors.fill: parent
         anchors.margins: parent.width/640
+        anchors.fill: parent
         Grid {
             id: grid
             spacing: screen.height/360

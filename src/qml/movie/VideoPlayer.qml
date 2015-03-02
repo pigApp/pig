@@ -9,6 +9,7 @@ Rectangle {
 
     property bool sandbox: true
     property bool standby
+    property int timeLeft: 9
     property int sideBoxMargin: 0
     property int barsMargin: 0
 
@@ -24,12 +25,26 @@ Rectangle {
                     movie.sandboxStatus = "SUCCESS"
                     videoPlayer.sandbox = false
                     controls.forceActiveFocus()
-                } else if ((player.status === MediaPlayer.NoMedia) || (player.status === MediaPlayer.InvalidMedia)) {
+                } else if (((player.status === MediaPlayer.NoMedia) || (player.status === MediaPlayer.InvalidMedia) && (player.source !== ""))) {
+                    player.source = ""
                     movie.sandboxStatus = "FAIL"
-                    // Timer recheck video start -10
                 }
             } else {
                 //...
+            }
+        }
+    }
+    Timer {
+        id: delaySandbox
+        running: { movie.sandboxStatus === "FAIL" }
+        repeat: true
+        interval: 1000
+        onTriggered: {
+            if (timeLeft > 0) {
+                timeLeft -= 1
+            } else { 
+                player.source = "file://"+root.movie_file_path
+                timeLeft = 9
             }
         }
     }
@@ -83,9 +98,12 @@ Rectangle {
         }
     ]
     
-    onStandbyChanged: { if (standby) player.pause(); else player.play() } 
+    onStandbyChanged: { 
+        if (!sandbox)
+            if (standby) player.pause(); else player.play()
+    } 
 
-    Component.onCompleted: { player.source = "file://"+root.movie_file }
+    Component.onCompleted: { player.source = "file://"+root.movie_file_path }
     Component.onDestruction: { if ((player.playbackState === MediaPlayer.PlayingState) || (player.playbackState === MediaPlayer.PausedState)) player.stop() }
 }
 // Tabs hechos.

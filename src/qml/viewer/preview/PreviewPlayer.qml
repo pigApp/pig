@@ -27,8 +27,8 @@ Item {
         id: player
         autoPlay: true
         fillMode: VideoOutput.Stretch
-        visible: false
         enabled: false
+        visible: false
         anchors.fill: parent
         onPlaybackStateChanged: {
             if (player.playbackState === MediaPlayer.StoppedState) {
@@ -65,13 +65,14 @@ Item {
     }
 
     MouseArea {
+        anchors.fill: parent
         onClicked: {
             if (!downloading) {
                 if (player.playbackState === MediaPlayer.PlayingState) {
                     player.pause()
                 } else if (player.playbackState === MediaPlayer.PausedState) {
                     player.play()
-                } else if (player.playbackState === MediaPlayer.StoppedState) {
+               } else if (player.playbackState === MediaPlayer.StoppedState) {
                     icon.visible = false
                     player.enabled = true
                     player.visible = true
@@ -80,7 +81,6 @@ Item {
             }
             view.forceActiveFocus()
         }
-        anchors.fill: parent
     }
 
     function abort() {

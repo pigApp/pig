@@ -6,47 +6,49 @@ Item {
     height: label.contentHeight
 
     property alias label: label.text
-    property alias labelColor: label.color
-    property alias labelBold: label.font.bold
-    property alias labelSize: label.font.pixelSize
 
-    property bool lockColor
-    property int labelMargin: 0
-    property int mouseAreaMargin: screen.height/36
+    property string iconSource: ""
 
     signal clicked()
 
+    Image {
+        id: icon
+        width: button.width
+        height: button.height
+        sourceSize.width: width
+        sourceSize.height: height
+        source: iconSource
+        anchors.centerIn: parent
+    }
     Text {
         id: label
         width: contentWidth
         height: contentHeight
         color: "white"
         font.family: fontGlobal.name
-        font.bold: false
-        font.pixelSize: screen.height/10
-        anchors.left: parent.left
-        anchors.leftMargin: labelMargin
-        anchors.verticalCenter: parent.verticalCenter
-        ColorAnimation on color { id: inLabel; running: false; to: "black"; duration: 100 }
-        ColorAnimation on color { id: outLabel; running: false; to: "white"; duration: 100 }
+        font.bold: true
+        font.pixelSize: screen.height/23
+        ColorAnimation on color { id: labelIn; running: false; to: "black"; duration: 100 }
+        ColorAnimation on color { id: labelOut; running: false; to: "white"; duration: 100 }
         MouseArea {
             hoverEnabled: true
+            anchors.topMargin: screen.height/83.07
+            anchors.leftMargin: screen.width/960
+            anchors.bottomMargin: screen.height/90
+            anchors.fill: parent
             onEntered: {
-                if (!lockColor) {
-                    outLabel.running = false
-                    inLabel.running = true
+                if (iconSource === "") {
+                    labelOut.running = false
+                    labelIn.running = true
                 }
             }
             onHoveredChanged: {
-                if (!lockColor) {
-                    inLabel.running = false
-                    outLabel.running = true
+                if (iconSource === "") {
+                    labelIn.running = false
+                    labelOut.running = true
                 }
             }
             onClicked: button.clicked()
-            anchors.fill: parent
-            anchors.topMargin: mouseAreaMargin
-            anchors.bottomMargin: mouseAreaMargin
         }
     }
 }

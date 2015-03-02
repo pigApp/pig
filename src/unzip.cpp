@@ -14,12 +14,15 @@ Unzip::~Unzip()
 {
 }
 
-bool Unzip::unzip(const QString* const *tmp, const QStringList* const *files, const QStringList *sums)
+bool Unzip::unzip(const QString* const *tmp, const QStringList* const *files
+    , const QStringList *sums)
 {
     QFile file;
     for (int i=0; i<(*files)->count(); i++) {
         file.setFileName((**files)[i]);
-        if (file.open(QIODevice::ReadOnly) && (*sums)[i] == QCryptographicHash::hash(file.readAll(), QCryptographicHash::Md5).toHex()) {
+        if (file.open(QIODevice::ReadOnly)
+            && ((*sums)[i] == QCryptographicHash::hash(file.readAll()
+            , QCryptographicHash::Md5).toHex())) {
             file.close();
             QuaZip zip((**files)[i]);
             if (zip.open(QuaZip::mdUnzip)) {

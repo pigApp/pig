@@ -36,7 +36,8 @@ void PIG::set_root_object(QObject *root)
 }
 
 //PASSWORD
-void PIG::password_handler(const bool require, const QString plain, const bool check, const bool write)
+void PIG::password_handler(const bool require, const QString plain
+    , const bool check, const bool write)
 {
     if (require) {
 #ifdef __linux__
@@ -78,10 +79,7 @@ void PIG::update_handler()
     if (file.exists(target)) {
         db = QSqlDatabase::addDatabase("QSQLITE");
         db.setDatabaseName(target);
-        mUpdate = new Update();
-        mUpdate->_root = &mRoot;
-        mUpdate->db = &db;
-        mUpdate->start();
+        mUpdate = new Update(NULL, &mRoot, &db);
         connect (mRoot, SIGNAL(sig_qml_update_get()), mUpdate, SLOT(user_confirmation()));
         connect (mRoot, SIGNAL(sig_qml_update_skip()), this, SLOT(start()));
         connect (mUpdate, SIGNAL(sig_continue()), this, SLOT(start()));
@@ -100,7 +98,8 @@ void PIG::start()
 
     if (db.open()) {
         QSqlQuery query;
-        query.prepare("SELECT Binary, Release, Database, Categories, NCategories, Pornstars, NPornstars FROM PigData, FiltersData");
+        query.prepare("SELECT Binary, Release, Database, Categories, NCategories \
+            , Pornstars, NPornstars FROM PigData, FiltersData");
         if (!query.exec()) {
             db.close();
             db_error();
@@ -171,8 +170,8 @@ void PIG::start()
 }
 
 //PREVIEW
-void PIG::preview_handler(const int id, const QString host, const QString url, const QString target,
-    const bool success, const bool abort)
+void PIG::preview_handler(const int id, const QString host, const QString url
+    , const QString target, const bool success, const bool abort)
 {
     if (!target.isEmpty()) {
         mSocket[id] = new TcpSocket();
@@ -182,8 +181,10 @@ void PIG::preview_handler(const int id, const QString host, const QString url, c
         mSocket[id]->urls << url;
         mSocket[id]->target = target;
         mSocket[id]->start();
-        connect (mSocket[id], SIGNAL(sig_ret_preview(const int, const QString, const QString, const QString, const bool, const bool)),this,
-            SLOT(preview_handler(const int, const QString, const QString, const QString, const bool, const bool)));
+        connect (mSocket[id], SIGNAL(sig_ret_preview(const int, const QString, const QString
+            , const QString, const bool, const bool))
+            , this, SLOT(preview_handler(const int, const QString, const QString
+            , const QString, const bool, const bool)));
     } else if (target.isEmpty() && !abort) {
         emit sig_ret_preview(id, success);
         mSocket[id]->deleteLater();
@@ -198,9 +199,8 @@ void PIG::torrent_handler(const QString url, const int scene, const bool abort)
 {
     //cleanup();
     if (!abort) {
-        mTorrent = new Torrent(NULL, &url);
-        mTorrent->_root = &mRoot;
-        mTorrent->scene = scene+1; //TODO: ver si esta bien sumarle 1 a scene.
+        mTorrent = new Torrent(NULL, &mRoot, &url);
+        mTorrent->scene = scene; 
     } else {
         mTorrent->deleteLater();
         mTorrent = NULL;
@@ -208,14 +208,16 @@ void PIG::torrent_handler(const QString url, const int scene, const bool abort)
 }
 
 //FIND
-void PIG::find(const QString userInput, const QString pornstar, const QString category,
-    const QString quality, const QString full)
+void PIG::find(const QString userInput, const QString pornstar, const QString category
+    , const QString quality, const QString full)
 {
     if (db.open()) {
         QSqlQuery query;
-        query.prepare("SELECT id, Title, Cas, Category, Quality, Time, Full, HostPreview, UrlPreview, HostCover, UrlCoverFront, UrlCoverBack, Torrent \
-            FROM Movies WHERE Title LIKE '%"+userInput+"%' AND Cas LIKE '%"+pornstar+"%' AND Category LIKE '%"+category+"%' \
-            AND Quality LIKE '%"+quality+"%' AND Full LIKE '%"+full+"%' ORDER BY Title ASC LIMIT 1000");
+        query.prepare("SELECT id, Title, Cas, Category, Quality, Time, Full \
+            , HostPreview, UrlPreview, HostCover, UrlCoverFront, UrlCoverBack, Torrent \
+            FROM Movies WHERE Title LIKE '%"+userInput+"%' AND Cas LIKE '%"+pornstar+"%' \
+            AND Category LIKE '%"+category+"%' AND Quality LIKE '%"+quality+"%' \
+            AND Full LIKE '%"+full+"%' ORDER BY Title ASC LIMIT 1000");
         if (!query.exec()) {
             db.close();
             db_error();
@@ -236,8 +238,9 @@ void PIG::find(const QString userInput, const QString pornstar, const QString ca
                 const QString strUrlCoverFront = query.value(10).toString();
                 const QString strUrlCoverBack = query.value(11).toString();
                 const QString strTorrent = query.value(12).toString();
-                dataMovies << strId << strTitle << strCast << strCategories << strQuality << strTime << strFull << strHostPreview << strUrlPreview
-                    << strHostCover << strUrlCoverFront << strUrlCoverBack << strTorrent;
+                dataMovies << strId << strTitle << strCast << strCategories<< strQuality
+                    << strTime << strFull << strHostPreview << strUrlPreview << strHostCover
+                    << strUrlCoverFront << strUrlCoverBack << strTorrent;
             }
             db.close();
             if (!query.last()) {

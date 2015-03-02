@@ -28,8 +28,8 @@ public slots:
 signals:
     void sig_ret_str(const QString *const str);
     void sig_ret_files(const QString *const tmp, const QStringList *const files);
-    void sig_ret_preview(const int id, const QString host, const QString url, const QString file,
-        const bool success, const bool abort);
+    void sig_ret_preview(const int id, const QString host, const QString url
+        , const QString file , const bool success, const bool abort);
     void sig_socket_err();
 
 private:

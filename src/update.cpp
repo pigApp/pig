@@ -5,9 +5,17 @@
 #include <QTextStream>
 #include <QTimer>
 
-Update::Update(QObject *parent) : QObject(parent)
+Update::Update(QObject *parent, QObject **root, QSqlDatabase *db)
+    : QObject(parent)
 {
+    _root = root;
     mSu = NULL;
+    _db = db;
+    binaryAvailable = false;
+    databaseAvailable = false;
+    libraryAvailable = false;
+
+    start();
 }
 
 Update::~Update()
@@ -20,10 +28,6 @@ Update::~Update()
 
 void Update::start()
 {
-    binaryAvailable = false;
-    databaseAvailable = false;
-    libraryAvailable = false;
-
     QString Url;
     const int i = sizeof(void*);
 #ifdef __linux__
@@ -37,11 +41,12 @@ void Update::start()
     else
         Url = "UrlWindows_64";
 #endif
-    if (db->open()) {
+    if (_db->open()) {
         QSqlQuery query;
-        query.prepare("SELECT Binary, Release, Database, Library, Host, "+Url+" FROM PigData, UpdateData");
+        query.prepare("SELECT Binary, Release, Database, Library, Host, "
+            +Url+" FROM PigData, UpdateData");
         if (!query.exec()) {
-            db->close();
+            _db->close();
             emit sig_fail_database();
         } else {
             query.next();
@@ -51,7 +56,7 @@ void Update::start()
             library = query.value(3).toInt();
             host = query.value(4).toString();
             urls << query.value(5).toString();
-            db->close();
+            _db->close();
 
             get(&host, &urls, "VERSIONS");
         }
@@ -60,13 +65,15 @@ void Update::start()
     }
 }
 
-void Update::get(const QString *const host, const QStringList *const urls, const QString request)
+void Update::get(const QString *const host
+    ,const QStringList *const urls, const QString request)
 {
     if (request == "VERSIONS") {
         mSocket = new TcpSocket();
-        connect (mSocket, SIGNAL(sig_ret_str(const QString *const)), this, SLOT(check_versions(const QString *const)));
-        connect (mSocket, SIGNAL(sig_ret_files(const QString *const, const QStringList *const)), this,
-            SLOT(unzip_files(const QString *const, const QStringList *const)));
+        connect (mSocket, SIGNAL(sig_ret_str(const QString *const))
+            , this, SLOT(check_versions(const QString *const)));
+        connect (mSocket, SIGNAL(sig_ret_files(const QString *const, const QStringList *const))
+            , this, SLOT(unzip_files(const QString *const, const QStringList *const)));
         connect (mSocket, SIGNAL(sig_socket_err()), this, SLOT(error()));
     }
     mSocket->request = request;
@@ -74,7 +81,7 @@ void Update::get(const QString *const host, const QStringList *const urls, const
     mSocket->urls = *urls;
     mSocket->start();
 
-    (*_root)->setProperty("showNetwork", true);
+    (*_root)->setProperty("network", true);
 }
 
 void Update::check_versions(const QString *const str)
@@ -103,7 +110,7 @@ void Update::check_versions(const QString *const str)
     }
 
     if (binaryAvailable || databaseAvailable || libraryAvailable) {
-        (*_root)->setProperty("showNetwork", false);
+        (*_root)->setProperty("network", false);
         (*_root)->setProperty("status", "UPDATE AVAILABLE");
     } else {
         emit sig_continue();
@@ -119,7 +126,7 @@ void Update::user_confirmation()
 
 void Update::unzip_files(const QString *const tmp, const QStringList *const files)
 {
-    (*_root)->setProperty("showNetwork", false);
+    (*_root)->setProperty("network", false);
 
     Unzip mUnzip;
     if (mUnzip.unzip(&tmp, &files, &sums)) {
@@ -176,10 +183,13 @@ void Update::update_files()
     mSu = new Su();
     connect (mSu, SIGNAL(sig_ret_su(int)), this, SLOT(check_exit(int)));
     if (!libraryAvailable)
-        mSu->update("'mv "+QDir::homePath()+"/.pig/tmp/pig /usr/bin/ ; chown root.root /usr/bin/pig ; chmod +x /usr/bin/pig'");
+        mSu->update("'mv "+QDir::homePath()+"/.pig/tmp/pig /usr/bin/ \
+            ; chown root.root /usr/bin/pig ; chmod +x /usr/bin/pig'");
     else
-        mSu->update("'mv "+QDir::homePath()+"/.pig/tmp/pig /usr/bin/ ; mv "+QDir::homePath()+"/.pig/tmp/*.so* /usr/lib/pig/ ; \
-            chown root.root /usr/bin/pig ; chown root.root /usr/lib/pig/* ; chmod +x /usr/bin/pig ; chmod +x /usr/lib/pig/*'");
+        mSu->update("'mv "+QDir::homePath()+"/.pig/tmp/pig /usr/bin/ ; mv "
+            +QDir::homePath()+"/.pig/tmp/*.so* /usr/lib/pig/ ; \
+            chown root.root /usr/bin/pig ; chown root.root /usr/lib/pig/* \
+            ; chmod +x /usr/bin/pig ; chmod +x /usr/lib/pig/*'");
 #else
     QProcess proc;
     if (!libraryAvailable)
@@ -201,7 +211,7 @@ void Update::check_exit(int exitCode)
 #ifdef __linux__
     if (exitCode == 0) {
         if (!databaseAvailable) {
-            if (db->open()) {
+            if (_db->open()) {
                 if (!binaryAvailable) {
                     newBinary = binary;
                     newRelease = release;
@@ -215,7 +225,7 @@ void Update::check_exit(int exitCode)
                 query.exec();
                 query.prepare("UPDATE PigData SET Library='"+QString::number(newLibrary)+"'");
                 query.exec();
-                db->close();
+                _db->close();
             }
         }
         (*_root)->setProperty("status", "UPDATED");
@@ -232,7 +242,7 @@ void Update::check_exit(int exitCode)
 #else
     if (exitCode == 0) {
         if (!databaseAvailable) {
-            if (db->open()) {
+            if (_db->open()) {
                 if (!binaryAvailable) {
                     newBinary = binary;
                     newRelease = release;
@@ -246,7 +256,7 @@ void Update::check_exit(int exitCode)
                 query.exec();
                 query.prepare("UPDATE PigData SET Library='"+QString::number(newLibrary)+"'");
                 query.exec();
-                db->close();
+                _db->close();
             }
         }
         exit(0);
