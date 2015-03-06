@@ -41,7 +41,6 @@
         <file alias="img-star-BELLADONNA">resources/images/finder/filters/pornstars/BELLADONNA.jpg</file>
         <file alias="img-scene">resources/images/viewer/scene.svg</file>
         <file alias="img-scene-off">resources/images/viewer/scene-off.svg</file>
-        <file alias="img-board">resources/images/viewer/preview/board.jpg</file>
         <file alias="img-play">resources/images/viewer/preview/play.svg</file>
         <file alias="img-replay">resources/images/viewer/preview/replay.svg</file>
         <file alias="img-cover_err">resources/images/viewer/cover_err.jpg</file>

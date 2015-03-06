@@ -8,6 +8,7 @@ Item {
     property alias label: label.text
 
     property string iconSource: ""
+    property string colorIn: "black"
 
     signal clicked()
 
@@ -28,7 +29,7 @@ Item {
         font.family: fontGlobal.name
         font.bold: true
         font.pixelSize: screen.height/23
-        ColorAnimation on color { id: labelIn; running: false; to: "black"; duration: 100 }
+        ColorAnimation on color { id: labelIn; running: false; to: colorIn; duration: 100 }
         ColorAnimation on color { id: labelOut; running: false; to: "white"; duration: 100 }
         MouseArea {
             hoverEnabled: true

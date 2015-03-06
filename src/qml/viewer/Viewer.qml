@@ -15,12 +15,11 @@ Item {
 
     ListModel { id: model }
 
-    Image {
-        id: previewBoard
+    Rectangle {
+        id: layerPreview
         width: parent.width/3
         height: parent.height/2.25
-        source: "qrc:/img-board"
-        opacity: 0
+        color: Qt.rgba(1, 1, 1, 0.02)
         anchors.right: parent.right
         anchors.rightMargin: parent.width/16.69
         anchors.verticalCenter: parent.verticalCenter
@@ -67,7 +66,7 @@ Item {
             PathQuad {
                 x: screen.width/2
                 y: screen.height/2
-                controlX: screen.width/1.55
+                controlX: screen.width/1.6
                 controlY: screen.height/1.8
             }
         }
@@ -258,7 +257,7 @@ Item {
                 anchors.left: cover.right
                 anchors.leftMargin: parent.width/128
                 anchors.bottom: cover.bottom
-                anchors.bottomMargin: -35 //-parent.height/830.76
+                anchors.bottomMargin: -40//-35 //-parent.height/830.76
             }
             Preview {
                 id: preview

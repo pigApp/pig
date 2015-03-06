@@ -7,6 +7,13 @@ Item {
     property bool back_cached
     property int id_cache: id_movie
 
+    Rectangle {
+        id: labelCover
+        color: Qt.rgba(1, 1, 1, 0.2)
+        width: flipable.width+(screen.width/48)
+        height: flipable.height+(screen.height/27)
+        anchors.centerIn: flipable
+    }
     Flipable {
         id: flipable
         width: front.width

@@ -1,6 +1,7 @@
 #ifndef TORRENT_H
 #define TORRENT_H
 
+//#include <libtorrent/torrent.hpp>//
 #include <libtorrent/session.hpp>
 
 #include <stdlib.h>
@@ -12,10 +13,9 @@ class Torrent : public QObject
     Q_OBJECT
 
 public:
-    explicit Torrent(QObject *parent = 0, QObject **root = NULL, const QString *url = NULL);
+    explicit Torrent(QObject *parent = 0, QObject **root = NULL
+        , const QString *url = NULL, const int _scene = 0);
     ~Torrent();
-
-    int scene;
 
 public slots:
     //bool piece_is_available(qint64 total_msec, qint64 offset_msec);
@@ -23,23 +23,21 @@ public slots:
 
 private:
     QObject **_root;
+    //libtorrent::torrent::request_time_critical_pieces();
     libtorrent::session *s;
     libtorrent::torrent_handle h;
+    libtorrent::file_storage fs;
 
-    QString file;
-    qint64 piece_first, piece_last, piece_length, piece_offset, n_pieces;
-    qint64 piece_offset_global, n_pieces_global;
-    qint64 offset, mb_skip_global, n_mb;
+    int piece_first, mb_skip_global, n_mb; // TODO: Revisar qint64 o int.
 
     bool metadata_ready, dump, skip, abort;
-    int mb_required;
+    int scene, mb_required;
 
 private slots:
     void main_loop();
     void filter_files();
+    void ret();
     void progress();
-
-    void call_player();//
 };
 
 #endif

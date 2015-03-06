@@ -140,7 +140,7 @@ Item {
             },
             State {
                 name: "show_movie"
-                PropertyChanges { target: root; status: "GETTING TORRENT FILE"; restoreEntryValues: false }
+                PropertyChanges { target: root; status: "DOWNLOAD METADATA"; restoreEntryValues: false }
                 PropertyChanges { target: loader_root; source: "movie/Movie.qml"; restoreEntryValues: false }
             },
             State {

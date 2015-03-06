@@ -22,8 +22,8 @@ Item {
                 MouseArea {
                     anchors.fill: parent
                     onClicked: {
-                        icon.source = "qrc:/img-scene-off"
                         icon.viewed = true
+                        icon.source = "qrc:/img-scene-off"
                         screen.state = "show_movie"
                         cpp.torrent_handler(urlTorrent, index+1, false)
                     }
@@ -34,10 +34,9 @@ Item {
                     color: "white"
                     font.family: fontGlobal.name
                     font.bold: true
-                    font.pixelSize: screen.height/23
+                    font.pixelSize: screen.height/30
                     anchors.centerIn: parent
-                    anchors.horizontalCenterOffset: -2
-                    anchors.verticalCenterOffset: -2
+                    anchors.horizontalCenterOffset: -screen.width/2560
                 }
             }
         }

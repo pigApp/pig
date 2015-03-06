@@ -199,8 +199,7 @@ void PIG::torrent_handler(const QString url, const int scene, const bool abort)
 {
     //cleanup();
     if (!abort) {
-        mTorrent = new Torrent(NULL, &mRoot, &url);
-        mTorrent->scene = scene; 
+        mTorrent = new Torrent(NULL, &mRoot, &url, scene);
     } else {
         mTorrent->deleteLater();
         mTorrent = NULL;

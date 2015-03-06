@@ -4,13 +4,14 @@ Rectangle {
     id: torrentStatus
     color: "black"
 
-    property bool downloading: {
+    property bool downloading: { root.status === "" }
+        /* {
         // if ((root.status !== "GETTING TORRENT FILE") && (root.status !== "CONNECTING") && (root.bitRate !== 0))
         if ((root.status !== "GETTING TORRENT FILE") && (root.status !== "CONNECTING"))
             true
         else
             false
-    }
+    }*/
     property string debug: root.debug
     property int timeLeft: 9
 
@@ -83,7 +84,7 @@ Rectangle {
     TextEdit {
         id: labelDebug
         width: parent.width
-        color: Qt.rgba(0.1, 0.1, 0.1, 0.5)
+        color: "orange"//Qt.rgba(0.1, 0.1, 0.1, 0.5)
         font.family: fontGlobal.name
         font.bold: true
         font.pixelSize: screen.height/75
@@ -142,7 +143,7 @@ Rectangle {
     }
     
     Keys.onPressed: {
-        if (event.key === Qt.Key_Escape) {
+        if ((event.key === Qt.Key_Escape) && (x === 0)) {
             cpp.torrent_handler("", 0, true)
             movie.state = "hide"
             event.accepted = true
