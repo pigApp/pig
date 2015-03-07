@@ -96,7 +96,7 @@ Item {
             root.category = label.toUpperCase()
         else
             root.pornstar = label.toUpperCase()
-        cpp.find("", root.pornstar, root.category, root.quality, root.full)
+        cpp.find("", root.category, root.pornstar, root.quality, root.full)
     }
 
     onFocusChanged: { if (!focus) forceActiveFocus() }

@@ -1,13 +1,5 @@
 <RCC>
     <qresource prefix="/">
-        <file alias="img-sd">resources/images/finder/quality/sd.svg</file>
-        <file alias="img-sd-off">resources/images/finder/quality/sd-off.svg</file>
-        <file alias="img-hd">resources/images/finder/quality/hd.svg</file>
-        <file alias="img-hd-off">resources/images/finder/quality/hd-off.svg</file>
-        <file alias="img-fhd">resources/images/finder/quality/fhd.svg</file>
-        <file alias="img-fhd-off">resources/images/finder/quality/fhd-off.svg</file>
-        <file alias="img-fm">resources/images/finder/quality/fm.svg</file>
-        <file alias="img-fm-off">resources/images/finder/quality/fm-off.svg</file>
         <file alias="img-cat-AMATEUR">resources/images/finder/filters/categories/AMATEUR.jpg</file>
         <file alias="img-cat-ANAL">resources/images/finder/filters/categories/ANAL.jpg</file>
         <file alias="img-cat-ASIAN">resources/images/finder/filters/categories/ASIAN.jpg</file>
@@ -39,6 +31,14 @@
         <file alias="img-cat-TOYS">resources/images/finder/filters/categories/TOYS.jpg</file>
         <file alias="img-cat-VOYEUR">resources/images/finder/filters/categories/VOYEUR.jpg</file>
         <file alias="img-star-BELLADONNA">resources/images/finder/filters/pornstars/BELLADONNA.jpg</file>
+        <file alias="img-sd">resources/images/finder/quality/sd.svg</file>
+        <file alias="img-sd-off">resources/images/finder/quality/sd-off.svg</file>
+        <file alias="img-hd">resources/images/finder/quality/hd.svg</file>
+        <file alias="img-hd-off">resources/images/finder/quality/hd-off.svg</file>
+        <file alias="img-fhd">resources/images/finder/quality/fhd.svg</file>
+        <file alias="img-fhd-off">resources/images/finder/quality/fhd-off.svg</file>
+        <file alias="img-fm">resources/images/finder/quality/fm.svg</file>
+        <file alias="img-fm-off">resources/images/finder/quality/fm-off.svg</file>
         <file alias="img-scene">resources/images/viewer/scene.svg</file>
         <file alias="img-scene-off">resources/images/viewer/scene-off.svg</file>
         <file alias="img-play">resources/images/viewer/preview/play.svg</file>
@@ -68,10 +68,10 @@
         <file>src/qml/update/Update.qml</file>
         <file>src/qml/update/News.qml</file>
         <file>src/qml/finder/Finder.qml</file>
-        <file>src/qml/finder/Quality.qml</file>
         <file>src/qml/finder/Input.qml</file>
         <file>src/qml/finder/Filters.qml</file>
         <file>src/qml/finder/_filters/Box.qml</file>
+        <file>src/qml/finder/Quality.qml</file>
         <file>src/qml/finder/Welcome.qml</file>
         <file>src/qml/viewer/Viewer.qml</file>
         <file>src/qml/viewer/Cover.qml</file>

@@ -16,11 +16,11 @@ Item {
     property string database
     property string binaryNews: ""
     property string databaseNews: ""
-    property string quality: ""
-    property string full: ""
     property string userInput: ""
     property string category: ""
     property string pornstar: ""
+    property string quality: ""
+    property string full: ""
     property string bitRate: ""
     property string debug: ""
     property string tmp

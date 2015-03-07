@@ -46,6 +46,7 @@ Item {
             Button {
                 id: btnGet
                 label: "GET"
+                labelSize: screen.height/23
                 onClicked: {
                     columnStatus.enabled = false
                     columnStatus.visible = false
@@ -55,6 +56,7 @@ Item {
             Button {
                 id: btnSkip
                 label: "SKIP"
+                labelSize: screen.height/23
                 onClicked: root.sig_qml_update_skip()
             }
         }

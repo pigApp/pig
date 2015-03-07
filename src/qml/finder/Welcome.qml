@@ -6,7 +6,7 @@ Item {
     Text {
         id: label
         text: "WELCOME &nbsp; <font color='#000000'>CTRL H TO HELP</font>"
-        color: "white"
+        color: "#FD2790"
         font.family: fontGlobal.name
         font.bold: true
         font.pixelSize: screen.height/54
@@ -15,6 +15,6 @@ Item {
         anchors.bottom: parent.bottom
     }
 
-    NumberAnimation { target: label; running: root.init; properties: "opacity"; to: 1.0; duration: 1400; easing.type: Easing.InOutQuart }
+    NumberAnimation { target: label; running: root.init; properties: "opacity"; to: 1.0; duration: 3200; easing.type: Easing.InOutQuart }
 }
 // Tabs hechos.

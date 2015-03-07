@@ -9,16 +9,6 @@ Item {
 
     property bool onCategory
 
-    Quality {
-        id: quality
-        x: parent.width+250 //-parent.width/5.96
-        width: parent.width/5.96
-        height: parent.height/14.21
-        anchors.verticalCenter: input.verticalCenter
-        //anchors.bottom: input.top
-        //anchors.bottomMargin: parent.height/108
-    }
-
     RectangularGlow {
         id: inputEffect
         color: "black"
@@ -37,14 +27,13 @@ Item {
 
     Row {
         id: columnFilters
-        x: parent.width+10 //-parent.width/4.51
+        x: parent.width+10
         spacing: parent.width/384
         anchors.verticalCenter: input.verticalCenter
-        //anchors.top: input.bottom
-        //anchors.topMargin: -parent.height/216
         Button {
             id: btnFilterCategory
             label: "CATEGORY"
+            labelSize: screen.height/20
             colorIn: "#FA6900"
             onClicked: {
                 onCategory = true
@@ -54,6 +43,7 @@ Item {
         Button {
             id: btnFilterPornstar
             label: "PORNSTAR"
+            labelSize: screen.height/20
             colorIn: "#FD2790"
             onClicked: {
                 onCategory = false
@@ -67,6 +57,14 @@ Item {
         source: ""
         asynchronous: true
         visible: { status === Loader.Ready }
+    }
+
+    Quality {
+        id: quality
+        x: parent.width+10
+        width: parent.width/5.96
+        height: parent.height/14.21
+        anchors.verticalCenter: input.verticalCenter
     }
 
     Welcome {
@@ -107,11 +105,11 @@ Item {
                     NumberAnimation { target: root; easing.amplitude: 1.7; properties: "screenA"; to: 0; duration: 600; easing.type: Easing.OutQuart }
                     NumberAnimation { target: backgroundBlur; easing.amplitude: 1.7; properties: "radius"; to: 0; duration: 600; easing.type: Easing.OutQuart }
                 }
-                ParallelAnimation { //screen.width/18.33 duration: 1200
-                    NumberAnimation { target: quality; properties: "x"; to: 950; duration: 1260; easing.type: Easing.InOutQuart }
+                ParallelAnimation {
                     NumberAnimation { target: input; properties: "x"; to: 0; duration: 1200; easing.type: Easing.InOutQuart }
-                    NumberAnimation { target: columnFilters; properties: "x"; to: 520; duration: 1200; easing.type: Easing.InOutQuart }
-                } //screen.width/43.63
+                    NumberAnimation { target: columnFilters; properties: "x"; to: screen.width/3.69; duration: 1200; easing.type: Easing.InOutQuart }
+                    NumberAnimation { target: quality; properties: "x"; to: screen.width/1.9; duration: 1200; easing.type: Easing.InOutCubic }
+                }
                 PropertyAction { target: input; property: "enabled"; value: true }
             }
         },
@@ -119,11 +117,11 @@ Item {
             to: "hide"
             SequentialAnimation {
                 PropertyAction { target: input; property: "enabled"; value: false }
-                ParallelAnimation { //-screen.width/5.96
-                    NumberAnimation { target: quality; properties: "x"; to: screen.width+10; duration: 600; easing.type: Easing.InOutQuart }
+                ParallelAnimation {
                     NumberAnimation { target: input; properties: "x"; to: -screen.width/3.58; duration: 600; easing.type: Easing.InOutQuart }
                     NumberAnimation { target: columnFilters; properties: "x"; to: screen.width+10; duration: 600; easing.type: Easing.InOutQuart }
-                } //-screen.width/4.51
+                    NumberAnimation { target: quality; properties: "x"; to: screen.width+10; duration: 600; easing.type: Easing.InOutQuart }
+                }
                 ParallelAnimation {
                     NumberAnimation { target: root; easing.amplitude: 1.7; properties: "screenA"; to: 0.4; duration: 600; easing.type: Easing.OutQuart }
                     NumberAnimation { target: backgroundBlur; easing.amplitude: 1.7; properties: "radius"; to: 32; duration: 600; easing.type: Easing.OutQuart }
@@ -137,9 +135,9 @@ Item {
                 PropertyAction { target: input; property: "enabled"; value: false }
                 PropertyAction { target: loader_filter; property: "source"; value: "Filters.qml" }
                 ParallelAnimation {
-                    NumberAnimation { target: quality; properties: "x"; to: -screen.width/5.96; duration: 300; easing.type: Easing.InOutQuart }
-                    NumberAnimation { target: input; properties: "x"; to: -screen.width/3.58; duration: 300; easing.type: Easing.InOutQuart }
-                    NumberAnimation { target: columnFilters; properties: "x"; to: -screen.width/4.51; duration: 300; easing.type: Easing.InOutQuart }
+                    NumberAnimation { target: input; properties: "x"; to: -screen.width/1.79; duration: 120; easing.type: Easing.InOutQuart }
+                    NumberAnimation { target: columnFilters; properties: "x"; to: -screen.width/1.79; duration: 200; easing.type: Easing.InOutQuart }
+                    NumberAnimation { target: quality; properties: "x"; to: -screen.width/1.79; duration: 350; easing.type: Easing.InOutQuart }
                     NumberAnimation { target: root; easing.amplitude: 1.7; properties: "xa"; to: 0; duration: 1200; easing.type: Easing.OutQuart }
                 }
             }
@@ -148,9 +146,9 @@ Item {
             to: "hide_filter"
             SequentialAnimation {
                 ParallelAnimation {
-                    NumberAnimation { target: quality; properties: "x"; to: screen.width/18.33; duration: 1200; easing.type: Easing.InOutQuart }
-                    NumberAnimation { target: input; properties: "x"; to: 0; duration: 600; easing.type: Easing.InOutQuart }
-                    NumberAnimation { target: columnFilters; properties: "x"; to: screen.width/43.63; duration: 1200; easing.type: Easing.InOutQuart }
+                    NumberAnimation { target: input; properties: "x"; to: 0; duration: 1240; easing.type: Easing.InOutQuart }
+                    NumberAnimation { target: columnFilters; properties: "x"; to: screen.width/3.69; duration: 1200; easing.type: Easing.InOutQuart }
+                    NumberAnimation { target: quality; properties: "x"; to: screen.width/1.9; duration: 1100; easing.type: Easing.InOutQuart }
                     NumberAnimation { target: root; easing.amplitude: 1.7; properties: "xa"; to: screen.width+10; duration: 1200; easing.type: Easing.OutQuart }
                 }
                 PropertyAction { target: loader_filter; property: "source"; value: "" }
@@ -161,8 +159,8 @@ Item {
             to: "hide_filter_finder"
             SequentialAnimation {
                 ParallelAnimation {
-                    NumberAnimation { target: root; easing.amplitude: 1.7; properties: "xa"; to: screen.width+10; duration: 1200; easing.type: Easing.OutQuart }
-                    NumberAnimation { target: backgroundBlur; easing.amplitude: 1.7; properties: "radius"; to: 32; duration: 1200; easing.type: Easing.OutQuart }
+                    NumberAnimation { target: root; easing.amplitude: 1.7; properties: "xa"; to: screen.width+10; duration: 600; easing.type: Easing.OutQuart }
+                    NumberAnimation { target: backgroundBlur; easing.amplitude: 1.7; properties: "radius"; to: 32; duration: 600; easing.type: Easing.OutQuart }
                 }
                 NumberAnimation { target: root; easing.amplitude: 1.7; properties: "screenA"; to: 0.4; duration: 600; easing.type: Easing.OutQuart }
                 PropertyAction { target: loader_filter; property: "source"; value: "" }

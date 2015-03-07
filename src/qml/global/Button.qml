@@ -6,6 +6,7 @@ Item {
     height: label.contentHeight
 
     property alias label: label.text
+    property alias labelSize: label.font.pixelSize
 
     property string iconSource: ""
     property string colorIn: "black"
@@ -28,7 +29,6 @@ Item {
         color: "white"
         font.family: fontGlobal.name
         font.bold: true
-        font.pixelSize: screen.height/23
         ColorAnimation on color { id: labelIn; running: false; to: colorIn; duration: 100 }
         ColorAnimation on color { id: labelOut; running: false; to: "white"; duration: 100 }
         MouseArea {

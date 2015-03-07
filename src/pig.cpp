@@ -207,7 +207,7 @@ void PIG::torrent_handler(const QString url, const int scene, const bool abort)
 }
 
 //FIND
-void PIG::find(const QString userInput, const QString pornstar, const QString category
+void PIG::find(const QString userInput, const QString category, const QString pornstar
     , const QString quality, const QString full)
 {
     if (db.open()) {

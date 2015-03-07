@@ -22,8 +22,8 @@ public slots:
     void password_handler(const bool require, const QString plain, const bool check, const bool write);
     void preview_handler(const int id, const QString host, const QString url, const QString target, const bool success, const bool abort);
     void torrent_handler(const QString url, const int scene, const bool abort);
-    void find(const QString userInput, const QString pornstar, const QString category
-        , const QString quality, const QString full);
+    void find(const QString userInput, const QString category
+        , const QString pornstar, const QString quality, const QString full);
 
 signals:
     void sig_ret_password(const bool require = false, const bool success = false);
