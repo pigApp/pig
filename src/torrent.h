@@ -28,10 +28,8 @@ private:
     libtorrent::torrent_handle h;
     libtorrent::file_storage fs;
 
-    int piece_first, mb_skip_global, n_mb; // TODO: Revisar qint64 o int.
-
+    int scene, piece_first, mb_required, mb_skip_global, n_mb;
     bool metadata_ready, dump, skip, abort;
-    int scene, mb_required;
 
 private slots:
     void main_loop();

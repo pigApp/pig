@@ -51,7 +51,7 @@ Torrent::Torrent(QObject *parent, QObject **root
     h.set_priority(255);
 
     if (ec)
-        qDebug() << "ERROR_PORT"; // TODO: Crear funcion de error.
+        qDebug() << "ERROR_ADD_TORRENT"; // TODO: Crear funcion de error.
     else
         main_loop();
 }
@@ -107,8 +107,8 @@ void Torrent::filter_files()
 
     for (int i=0; i<fs.num_files(); i++) {
         if (check) {
-            for (int fts=0; fts<formats.size(); fts++) {
-                if (QString::fromStdString(fs.file_name(i)).endsWith(formats[fts]
+            for (int n=0; n<formats.size(); n++) {
+                if (QString::fromStdString(fs.file_name(i)).endsWith(formats[n]
                     , Qt::CaseInsensitive)) {
                     if (scene == ctrl) {
                         priorities.push_back(7);
@@ -120,7 +120,7 @@ void Torrent::filter_files()
                     }
                     break;
                 } else {
-                    if (fts == formats.size()+1)
+                    if (n == formats.size()+1)
                         priorities.push_back(0);
                 }
             }
@@ -133,6 +133,9 @@ void Torrent::filter_files()
     fs = h.torrent_file().get()->files();
     piece_first = fs.map_file(scene, 0, 0).piece;
     n_mb = fs.file_size(scene)/MB;
+
+    (*_root)->setProperty("mb_required", mb_required);
+    (*_root)->setProperty("n_mb", n_mb);
 }
 
 void Torrent::ret()
@@ -149,21 +152,28 @@ void Torrent::ret()
 void Torrent::progress()
 {
     if (!abort) {
-        const int mb_downloaded = h.status(2).total_wanted_done/MB;
+        const int mb_downloaded = h.status(2).total_payload_download/MB;
+
+        //qDebug() << "DOWN_ORG_: " << h.status(2).total_wanted_done/MB; //NO SUMA CHACHE.
+        qDebug() << "DOWN: " << h.status(2).total_payload_download/MB; //SUMA CACHE.
+
         (*_root)->setProperty("bitRate", QString::number(h.status(2).download_rate/KB));
         (*_root)->setProperty("peers", h.status(2).num_peers);
-        (*_root)->setProperty("mb_required", mb_required);//
         (*_root)->setProperty("mb_downloaded", mb_downloaded);
-        (*_root)->setProperty("n_mb", n_mb);//
         if (dump) {
             if ((mb_downloaded-mb_skip_global) >= mb_required) {
                 dump = false;
                 h.flush_cache(); // TODO: Recibirlo con un Alert.
-                QTimer::singleShot(3000, this, SLOT(ret()));//
+                ret();
+                //QTimer::singleShot(3000, this, SLOT(ret()));//
             }
         }
     }
 }
+
+
+
+
 
 
 
