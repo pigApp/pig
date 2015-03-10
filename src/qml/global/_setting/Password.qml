@@ -4,39 +4,47 @@ Rectangle {
     id: password
     color: "black"
 
-    property bool set
+    property bool onSet
 
     TextInput {
         id: userInput
         color: "white"
         font.family: fontGlobal.name
-        font.pixelSize: screen.height/43.2
+        font.pixelSize: { if (onSet) screen.height/95.4; else screen.height/43.2 } //TODO: Un poco mas grande la fuente.(label.font.pixelSize+20.2)
         echoMode: TextInput.Password
         maximumLength: 16
         cursorVisible: false
         anchors.centerIn: parent
         onCursorVisibleChanged: { if (cursorVisible) cursorVisible = false }
         onCursorPositionChanged: {
-            if ((password.color == "#ff0000") && !set)
+            if (password.color == "#ff0000")
                 password.color = "black"
             if (text === "")
                 label.visible = true
             else
                 label.visible = false
         }
+        onFocusChanged: {
+            if (onSet && enabled) {
+                if (focus)
+                    password.color = "#202020"
+                else
+                    password.color = "black"
+            }
+        }
         onAccepted: {
             if (text !== "") {
-                if (!set) {
-                    cpp.password_handler(false, text, true, false)
-                } else {
+                if (onSet) {
                     enabled = false
                     cpp.password_handler(false, text, false, true)
                     setting.forceActiveFocus()
+                } else {
+                    cpp.password_handler(false, text, true, false)
                 }
             }
         }
         Keys.onPressed: {
-            if (event.key === Qt.Key_Escape && set) {
+            if (event.key === Qt.Key_Escape && onSet) {
                 screen.state = "hide_setting"
                 event.accepted = true
             } else if ((event.key === Qt.Key_Q) && (event.modifiers & Qt.ControlModifier)) {
@@ -45,23 +53,25 @@ Rectangle {
             }
         }
     }
+
     Row {
         spacing: screen.width/192
         anchors.centerIn: parent
         Text {
             id: label
-            text: "PASSWORD"
+            text: { if (onSet) "INTRO NEW PASSWORD"; else "PASSWORD" }
             color: "white"
             font.family: fontGlobal.name
-            font.bold: { text === "DONE" || text === "FAIL" }
-            font.pixelSize: screen.height/23
+            font.bold: onSet
+            font.pixelSize: { if (onSet) screen.height/75; else screen.height/23 } //TODO: Un poco mas grande la fuente.
         }
         Text {
             id: labelInformation
-            text: "PERMISSIONS"
+            text: "CHECK PERMISSIONS"
             color: "white"
             font.family: fontGlobal.name
-            font.pixelSize: screen.height/23
+            font.bold: true
+            font.pixelSize: screen.height/75 //TODO: Un poco mas grande la fuente.
             visible: { label.text === "FAIL" }
         }
     }
@@ -74,14 +84,14 @@ Rectangle {
     Connections {
         target: cpp
         onSig_ret_password: {
-            if (success && set) {
+            if (success) {
                 color = Qt.rgba(0, 0.28, 0.047, 1)
                 userInput.text = ""
                 label.text = "DONE" 
                 label.visible = true
             } else {
                 color = "red"
-                if (set) {
+                if (onSet) {
                     userInput.text = ""
                     label.text = "FAIL"
                     label.visible = true

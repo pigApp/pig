@@ -7,7 +7,6 @@ Item {
     Timer {
         id: delayHideControls
         running: !videoPlayer.sandbox
-        repeat: false
         interval: 4000
         onTriggered: {
             if ((mouseArea.mouseX < (parent.width-(parent.width/9.6))) && (mouseArea.mouseY < (parent.height-(parent.height/54))))

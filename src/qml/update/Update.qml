@@ -27,7 +27,7 @@ Item {
                     else if (text === "UPDATED")
                         update.state = "success"
                     else if (text === "FAIL")
-                        update.state = "err"
+                        update.state = "error"
                 }
             }
             Text {
@@ -87,7 +87,7 @@ Item {
             PropertyChanges { target: columnStatus; visible: true; restoreEntryValues: false }
         },
         State {
-            name: "err"
+            name: "error"
             PropertyChanges { target: root; screenR: 1; restoreEntryValues: false }
             PropertyChanges { target: root; screenG: 0; restoreEntryValues: false }
             PropertyChanges { target: root; screenB: 0; restoreEntryValues: false }

@@ -27,6 +27,7 @@ private:
     libtorrent::session *s;
     libtorrent::torrent_handle h;
     libtorrent::file_storage fs;
+    libtorrent::error_code ec;//
 
     int scene, piece_first, mb_required, mb_skip_global, n_mb;
     bool metadata_ready, dump, skip, abort;
@@ -35,7 +36,7 @@ private slots:
     void main_loop();
     void filter_files();
     void ret();
-    void progress();
+    void information();
 };
 
 #endif

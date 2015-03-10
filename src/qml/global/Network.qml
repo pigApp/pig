@@ -19,8 +19,6 @@ Item {
 
     Timer {
         id: delayBack
-        running: false
-        repeat: false
         interval: 5000
         onTriggered: {
             root.network_err = false

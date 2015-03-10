@@ -94,21 +94,21 @@ Item {
                 name: "show_update"
                 PropertyChanges { target: background; visible: true; restoreEntryValues: false }
                 PropertyChanges { target: backgroundBlur; visible: true; restoreEntryValues: false }
-                PropertyChanges { target: loader_root; source: ""; restoreEntryValues: false }
                 PropertyChanges { target: loader_root; source: "update/Update.qml"; restoreEntryValues: false }
             },
             State {
                 name: "show_news"
-                PropertyChanges { target: loader_root; source: ""; restoreEntryValues: false }
                 PropertyChanges { target: loader_root; source: "update/News.qml"; restoreEntryValues: false }
             },
             State {
                 name: "show_setting"
+                PropertyChanges { target: loader_root_b; enabled: false; restoreEntryValues: false }
                 PropertyChanges { target: loader_root; source: "global/Setting.qml"; restoreEntryValues: false }
             },
             State {
                 name: "hide_setting"
                 PropertyChanges { target: loader_root; source: ""; restoreEntryValues: false }
+                PropertyChanges { target: loader_root_b; enabled: true; restoreEntryValues: false }
                 PropertyChanges { target: loader_root_b; focus: true; restoreEntryValues: false }
 
             },
@@ -128,14 +128,12 @@ Item {
                 PropertyChanges { target: root; category: ""; restoreEntryValues: false }
                 PropertyChanges { target: root; pornstar: ""; restoreEntryValues: false }
                 PropertyChanges { target: loader_root; source: ""; restoreEntryValues: false }
-                PropertyChanges { target: loader_root_b; source: ""; restoreEntryValues: false }
                 PropertyChanges { target: loader_root_b; source: "finder/Finder.qml"; restoreEntryValues: false }
                 PropertyChanges { target: root; xb: 0; restoreEntryValues: false }
             },
             State {
                 name: "show_viewer"
                 PropertyChanges { target: root; xb: screen.width+50 }
-                PropertyChanges { target: loader_root_b; source: ""; restoreEntryValues: false }
                 PropertyChanges { target: loader_root_b; source: "viewer/Viewer.qml"; restoreEntryValues: false }
             },
             State {
@@ -146,11 +144,13 @@ Item {
             State {
                 name: "hide_movie"
                 PropertyChanges { target: loader_root; source: ""; restoreEntryValues: false }
+                PropertyChanges { target: root; status: ""; restoreEntryValues: false }
                 PropertyChanges { target: root; bitRate: ""; restoreEntryValues: false }
-                PropertyChanges { target: root; mb_required: 0; restoreEntryValues: false }
-                PropertyChanges { target: root; mb_downloaded: 0; restoreEntryValues: false }
                 PropertyChanges { target: root; debug: ""; restoreEntryValues: false }
                 PropertyChanges { target: root; movie_file_path: ""; restoreEntryValues: false }
+                PropertyChanges { target: root; mb_required: 0; restoreEntryValues: false }
+                PropertyChanges { target: root; mb_downloaded: 0; restoreEntryValues: false }
+                PropertyChanges { target: root; n_mb: 0; restoreEntryValues: false }
             },
             State {
                 name: "show_db_error"

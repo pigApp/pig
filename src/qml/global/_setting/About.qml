@@ -1,7 +1,8 @@
 import QtQuick 2.4
 
-Item {
+Rectangle {
     id: about
+    color: "black"
 
     Text {
         id: label
@@ -16,7 +17,7 @@ Item {
         color: "white"
         font.family: fontGlobal.name
         font.bold: true
-        font.pixelSize: screen.height/54
+        font.pixelSize: screen.height/75 //TODO: Un poco mas grande la fuente.
         anchors.left: parent.left
         anchors.leftMargin: screen.width/192
         anchors.verticalCenter: parent.verticalCenter

@@ -5,28 +5,31 @@ Rectangle {
     color: "black"
 
     property bool downloading: { root.status === "" }
-        /* {
-        // if ((root.status !== "GETTING TORRENT FILE") && (root.status !== "CONNECTING") && (root.bitRate !== 0))
-        if ((root.status !== "GETTING TORRENT FILE") && (root.status !== "CONNECTING"))
-            true
-        else
-            false
-    }*/
     property string debug: root.debug
     property int timeLeft: 9
 
     Text {
-        id: labelStatus
+        id: label
         text: root.status
         color: "white"
         font.family: fontGlobal.name
         font.pixelSize: screen.height/23
         visible: !downloading
         anchors.centerIn: parent
+        onTextChanged: {
+            if (text === "TORRENT ERROR") {
+                cpp.torrent_handler("", 0, true)
+                torrentStatus.color = "red"
+                labelDebug.remove(0, labelDebug.text.length)
+                labelDebug.font.pixelSize = screen.height/54
+                labelDebug.color = "white"
+                delayError.start()
+            }
+        }
     }
 
     Row {
-        id: rowStatus
+        id: rowInformation
         spacing: parent.width/96
         visible: downloading
         anchors.centerIn: parent
@@ -81,27 +84,6 @@ Rectangle {
             }
         }
     }
-    TextEdit {
-        id: labelDebug
-        width: parent.width
-        color: "orange"//Qt.rgba(0.1, 0.1, 0.1, 0.5)
-        font.family: fontGlobal.name
-        font.bold: true
-        font.pixelSize: screen.height/75
-        enabled: false
-        readOnly: true
-        cursorVisible: false
-        wrapMode: Text.Wrap
-        horizontalAlignment: TextEdit.AlignHCenter
-        anchors.top: rowStatus.bottom
-        anchors.topMargin: { if (movie.sandboxStatus === "FAIL") parent.height/54 }
-        anchors.horizontalCenter: parent.horizontalCenter
-    }
-    onDebugChanged: {
-        if (labelDebug.lineCount > 5)
-            labelDebug.remove(0, labelDebug.text.length)
-        labelDebug.append(root.debug)
-    }
 
     Text {
         id: labelSandbox
@@ -112,7 +94,7 @@ Rectangle {
         font.bold: true
         font.pixelSize: screen.height/54
         visible: { movie.sandboxStatus === "FAIL" }
-        anchors.top: rowStatus.bottom
+        anchors.top: rowInformation.bottom
         anchors.topMargin: -screen.height/72
         anchors.horizontalCenter: parent.horizontalCenter
     }
@@ -122,14 +104,41 @@ Rectangle {
         repeat: true
         interval: 1000
         onTriggered: {
-            if (timeLeft > 0) { 
+            if (timeLeft > 0) {
                 labelSandbox.text = "<font color='#ffd700'>FILE NOT READY</font> RECHECK "+timeLeft
                 timeLeft -= 1
-            } else { 
+            } else {
                 labelSandbox.text = "<font color='#ffd700'>FILE NOT READY</font> CHECKING"
                 timeLeft = 9
             }
         }
+    }
+
+    TextEdit {
+        id: labelDebug
+        width: parent.width
+        color: Qt.rgba(0.1, 0.1, 0.1, 0.5)
+        font.family: fontGlobal.name
+        font.bold: true
+        font.pixelSize: screen.height/75
+        enabled: false
+        readOnly: true
+        cursorVisible: false
+        wrapMode: Text.Wrap
+        horizontalAlignment: TextEdit.AlignHCenter
+        anchors.top: rowInformation.bottom
+        anchors.topMargin: {
+            if (movie.sandboxStatus === "FAIL")
+                parent.height/54
+            else if (downloading)
+                -parent.height/108
+        }
+        anchors.horizontalCenter: parent.horizontalCenter
+    }
+    onDebugChanged: {
+        if (labelDebug.lineCount > 5)
+            labelDebug.remove(0, labelDebug.text.length)
+        labelDebug.append(root.debug)
     }
 
     Rectangle {
@@ -137,13 +146,19 @@ Rectangle {
        width: { (parent.width*root.mb_downloaded)/root.mb_required }
        height: parent.height/540
        color: { if (movie.sandboxStatus !== "FAIL") "white"; else "gold" }
-       visible: { downloading && (labelPeers !== "PEERS 0") }
+       visible: downloading
        anchors.bottom: parent.bottom
        anchors.bottomMargin: parent.height/540
     }
     
+    Timer {
+        id: delayError
+        interval: 5000
+        onTriggered: { movie.state = "hide" }
+    }
+
     Keys.onPressed: {
-        if ((event.key === Qt.Key_Escape) && (x === 0)) {
+        if ((event.key === Qt.Key_Escape) && (x === 0) && !delayError.running) {
             cpp.torrent_handler("", 0, true)
             movie.state = "hide"
             event.accepted = true

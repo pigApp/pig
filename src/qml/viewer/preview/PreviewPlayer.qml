@@ -42,8 +42,6 @@ Item {
 
     Timer {
         id: delay
-        running: false
-        repeat: false
         interval: 50
         onTriggered: {
             if (cached) {
@@ -58,8 +56,6 @@ Item {
     }
     Timer {
         id: delay_error
-        running: false
-        repeat: false
         interval: 50
         onTriggered: { icon.source = "qrc:/img_err" }
     }

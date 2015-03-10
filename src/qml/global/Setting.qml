@@ -6,19 +6,19 @@ Rectangle {
     color: "black"
 
     Row {
-        anchors.top: parent.top
-        anchors.left: parent.left
-        About {
-            id: about
-            width: screen.width/4
-            height: screen.height
-        }
-        Password {
-            id: password
-            color: "#202020"
-            width: screen.width/4
-            height: screen.height
-            set: true
+        Column {
+            id: column_a
+            About {
+                id: about
+                width: screen.width/4
+                height: screen.height/4
+            }
+            Password {
+                id: password
+                width: screen.width/4
+                height: screen.height/4
+                onSet: true
+            }
         }
     }
 

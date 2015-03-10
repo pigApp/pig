@@ -73,8 +73,6 @@ Item {
 
         Timer {
             id: delayEnable
-            running: false
-            repeat: false
             interval: 300
             onTriggered: { view.enabled = true }
         }
@@ -272,8 +270,6 @@ Item {
 
     Timer {
         id: timeOutNetwork
-        running: false
-        repeat: false
         interval: 60000
         onTriggered: { root.network_err = true }
     }

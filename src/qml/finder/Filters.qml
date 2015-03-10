@@ -75,8 +75,6 @@ Item {
     }
     Timer {
         id: delayCheck
-        running: false
-        repeat: false
         interval: 5000
         onTriggered: { rowCheck.visible = false }
     }

@@ -3,11 +3,11 @@
 #include <stdlib.h>
 #include <libtorrent/alert.hpp>
 #include <libtorrent/alert_types.hpp>
-#include <libtorrent/extensions/ut_pex.hpp>
+#include <libtorrent/extensions/ut_pex.hpp>// Por defecto enable.
 
 #include <QDir>
 #include <QTimer>
-#include <QDebug>
+#include <QDebug>//
 
 const int KB = 1024;
 const int MB = 1048576;
@@ -22,7 +22,7 @@ Torrent::Torrent(QObject *parent, QObject **root
     metadata_ready = false;
     skip = false;
     abort = false;
-    mb_required = 4; //10;
+    mb_required = 10;//10;
     mb_skip_global = 0;
 #ifdef __linux__
     const QString home = QDir::homePath();
@@ -33,25 +33,24 @@ Torrent::Torrent(QObject *parent, QObject **root
 
     libtorrent::session_settings ss;
     libtorrent::add_torrent_params p;
-    libtorrent::error_code ec;
+    //libtorrent::error_code ec;
     s = new libtorrent::session();
-    ss.disable_hash_checks = true; //Posible causa del error al filtrar las filas.
+    ss.disable_hash_checks = true;
     s->set_settings(ss);
-    s->set_alert_mask(2147483647);// limitar.
-    //s->set_alert_mask(864);//
-    s->listen_on(std::make_pair(6881, 6889), ec);
-    if (ec) qDebug() << "ERROR_PORT"; // TODO: Crear funcion de error.
-    s->add_extension(&libtorrent::create_ut_pex_plugin);
-    s->start_upnp();
+    s->set_alert_mask(2147483647); //TODO: Limitar (1864) (2147483647)
+    //s->listen_on(std::make_pair(6881, 6889), ec);
+    //s->add_extension(&libtorrent::create_ut_pex_plugin); // Por defecto enable.
+    //s->start_upnp();
     s->start_dht();
-    p.url = url->toStdString();
     p.save_path = tmp;
+    //p.url = url->toStdString();
+    p.ti = new libtorrent::torrent_info("/home/lxfb/down/BFF9E2F76C55DA6CFEC07ACD6961BE5607E09B6B.torrent", ec);  //TODO: Descargar el .torrent con un socket.
     h = s->add_torrent(p, ec);
     h.set_sequential_download(true);
     h.set_priority(255);
 
     if (ec)
-        qDebug() << "ERROR_ADD_TORRENT"; // TODO: Crear funcion de error.
+        (*_root)->setProperty("status", "TORRENT ERROR");
     else
         main_loop();
 }
@@ -65,35 +64,46 @@ Torrent::~Torrent()
 
 void Torrent::main_loop()
 {
-    //if (h.is_valid()) Posiblemente sea necesario.
-    //if (!abort) Posiblemente sea necesario.
+    if (!abort) { //TODO: Crear un bool con estas dos variable.
+        std::auto_ptr<libtorrent::alert> a = s->pop_alert();
+        switch (a->type())
+        {
+            case libtorrent::add_torrent_alert::alert_type:
+            {
+                std::cout << "//// add_torrent_alert" << std::endl;
+                std::cout << libtorrent::add_torrent_alert::error_notification << std::endl;
+                filter_files();
+                break;
+            }
+            case libtorrent::metadata_received_alert::alert_type:
+            {
+                std::cout << "//// METADATA_RECEIVED" << std::endl;
+                //filter_files();
+                break;
+            }
+            case libtorrent::cache_flushed_alert::alert_type: // No lo toma.
+            {
+                std::cout << "//// CHACHE_FLUSHED" << std::endl;
+                break;
+            }
+            case libtorrent::file_error_alert::alert_type:
+            case libtorrent::tracker_error_alert::alert_type:
+            case libtorrent::torrent_error_alert::alert_type:
+            {
+                std::cout << "//// ERROR" << std::endl;//
 
-    std::auto_ptr<libtorrent::alert> a = s->pop_alert();
-    switch (a->type())
-    {
-        case libtorrent::torrent_added_alert::alert_type:
-        {
-            metadata_ready = true;
-            filter_files();
-            (*_root)->setProperty("status", "");
-            break;
+                (*_root)->setProperty("status", "TORRENT ERROR");
+                break;
+            }
+            default: break;
         }
-        case libtorrent::cache_flushed_alert::alert_type: // No lo toma.
-        {
-            std::cout << "//////// CHACHE_FLUSHED" << std::endl;
-            break;
-        }
-        default: break;
+        if (metadata_ready) information();
+
+        (*_root)->setProperty("debug", QString::fromStdString(a->message()));
+        std::cout << "MSG : " << a->message() << std::endl;//
+
+        QTimer::singleShot(1000, this, SLOT(main_loop()));
     }
-    if (metadata_ready)
-        progress();
-
-    (*_root)->setProperty("debug", QString::fromStdString(a->message()));
-
-    //std::cout << "TYPE : " << a->type() << std::endl;//
-    //std::cout << "MSG : " << a->message() << std::endl;//
-
-    QTimer::singleShot(1000, this, SLOT(main_loop()));
 }
 
 void Torrent::filter_files()
@@ -103,6 +113,7 @@ void Torrent::filter_files()
     QStringList formats; formats << ".avi" << ".divx" << ".flv" << ".h264"
         << ".mkv" << ".mp4" << ".mpg" << ".mpeg" << ".ogm"<< ".ogv" << ".wmv";
     std::vector<int> priorities;
+
     fs = h.torrent_file().get()->orig_files();
 
     for (int i=0; i<fs.num_files(); i++) {
@@ -136,6 +147,9 @@ void Torrent::filter_files()
 
     (*_root)->setProperty("mb_required", mb_required);
     (*_root)->setProperty("n_mb", n_mb);
+    (*_root)->setProperty("status", "");
+
+    metadata_ready = true;
 }
 
 void Torrent::ret()
@@ -149,14 +163,12 @@ void Torrent::ret()
     }
 }
 
-void Torrent::progress()
+void Torrent::information()
 {
     if (!abort) {
         const int mb_downloaded = h.status(2).total_payload_download/MB;
-
-        //qDebug() << "DOWN_ORG_: " << h.status(2).total_wanted_done/MB; //NO SUMA CHACHE.
-        qDebug() << "DOWN: " << h.status(2).total_payload_download/MB; //SUMA CACHE.
-
+        //qDebug() << "DOWN: " << h.status(2).total_wanted_done/MB; //NO SUMA CHACHE.
+        //qDebug() << "DOWN: " << h.status(2).total_payload_download/MB; //SUMA CACHE.
         (*_root)->setProperty("bitRate", QString::number(h.status(2).download_rate/KB));
         (*_root)->setProperty("peers", h.status(2).num_peers);
         (*_root)->setProperty("mb_downloaded", mb_downloaded);
@@ -164,8 +176,8 @@ void Torrent::progress()
             if ((mb_downloaded-mb_skip_global) >= mb_required) {
                 dump = false;
                 h.flush_cache(); // TODO: Recibirlo con un Alert.
-                ret();
-                //QTimer::singleShot(3000, this, SLOT(ret()));//
+                //ret();
+                QTimer::singleShot(3000, this, SLOT(ret()));//
             }
         }
     }
@@ -282,10 +294,10 @@ void Torrent::main_loop()
     if (!abort) {
         if (!skip) {
             const qint64 kb_downloaded = offset+(h.status().total_wanted_done/1024);
-            //(*_player)->progress(total, kb_downloaded, 220);
+            //(*_player)->information(total, kb_downloaded, 220);
         } else {
             const int downloadedSkip_mb = (h.status().total_done/MB)-mb_skip_global;
-            //(*_player)->progress(0, 0, downloadedSkip_mb);
+            //(*_player)->information(0, 0, downloadedSkip_mb);
         }
         QTimer::singleShot(1000, this, SLOT(main_loop()));
     }
