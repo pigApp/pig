@@ -195,11 +195,12 @@ void PIG::preview_handler(const int id, const QString host, const QString url
 }
 
 //TORRENT
-void PIG::torrent_handler(const QString url, const int scene, const bool abort)
+void PIG::torrent_handler(const QString host, const QString url, const int scene, const bool abort)
 {
     //cleanup();
     if (!abort) {
-        mTorrent = new Torrent(NULL, &mRoot, &url, scene);
+        mTorrent = new Torrent(NULL, &mRoot, &scene);
+        mTorrent->get(&host, &url);
     } else {
         mTorrent->deleteLater();
         mTorrent = NULL;
@@ -213,10 +214,11 @@ void PIG::find(const QString userInput, const QString category, const QString po
     if (db.open()) {
         QSqlQuery query;
         query.prepare("SELECT id, Title, Cas, Category, Quality, Time, Full \
-            , HostPreview, UrlPreview, HostCover, UrlCoverFront, UrlCoverBack, Torrent \
-            FROM Movies WHERE Title LIKE '%"+userInput+"%' AND Cas LIKE '%"+pornstar+"%' \
-            AND Category LIKE '%"+category+"%' AND Quality LIKE '%"+quality+"%' \
-            AND Full LIKE '%"+full+"%' ORDER BY Title ASC LIMIT 1000");
+            , HostCover, UrlCoverFront, UrlCoverBack, HostPreview, UrlPreview \
+            , HostTorrent, UrlTorrent, Scenes FROM Movies WHERE Title LIKE \
+            '%"+userInput+"%' AND Cas LIKE '%"+pornstar+"%' AND Category LIKE \
+            '%"+category+"%' AND Quality LIKE '%"+quality+"%' AND Full LIKE \
+            '%"+full+"%' ORDER BY Title ASC LIMIT 1000");
         if (!query.exec()) {
             db.close();
             db_error();
@@ -231,15 +233,18 @@ void PIG::find(const QString userInput, const QString category, const QString po
                 const QString strQuality = query.value(4).toString();
                 const QString strTime = query.value(5).toString();
                 const QString strFull = query.value(6).toString();
-                const QString strHostPreview = query.value(7).toString();
-                const QString strUrlPreview = query.value(8).toString();
-                const QString strHostCover = query.value(9).toString();
-                const QString strUrlCoverFront = query.value(10).toString();
-                const QString strUrlCoverBack = query.value(11).toString();
-                const QString strTorrent = query.value(12).toString();
-                dataMovies << strId << strTitle << strCast << strCategories<< strQuality
-                    << strTime << strFull << strHostPreview << strUrlPreview << strHostCover
-                    << strUrlCoverFront << strUrlCoverBack << strTorrent;
+                const QString strHostCover = query.value(7).toString();
+                const QString strUrlCoverFront = query.value(8).toString();
+                const QString strUrlCoverBack = query.value(9).toString();
+                const QString strHostPreview = query.value(10).toString();
+                const QString strUrlPreview = query.value(11).toString();
+                const QString strHostTorrent = query.value(12).toString();
+                const QString strUrlTorrent = query.value(13).toString();
+                const QString strScenes = query.value(14).toString();
+
+                dataMovies << strId << strTitle << strCast << strCategories << strQuality
+                    << strTime << strFull << strHostCover << strUrlCoverFront << strUrlCoverBack
+                    << strHostPreview << strUrlPreview << strHostTorrent << strUrlTorrent << strScenes;
             }
             db.close();
             if (!query.last()) {

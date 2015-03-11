@@ -25,7 +25,7 @@ Item {
                         icon.viewed = true
                         icon.source = "qrc:/img-scene-off"
                         screen.state = "show_movie"
-                        cpp.torrent_handler(urlTorrent, index+1, false)
+                        cpp.torrent_handler(hostTorrent, urlTorrent, index+1, false)
                     }
                 }
                 Text {

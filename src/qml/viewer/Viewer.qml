@@ -277,19 +277,19 @@ Item {
     function append_data() {
         coverStatus = []
         previewStatus = []
-        var torrent
-        var row = (currentMovie-1)*13
+        var row = (currentMovie-1)*15
         if (root.n_movies < 5) {
             n_blockMovies = root.n_movies
             view.counter = root.n_movies
         }
         for (var i=0; i<n_blockMovies; i++) {
-            torrent = root.data_movies[row+12].split(",")
-            model.append({ "id_movie": root.data_movies[row], "title": root.data_movies[row+1], "cast": root.data_movies[row+2], "categories": root.data_movies[row+3],
-                           "quality": root.data_movies[row+4], "time": root.data_movies[row+5], "full": root.data_movies[row+6], "hostPreview": root.data_movies[row+7],
-                           "urlPreview": root.data_movies[row+8], "id_preview": i, "hostCover": root.data_movies[row+9], "urlCoverFront": root.data_movies[row+10],
-                           "urlCoverBack": root.data_movies[row+11], "urlTorrent": torrent[0], "scenes": Number(torrent[1]) })
-            row += 13
+            model.append({ "id_movie": root.data_movies[row], "title": root.data_movies[row+1], "cast": root.data_movies[row+2]
+                , "categories": root.data_movies[row+3], "quality": root.data_movies[row+4], "time": root.data_movies[row+5]
+                , "full": root.data_movies[row+6], "hostCover": root.data_movies[row+7], "urlCoverFront": root.data_movies[row+8]
+                , "urlCoverBack": root.data_movies[row+9], "hostPreview": root.data_movies[row+10], "urlPreview": root.data_movies[row+11]
+                , "id_preview": i, "hostTorrent": root.data_movies[row+12], "urlTorrent": root.data_movies[row+13]
+                , "scenes": Number(root.data_movies[row+14]) })
+            row += 15
         }
         loader_root.source = "../global/Network.qml"
         timeOutNetwork.start()

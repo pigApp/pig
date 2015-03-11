@@ -10,14 +10,14 @@ Rectangle {
         id: userInput
         color: "white"
         font.family: fontGlobal.name
-        font.pixelSize: { if (onSet) screen.height/95.4; else screen.height/43.2 } //TODO: Un poco mas grande la fuente.(label.font.pixelSize+20.2)
+        font.pixelSize: { if (onSet) screen.height/74.2; else screen.height/43.2 }
         echoMode: TextInput.Password
         maximumLength: 16
         cursorVisible: false
         anchors.centerIn: parent
         onCursorVisibleChanged: { if (cursorVisible) cursorVisible = false }
         onCursorPositionChanged: {
-            if (password.color == "#ff0000")
+            if (password.color == "#ff0000" && enabled)
                 password.color = "black"
             if (text === "")
                 label.visible = true
@@ -63,7 +63,7 @@ Rectangle {
             color: "white"
             font.family: fontGlobal.name
             font.bold: onSet
-            font.pixelSize: { if (onSet) screen.height/75; else screen.height/23 } //TODO: Un poco mas grande la fuente.
+            font.pixelSize: { if (onSet) screen.height/54; else screen.height/23 }
         }
         Text {
             id: labelInformation
@@ -71,7 +71,7 @@ Rectangle {
             color: "white"
             font.family: fontGlobal.name
             font.bold: true
-            font.pixelSize: screen.height/75 //TODO: Un poco mas grande la fuente.
+            font.pixelSize: screen.height/54
             visible: { label.text === "FAIL" }
         }
     }

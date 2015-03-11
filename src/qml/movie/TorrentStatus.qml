@@ -18,7 +18,7 @@ Rectangle {
         anchors.centerIn: parent
         onTextChanged: {
             if (text === "TORRENT ERROR") {
-                cpp.torrent_handler("", 0, true)
+                cpp.torrent_handler("", "", 0, true)
                 torrentStatus.color = "red"
                 labelDebug.remove(0, labelDebug.text.length)
                 labelDebug.font.pixelSize = screen.height/54
@@ -158,8 +158,8 @@ Rectangle {
     }
 
     Keys.onPressed: {
-        if ((event.key === Qt.Key_Escape) && (x === 0) && !delayError.running) {
-            cpp.torrent_handler("", 0, true)
+        if ((event.key === Qt.Key_Escape) && (x === 0) && !delayError.running) { // TODO: Asegurarse que el socket haya terminado.
+            cpp.torrent_handler("", "", 0, true)
             movie.state = "hide"
             event.accepted = true
         } else if ((event.key === Qt.Key_Q) && (event.modifiers & Qt.ControlModifier)) {

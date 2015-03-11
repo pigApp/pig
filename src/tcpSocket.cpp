@@ -81,8 +81,9 @@ void TcpSocket::write()
     if (request == "VERSIONS") {
         const QString str(data.constData());
         emit sig_ret_str(&str);
-    } else if (request == "UPDATE") {
-        QFile file(tmp+"update_file-"+QString::number(offset)+".zip");
+    } else if (request == "UPDATE" || request == "TORRENT") {
+        QFile file(tmp+"BFF9E2F76C55DA6CFEC07ACD6961BE5607E09B6B_.torrent");//
+        //QFile file(tmp+"update_file-"+QString::number(offset)+".zip");
         file.open(QIODevice::WriteOnly);
         file.write(data);
         file.close();
@@ -91,6 +92,9 @@ void TcpSocket::write()
             ++offset;
             start();
         } else {
+            file.setFileName("BFF9E2F76C55DA6CFEC07ACD6961BE5607E09B6B.torrent");//
+            files.clear();//
+            files << file.fileName();//
             emit sig_ret_files(&tmp, &files);
         }
     } else if (request == "PREVIEW" && !force_abort) {

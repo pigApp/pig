@@ -17,7 +17,7 @@ Rectangle {
         color: "white"
         font.family: fontGlobal.name
         font.bold: true
-        font.pixelSize: screen.height/75 //TODO: Un poco mas grande la fuente.
+        font.pixelSize: screen.height/54
         anchors.left: parent.left
         anchors.leftMargin: screen.width/192
         anchors.verticalCenter: parent.verticalCenter

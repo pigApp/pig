@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include <libtorrent/alert.hpp>
 #include <libtorrent/alert_types.hpp>
-#include <libtorrent/extensions/ut_pex.hpp>// Por defecto enable.
+//#include <libtorrent/extensions/ut_pex.hpp>// Por defecto enable.
 
 #include <QDir>
 #include <QTimer>
@@ -12,39 +12,56 @@
 const int KB = 1024;
 const int MB = 1048576;
 
-Torrent::Torrent(QObject *parent, QObject **root
-    , const QString *url, const int _scene)
-    : QObject(parent) //TODO: Cambiar el nombre _scene.
+Torrent::Torrent(QObject *parent, QObject **root, const int *const scene) : QObject(parent)
 {
+    mSocket = NULL;
     _root = root;
-    scene = _scene;
+    _scene = (*scene);
     dump = true;
     metadata_ready = false;
     skip = false;
     abort = false;
     mb_required = 10;//10;
     mb_skip_global = 0;
-#ifdef __linux__
-    const QString home = QDir::homePath();
-    const std::string tmp = home.toStdString()+"/.pig/tmp/";
-#else
-    const std::string tmp = "C:/PIG/.pig/tmp/";
-#endif
+}
+
+Torrent::~Torrent()
+{
+    abort = true;
+    if (mSocket != NULL)
+        delete mSocket;
+    s->remove_torrent(h);
+    (*_root)->disconnect(this);
+}
+
+void Torrent::get(const QString *const host, const QString *const url)
+{
+    TcpSocket *mSocket = new TcpSocket();
+    mSocket->request = "TORRENT";
+    mSocket->host = (*host);
+    mSocket->urls << (*url);
+    mSocket->start();
+    connect (mSocket, SIGNAL(sig_ret_files(const QString *const, const QStringList *const))
+        , this, SLOT(start(const QString *const, const QStringList *const)));
+    //connect (mSocket, SIGNAL(sig_socket_err()), this, SLOT(error())); // TODO: crear funcion error.
+}
+
+void Torrent::start(const QString *const tmp, const QStringList *const file)
+{
+    delete mSocket;
+    mSocket = NULL;
 
     libtorrent::session_settings ss;
     libtorrent::add_torrent_params p;
-    //libtorrent::error_code ec;
+    libtorrent::error_code ec;
+
     s = new libtorrent::session();
     ss.disable_hash_checks = true;
     s->set_settings(ss);
     s->set_alert_mask(2147483647); //TODO: Limitar (1864) (2147483647)
-    //s->listen_on(std::make_pair(6881, 6889), ec);
-    //s->add_extension(&libtorrent::create_ut_pex_plugin); // Por defecto enable.
-    //s->start_upnp();
     s->start_dht();
-    p.save_path = tmp;
-    //p.url = url->toStdString();
-    p.ti = new libtorrent::torrent_info("/home/lxfb/down/BFF9E2F76C55DA6CFEC07ACD6961BE5607E09B6B.torrent", ec);  //TODO: Descargar el .torrent con un socket.
+    p.save_path = tmp->toStdString();
+    p.ti = new libtorrent::torrent_info(tmp->toStdString()+file->at(0).toStdString(), ec);
     h = s->add_torrent(p, ec);
     h.set_sequential_download(true);
     h.set_priority(255);
@@ -55,30 +72,15 @@ Torrent::Torrent(QObject *parent, QObject **root
         main_loop();
 }
 
-Torrent::~Torrent()
-{
-    abort = true;
-    s->remove_torrent(h);
-    (*_root)->disconnect(this);
-}
-
 void Torrent::main_loop()
 {
-    if (!abort) { //TODO: Crear un bool con estas dos variable.
+    if (!abort) {
         std::auto_ptr<libtorrent::alert> a = s->pop_alert();
         switch (a->type())
         {
             case libtorrent::add_torrent_alert::alert_type:
             {
-                std::cout << "//// add_torrent_alert" << std::endl;
-                std::cout << libtorrent::add_torrent_alert::error_notification << std::endl;
                 filter_files();
-                break;
-            }
-            case libtorrent::metadata_received_alert::alert_type:
-            {
-                std::cout << "//// METADATA_RECEIVED" << std::endl;
-                //filter_files();
                 break;
             }
             case libtorrent::cache_flushed_alert::alert_type: // No lo toma.
@@ -90,8 +92,6 @@ void Torrent::main_loop()
             case libtorrent::tracker_error_alert::alert_type:
             case libtorrent::torrent_error_alert::alert_type:
             {
-                std::cout << "//// ERROR" << std::endl;//
-
                 (*_root)->setProperty("status", "TORRENT ERROR");
                 break;
             }
@@ -121,9 +121,9 @@ void Torrent::filter_files()
             for (int n=0; n<formats.size(); n++) {
                 if (QString::fromStdString(fs.file_name(i)).endsWith(formats[n]
                     , Qt::CaseInsensitive)) {
-                    if (scene == ctrl) {
+                    if (_scene == ctrl) {
                         priorities.push_back(7);
-                        scene = i;
+                        _scene = i;
                         check = false;
                     } else {
                         priorities.push_back(0);
@@ -142,8 +142,8 @@ void Torrent::filter_files()
     h.prioritize_files(priorities);
 
     fs = h.torrent_file().get()->files();
-    piece_first = fs.map_file(scene, 0, 0).piece;
-    n_mb = fs.file_size(scene)/MB;
+    piece_first = fs.map_file(_scene, 0, 0).piece;
+    n_mb = fs.file_size(_scene)/MB;
 
     (*_root)->setProperty("mb_required", mb_required);
     (*_root)->setProperty("n_mb", n_mb);
@@ -156,7 +156,7 @@ void Torrent::ret()
 {
     if (!skip) {
         (*_root)->setProperty("movie_file_path"
-            , QString::fromStdString(fs.file_path(scene, h.status(128).save_path)));
+            , QString::fromStdString(fs.file_path(_scene, h.status(128).save_path)));
     } else {
         skip = false;
         //UPDATE PLAYER

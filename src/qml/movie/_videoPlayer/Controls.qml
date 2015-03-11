@@ -50,7 +50,7 @@ Item {
             volume(true)
             event.accepted = true
         } else if (event.key === Qt.Key_Escape) {
-            cpp.torrent_handler("", 0, true)
+            cpp.torrent_handler("", "", 0, true)
             movie.state = "hide"
             event.accepted = true
         } else if ((event.key === Qt.Key_Q) && (event.modifiers & Qt.ControlModifier)) {

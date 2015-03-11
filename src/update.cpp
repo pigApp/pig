@@ -8,8 +8,8 @@
 Update::Update(QObject *parent, QObject **root, QSqlDatabase *db)
     : QObject(parent)
 {
-    _root = root;
     mSu = NULL;
+    _root = root;
     _db = db;
     binaryAvailable = false;
     databaseAvailable = false;
