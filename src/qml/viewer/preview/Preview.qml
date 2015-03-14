@@ -4,7 +4,6 @@ Item {
     id: preview
 
     property bool cached
-    property int id_cache: id_movie
 
     Image {
         id: icon
@@ -36,8 +35,8 @@ Item {
         anchors.fill: parent
         onStatusChanged: {
             if (status === Loader.Ready) {
-                loader_previewPlayer.item.id_private = id_preview
-                loader_previewPlayer.item.id_cache = id_cache
+                loader_previewPlayer.item.id_private = id_private
+                loader_previewPlayer.item.id_movie = id_movie
                 loader_previewPlayer.item.host = hostPreview
                 loader_previewPlayer.item.url = urlPreview
                 loader_previewPlayer.item.cached = preview.cached
@@ -46,6 +45,6 @@ Item {
         }
     }
 
-    Component.onCompleted: { if (root.cache_preview.indexOf(id_cache) !== -1)  preview.cached = true }
+    Component.onCompleted: { if (root.cache_preview.indexOf(id_movie) !== -1)  preview.cached = true }
 }
 // Tabs hechos.

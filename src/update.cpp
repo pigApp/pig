@@ -58,17 +58,17 @@ void Update::start()
             urls << query.value(5).toString();
             _db->close();
 
-            get(&host, &urls, "VERSIONS");
+            get(&host, &urls, &targets);
         }
     } else {
         emit sig_fail_database();
     }
 }
 
-void Update::get(const QString *const host
-    ,const QStringList *const urls, const QString request)
+void Update::get(const QString *const host ,const QStringList *const urls
+    ,const QStringList *const targets)
 {
-    if (request == "VERSIONS") {
+    if (targets->isEmpty()) {
         mSocket = new TcpSocket();
         connect (mSocket, SIGNAL(sig_ret_str(const QString *const))
             , this, SLOT(check_versions(const QString *const)));
@@ -76,9 +76,9 @@ void Update::get(const QString *const host
             , this, SLOT(unzip_files(const QString *const, const QStringList *const)));
         connect (mSocket, SIGNAL(sig_socket_err()), this, SLOT(error()));
     }
-    mSocket->request = request;
     mSocket->host = *host;
     mSocket->urls = *urls;
+    mSocket->targets = *targets;
     mSocket->start();
 
     (*_root)->setProperty("network", true);
@@ -94,18 +94,21 @@ void Update::check_versions(const QString *const str)
         newRelease = split[1].toInt();
         urls << split[5];
         sums << split[8];
+        targets << "update_bin.zip";
         binaryAvailable = true;
     }
     if (split[2].toInt() > database) {
         newDatabase = split[2].toInt();
         urls << split[6];
         sums << split[9];
+        targets << "update_db.zip";
         databaseAvailable = true;
     }
     if (split[3].toInt() > library) {
         newLibrary = split[3].toInt();
         urls << split[7];
         sums << split[10];
+        targets << "update_lib.zip";
         libraryAvailable = true;
     }
 
@@ -121,7 +124,7 @@ void Update::user_confirmation()
 {
     (*_root)->setProperty("status", "");
 
-    get(&host, &urls, "UPDATE");
+    get(&host, &urls, &targets);
 }
 
 void Update::unzip_files(const QString *const tmp, const QStringList *const files)

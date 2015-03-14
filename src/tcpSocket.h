@@ -5,6 +5,7 @@
 #include <QAbstractSocket>
 #include <QTcpSocket>
 #include <QTimer>
+#include <QFile>//
 
 class TcpSocket : public QTcpSocket
 {
@@ -14,11 +15,11 @@ public:
     explicit TcpSocket(QTcpSocket *parent = 0);
     ~TcpSocket();
 
-    QString request;
     QString host;
     QStringList urls;
-    QString target;
+    QStringList targets;
 
+    bool stream;
     bool force_abort;
     int id;
 
@@ -29,21 +30,24 @@ signals:
     void sig_ret_str(const QString *const str);
     void sig_ret_files(const QString *const tmp, const QStringList *const files);
     void sig_ret_preview(const int id, const QString host, const QString url
-        , const QString file , const bool success, const bool abort);
+        , const QString file, const bool success, const bool abort);
     void sig_socket_err();
 
 private:
     QByteArray data;
     QStringList files;
     QTimer *timeOut;
+    QFile file;
 
+    bool header;
     int offset;
 
 private slots:
     void connected();
     void disconnected();
     void ready_to_read();
-    void write();
+    void remove_header();
+    void ret();
     void socket_error();
 };
 

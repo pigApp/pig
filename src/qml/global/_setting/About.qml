@@ -18,8 +18,7 @@ Rectangle {
         font.family: fontGlobal.name
         font.bold: true
         font.pixelSize: screen.height/54
-        anchors.left: parent.left
-        anchors.leftMargin: screen.width/192
+        anchors.horizontalCenter: parent.horizontalCenter
         anchors.verticalCenter: parent.verticalCenter
         onLinkActivated: Qt.openUrlExternally(link)
     }

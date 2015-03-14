@@ -19,7 +19,7 @@ public:
     ~Torrent();
 
 public slots:
-    void get(const QString * const host, const QString * const url);
+    void get(const QString * const host, const QString * const url, const QString * const target);
 
     //bool piece_is_available(qint64 total_msec, qint64 offset_msec);
     //void piece_update(qint64 total_msec, qint64 offset_msec);

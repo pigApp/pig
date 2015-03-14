@@ -26,7 +26,7 @@ private:
 
     QSqlDatabase *_db;
     QString host;
-    QStringList urls, sums;
+    QStringList urls, sums, targets;
 
     bool binaryAvailable, databaseAvailable, libraryAvailable;
     int binary, release, database, library;
@@ -34,7 +34,7 @@ private:
 
 private slots:
     void start();
-    void get(const QString *const host, const QStringList *const urls, const QString request);
+    void get(const QString *const host, const QStringList *const urls, const QStringList *const targets);
     void check_versions(const QString *const str);
     void user_confirmation();
     void unzip_files(const QString * const tmp, const QStringList * const files);

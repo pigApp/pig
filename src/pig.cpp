@@ -175,11 +175,10 @@ void PIG::preview_handler(const int id, const QString host, const QString url
 {
     if (!target.isEmpty()) {
         mSocket[id] = new TcpSocket();
-        mSocket[id]->request = "PREVIEW";
         mSocket[id]->id = id;
         mSocket[id]->host = host;
         mSocket[id]->urls << url;
-        mSocket[id]->target = target;
+        mSocket[id]->targets << target;
         mSocket[id]->start();
         connect (mSocket[id], SIGNAL(sig_ret_preview(const int, const QString, const QString
             , const QString, const bool, const bool))
@@ -187,7 +186,7 @@ void PIG::preview_handler(const int id, const QString host, const QString url
             , const QString, const bool, const bool)));
     } else if (target.isEmpty() && !abort) {
         emit sig_ret_preview(id, success);
-        mSocket[id]->deleteLater();
+        //mSocket[id]->deleteLater();
     } else if (abort) {
         mSocket[id]->force_abort = true;
         mSocket[id]->deleteLater();
@@ -195,12 +194,12 @@ void PIG::preview_handler(const int id, const QString host, const QString url
 }
 
 //TORRENT
-void PIG::torrent_handler(const QString host, const QString url, const int scene, const bool abort)
+void PIG::torrent_handler(const QString host, const QString url, const QString target, const int scene, const bool abort)
 {
     //cleanup();
     if (!abort) {
         mTorrent = new Torrent(NULL, &mRoot, &scene);
-        mTorrent->get(&host, &url);
+        mTorrent->get(&host, &url, &target);
     } else {
         mTorrent->deleteLater();
         mTorrent = NULL;

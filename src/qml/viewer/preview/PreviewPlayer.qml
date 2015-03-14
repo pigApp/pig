@@ -9,9 +9,9 @@ Item {
     property bool downloading
     property string host
     property string url
-    property string target: id_cache+"p.mp4"
+    property string target: id_movie+"p.mp4"
     property int id_private
-    property int id_cache
+    property int id_movie
 
     Image {
         id: icon
@@ -106,7 +106,7 @@ Item {
                 downloading = false
                 if (success) {
                     icon.visible = false
-                    root.cache_preview.push(id_cache)
+                    root.cache_preview.push(id_movie)
                     cached = true
                     delay.start()
                 } else {

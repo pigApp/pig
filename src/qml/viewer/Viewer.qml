@@ -283,12 +283,11 @@ Item {
             view.counter = root.n_movies
         }
         for (var i=0; i<n_blockMovies; i++) {
-            model.append({ "id_movie": root.data_movies[row], "title": root.data_movies[row+1], "cast": root.data_movies[row+2]
+            model.append({ "id_private": i, "id_movie": root.data_movies[row], "title": root.data_movies[row+1], "cast": root.data_movies[row+2]
                 , "categories": root.data_movies[row+3], "quality": root.data_movies[row+4], "time": root.data_movies[row+5]
                 , "full": root.data_movies[row+6], "hostCover": root.data_movies[row+7], "urlCoverFront": root.data_movies[row+8]
                 , "urlCoverBack": root.data_movies[row+9], "hostPreview": root.data_movies[row+10], "urlPreview": root.data_movies[row+11]
-                , "id_preview": i, "hostTorrent": root.data_movies[row+12], "urlTorrent": root.data_movies[row+13]
-                , "scenes": Number(root.data_movies[row+14]) })
+                , "hostTorrent": root.data_movies[row+12], "urlTorrent": root.data_movies[row+13], "scenes": Number(root.data_movies[row+14]) })
             row += 15
         }
         loader_root.source = "../global/Network.qml"

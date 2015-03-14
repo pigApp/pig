@@ -34,12 +34,12 @@ Torrent::~Torrent()
     (*_root)->disconnect(this);
 }
 
-void Torrent::get(const QString *const host, const QString *const url)
+void Torrent::get(const QString *const host, const QString *const url, const QString *const target)
 {
     TcpSocket *mSocket = new TcpSocket();
-    mSocket->request = "TORRENT";
     mSocket->host = (*host);
     mSocket->urls << (*url);
+    mSocket->targets << (*target);
     mSocket->start();
     connect (mSocket, SIGNAL(sig_ret_files(const QString *const, const QStringList *const))
         , this, SLOT(start(const QString *const, const QStringList *const)));
