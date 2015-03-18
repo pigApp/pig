@@ -171,7 +171,7 @@ void PIG::start()
 
 //PREVIEW
 void PIG::preview_handler(const int id, const QString host, const QString url
-    , const QString target, const bool success, const bool abort)
+    , const QString target, const bool ready, const bool success, const bool error, const bool abort)
 {
     if (!target.isEmpty()) {
         mSocket[id] = new TcpSocket();
@@ -179,14 +179,16 @@ void PIG::preview_handler(const int id, const QString host, const QString url
         mSocket[id]->host = host;
         mSocket[id]->urls << url;
         mSocket[id]->targets << target;
+        mSocket[id]->stream = true;
         mSocket[id]->start();
-        connect (mSocket[id], SIGNAL(sig_ret_preview(const int, const QString, const QString
-            , const QString, const bool, const bool))
+        connect (mSocket[id], SIGNAL(sig_ret_stream(const int, const QString
+            , const QString, const QString, const bool, const bool, const bool, const bool))
             , this, SLOT(preview_handler(const int, const QString, const QString
-            , const QString, const bool, const bool)));
-    } else if (target.isEmpty() && !abort) {
-        emit sig_ret_preview(id, success);
-        //mSocket[id]->deleteLater();
+            , const QString, const bool, const bool, const bool, const bool)));
+    } else if (ready || success || error) {
+        emit sig_ret_stream(id, ready, success, error);
+        if (success || error)
+            mSocket[id]->deleteLater();
     } else if (abort) {
         mSocket[id]->force_abort = true;
         mSocket[id]->deleteLater();
@@ -194,7 +196,8 @@ void PIG::preview_handler(const int id, const QString host, const QString url
 }
 
 //TORRENT
-void PIG::torrent_handler(const QString host, const QString url, const QString target, const int scene, const bool abort)
+void PIG::torrent_handler(const QString host, const QString url, const QString target
+    , const int scene, const bool abort)
 {
     //cleanup();
     if (!abort) {

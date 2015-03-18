@@ -70,7 +70,7 @@ void Update::get(const QString *const host ,const QStringList *const urls
 {
     if (targets->isEmpty()) {
         mSocket = new TcpSocket();
-        connect (mSocket, SIGNAL(sig_ret_str(const QString *const))
+        connect (mSocket, SIGNAL(sig_ret_string(const QString *const))
             , this, SLOT(check_versions(const QString *const)));
         connect (mSocket, SIGNAL(sig_ret_files(const QString *const, const QStringList *const))
             , this, SLOT(unzip_files(const QString *const, const QStringList *const)));
@@ -300,3 +300,4 @@ void Update::error()
     }
     emit sig_continue();
 }
+// Tabs hechos.

@@ -6,6 +6,7 @@ Item {
 
     property bool quit: root.preview_quit
     property bool cached
+    property bool ready
     property bool downloading
     property string host
     property string url
@@ -44,12 +45,12 @@ Item {
         id: delay
         interval: 50
         onTriggered: {
-            if (cached) {
+            if (cached || ready) {
                 player.source = "file://"+root.tmp+target
                 player.enabled = true
                 player.visible = true
             } else {
-                cpp.preview_handler(id_private, host, url, target, false, false)
+                cpp.preview_handler(id_private, host, url, target, false, false, false, false)
                 downloading = true
             }
         }
@@ -63,7 +64,7 @@ Item {
     MouseArea {
         anchors.fill: parent
         onClicked: {
-            if (!downloading) {
+            if (ready) {
                 if (player.playbackState === MediaPlayer.PlayingState) {
                     player.pause()
                 } else if (player.playbackState === MediaPlayer.PausedState) {
@@ -80,12 +81,13 @@ Item {
     }
 
     function abort() {
-        if ((player.playbackState === MediaPlayer.PlayingState) || (player.playbackState === MediaPlayer.PausedState)) {
+        if ((player.playbackState === MediaPlayer.PlayingState)
+            || (player.playbackState === MediaPlayer.PausedState)) {
             player.stop()
         } else if (downloading) {
             icon.visible = false
             downloading = false
-            cpp.preview_handler(id_private, "", "", "", false, true)
+            cpp.preview_handler(id_private, "", "", "", false, false, false, true)
         }
         if (quit) {
             var sts = viewer.previewStatus.indexOf(0)
@@ -101,15 +103,18 @@ Item {
 
     Connections {
         target: cpp
-        onSig_ret_preview: {
+        onSig_ret_stream: {
             if (id === id_private) {
-                downloading = false
-                if (success) {
+                if (ready) {
+                    previewPlayer.ready = true
                     icon.visible = false
+                    delay.start()
+                } else if (success) {
+                    downloading = false
                     root.cache_preview.push(id_movie)
                     cached = true
-                    delay.start()
-                } else {
+                } else if (error) {
+                    downloading = false
                     delay_error.start()
                 }
             }

@@ -6,18 +6,20 @@
 
 TcpSocket::TcpSocket(QTcpSocket *parent) : QTcpSocket(parent)
 {
-    header = true;
-    //stream = true;//
+    headerless = false;
+    stream = false;
+    dumped = false;
     force_abort = false;
     offset = 0;
 
     connect (this, SIGNAL(connected()), this, SLOT(connected()));
-    connect (this, SIGNAL(disconnected()), this, SLOT(disconnected()));
     connect (this, SIGNAL(readyRead()), this, SLOT(ready_to_read()));
+    connect (this, SIGNAL(disconnected()), this, SLOT(ret()));
 }
 
 TcpSocket::~TcpSocket()
 {
+    qDebug() << "SOCKET CLOSED";
     abort();
 }
 
@@ -35,21 +37,11 @@ void TcpSocket::start()
 
 void TcpSocket::connected()
 {
-    const QString strGet = "GET "+urls[offset]
+    const QString str = "GET "+urls[offset]
         +" HTTP/1.1\r\nConnection: Close\r\nHost: "+host+"\r\n\r\n\r\n";
-    const QByteArray baGet = strGet.toUtf8();
-    const char *get = baGet.constData();
-    writeData(get, baGet.size());
-}
-
-void TcpSocket::disconnected()
-{
-    //if (request != "PREVIEW") {
-    //if (this->error() != 1)
-        //socket_error();
-    //else
-        ret();
-    //}
+    const QByteArray ba = str.toUtf8();
+    const char *get = ba.constData();
+    writeData(get, ba.size());
 }
 
 void TcpSocket::ready_to_read()
@@ -59,30 +51,34 @@ void TcpSocket::ready_to_read()
     while (!atEnd()) 
         data.append(read(100));
 
-    if (header)
+    if (!headerless)
         remove_header();
 
     if (!targets.isEmpty()) {
         file.write(data);
         data.clear();
-        if (stream && (file.size() > 240000)) {
-            stream = false;
-            emit sig_ret_preview(id, "", "", "", true, false);
+        if (stream) {
+            if (!dumped && (file.size() > 240000)) {
+                dumped = true;
+                emit sig_ret_stream(id, "", "", "", true, false, false, false);
+            } else if (dumped) {
+                //emit sig_ret_stream(id, "", "", "", true, file.size(),false, false, false); TODO: Agregar parametro dump a sig_ret_stream.
+            }
         }
     }
 }
 
 void TcpSocket::remove_header()
 {
-    int bytes = 0;
+    int b = 0;
     QByteArray line;
     const QDataStream in(data);
     while (!in.atEnd()) {
         line = in.device()->readLine();
-        bytes += line.size();
+        b += line.size();
         if (line.toHex() == "0d0a") {
-            data.remove(0, bytes);
-            header = false;
+            data.remove(0, b);
+            headerless = true;
             break;
         }
     }
@@ -93,13 +89,14 @@ void TcpSocket::remove_header()
 #else
     const QString tmp = "C:/PIG/.pig/tmp/";
 #endif
-        file.setFileName(tmp+targets[offset]);//
+        file.setFileName(tmp+targets[offset]);
         file.open(QIODevice::WriteOnly);
     }
 }
 
 void TcpSocket::ret()
-{    
+{
+    headerless = false;
 #ifdef __linux__
     const QString tmp = QDir::homePath()+"/.pig/tmp/";
 #else
@@ -108,7 +105,7 @@ void TcpSocket::ret()
     
     if (targets.isEmpty()) {
         const QString str(data.constData());
-        emit sig_ret_str(&str);
+        emit sig_ret_string(&str);
     } else {
         if (!force_abort) {
             file.close();
@@ -117,8 +114,10 @@ void TcpSocket::ret()
                 ++offset;
                 start();
             } else {
-                //if (!preview)
-                emit sig_ret_files(&tmp, &files);
+                if (stream)
+                    emit sig_ret_stream(id, "", "", "", false, true, false, false);
+                else
+                    emit sig_ret_files(&tmp, &files);
             }
         }
     }
@@ -128,19 +127,25 @@ void TcpSocket::socket_error()
 {
     timeOut->stop();
 
-    //if (request == "PREVIEW" && !force_abort) {
-    if (!force_abort) {
-        force_abort = true;
-        emit sig_ret_preview(id, "", "", "", false, false);
+    if (stream && !force_abort) {//
+        force_abort = true;//
+        emit sig_ret_stream(id, "", "", "", false, false, true, false);
     } else {
         emit sig_socket_err();
     }
 }
 
+
+
+
+
+//if (this->error() != 1)
+    //socket_error();
+
 /*
     if (targets.isEmpty()) {
         const QString str(data.constData());
-        emit sig_ret_str(&str);
+        emit sig_ret_string(&str);
     } else if (request == "UPDATE" || request == "TORRENT") {
         QFile file(tmp+"BFF9E2F76C55DA6CFEC07ACD6961BE5607E09B6B_.torrent");//
         //QFile file(tmp+"update_file-"+QString::number(offset)+".zip");
@@ -162,6 +167,6 @@ void TcpSocket::socket_error()
         //file.open(QIODevice::WriteOnly);
         //file.write(data);
         file.close();
-        emit sig_ret_preview(id, "", "", "", true, false);
+        emit sig_ret_stream(id, "", "", "", true, false);
     }
 */
