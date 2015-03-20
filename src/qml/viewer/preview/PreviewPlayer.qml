@@ -39,6 +39,7 @@ Item {
                 icon.visible = true
             }
         }
+        //onStatusChanged: TODO: Comprobar si se puede controlar qu no lea mas que lo escrito en disco desde aca.
     }
 
     Timer {
@@ -64,7 +65,7 @@ Item {
     MouseArea {
         anchors.fill: parent
         onClicked: {
-            if (ready) {
+            if (cached || ready) {
                 if (player.playbackState === MediaPlayer.PlayingState) {
                     player.pause()
                 } else if (player.playbackState === MediaPlayer.PausedState) {
@@ -84,8 +85,8 @@ Item {
         if ((player.playbackState === MediaPlayer.PlayingState)
             || (player.playbackState === MediaPlayer.PausedState)) {
             player.stop()
-        } else if (downloading) {
-            icon.visible = false
+        }
+        if (downloading) {
             downloading = false
             cpp.preview_handler(id_private, "", "", "", false, false, false, true)
         }
@@ -94,7 +95,8 @@ Item {
             if (sts !== -1) {
                 viewer.previewStatus.splice(sts, 1);
                 if (viewer.previewStatus.indexOf(0) === -1)
-                    cpp.quit()
+                    cpp.quit() // FIX: Revisar si solamente es la ultima instancia de previewPlayer la que llama a quit.
+                               // TODO: Revisar todo y que todos los quit se puedan apretar un solo vez.
             }
         }
     }

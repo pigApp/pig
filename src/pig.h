@@ -19,8 +19,10 @@ public:
 public slots:
     void quit();
     void set_root_object(QObject *root);
-    void password_handler(const bool require, const QString plain, const bool check, const bool write);
-    void preview_handler(const int id, const QString host, const QString url, const QString target
+    void password_handler(const bool require, const QString plain
+        , const bool check, const bool write);
+    void preview_handler(const int id, const QString host, const QString url
+        , const QString target
         , const bool ready, const bool success, const bool error, const bool abort);
     void torrent_handler(const QString host, const QString url, const QString target
         , const int scene, const bool abort);
@@ -33,7 +35,8 @@ signals:
     void sig_show_news(const QString binaryNews, const QString databaseNews);
     void sig_show_finder();
     void sig_ret_db(int nMovies, QStringList dataMovies);
-    void sig_ret_stream(const int id, const bool ready, const bool success, const bool error);
+    void sig_ret_stream(const int id, const bool ready, const bool success
+        , const bool error);
     void sig_show_db_err();
 
 private:

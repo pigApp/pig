@@ -12,7 +12,8 @@ class Update : public QObject
     Q_OBJECT
 
 public:
-    explicit Update(QObject *parent = 0, QObject **root = NULL, QSqlDatabase *db = NULL);
+    explicit Update(QObject *parent = 0, QObject **root = NULL
+        , QSqlDatabase *db = NULL);
     ~Update();
 
 signals:
@@ -34,7 +35,8 @@ private:
 
 private slots:
     void start();
-    void get(const QString *const host, const QStringList *const urls, const QStringList *const targets);
+    void get(const QString *const host, const QStringList *const urls
+        , const QStringList *const targets);
     void check_versions(const QString *const str);
     void user_confirmation();
     void unzip_files(const QString *const tmp, const QStringList *const files);

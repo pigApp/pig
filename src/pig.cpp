@@ -50,7 +50,6 @@ void PIG::password_handler(const bool require, const QString plain
            emit sig_ret_password(true);
        else
            update_handler();
-       file.close();
     } else if (check) {
         Password mPassword;
         if (mPassword.check(&plain))
@@ -163,6 +162,7 @@ void PIG::start()
             } else {
                 emit sig_show_finder();
             }
+            file.close();
         }
     } else {
         db_error();
@@ -171,7 +171,8 @@ void PIG::start()
 
 //PREVIEW
 void PIG::preview_handler(const int id, const QString host, const QString url
-    , const QString target, const bool ready, const bool success, const bool error, const bool abort)
+    , const QString target, const bool ready, const bool success, const bool error
+    , const bool abort)
 {
     if (!target.isEmpty()) {
         mSocket[id] = new TcpSocket();
@@ -185,13 +186,11 @@ void PIG::preview_handler(const int id, const QString host, const QString url
             , const QString, const QString, const bool, const bool, const bool, const bool))
             , this, SLOT(preview_handler(const int, const QString, const QString
             , const QString, const bool, const bool, const bool, const bool)));
-    } else if (ready || success || error) {
-        emit sig_ret_stream(id, ready, success, error);
-        if (success || error)
+    } else if (ready || success || error || abort) {
+        if (!abort)
+            emit sig_ret_stream(id, ready, success, error);
+        if (success || error || abort)
             mSocket[id]->deleteLater();
-    } else if (abort) {
-        mSocket[id]->force_abort = true;
-        mSocket[id]->deleteLater();
     }
 }
 

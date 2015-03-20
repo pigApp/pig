@@ -4,8 +4,7 @@
 #include <QObject>
 #include <QAbstractSocket>
 #include <QTcpSocket>
-#include <QTimer>
-#include <QFile>//
+#include <QFile>
 
 class TcpSocket : public QTcpSocket
 {
@@ -20,7 +19,6 @@ public:
     QStringList targets;
 
     bool stream;
-    bool force_abort;
     int id;
 
 public slots:
@@ -32,13 +30,12 @@ signals:
     void sig_ret_stream(const int id, const QString host, const QString url
         , const QString file, const bool ready, const bool success
         , const bool error, const bool abort);
-    void sig_socket_err();
+    void sig_err();
 
 private:
     QByteArray data;
-    QStringList files;
-    QTimer *timeOut;
     QFile file;
+    QStringList files;
 
     bool headerless;
     bool dumped;
@@ -46,10 +43,10 @@ private:
 
 private slots:
     void connected();
-    void ready_to_read();
-    void remove_header();
+    void readyRead();
     void ret();
-    void socket_error();
+    void remove_header();
+    void error(QAbstractSocket::SocketError error);
 };
 
 #endif

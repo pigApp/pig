@@ -43,5 +43,6 @@ bool Password::write(const QString *plain)
 
 const QString Password::calculate(const QString **plain)
 {
-    return QString(QCryptographicHash::hash(QString(**plain).toUtf8(),QCryptographicHash::Md5).toHex());
+    return QString(QCryptographicHash::hash(QString(**plain).toUtf8()
+        , QCryptographicHash::Md5).toHex());
 }

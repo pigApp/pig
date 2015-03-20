@@ -1,6 +1,5 @@
-- Socket dump.
-- No funciona cache_preview.
-- Control del streaming en preview.
+- Revisar el error del socket al desconectarse.
+
 - Setting torrent.
 - Help,
 - Icono scenes.

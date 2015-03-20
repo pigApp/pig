@@ -65,8 +65,8 @@ void Update::start()
     }
 }
 
-void Update::get(const QString *const host ,const QStringList *const urls
-    ,const QStringList *const targets)
+void Update::get(const QString *const host, const QStringList *const urls
+    , const QStringList *const targets)
 {
     if (targets->isEmpty()) {
         mSocket = new TcpSocket();
@@ -74,7 +74,7 @@ void Update::get(const QString *const host ,const QStringList *const urls
             , this, SLOT(check_versions(const QString *const)));
         connect (mSocket, SIGNAL(sig_ret_files(const QString *const, const QStringList *const))
             , this, SLOT(unzip_files(const QString *const, const QStringList *const)));
-        connect (mSocket, SIGNAL(sig_socket_err()), this, SLOT(error()));
+        connect (mSocket, SIGNAL(sig_err()), this, SLOT(error()));
     }
     mSocket->host = *host;
     mSocket->urls = *urls;
