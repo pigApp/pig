@@ -50,15 +50,9 @@ void TcpSocket::readyRead()
     if (!targets.isEmpty()) {
         file.write(data);
         data.clear();
-        if (stream) {
-            if (!dumped && (file.size() > 240000)) {
-                dumped = true;
-                emit sig_ret_stream(id, "", "", "", true, false, false, false);
-            } else if (dumped) {
-                // Enviar mRoot desde pig.
-                // Desconectarlo en el destructor si es distinto a NULL.
-                // (*_root)->setProperty("mb_downloaded", mb_downloaded);
-            }
+        if (stream && !dumped && (file.size() > 240000)) {
+            dumped = true;
+            emit sig_ret_stream(id, "", "", "", true, false, false, false);
         }
     }
 }

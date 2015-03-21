@@ -40,7 +40,7 @@ Item {
                 loader_previewPlayer.item.host = hostPreview
                 loader_previewPlayer.item.url = urlPreview
                 loader_previewPlayer.item.cached = preview.cached
-                viewer.previewStatus.push(0)
+                viewer.n_previews += 1
             }
         }
     }

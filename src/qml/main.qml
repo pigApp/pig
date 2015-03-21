@@ -8,7 +8,7 @@ Item {
     property bool network
     property bool network_err
     property bool help_finder
-    property bool preview_quit
+    property bool stop_preview_quit
     property string status
     property string information
     property string binary

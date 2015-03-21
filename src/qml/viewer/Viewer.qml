@@ -10,8 +10,8 @@ Item {
     property int n_blockMovies: 5
     property int locationOnBlockMovies: 0
     property int currentMovie: 1
-    property var coverStatus: []
-    property var previewStatus: []
+    property int n_covers: 0
+    property int n_previews: 0
 
     ListModel { id: model }
 
@@ -21,9 +21,10 @@ Item {
         height: parent.height/2.25
         color: Qt.rgba(1, 1, 1, 0.02)
         anchors.right: parent.right
-        anchors.rightMargin: parent.width/16.69
+        anchors.rightMargin: 110//parent.width/16.69
         anchors.verticalCenter: parent.verticalCenter
-        anchors.verticalCenterOffset: -parent.height/270
+        anchors.verticalCenterOffset: -25//-parent.height/270
+        //anchors.verticalCenterOffset: -parent.height/270
     }
 
     PathView {
@@ -181,8 +182,8 @@ Item {
                 view.state = "hide_viewer_show_finder"
                 event.accepted = true
             } else if ((event.key === Qt.Key_Q) && (event.modifiers & Qt.ControlModifier)) {
-                if (previewStatus.length !== 0)
-                    root.preview_quit = true
+                if (n_previews !== 0)
+                    root.stop_preview_quit = true
                 else
                     cpp.quit()
                 event.accepted = true
@@ -231,7 +232,7 @@ Item {
                 visible: recipe.PathView.isCurrentItem
                 anchors.left: cover.left
                 anchors.bottom: cover.top
-                anchors.bottomMargin: parent.height/108
+                anchors.bottomMargin: 30//parent.height/108
             }
             Cover {
                 id: cover
@@ -239,31 +240,37 @@ Item {
                 height: parent.height/1.8
                 anchors.centerIn: parent
                 anchors.horizontalCenterOffset: -parent.width/15.86
-                anchors.verticalCenterOffset: -parent.height/270
+                anchors.verticalCenterOffset: -25//-parent.height/270
             }
             Dates {
                 id: dates
                 visible: recipe.PathView.isCurrentItem
                 anchors.top: cover.bottom
+                anchors.topMargin: 20//
                 anchors.left: cover.left
-            }
-            Scenes {
-                id: btnScenes
-                totalScenes: scenes
-                enabled: recipe.PathView.isCurrentItem
-                visible: recipe.PathView.isCurrentItem
-                anchors.left: cover.right
-                anchors.leftMargin: parent.width/128
-                anchors.bottom: cover.bottom
-                anchors.bottomMargin: -40//-35 //-parent.height/830.76
             }
             Preview {
                 id: preview
                 width: parent.width/3
                 height: parent.height/2.25
                 anchors.right: parent.right
-                anchors.rightMargin: parent.width/16.69
+                anchors.rightMargin: 110//parent.width/16.69
                 anchors.verticalCenter: cover.verticalCenter
+            }
+            Scenes {
+                id: btnScenes
+                totalScenes: scenes
+                enabled: recipe.PathView.isCurrentItem
+                visible: recipe.PathView.isCurrentItem
+                //anchors.left: cover.right
+                //anchors.leftMargin: parent.width/128
+                //anchors.bottom: cover.bottom
+                //anchors.bottomMargin: -40//-35 //-parent.height/830.76
+                anchors.left: cover.right//preview.left
+                anchors.leftMargin: 50
+                anchors.top: preview.bottom
+                anchors.topMargin: 25//
+                //anchors.horizontalCenter: preview.horizontalCenter
             }
         }
     }
@@ -275,8 +282,8 @@ Item {
     }
 
     function append_data() {
-        coverStatus = []
-        previewStatus = []
+        n_covers = 0
+        n_previews = 0
         var row = (currentMovie-1)*15
         if (root.n_movies < 5) {
             n_blockMovies = root.n_movies

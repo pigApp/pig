@@ -8,7 +8,21 @@ Item {
     Row {
         spacing: screen.width/192
         anchors.left: parent.left
-        anchors.bottom: parent.bottom
+        anchors.top: parent.top
+        //anchors.horizontalCenter: parent.horizontalCenter
+        Text {
+            id: labelScenes
+            text: "SCENES"
+            color: "white"
+            font.family: fontGlobal.name
+            font.pixelSize: screen.height/23
+            anchors.top: parent.top
+            anchors.topMargin: 8
+            //anchors.left: layerPreview.left
+            //anchors.top: layerPreview.bottom
+            //anchors.topMargin: 77//
+            //anchors.horizontalCenter: layerPreview.horizontalCenter
+        }
         Repeater {
             id: repeater
             delegate: Image {

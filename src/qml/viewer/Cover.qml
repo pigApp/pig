@@ -26,11 +26,11 @@ Item {
             source: { if (!front_cached) hostCover+urlCoverFront; else "file://"+root.tmp+id_movie+"f.jpg" }
             onStatusChanged: {
                 if (status === Image.Ready) {
-                    viewer.coverStatus.push(0)
+                    viewer.n_covers += 1
                     check_state("front");
                 } else if (status === Image.Error) {
                     front.source = "qrc:/img-cover_err"
-                    viewer.coverStatus.push(1)
+                    viewer.n_covers += 1
                     check_state("front");
                 }
             }
@@ -76,7 +76,7 @@ Item {
         }
 
         states: State {
-            name: "back"
+            name: "rotate"
             when: flipable.flipped
             PropertyChanges { target: rotation; angle: 180 }
         }
@@ -93,7 +93,7 @@ Item {
 
     function check_state(cover) {
         if (cover === "front") {
-            if (viewer.coverStatus.length === viewer.n_blockMovies)
+            if (viewer.n_covers === viewer.n_blockMovies)
                 view.state = "show"
             if (!front_cached)
                 front.grabToImage(function(result) { if (result.saveToFile(root.tmp+id_movie+"f.jpg")) root.cache_cover_front.push(id_movie) })
@@ -104,9 +104,9 @@ Item {
     }
 
     Component.onCompleted: {
-        if (root.cache_cover_front.indexOf(id_movie) !== -1)
+        //if (root.cache_cover_front.indexOf(id_movie) !== -1)
             front_cached = true
-        if (root.cache_cover_back.indexOf(id_movie) !== -1)
+        //if (root.cache_cover_back.indexOf(id_movie) !== -1)
             back_cached = true
     }
 }

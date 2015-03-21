@@ -4,10 +4,10 @@ import QtMultimedia 5.4
 Item {
     id: previewPlayer
 
-    property bool quit: root.preview_quit
     property bool cached
     property bool ready
     property bool downloading
+    property bool quit: root.stop_preview_quit
     property string host
     property string url
     property string target: id_movie+"p.mp4"
@@ -39,7 +39,12 @@ Item {
                 icon.visible = true
             }
         }
-        //onStatusChanged: TODO: Comprobar si se puede controlar qu no lea mas que lo escrito en disco desde aca.
+        onStatusChanged: {
+            if ((player.status === 7) && ((player.position+1) !== player.duration)) { // FIX: Hacer que no se vuelva a cumplir al poner play nuevamente.
+                player.seek(player.position-100)
+                player.pause()
+            }
+        }
     }
 
     Timer {
@@ -69,6 +74,7 @@ Item {
                 if (player.playbackState === MediaPlayer.PlayingState) {
                     player.pause()
                 } else if (player.playbackState === MediaPlayer.PausedState) {
+                    player.seek(player.position)// TODO: Posiblemente no sea necesario.
                     player.play()
                } else if (player.playbackState === MediaPlayer.StoppedState) {
                     icon.visible = false
@@ -83,21 +89,16 @@ Item {
 
     function abort() {
         if ((player.playbackState === MediaPlayer.PlayingState)
-            || (player.playbackState === MediaPlayer.PausedState)) {
+            || (player.playbackState === MediaPlayer.PausedState))
             player.stop()
-        }
         if (downloading) {
             downloading = false
             cpp.preview_handler(id_private, "", "", "", false, false, false, true)
         }
         if (quit) {
-            var sts = viewer.previewStatus.indexOf(0)
-            if (sts !== -1) {
-                viewer.previewStatus.splice(sts, 1);
-                if (viewer.previewStatus.indexOf(0) === -1)
-                    cpp.quit() // FIX: Revisar si solamente es la ultima instancia de previewPlayer la que llama a quit.
-                               // TODO: Revisar todo y que todos los quit se puedan apretar un solo vez.
-            }
+            viewer.n_previews -= 1
+            if (viewer.n_previews === 0)
+                cpp.quit()
         }
     }
 
