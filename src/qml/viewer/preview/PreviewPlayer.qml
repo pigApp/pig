@@ -20,6 +20,7 @@ Item {
         height: screen.height/32.72
         sourceSize.width: width
         sourceSize.height: height
+        opacity: 0.5
         source:  { if (!cached) "qrc:/img-download"; else "qrc:/img-replay" }
         anchors.centerIn: parent
     }
@@ -74,7 +75,7 @@ Item {
                 if (player.playbackState === MediaPlayer.PlayingState) {
                     player.pause()
                 } else if (player.playbackState === MediaPlayer.PausedState) {
-                    player.seek(player.position)// TODO: Posiblemente no sea necesario.
+                    player.seek(player.position) // TODO: Posiblemente no sea necesario.
                     player.play()
                } else if (player.playbackState === MediaPlayer.StoppedState) {
                     icon.visible = false

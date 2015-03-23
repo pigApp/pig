@@ -46,31 +46,19 @@ Item {
             }
         }
     }
-    Row {
-        spacing: parent.width/192
+    Text {
+        id: labelLink
+        text: "<style type='text/css'>a:link{color:#ffffff;font-style:normal;text-decoration:none}</style>"+
+              "<a href=\'http://google.com\'>READ MORE &nbsp;&nbsp;➟</a>"
+        textFormat: Text.RichText
+        font.family: fontGlobal.name
+        font.bold: true
+        font.pixelSize: screen.height/54
         anchors.right: parent.right
         anchors.rightMargin: parent.width/128
         anchors.bottom: parent.bottom
         anchors.bottomMargin: parent.height/154.28
-        Text {
-            id: labelReadMore
-            text: "READ MORE"
-            color: "white"
-            font.family: fontGlobal.name
-            font.bold: true
-            font.pixelSize: screen.height/54
-        }
-        Text {
-            id: labelLink
-            text: "<style type='text/css'> a:link{color:#000000;font-style:normal;text-decoration:none} </style>"+
-                  "<a href=\'http://google.com\'>GITHUB.COM/PIGAPP/NEWS <font color='#ffffff'>&nbsp;&nbsp;➟</font></a>"
-            textFormat: Text.RichText
-            font.family: fontGlobal.name
-            font.bold: true
-            font.pixelSize: screen.height/54
-            anchors.verticalCenter: labelReadMore.verticalCenter
-            onLinkActivated: Qt.openUrlExternally(link)
-        }
+        onLinkActivated: Qt.openUrlExternally(link)
     }
 
     Keys.onPressed: {

@@ -17,14 +17,13 @@ Item {
 
     Rectangle {
         id: layerPreview
-        width: parent.width/3
-        height: parent.height/2.25
+        width: parent.width/2.82
+        height: parent.height/2.07
         color: Qt.rgba(1, 1, 1, 0.02)
         anchors.right: parent.right
-        anchors.rightMargin: 110//parent.width/16.69
+        anchors.rightMargin: parent.width/22.58
         anchors.verticalCenter: parent.verticalCenter
-        anchors.verticalCenterOffset: -25//-parent.height/270
-        //anchors.verticalCenterOffset: -parent.height/270
+        anchors.verticalCenterOffset: -parent.height/43.2
     }
 
     PathView {
@@ -138,7 +137,7 @@ Item {
             if (event.key === Qt.Key_Up) {
                 if ((root.n_movies > 5) && (view.counter < root.n_movies)) {
                     if ((root.n_movies-view.counter) >= 5 ) {
-                        view.counter = view.counter+5
+                        view.counter += 5
                     } else {
                         n_blockMovies = root.n_movies-view.counter
                         view.counter = view.counter+n_blockMovies
@@ -164,18 +163,19 @@ Item {
                     ++locationOnBlockMovies
                     ++currentMovie
                 }
-            } else if (event.key === Qt.Key_Left) { // TODO: Hacia la izquierda funciona mal.
+            } else if (event.key === Qt.Key_Left) {
                 view.enabled = false
                 delayEnable.start()
                 decrementCurrentIndex()
                 if (locationOnBlockMovies === 0) {
-                    locationOnBlockMovies = view.counter-1
+                    locationOnBlockMovies = n_blockMovies-1
                     currentMovie = view.counter
                 } else {
                     --locationOnBlockMovies
                     --currentMovie
                 }
-            } else if ((event.key === Qt.Key_H) && (event.modifiers & Qt.ControlModifier) && !timeOutNetwork.running) {
+            } else if ((event.key === Qt.Key_H)
+                && (event.modifiers & Qt.ControlModifier) && !timeOutNetwork.running) {
                 screen.state = "show_help"
                 event.accepted = true
             } else if (event.key === Qt.Key_Escape) {
@@ -232,7 +232,7 @@ Item {
                 visible: recipe.PathView.isCurrentItem
                 anchors.left: cover.left
                 anchors.bottom: cover.top
-                anchors.bottomMargin: 30//parent.height/108
+                anchors.bottomMargin: parent.height/36
             }
             Cover {
                 id: cover
@@ -240,13 +240,13 @@ Item {
                 height: parent.height/1.8
                 anchors.centerIn: parent
                 anchors.horizontalCenterOffset: -parent.width/15.86
-                anchors.verticalCenterOffset: -25//-parent.height/270
+                anchors.verticalCenterOffset: -parent.height/43.2
             }
             Dates {
                 id: dates
                 visible: recipe.PathView.isCurrentItem
                 anchors.top: cover.bottom
-                anchors.topMargin: 20//
+                anchors.topMargin: parent.height/54
                 anchors.left: cover.left
             }
             Preview {
@@ -254,7 +254,7 @@ Item {
                 width: parent.width/3
                 height: parent.height/2.25
                 anchors.right: parent.right
-                anchors.rightMargin: 110//parent.width/16.69
+                anchors.rightMargin: parent.width/18.28
                 anchors.verticalCenter: cover.verticalCenter
             }
             Scenes {
@@ -262,15 +262,10 @@ Item {
                 totalScenes: scenes
                 enabled: recipe.PathView.isCurrentItem
                 visible: recipe.PathView.isCurrentItem
-                //anchors.left: cover.right
-                //anchors.leftMargin: parent.width/128
-                //anchors.bottom: cover.bottom
-                //anchors.bottomMargin: -40//-35 //-parent.height/830.76
-                anchors.left: cover.right//preview.left
-                anchors.leftMargin: 50
-                anchors.top: preview.bottom
-                anchors.topMargin: 25//
-                //anchors.horizontalCenter: preview.horizontalCenter
+                anchors.top: cover.bottom
+                anchors.topMargin: 12//
+                anchors.left: cover.right
+                anchors.leftMargin: 70//
             }
         }
     }

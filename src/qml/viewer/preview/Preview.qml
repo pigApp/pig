@@ -12,7 +12,7 @@ Item {
         sourceSize.width: width
         sourceSize.height: height
         source: { if (!cached) "qrc:/img-play"; else "qrc:/img-replay" }
-        opacity: 0.7
+        opacity: 0.5
         anchors.centerIn: parent
     }
 

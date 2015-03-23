@@ -26,29 +26,16 @@ Rectangle {
                 font.pixelSize: screen.height/23
             }
         }
-        Row {
-            spacing: screen.width/192
+        Text {
+            id: labelLink
+            text: "<style type='text/css'>a:link{color:#ffffff;font-style:normal;text-decoration:none}</style>"+
+                  "<a href=\'http://google.com\'>GET LATEST DATABASE &nbsp;&nbsp;➟</a>"
+            textFormat: Text.RichText
+            font.family: fontGlobal.name
+            font.bold: true
+            font.pixelSize: screen.height/54
             anchors.horizontalCenter: rowStatus.horizontalCenter
-            Text {
-                id: labelGet
-                text: "GET LATEST DATABASE"
-                color: "white"
-                font.family: fontGlobal.name
-                font.bold: true
-                font.pixelSize: screen.height/54
-            }
-            Text {
-                id: labelLink
-                text: "<style type='text/css'> a:link{color:#000000;font-style:normal;text-decoration:none} </style>"+
-                      "<a href=\'http://google.com\'>DL.BINTRAY.COM/DB <font color='#ffffff'>&nbsp;&nbsp;➟</font></a>"
-                textFormat: Text.RichText
-                font.family: fontGlobal.name
-                font.bold: true
-                font.pixelSize: screen.height/54
-                anchors.verticalCenter: labelGet.verticalCenter
-                anchors.verticalCenterOffset: screen.height/1300
-                onLinkActivated: Qt.openUrlExternally(link)
-            }
+            onLinkActivated: Qt.openUrlExternally(link)
         }
     }
 

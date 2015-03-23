@@ -7,21 +7,17 @@ Item {
 
     Row {
         spacing: screen.width/192
-        anchors.left: parent.left
         anchors.top: parent.top
-        //anchors.horizontalCenter: parent.horizontalCenter
+        anchors.left: parent.left
         Text {
             id: labelScenes
             text: "SCENES"
             color: "white"
             font.family: fontGlobal.name
+            font.bold: true
             font.pixelSize: screen.height/23
             anchors.top: parent.top
-            anchors.topMargin: 8
-            //anchors.left: layerPreview.left
-            //anchors.top: layerPreview.bottom
-            //anchors.topMargin: 77//
-            //anchors.horizontalCenter: layerPreview.horizontalCenter
+            anchors.topMargin: screen.height/135
         }
         Repeater {
             id: repeater
@@ -39,7 +35,6 @@ Item {
                         icon.viewed = true
                         icon.source = "qrc:/img-scene-off"
                         screen.state = "show_movie"
-                        console.log(id_movie+"t.torrent");
                         cpp.torrent_handler(hostTorrent, urlTorrent, id_movie+"t.torrent", index+1, false)
                     }
                 }

@@ -4,8 +4,6 @@
 - Setting torrent.
 - Help,
 - Icono scenes.
-- View hacia la izquierda falla.
-- Ver si conviene puntero a puntero o pasar el contenido de memoria del primer puntero (osea la direcccion del objeto original).
 - Esconder el puntero del mouse en el reproductor.
 - Descomentar ComponentOnComplete en cover.
 
