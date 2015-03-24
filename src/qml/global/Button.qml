@@ -29,8 +29,10 @@ Item {
         color: "white"
         font.family: fontGlobal.name
         font.bold: true
-        ColorAnimation on color { id: labelIn; running: false; to: colorIn; duration: 100 }
-        ColorAnimation on color { id: labelOut; running: false; to: "white"; duration: 100 }
+        ColorAnimation on color { id: labelIn
+            ; running: false; to: colorIn; duration: 100 }
+        ColorAnimation on color { id: labelOut
+            ; running: false; to: "white"; duration: 100 }
         MouseArea {
             hoverEnabled: true
             anchors.topMargin: screen.height/83.07

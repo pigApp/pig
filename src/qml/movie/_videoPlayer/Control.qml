@@ -11,10 +11,12 @@ Item {
         console.log("DOWN: "+(mb_downloaded/root.n_mb))
 
         if (!videoPlayer.sandbox) {
-            if (!videoPlayer.stanby && (player.position/player.duration)+0.001 >= (mb_downloaded/root.n_mb)) {
+            if (!videoPlayer.stanby && (player.position/player.duration)+0.001
+                >= (mb_downloaded/root.n_mb)) {
                 videoPlayer.standby = true
                 console.log("//// STANDBY")//
-            } else if (videoPlayer.stanby && (player.position/player.duration)+0.001 < (mb_downloaded/root.n_mb)) {
+            } else if (videoPlayer.stanby && (player.position/player.duration)+0.001
+                < (mb_downloaded/root.n_mb)) {
                 videoPlayer.standby = false
                 console.log("//// STANDBY-FALSE")//
             }

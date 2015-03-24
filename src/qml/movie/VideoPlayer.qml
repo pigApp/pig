@@ -25,7 +25,9 @@ Rectangle {
                     movie.sandboxStatus = "SUCCESS"
                     videoPlayer.sandbox = false
                     controls.forceActiveFocus()
-                } else if (((player.status === MediaPlayer.NoMedia) || (player.status === MediaPlayer.InvalidMedia) && (player.source !== ""))) {
+                } else if (((player.status === MediaPlayer.NoMedia)
+                    || (player.status === MediaPlayer.InvalidMedia)
+                    && (player.source !== ""))) {
                     player.source = ""
                     movie.sandboxStatus = "FAIL"
                 }
@@ -85,15 +87,19 @@ Rectangle {
         Transition {
             to: "show_controls"
             ParallelAnimation {
-                NumberAnimation { target: videoPlayer; easing.amplitude: 1.7; properties: "sideBoxMargin"; to: 0; duration: 500; easing.type: Easing.OutQuart }
-                NumberAnimation { target: videoPlayer; easing.amplitude: 1.7; properties: "barsMargin"; to: 0; duration: 200; easing.type: Easing.OutQuart }
+                NumberAnimation { target: videoPlayer; easing.amplitude: 1.7; properties: "sideBoxMargin"
+                    ; to: 0; duration: 500; easing.type: Easing.OutQuart }
+                NumberAnimation { target: videoPlayer; easing.amplitude: 1.7; properties: "barsMargin"
+                    ; to: 0; duration: 200; easing.type: Easing.OutQuart }
             }
         },
         Transition {
             to: "hide_controls"
             ParallelAnimation {
-                NumberAnimation { target: videoPlayer; easing.amplitude: 1.7; properties: "sideBoxMargin"; to: -screen.width/9.6; duration: 500; easing.type: Easing.OutQuart }
-                NumberAnimation { target: videoPlayer; easing.amplitude: 1.7; properties: "barsMargin"; to: -screen.height/54; duration: 500; easing.type: Easing.OutQuart }
+                NumberAnimation { target: videoPlayer; easing.amplitude: 1.7; properties: "sideBoxMargin"
+                    ; to: -screen.width/9.6; duration: 500; easing.type: Easing.OutQuart }
+                NumberAnimation { target: videoPlayer; easing.amplitude: 1.7; properties: "barsMargin"
+                    ; to: -screen.height/54; duration: 500; easing.type: Easing.OutQuart }
             }
         }
     ]
@@ -104,6 +110,10 @@ Rectangle {
     } 
 
     Component.onCompleted: { player.source = "file://"+root.movie_file_path }
-    Component.onDestruction: { if ((player.playbackState === MediaPlayer.PlayingState) || (player.playbackState === MediaPlayer.PausedState)) player.stop() }
+    Component.onDestruction: {
+        if ((player.playbackState === MediaPlayer.PlayingState)
+            || (player.playbackState === MediaPlayer.PausedState))
+            player.stop()
+    }
 }
 // Tabs hechos.

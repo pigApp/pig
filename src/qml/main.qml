@@ -88,74 +88,106 @@ Item {
         states: [
             State {
                 name: "ask_password"
-                PropertyChanges { target: loader_root; source: "global/_setting/Password.qml"; restoreEntryValues: false }
+                PropertyChanges { target: loader_root; source: "global/_setting/Password.qml"
+                    ; restoreEntryValues: false }
             },
             State {
                 name: "show_update"
-                PropertyChanges { target: background; visible: true; restoreEntryValues: false }
-                PropertyChanges { target: backgroundBlur; visible: true; restoreEntryValues: false }
-                PropertyChanges { target: loader_root; source: "update/Update.qml"; restoreEntryValues: false }
+                PropertyChanges { target: background; visible: true
+                    ; restoreEntryValues: false }
+                PropertyChanges { target: backgroundBlur; visible: true
+                    ; restoreEntryValues: false }
+                PropertyChanges { target: loader_root; source: "update/Update.qml"
+                    ; restoreEntryValues: false }
             },
             State {
                 name: "show_news"
-                PropertyChanges { target: loader_root; source: "update/News.qml"; restoreEntryValues: false }
+                PropertyChanges { target: loader_root; source: "update/News.qml"
+                    ; restoreEntryValues: false }
             },
             State {
                 name: "show_setting"
-                PropertyChanges { target: loader_root_b; enabled: false; restoreEntryValues: false }
-                PropertyChanges { target: loader_root; source: "global/Setting.qml"; restoreEntryValues: false }
+                PropertyChanges { target: loader_root_b; enabled: false
+                    ; restoreEntryValues: false }
+                PropertyChanges { target: loader_root; source: "global/Setting.qml"
+                    ; restoreEntryValues: false }
             },
             State {
                 name: "hide_setting"
-                PropertyChanges { target: loader_root; source: ""; restoreEntryValues: false }
-                PropertyChanges { target: loader_root_b; enabled: true; restoreEntryValues: false }
-                PropertyChanges { target: loader_root_b; focus: true; restoreEntryValues: false }
+                PropertyChanges { target: loader_root; source: ""
+                    ; restoreEntryValues: false }
+                PropertyChanges { target: loader_root_b; enabled: true
+                    ; restoreEntryValues: false }
+                PropertyChanges { target: loader_root_b; focus: true
+                    ; restoreEntryValues: false }
 
             },
             State {
                 name: "show_help"
-                PropertyChanges { target: loader_root; source: "global/Help.qml"; restoreEntryValues: false }
+                PropertyChanges { target: loader_root; source: "global/Help.qml"
+                    ; restoreEntryValues: false }
             },
             State {
                 name: "hide_help"
-                PropertyChanges { target: root; help_finder: false; restoreEntryValues: false }
-                PropertyChanges { target: loader_root; source: ""; restoreEntryValues: false }
-                PropertyChanges { target: loader_root_b; focus: true; restoreEntryValues: false }
+                PropertyChanges { target: root; help_finder: false
+                    ; restoreEntryValues: false }
+                PropertyChanges { target: loader_root; source: ""
+                    ; restoreEntryValues: false }
+                PropertyChanges { target: loader_root_b; focus: true
+                    ; restoreEntryValues: false }
 
             },
             State {
                 name: "show_finder"
-                PropertyChanges { target: root; category: ""; restoreEntryValues: false }
-                PropertyChanges { target: root; pornstar: ""; restoreEntryValues: false }
-                PropertyChanges { target: loader_root; source: ""; restoreEntryValues: false }
-                PropertyChanges { target: loader_root_b; source: "finder/Finder.qml"; restoreEntryValues: false }
-                PropertyChanges { target: root; xb: 0; restoreEntryValues: false }
+                PropertyChanges { target: root; category: ""
+                    ; restoreEntryValues: false }
+                PropertyChanges { target: root; pornstar: ""
+                    ; restoreEntryValues: false }
+                PropertyChanges { target: loader_root; source: ""
+                    ; restoreEntryValues: false }
+                PropertyChanges { target: loader_root_b; source: "finder/Finder.qml"
+                    ; restoreEntryValues: false }
+                PropertyChanges { target: root; xb: 0
+                    ; restoreEntryValues: false }
             },
             State {
                 name: "show_viewer"
                 PropertyChanges { target: root; xb: screen.width+50 }
-                PropertyChanges { target: loader_root_b; source: "viewer/Viewer.qml"; restoreEntryValues: false }
+                PropertyChanges { target: loader_root_b; source: "viewer/Viewer.qml"
+                    ; restoreEntryValues: false }
             },
             State {
                 name: "show_movie"
-                PropertyChanges { target: root; status: "DOWNLOAD METADATA"; restoreEntryValues: false }
-                PropertyChanges { target: loader_root; source: "movie/Movie.qml"; restoreEntryValues: false }
+                PropertyChanges { target: root; status: "DOWNLOAD METADATA"
+                    ; restoreEntryValues: false }
+                PropertyChanges { target: loader_root; source: "movie/Movie.qml"
+                    ; restoreEntryValues: false }
             },
             State {
                 name: "hide_movie"
-                PropertyChanges { target: loader_root; source: ""; restoreEntryValues: false }
-                PropertyChanges { target: root; status: ""; restoreEntryValues: false }
-                PropertyChanges { target: root; bitRate: ""; restoreEntryValues: false }
-                PropertyChanges { target: root; debug: ""; restoreEntryValues: false }
-                PropertyChanges { target: root; movie_file_path: ""; restoreEntryValues: false }
-                PropertyChanges { target: root; mb_required: 0; restoreEntryValues: false }
-                PropertyChanges { target: root; mb_downloaded: 0; restoreEntryValues: false }
-                PropertyChanges { target: root; n_mb: 0; restoreEntryValues: false }
+                PropertyChanges { target: loader_root; source: ""
+                    ; restoreEntryValues: false }
+                PropertyChanges { target: root; status: ""
+                    ; restoreEntryValues: false }
+                PropertyChanges { target: root; bitRate: ""
+                    ; restoreEntryValues: false }
+                PropertyChanges { target: root; debug: ""
+                    ; restoreEntryValues: false }
+                PropertyChanges { target: root; movie_file_path: ""
+                    ; restoreEntryValues: false }
+                PropertyChanges { target: root; mb_required: 0
+                    ; restoreEntryValues: false }
+                PropertyChanges { target: root; mb_downloaded: 0
+                    ; restoreEntryValues: false }
+                PropertyChanges { target: root; n_mb: 0
+                    ; restoreEntryValues: false }
             },
             State {
                 name: "show_db_error"
-                PropertyChanges { target: loader_root_b; source: ""; restoreEntryValues: false }
-                PropertyChanges { target: loader_root; source: "global/Db_error.qml"; restoreEntryValues: false }
+                PropertyChanges { target: loader_root_b; source: ""
+                    ; restoreEntryValues: false }
+                PropertyChanges { target: loader_root; source: "global/Db_error.qml"
+                    ; restoreEntryValues: false }
             }
         ]
     }

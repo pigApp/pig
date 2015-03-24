@@ -57,7 +57,8 @@ Item {
                 player.enabled = true
                 player.visible = true
             } else {
-                cpp.preview_handler(id_private, host, url, target, false, false, false, false)
+                cpp.preview_handler(id_private, host, url
+                    , target, false, false, false, false)
                 downloading = true
             }
         }
@@ -94,7 +95,8 @@ Item {
             player.stop()
         if (downloading) {
             downloading = false
-            cpp.preview_handler(id_private, "", "", "", false, false, false, true)
+            cpp.preview_handler(id_private, "", "", ""
+                , false, false, false, true)
         }
         if (quit) {
             viewer.n_previews -= 1

@@ -15,6 +15,7 @@ Item {
         anchors.bottom: parent.bottom
     }
 
-    NumberAnimation { target: label; running: root.init; properties: "opacity"; to: 1.0; duration: 3200; easing.type: Easing.InOutQuart }
+    NumberAnimation { target: label; running: root.init; properties: "opacity"
+        ; to: 1.0; duration: 3200; easing.type: Easing.InOutQuart }
 }
 // Tabs hechos.

@@ -32,7 +32,8 @@ Rectangle {
         }
         onAccepted: {
             root.userInput = text
-            cpp.find(root.userInput, root.pornstar, root.category, root.quality, root.full)
+            cpp.find(root.userInput, root.pornstar
+                , root.category, root.quality, root.full)
         }
     }
 
@@ -43,7 +44,10 @@ Rectangle {
 
     Connections {
         target: cpp
-        onSig_ret_db: { if ((n_movies === 0) && (loader_filter.source == "")) input.color = "red" }
+        onSig_ret_db: {
+            if ((n_movies === 0) && (loader_filter.source == ""))
+                input.color = "red"
+        }
     }
 }
 // Tabs hechos.

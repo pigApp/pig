@@ -66,10 +66,10 @@ void Torrent::start(const QString *const tmp, const QStringList *const file)
     h.set_sequential_download(true);
     h.set_priority(255);
 
-    if (ec)
-        (*_root)->setProperty("status", "TORRENT ERROR");
-    else
+    if (!ec)
         main_loop();
+    else
+        error();
 }
 
 void Torrent::main_loop()
@@ -92,7 +92,7 @@ void Torrent::main_loop()
             case libtorrent::tracker_error_alert::alert_type:
             case libtorrent::torrent_error_alert::alert_type:
             {
-                (*_root)->setProperty("status", "TORRENT ERROR");
+                error();
                 break;
             }
             default: break;
@@ -181,6 +181,11 @@ void Torrent::information()
             }
         }
     }
+}
+
+void Torrent::error()
+{
+    (*_root)->setProperty("status", "TORRENT ERROR");
 }
 
 

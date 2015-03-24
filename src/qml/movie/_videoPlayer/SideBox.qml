@@ -72,7 +72,12 @@ Item {
                         height: screen.height/32.72
                         sourceSize.width: width
                         sourceSize.height: height
-                        source: { if ((player.volume === 0.0) || player.muted) "qrc:/img-volume-off"; else "qrc:/img-volume" }
+                        source: {
+                            if ((player.volume === 0.0) || player.muted)
+                                "qrc:/img-volume-off"
+                            else
+                                "qrc:/img-volume"
+                        }
                     }
                     Text {
                         id: labelVolume
@@ -88,7 +93,12 @@ Item {
                                 "0.0"
                             }
                         }
-                        color: { if (player.muted || (player.volume === 0.0)) Qt.rgba(0.1, 0.1, 0.1, 1); else "white" }
+                        color: {
+                            if (player.muted || (player.volume === 0.0))
+                                Qt.rgba(0.1, 0.1, 0.1, 1)
+                            else
+                                "white"
+                        }
                         font.family: fontGlobal.name
                         font.pixelSize: screen.height/23
                         anchors.verticalCenter: iconVolume.verticalCenter

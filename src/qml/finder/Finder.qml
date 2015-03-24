@@ -99,16 +99,24 @@ Item {
             to: "show"
             SequentialAnimation {
                 ParallelAnimation {
-                    NumberAnimation { target: root; easing.amplitude: 1.7; properties: "screenR"; to: 0; duration: 600; easing.type: Easing.OutQuart }
-                    NumberAnimation { target: root; easing.amplitude: 1.7; properties: "screenG"; to: 0; duration: 600; easing.type: Easing.OutQuart }
-                    NumberAnimation { target: root; easing.amplitude: 1.7; properties: "screenB"; to: 0; duration: 600; easing.type: Easing.OutQuart }
-                    NumberAnimation { target: root; easing.amplitude: 1.7; properties: "screenA"; to: 0; duration: 600; easing.type: Easing.OutQuart }
-                    NumberAnimation { target: backgroundBlur; easing.amplitude: 1.7; properties: "radius"; to: 0; duration: 600; easing.type: Easing.OutQuart }
+                    NumberAnimation { target: root; easing.amplitude: 1.7; properties: "screenR"
+                        ; to: 0; duration: 600; easing.type: Easing.OutQuart }
+                    NumberAnimation { target: root; easing.amplitude: 1.7; properties: "screenG"
+                        ; to: 0; duration: 600; easing.type: Easing.OutQuart }
+                    NumberAnimation { target: root; easing.amplitude: 1.7; properties: "screenB"
+                        ; to: 0; duration: 600; easing.type: Easing.OutQuart }
+                    NumberAnimation { target: root; easing.amplitude: 1.7; properties: "screenA"
+                        ; to: 0; duration: 600; easing.type: Easing.OutQuart }
+                    NumberAnimation { target: backgroundBlur; easing.amplitude: 1.7; properties: "radius"
+                        ; to: 0; duration: 600; easing.type: Easing.OutQuart }
                 }
                 ParallelAnimation {
-                    NumberAnimation { target: input; properties: "x"; to: 0; duration: 1200; easing.type: Easing.InOutQuart }
-                    NumberAnimation { target: columnFilters; properties: "x"; to: screen.width/3.69; duration: 1200; easing.type: Easing.InOutQuart }
-                    NumberAnimation { target: quality; properties: "x"; to: screen.width/1.9; duration: 1200; easing.type: Easing.InOutCubic }
+                    NumberAnimation { target: input; properties: "x"
+                        ; to: 0; duration: 1200; easing.type: Easing.InOutQuart }
+                    NumberAnimation { target: columnFilters; properties: "x"
+                        ; to: screen.width/3.69; duration: 1200; easing.type: Easing.InOutQuart }
+                    NumberAnimation { target: quality; properties: "x"
+                        ; to: screen.width/1.9; duration: 1200; easing.type: Easing.InOutCubic }
                 }
                 PropertyAction { target: input; property: "enabled"; value: true }
             }
@@ -118,13 +126,18 @@ Item {
             SequentialAnimation {
                 PropertyAction { target: input; property: "enabled"; value: false }
                 ParallelAnimation {
-                    NumberAnimation { target: input; properties: "x"; to: -screen.width/3.58; duration: 600; easing.type: Easing.InOutQuart }
-                    NumberAnimation { target: columnFilters; properties: "x"; to: screen.width+10; duration: 600; easing.type: Easing.InOutQuart }
-                    NumberAnimation { target: quality; properties: "x"; to: screen.width+10; duration: 600; easing.type: Easing.InOutQuart }
+                    NumberAnimation { target: input; properties: "x"
+                        ; to: -screen.width/3.58; duration: 600; easing.type: Easing.InOutQuart }
+                    NumberAnimation { target: columnFilters; properties: "x"
+                        ; to: screen.width+10; duration: 600; easing.type: Easing.InOutQuart }
+                    NumberAnimation { target: quality; properties: "x"
+                        ; to: screen.width+10; duration: 600; easing.type: Easing.InOutQuart }
                 }
                 ParallelAnimation {
-                    NumberAnimation { target: root; easing.amplitude: 1.7; properties: "screenA"; to: 0.4; duration: 600; easing.type: Easing.OutQuart }
-                    NumberAnimation { target: backgroundBlur; easing.amplitude: 1.7; properties: "radius"; to: 32; duration: 600; easing.type: Easing.OutQuart }
+                    NumberAnimation { target: root; easing.amplitude: 1.7; properties: "screenA"
+                        ; to: 0.4; duration: 600; easing.type: Easing.OutQuart }
+                    NumberAnimation { target: backgroundBlur; easing.amplitude: 1.7; properties: "radius"
+                        ; to: 32; duration: 600; easing.type: Easing.OutQuart }
                 }
                 PropertyAction { target: screen; property: "state"; value: "show_viewer" }
             }
@@ -135,10 +148,14 @@ Item {
                 PropertyAction { target: input; property: "enabled"; value: false }
                 PropertyAction { target: loader_filter; property: "source"; value: "Filters.qml" }
                 ParallelAnimation {
-                    NumberAnimation { target: input; properties: "x"; to: -screen.width/1.79; duration: 120; easing.type: Easing.InOutQuart }
-                    NumberAnimation { target: columnFilters; properties: "x"; to: -screen.width/1.79; duration: 200; easing.type: Easing.InOutQuart }
-                    NumberAnimation { target: quality; properties: "x"; to: -screen.width/1.79; duration: 350; easing.type: Easing.InOutQuart }
-                    NumberAnimation { target: root; easing.amplitude: 1.7; properties: "xa"; to: 0; duration: 1200; easing.type: Easing.OutQuart }
+                    NumberAnimation { target: input; properties: "x"
+                        ; to: -screen.width/1.79; duration: 120; easing.type: Easing.InOutQuart }
+                    NumberAnimation { target: columnFilters; properties: "x"
+                        ; to: -screen.width/1.79; duration: 200; easing.type: Easing.InOutQuart }
+                    NumberAnimation { target: quality; properties: "x"
+                        ; to: -screen.width/1.79; duration: 350; easing.type: Easing.InOutQuart }
+                    NumberAnimation { target: root; easing.amplitude: 1.7; properties: "xa"
+                        ; to: 0; duration: 1200; easing.type: Easing.OutQuart }
                 }
             }
         },
@@ -146,10 +163,14 @@ Item {
             to: "hide_filter"
             SequentialAnimation {
                 ParallelAnimation {
-                    NumberAnimation { target: input; properties: "x"; to: 0; duration: 1240; easing.type: Easing.InOutQuart }
-                    NumberAnimation { target: columnFilters; properties: "x"; to: screen.width/3.69; duration: 1200; easing.type: Easing.InOutQuart }
-                    NumberAnimation { target: quality; properties: "x"; to: screen.width/1.9; duration: 1100; easing.type: Easing.InOutQuart }
-                    NumberAnimation { target: root; easing.amplitude: 1.7; properties: "xa"; to: screen.width+10; duration: 1200; easing.type: Easing.OutQuart }
+                    NumberAnimation { target: input; properties: "x"
+                        ; to: 0; duration: 1240; easing.type: Easing.InOutQuart }
+                    NumberAnimation { target: columnFilters; properties: "x"
+                        ; to: screen.width/3.69; duration: 1200; easing.type: Easing.InOutQuart }
+                    NumberAnimation { target: quality; properties: "x"
+                        ; to: screen.width/1.9; duration: 1100; easing.type: Easing.InOutQuart }
+                    NumberAnimation { target: root; easing.amplitude: 1.7; properties: "xa"
+                        ; to: screen.width+10; duration: 1200; easing.type: Easing.OutQuart }
                 }
                 PropertyAction { target: loader_filter; property: "source"; value: "" }
                 PropertyAction { target: input; property: "enabled"; value: true }
@@ -159,10 +180,13 @@ Item {
             to: "hide_filter_finder"
             SequentialAnimation {
                 ParallelAnimation {
-                    NumberAnimation { target: root; easing.amplitude: 1.7; properties: "xa"; to: screen.width+10; duration: 600; easing.type: Easing.OutQuart }
-                    NumberAnimation { target: backgroundBlur; easing.amplitude: 1.7; properties: "radius"; to: 32; duration: 600; easing.type: Easing.OutQuart }
+                    NumberAnimation { target: root; easing.amplitude: 1.7; properties: "xa"
+                        ; to: screen.width+10; duration: 600; easing.type: Easing.OutQuart }
+                    NumberAnimation { target: backgroundBlur; easing.amplitude: 1.7; properties: "radius"
+                        ; to: 32; duration: 600; easing.type: Easing.OutQuart }
                 }
-                NumberAnimation { target: root; easing.amplitude: 1.7; properties: "screenA"; to: 0.4; duration: 600; easing.type: Easing.OutQuart }
+                NumberAnimation { target: root; easing.amplitude: 1.7; properties: "screenA"
+                    ; to: 0.4; duration: 600; easing.type: Easing.OutQuart }
                 PropertyAction { target: loader_filter; property: "source"; value: "" }
                 PropertyAction { target: root; property: "userInput"; value: "" }
                 PropertyAction { target: screen; property: "state"; value: "show_viewer" }
@@ -172,17 +196,20 @@ Item {
 
     Keys.onPressed: {
         root.init = false
-        if ((event.key === Qt.Key_S) && (event.modifiers & Qt.ControlModifier)) {
+        if ((event.key === Qt.Key_S)
+            && (event.modifiers & Qt.ControlModifier)) {
             if (finder.state !== "show_filter")
                 screen.state = "show_setting"
             event.accepted = true
-        } else if ((event.key === Qt.Key_H) && (event.modifiers & Qt.ControlModifier)) {
+        } else if ((event.key === Qt.Key_H)
+            && (event.modifiers & Qt.ControlModifier)) {
             if (finder.state !== "show_filter") {
                 root.help_finder = true
                 screen.state = "show_help"
                 event.accepted = true
             }
-        } else if ((event.key === Qt.Key_Q) && (event.modifiers & Qt.ControlModifier)) {
+        } else if ((event.key === Qt.Key_Q)
+            && (event.modifiers & Qt.ControlModifier)) {
             cpp.quit()
             event.accepted = true
         }

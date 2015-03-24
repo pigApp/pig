@@ -23,7 +23,12 @@ Item {
             height: screen.height/1.8
             sourceSize.width: width
             sourceSize.height: height
-            source: { if (!front_cached) hostCover+urlCoverFront; else "file://"+root.tmp+id_movie+"f.jpg" }
+            source: {
+                if (!front_cached)
+                    hostCover+urlCoverFront
+                else
+                    "file://"+root.tmp+id_movie+"f.jpg"
+            }
             onStatusChanged: {
                 if (status === Image.Ready) {
                     viewer.n_covers += 1
@@ -96,10 +101,16 @@ Item {
             if (viewer.n_covers === viewer.n_blockMovies)
                 view.state = "show"
             if (!front_cached)
-                front.grabToImage(function(result) { if (result.saveToFile(root.tmp+id_movie+"f.jpg")) root.cache_cover_front.push(id_movie) })
+                front.grabToImage(function(result) {
+                    if (result.saveToFile(root.tmp+id_movie+"f.jpg"))
+                        root.cache_cover_front.push(id_movie)
+                })
         } else {
             if(!back_cached)
-                back.grabToImage(function(result) { if (result.saveToFile(root.tmp+id_movie+"b.jpg")) root.cache_cover_back.push(id_movie) })
+                back.grabToImage(function(result) {
+                    if (result.saveToFile(root.tmp+id_movie+"b.jpg"))
+                        root.cache_cover_back.push(id_movie)
+                })
         }
     }
 

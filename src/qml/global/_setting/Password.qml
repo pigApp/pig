@@ -47,7 +47,8 @@ Rectangle {
             if (event.key === Qt.Key_Escape && onSet) {
                 screen.state = "hide_setting"
                 event.accepted = true
-            } else if ((event.key === Qt.Key_Q) && (event.modifiers & Qt.ControlModifier)) {
+            } else if ((event.key === Qt.Key_Q)
+                && (event.modifiers & Qt.ControlModifier)) {
                 cpp.quit()
                 event.accepted = true
             }

@@ -41,34 +41,14 @@ Item {
             startX: screen.width/2
             startY: screen.height/2
 
-            PathAttribute {
-                name: "recipe_z"
-                value: 2
-            }
-            PathAttribute {
-                name: "recipe_scale"
-                value: 1.0
-            }
-            PathQuad {
-                x: screen.width/2
-                y: screen.height/2.16
-                controlX: -screen.width/19.2
-                controlY: screen.height/1.9
-            }
-            PathAttribute {
-                name: "recipe_z"
-                value: 0
-            }
-            PathAttribute {
-                name: "recipe_scale"
-                value: 0.3
-            }
-            PathQuad {
-                x: screen.width/2
-                y: screen.height/2
-                controlX: screen.width/1.6
-                controlY: screen.height/1.8
-            }
+            PathAttribute { name: "recipe_z"; value: 2 }
+            PathAttribute { name: "recipe_scale"; value: 1.0 }
+            PathQuad { x: screen.width/2; y: screen.height/2.16
+                ; controlX: -screen.width/19.2; controlY: screen.height/1.9 }
+            PathAttribute { name: "recipe_z"; value: 0 }
+            PathAttribute { name: "recipe_scale"; value: 0.3 }
+            PathQuad { x: screen.width/2; y: screen.height/2
+                ; controlX: screen.width/1.6; controlY: screen.height/1.8 }
         }
 
         Timer {
@@ -102,9 +82,12 @@ Item {
                     PropertyAction { target: viewer; property: "locationOnBlockMovies"; value: 0 }
                     NumberAnimation { duration: 250 }
                     ParallelAnimation {
-                        NumberAnimation { target: root; easing.amplitude: 1.7; properties: "xb"; to: 0; duration: 1200; easing.type: Easing.OutQuart }
-                        NumberAnimation { target: root; easing.amplitude: 1.7; properties: "screenA"; to: 0.8; duration: 1200; easing.type: Easing.OutQuart }
-                        NumberAnimation { target: backgroundBlur; easing.amplitude: 1.7; properties: "radius"; to: 64; duration: 1200; easing.type: Easing.OutQuart }
+                        NumberAnimation { target: root; easing.amplitude: 1.7; properties: "xb"
+                            ; to: 0; duration: 1200; easing.type: Easing.OutQuart }
+                        NumberAnimation { target: root; easing.amplitude: 1.7; properties: "screenA"
+                            ; to: 0.8; duration: 1200; easing.type: Easing.OutQuart }
+                        NumberAnimation { target: backgroundBlur; easing.amplitude: 1.7; properties: "radius"
+                            ; to: 64; duration: 1200; easing.type: Easing.OutQuart }
                     }
                     PropertyAction { target: view; property: "enabled"; value: true }
                 }
@@ -114,9 +97,12 @@ Item {
                 SequentialAnimation {
                     PropertyAction { target: view; property: "enabled"; value: false }
                     ParallelAnimation {
-                        NumberAnimation { target: root; easing.amplitude: 1.7; properties: "xb"; to: screen.width+10; duration: 600; easing.type: Easing.OutQuart }
-                        NumberAnimation { target: root; easing.amplitude: 1.7; properties: "screenA"; to: 0.4; duration: 600; easing.type: Easing.OutQuart }
-                        NumberAnimation { target: backgroundBlur; easing.amplitude: 1.7; properties: "radius"; to: 32; duration: 600; easing.type: Easing.OutQuart }
+                        NumberAnimation { target: root; easing.amplitude: 1.7; properties: "xb"
+                            ; to: screen.width+10; duration: 600; easing.type: Easing.OutQuart }
+                        NumberAnimation { target: root; easing.amplitude: 1.7; properties: "screenA"
+                            ; to: 0.4; duration: 600; easing.type: Easing.OutQuart }
+                        NumberAnimation { target: backgroundBlur; easing.amplitude: 1.7; properties: "radius"
+                            ; to: 32; duration: 600; easing.type: Easing.OutQuart }
                     }
                     PropertyAction { target: viewer; property: "updateData"; value: true }
                 }
@@ -125,8 +111,10 @@ Item {
                 to: "hide_viewer_show_finder"
                 SequentialAnimation {
                     ParallelAnimation {
-                        NumberAnimation { target: root; easing.amplitude: 1.7; properties: "xb"; to: screen.width+10; duration: 600; easing.type: Easing.OutQuart }
-                        NumberAnimation { target: backgroundBlur; easing.amplitude: 1.7; properties: "radius"; to: 0; duration: 600; easing.type: Easing.OutQuart }
+                        NumberAnimation { target: root; easing.amplitude: 1.7; properties: "xb"
+                            ; to: screen.width+10; duration: 600; easing.type: Easing.OutQuart }
+                        NumberAnimation { target: backgroundBlur; easing.amplitude: 1.7; properties: "radius"
+                            ; to: 0; duration: 600; easing.type: Easing.OutQuart }
                     }
                     PropertyAction { target: screen; property: "state"; value: "show_finder" }
                 }
@@ -175,13 +163,15 @@ Item {
                     --currentMovie
                 }
             } else if ((event.key === Qt.Key_H)
-                && (event.modifiers & Qt.ControlModifier) && !timeOutNetwork.running) {
+                && (event.modifiers & Qt.ControlModifier)
+                && !timeOutNetwork.running) {
                 screen.state = "show_help"
                 event.accepted = true
             } else if (event.key === Qt.Key_Escape) {
                 view.state = "hide_viewer_show_finder"
                 event.accepted = true
-            } else if ((event.key === Qt.Key_Q) && (event.modifiers & Qt.ControlModifier)) {
+            } else if ((event.key === Qt.Key_Q)
+                && (event.modifiers & Qt.ControlModifier)) {
                 if (n_previews !== 0)
                     root.stop_preview_quit = true
                 else
@@ -285,11 +275,16 @@ Item {
             view.counter = root.n_movies
         }
         for (var i=0; i<n_blockMovies; i++) {
-            model.append({ "id_private": i, "id_movie": root.data_movies[row], "title": root.data_movies[row+1], "cast": root.data_movies[row+2]
-                , "categories": root.data_movies[row+3], "quality": root.data_movies[row+4], "time": root.data_movies[row+5]
-                , "full": root.data_movies[row+6], "hostCover": root.data_movies[row+7], "urlCoverFront": root.data_movies[row+8]
-                , "urlCoverBack": root.data_movies[row+9], "hostPreview": root.data_movies[row+10], "urlPreview": root.data_movies[row+11]
-                , "hostTorrent": root.data_movies[row+12], "urlTorrent": root.data_movies[row+13], "scenes": Number(root.data_movies[row+14]) })
+            model.append({
+                "id_private": i, "id_movie": root.data_movies[row], "title": root.data_movies[row+1]
+                , "cast": root.data_movies[row+2], "categories": root.data_movies[row+3]
+                , "quality": root.data_movies[row+4], "time": root.data_movies[row+5]
+                , "full": root.data_movies[row+6], "hostCover": root.data_movies[row+7]
+                , "urlCoverFront": root.data_movies[row+8], "urlCoverBack": root.data_movies[row+9]
+                , "hostPreview": root.data_movies[row+10], "urlPreview": root.data_movies[row+11]
+                , "hostTorrent": root.data_movies[row+12], "urlTorrent": root.data_movies[row+13]
+                , "scenes": Number(root.data_movies[row+14])
+            })
             row += 15
         }
         loader_root.source = "../global/Network.qml"

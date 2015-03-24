@@ -38,8 +38,10 @@ Item {
             SequentialAnimation {
                 PropertyAction { target: loader_torrentStatus; property: "source"; value: "TorrentStatus.qml" }
                 ParallelAnimation {
-                    NumberAnimation { target: root; easing.amplitude: 1.7; properties: "xb"; to: -(screen.width+10); duration: 1100; easing.type: Easing.OutQuart }
-                    NumberAnimation { target: root; easing.amplitude: 1.7; properties: "xa"; to: 0; duration: 1100; easing.type: Easing.OutQuart }
+                    NumberAnimation { target: root; easing.amplitude: 1.7; properties: "xb"
+                        ; to: -(screen.width+10); duration: 1100; easing.type: Easing.OutQuart }
+                    NumberAnimation { target: root; easing.amplitude: 1.7; properties: "xa"
+                        ; to: 0; duration: 1100; easing.type: Easing.OutQuart }
                 }
                 PropertyAction { target: loader_root_b; property: "enabled"; value: false }
                 PropertyAction { target: loader_root_b; property: "visible"; value: false }
@@ -51,8 +53,10 @@ Item {
                 PropertyAction { target: loader_root_b; property: "enabled"; value: true }
                 PropertyAction { target: loader_root_b; property: "visible"; value: true }
                 ParallelAnimation {
-                    NumberAnimation { target: root; easing.amplitude: 1.7; properties: "xb"; to: 0; duration: 1100; easing.type: Easing.OutQuart }
-                    NumberAnimation { target: root; easing.amplitude: 1.7; properties: "xa"; to: screen.width+10; duration: 1100; easing.type: Easing.OutQuart }
+                    NumberAnimation { target: root; easing.amplitude: 1.7; properties: "xb"
+                        ; to: 0; duration: 1100; easing.type: Easing.OutQuart }
+                    NumberAnimation { target: root; easing.amplitude: 1.7; properties: "xa"
+                        ; to: screen.width+10; duration: 1100; easing.type: Easing.OutQuart }
                  }
                 PropertyAction { target: screen; property: "state"; value: "hide_movie" }
             }

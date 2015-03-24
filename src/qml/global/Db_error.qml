@@ -40,7 +40,8 @@ Rectangle {
     }
 
     Keys.onPressed: {
-        if ((event.key === Qt.Key_Q) && (event.modifiers & Qt.ControlModifier)) {
+        if ((event.key === Qt.Key_Q)
+            && (event.modifiers & Qt.ControlModifier)) {
             cpp.quit()
             event.accepted = true
         }

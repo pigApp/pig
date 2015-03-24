@@ -28,21 +28,27 @@ Item {
                     color: { if (onCategory) "#FA6900"; else "#FD2790" }
                     label: {
                         if (onCategory)
-                            if (index < root.categories.length) root.categories[index]; else ""
+                            if (index < root.categories.length)
+                                root.categories[index]; else ""
                         else
-                            if (index < root.pornstars.length) root.pornstars[index]; else ""
+                            if (index < root.pornstars.length)
+                                root.pornstars[index]; else ""
                     }
                     label_n: {
                         if (onCategory)
-                            if (index < root.categories.length) root.n_categories[index]; else ""
+                            if (index < root.categories.length)
+                                root.n_categories[index]; else ""
                         else
-                            if (index < root.pornstars.length) root.n_pornstars[index]; else ""
+                            if (index < root.pornstars.length)
+                                root.n_pornstars[index]; else ""
                     }
                     source: {
                         if (onCategory)
-                            if (index < root.categories.length) "qrc:/img-cat-"+categories[index]; else ""
+                            if (index < root.categories.length)
+                                "qrc:/img-cat-"+categories[index]; else ""
                         else
-                            if (index < root.pornstars.length) "qrc:/img-star-"+pornstars[index]; else ""
+                            if (index < root.pornstars.length)
+                                "qrc:/img-star-"+pornstars[index]; else ""
                     }
                 }
             }
@@ -83,7 +89,8 @@ Item {
         if (event.key === Qt.Key_Escape) {
             finder.state = "hide_filter"
             event.accepted = true
-        } else if ((event.key === Qt.Key_Q) && (event.modifiers & Qt.ControlModifier)) {
+        } else if ((event.key === Qt.Key_Q)
+            && (event.modifiers & Qt.ControlModifier)) {
             cpp.quit()
             event.accepted = true
         }
@@ -94,7 +101,8 @@ Item {
             root.category = label.toUpperCase()
         else
             root.pornstar = label.toUpperCase()
-        cpp.find("", root.category, root.pornstar, root.quality, root.full)
+        cpp.find("", root.category, root.pornstar
+            , root.quality, root.full)
     }
 
     onFocusChanged: { if (!focus) forceActiveFocus() }

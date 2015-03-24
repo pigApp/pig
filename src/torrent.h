@@ -41,6 +41,7 @@ private slots:
     void filter_files();
     void ret();
     void information();
+    void error();
 };
 
 #endif

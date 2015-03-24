@@ -57,17 +57,23 @@ Rectangle {
         Transition {
             to: "in"
             ParallelAnimation {
-                NumberAnimation { target: pic; properties: "opacity"; to: 1; duration: 1000; easing.type: Easing.InOutQuart }
-                NumberAnimation { target: label; properties: "opacity"; to: 0; duration: 200; easing.type: Easing.InOutQuart }
-                NumberAnimation { target: label_n; properties: "opacity"; to: 1; duration: 800; easing.type: Easing.InOutQuart }
+                NumberAnimation { target: pic; properties: "opacity"
+                    ; to: 1; duration: 1000; easing.type: Easing.InOutQuart }
+                NumberAnimation { target: label; properties: "opacity"
+                    ; to: 0; duration: 200; easing.type: Easing.InOutQuart }
+                NumberAnimation { target: label_n; properties: "opacity"
+                    ; to: 1; duration: 800; easing.type: Easing.InOutQuart }
             }
         },
         Transition {
             to: "out"
             ParallelAnimation {
-                NumberAnimation { target: pic; properties: "opacity"; to: 0; duration: 100; easing.type: Easing.InOutQuart }
-                NumberAnimation { target: label; properties: "opacity"; to: 1; duration: 200; easing.type: Easing.InOutQuart }
-                NumberAnimation { target: label_n; properties: "opacity"; to: 0; duration: 100; easing.type: Easing.InOutQuart }
+                NumberAnimation { target: pic; properties: "opacity"
+                    ; to: 0; duration: 100; easing.type: Easing.InOutQuart }
+                NumberAnimation { target: label; properties: "opacity"
+                    ; to: 1; duration: 200; easing.type: Easing.InOutQuart }
+                NumberAnimation { target: label_n; properties: "opacity"
+                    ; to: 0; duration: 100; easing.type: Easing.InOutQuart }
             }
         }
     ]

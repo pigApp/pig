@@ -158,11 +158,13 @@ Rectangle {
     }
 
     Keys.onPressed: {
-        if ((event.key === Qt.Key_Escape) && (x === 0) && !delayError.running) { // TODO: Asegurarse que el socket haya terminado.
+        if ((event.key === Qt.Key_Escape)
+            && (x === 0) && !delayError.running) { // TODO: Asegurarse que el socket haya terminado.
             cpp.torrent_handler("", "", 0, true)
             movie.state = "hide"
             event.accepted = true
-        } else if ((event.key === Qt.Key_Q) && (event.modifiers & Qt.ControlModifier)) {
+        } else if ((event.key === Qt.Key_Q)
+            && (event.modifiers & Qt.ControlModifier)) { // TODO: Asegurarse que el socket haya terminado.
             cpp.quit()
             event.accepted = true
         }

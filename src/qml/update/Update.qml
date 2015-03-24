@@ -68,7 +68,8 @@ Item {
     }
 
     Keys.onPressed: {
-        if ((event.key === Qt.Key_Q) && (event.modifiers & Qt.ControlModifier)) {
+        if ((event.key === Qt.Key_Q)
+            && (event.modifiers & Qt.ControlModifier)) {
             cpp.quit()
             event.accepted = true
         }
@@ -100,10 +101,14 @@ Item {
             to: "available"
             SequentialAnimation {
                 ParallelAnimation {
-                    NumberAnimation { target: root; easing.amplitude: 1.7; properties: "screenR"; to: 1; duration: 600; easing.type: Easing.OutQuart }
-                    NumberAnimation { target: root; easing.amplitude: 1.7; properties: "screenG"; to: 0.84; duration: 600; easing.type: Easing.OutQuart }
-                    NumberAnimation { target: root; easing.amplitude: 1.7; properties: "screenB"; to: 0; duration: 600; easing.type: Easing.OutQuart }
-                    NumberAnimation { target: root; easing.amplitude: 1.7; properties: "screenA"; to: 0.2; duration: 600; easing.type: Easing.OutQuart }
+                    NumberAnimation { target: root; easing.amplitude: 1.7; properties: "screenR"
+                        ; to: 1; duration: 600; easing.type: Easing.OutQuart }
+                    NumberAnimation { target: root; easing.amplitude: 1.7; properties: "screenG"
+                        ; to: 0.84; duration: 600; easing.type: Easing.OutQuart }
+                    NumberAnimation { target: root; easing.amplitude: 1.7; properties: "screenB"
+                        ; to: 0; duration: 600; easing.type: Easing.OutQuart }
+                    NumberAnimation { target: root; easing.amplitude: 1.7; properties: "screenA"
+                        ; to: 0.2; duration: 600; easing.type: Easing.OutQuart }
                 }
                 PropertyAction { target: columnStatus; property: "visible"; value: true }
                 PropertyAction { target: columnStatus; property: "enabled"; value: true }
