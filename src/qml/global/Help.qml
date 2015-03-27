@@ -2,7 +2,7 @@ import QtQuick 2.4
 
 Rectangle {
     id: help
-    color: Qt.rgba(1, 1, 1, 0.5)
+    color: Qt.rgba(1, 1, 1, 0.7)
 
     Loader {
         id: loader

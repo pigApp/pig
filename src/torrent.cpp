@@ -43,7 +43,7 @@ void Torrent::get(const QString *const host, const QString *const url, const QSt
     mSocket->start();
     connect (mSocket, SIGNAL(sig_ret_files(const QString *const, const QStringList *const))
         , this, SLOT(start(const QString *const, const QStringList *const)));
-    //connect (mSocket, SIGNAL(sig_err()), this, SLOT(error())); // TODO: crear funcion error.
+    connect (mSocket, SIGNAL(sig_err()), this, SLOT(error()));
 }
 
 void Torrent::start(const QString *const tmp, const QStringList *const file)

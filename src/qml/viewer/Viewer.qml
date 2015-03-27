@@ -255,7 +255,7 @@ Item {
                 anchors.top: cover.bottom
                 anchors.topMargin: 12//
                 anchors.left: cover.right
-                anchors.leftMargin: 70//
+                anchors.leftMargin: -80//
             }
         }
     }

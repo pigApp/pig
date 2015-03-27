@@ -3,6 +3,8 @@ import QtQuick 2.4
 Item {
     id: bars
 
+    property string status: root.status
+
     Rectangle {
         id: barTime
         width: { (parent.width*player.position)/player.duration }
@@ -18,4 +20,6 @@ Item {
        opacity: 0.5
        anchors.bottom: parent.bottom
     }
+
+    onStatusChanged: { if (status === "TORRENT ERROR") barDownload.color = "red" }
 }
