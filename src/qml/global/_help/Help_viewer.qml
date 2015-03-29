@@ -3,46 +3,17 @@ import QtQuick 2.4
 Item {
     id: help_viewer
 
-    /*
-    Canvas {
-        width: 1920//
-        height: 1080//
-        onPaint: {
-            var ctx = getContext("2d")
-            ctx.lineWidth = 2
-            ctx.strokeStyle = "white"
-            ctx.beginPath()
-
-            ctx.moveTo(820, 855)//
-            ctx.lineTo(820, 955)//
-
-            ctx.moveTo(1500, 795)//
-            ctx.lineTo(1500, 895)//
-
-            ctx.moveTo(90, 20)//
-            ctx.lineTo(90, 70)//
-
-            ctx.moveTo(1750, 20)//
-            ctx.lineTo(1750, 70)//
-
-            ctx.stroke()
-        }
-    }
-    */
-
     Rectangle {
         id: layerUp
         width: labelUp.contentWidth
         height: labelUp.contentHeight
-        color: "gray"
-        anchors.left: parent.left
-        anchors.leftMargin: 220//
-        anchors.verticalCenter: parent.verticalCenter
-        anchors.verticalCenterOffset: 300
+        color: Qt.rgba(0, 0.28, 0.047, 1)
+        anchors.centerIn: parent
+        anchors.verticalCenterOffset: -(layerUp.height+labelUpArrow.contentHeight)
     }
     Text {
         id: labelUp
-        text: " 5 MORE "
+        text: " MORE "
         color: "white"
         font.family: fontGlobal.name
         font.bold: true
@@ -54,23 +25,19 @@ Item {
         text: "↑"
         color: "white"
         font.family: fontGlobal.name
-        //font.bold: true
-        font.pixelSize: screen.height/10
+        font.pixelSize: screen.height/23
         anchors.top: layerUp.bottom
-        anchors.topMargin: -40
+        anchors.topMargin: -parent.height/108
         anchors.horizontalCenter: layerUp.horizontalCenter
-        anchors.horizontalCenterOffset: -10
     }
-
     Rectangle {
         id: layerLeft
         width: labelLeft.contentWidth
         height: labelLeft.contentHeight
-        color: "gray"
-        anchors.left: parent.left
-        anchors.leftMargin: 50//
-        anchors.verticalCenter: parent.verticalCenter
-        anchors.verticalCenterOffset: 400
+        color: Qt.rgba(0, 0.28, 0.047, 1)
+        anchors.centerIn: parent
+        anchors.horizontalCenterOffset: -(layerLeft.width-(parent.width/192))
+        anchors.verticalCenterOffset: -parent.height/43.2
     }
     Text {
         id: labelLeft
@@ -86,23 +53,19 @@ Item {
         text: "←"
         color: "white"
         font.family: fontGlobal.name
-        //font.bold: true
-        font.pixelSize: screen.height/10
+        font.pixelSize: screen.height/23
         anchors.left: layerLeft.right
-        anchors.leftMargin: 5
+        anchors.leftMargin: parent.width/192
         anchors.verticalCenter: layerLeft.verticalCenter
-        anchors.verticalCenterOffset: -10
     }
-
     Rectangle {
         id: layerRight
-        width: labelRight.contentWidth
-        height: labelRight.contentHeight
-        color: "gray"
-        anchors.left: parent.left
-        anchors.leftMargin: 365//
-        anchors.verticalCenter: parent.verticalCenter
-        anchors.verticalCenterOffset: 400
+        width: layerLeft.width
+        height: layerLeft.height
+        color: Qt.rgba(0, 0.28, 0.047, 1)
+        anchors.centerIn: parent
+        anchors.horizontalCenterOffset: layerRight.width-(parent.width/192)
+        anchors.verticalCenterOffset: -parent.height/43.2
     }
     Text {
         id: labelRight
@@ -118,27 +81,22 @@ Item {
         text: "→"
         color: "white"
         font.family: fontGlobal.name
-        //font.bold: true
-        font.pixelSize: screen.height/10
+        font.pixelSize: screen.height/23
         anchors.right: layerRight.left
-        anchors.rightMargin: 5
+        anchors.rightMargin: parent.width/192
         anchors.verticalCenter: layerRight.verticalCenter
-        anchors.verticalCenterOffset: -10
     }
-
     Rectangle {
         id: layerDown
-        width: labelDown.contentWidth
-        height: labelDown.contentHeight
-        color: "gray"
-        anchors.left: parent.left
-        anchors.leftMargin: 215//
-        anchors.verticalCenter: parent.verticalCenter
-        anchors.verticalCenterOffset: 500
+        width: layerUp.width
+        height: labelUp.height
+        color: Qt.rgba(0, 0.28, 0.047, 1)
+        anchors.centerIn: parent
+        anchors.verticalCenterOffset: (layerDown.height+labelDownArrow.contentHeight)-(parent.height/27)
     }
     Text {
         id: labelDown
-        text: " 5 LESS  "
+        text: "LESS "
         color: "white"
         font.family: fontGlobal.name
         font.bold: true
@@ -150,27 +108,24 @@ Item {
         text: "↓"
         color: "white"
         font.family: fontGlobal.name
-        //font.bold: true
-        font.pixelSize: screen.height/10
-        anchors.bottom: layerDown.top
-        anchors.bottomMargin: -20
+        font.pixelSize: screen.height/23
         anchors.horizontalCenter: layerDown.horizontalCenter
-        //anchors.horizontalCenterOffset: -10
+        anchors.bottom: layerDown.top
     }
 
     Rectangle {
         id: layerCover
         width: labelCover.contentWidth
         height: labelCover.contentHeight
-        color: "gray"
+        color: "black"
         anchors.left: parent.left
-        anchors.leftMargin: 630//
+        anchors.leftMargin: parent.width/2.77
         anchors.verticalCenter: parent.verticalCenter
-        anchors.verticalCenterOffset: 455
+        anchors.verticalCenterOffset: -parent.height/4.55
     }
     Text {
         id: labelCover
-        text: " FRONT · BACK "
+        text: " FRONT / BACK "
         color: "white"
         font.family: fontGlobal.name
         font.bold: true
@@ -182,11 +137,11 @@ Item {
         id: layerPreview
         width: labelPreview.contentWidth
         height: labelPreview.contentHeight
-        color: "gray"
-        anchors.left: parent.left
-        anchors.leftMargin: 1410//
+        color: "black"
+        anchors.right: parent.right
+        anchors.rightMargin: parent.width/5.8
         anchors.verticalCenter: parent.verticalCenter
-        anchors.verticalCenterOffset: 400
+        anchors.verticalCenterOffset: -parent.height/43.2
     }
     Text {
         id: labelPreview
@@ -202,11 +157,19 @@ Item {
         id: layerBack
         width: labelBack.contentWidth
         height: labelBack.contentHeight
-        color: "gray"
+        color: "black"
         anchors.top: parent.top
-        anchors.topMargin: 50//
+        anchors.topMargin: parent.height/21.6
         anchors.left: parent.left
-        anchors.leftMargin: 43//
+        anchors.leftMargin: parent.width/38.4
+    }
+    Rectangle {
+        id: layerBackKey
+        width: layerBack.width
+        height: layerBack.height
+        color: "white"
+        anchors.top: layerBack.bottom
+        anchors.horizontalCenter: layerBack.horizontalCenter
     }
     Text {
         id: labelBack
@@ -217,60 +180,51 @@ Item {
         font.pixelSize: screen.height/23
         anchors.centerIn: layerBack
     }
-    Rectangle {
-        id: layerBackKey
-        width: labelBackKey.contentWidth
-        height: labelQuitKey.contentHeight
-        color: "black"
-        anchors.top: labelBack.bottom
-        anchors.topMargin: 5
-        anchors.horizontalCenter: labelBack.horizontalCenter
-    }
     Text {
         id: labelBackKey
-        text: " ESC "
-        color: "white"
+        text: "ESC"
+        color: "black"
         font.family: fontGlobal.name
         font.bold: true
-        font.pixelSize: screen.height/30
+        font.pixelSize: screen.height/23
         anchors.centerIn: layerBackKey
     }
 
     Rectangle {
         id: layerQuit
-        width: labelQuit.contentWidth
-        height: labelQuit.contentHeight
+        width: layerQuitKey.width
+        height: layerQuitKey.height
         color: "red"
         anchors.top: parent.top
-        anchors.topMargin: 50//
-        anchors.left: parent.left
-        anchors.leftMargin: 1703//
+        anchors.topMargin: parent.height/21.6
+        anchors.right: parent.right
+        anchors.rightMargin: parent.width/38.4
+    }
+    Rectangle {
+        id: layerQuitKey
+        width: labelQuitKey.contentWidth
+        height: labelQuitKey.contentHeight
+        color: "white"
+        anchors.top: layerQuit.bottom
+        anchors.horizontalCenter: layerQuit.horizontalCenter
     }
     Text {
         id: labelQuit
-        text: " QUIT "
+        text: "QUIT"
         color: "white"
         font.family: fontGlobal.name
         font.bold: true
         font.pixelSize: screen.height/23
         anchors.centerIn: layerQuit
     }
-    Rectangle {
-        id: layerQuitKey
-        width: labelQuitKey.contentWidth
-        height: labelQuitKey.contentHeight
-        color: "black"
-        anchors.top: labelQuit.bottom
-        anchors.topMargin: 5
-        anchors.horizontalCenter: labelQuit.horizontalCenter
-    }
     Text {
         id: labelQuitKey
         text: " CTRL Q "
-        color: "white"
+        color: "black"
         font.family: fontGlobal.name
         font.bold: true
-        font.pixelSize: screen.height/30
+        font.pixelSize: screen.height/23
         anchors.centerIn: layerQuitKey
     }
 }
+// Tabs hechos.

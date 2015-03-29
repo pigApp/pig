@@ -204,7 +204,7 @@ Item {
         } else if ((event.key === Qt.Key_H)
             && (event.modifiers & Qt.ControlModifier)) {
             if (finder.state !== "show_filter") {
-                root.help_finder = true
+                root.helpSource = "_help/Help_finder.qml"
                 screen.state = "show_help"
                 event.accepted = true
             }

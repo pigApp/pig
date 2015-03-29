@@ -7,7 +7,6 @@ Item {
     property bool init
     property bool network
     property bool network_err
-    property bool help_finder
     property bool stop_preview_quit
     property string status
     property string information
@@ -16,6 +15,7 @@ Item {
     property string database
     property string binaryNews: ""
     property string databaseNews: ""
+    property string helpSource: ""
     property string userInput: ""
     property string category: ""
     property string pornstar: ""
@@ -84,6 +84,20 @@ Item {
             visible: { status === Loader.Ready }
             anchors.fill: parent
         }
+        Loader {
+            id: loader_help
+            asynchronous: true
+            visible: { status === Loader.Ready }
+            anchors.fill: parent
+            onSourceChanged: {
+                if (source == "") {
+                    if (loader_root.source != "")
+                        loader_root.focus = true
+                    else
+                        loader_root_b.focus = true
+                }
+            }
+        }
 
         states: [
             State {
@@ -124,18 +138,13 @@ Item {
             },
             State {
                 name: "show_help"
-                PropertyChanges { target: loader_root; source: "global/Help.qml"
+                PropertyChanges { target: loader_help; source: "global/Help.qml"
                     ; restoreEntryValues: false }
             },
             State {
                 name: "hide_help"
-                PropertyChanges { target: root; help_finder: false
+                PropertyChanges { target: loader_help; source: ""
                     ; restoreEntryValues: false }
-                PropertyChanges { target: loader_root; source: ""
-                    ; restoreEntryValues: false }
-                PropertyChanges { target: loader_root_b; focus: true
-                    ; restoreEntryValues: false }
-
             },
             State {
                 name: "show_finder"

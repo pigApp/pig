@@ -2,11 +2,11 @@ import QtQuick 2.4
 
 Rectangle {
     id: help
-    color: Qt.rgba(1, 1, 1, 0.7)
+    color: Qt.rgba(0, 0, 0, 0.7)
 
     Loader {
         id: loader
-        source: { if (root.help_finder) "_help/Help_finder.qml"; else "_help/Help_viewer.qml" }
+        source: root.helpSource
         asynchronous: true
         visible: { status === Loader.Ready }
         anchors.fill: parent
@@ -14,14 +14,8 @@ Rectangle {
 
     Keys.onPressed: {
         loader.source = ""
-        if ((event.key === Qt.Key_Q)
-            && (event.modifiers & Qt.ControlModifier)) {
-            cpp.quit()
-            event.accepted = true
-        } else {
-            screen.state = "hide_help"
-            event.accepted = true
-        }
+        screen.state = "hide_help"
+        event.accepted = true
     }
 
     Component.onCompleted: help.forceActiveFocus()

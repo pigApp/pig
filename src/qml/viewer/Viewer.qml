@@ -165,6 +165,7 @@ Item {
             } else if ((event.key === Qt.Key_H)
                 && (event.modifiers & Qt.ControlModifier)
                 && !timeOutNetwork.running) {
+                root.helpSource = "_help/Help_viewer.qml"
                 screen.state = "show_help"
                 event.accepted = true
             } else if (event.key === Qt.Key_Escape) {
@@ -253,9 +254,8 @@ Item {
                 enabled: recipe.PathView.isCurrentItem
                 visible: recipe.PathView.isCurrentItem
                 anchors.top: cover.bottom
-                anchors.topMargin: 12//
                 anchors.left: cover.right
-                anchors.leftMargin: -80//
+                anchors.leftMargin: parent.width/32
             }
         }
     }
