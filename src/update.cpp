@@ -28,23 +28,9 @@ Update::~Update()
 
 void Update::start()
 {
-    QString Url;
-    const int i = sizeof(void*);
-#ifdef __linux__
-    if (i == 4)
-        Url = "UrlLinux_x86";
-    else
-        Url = "UrlLinux_x86_64";
-#else
-    if (i == 4)
-        Url = "UrlWindows_32";
-    else
-        Url = "UrlWindows_64";
-#endif
     if (_db->open()) {
         QSqlQuery query;
-        query.prepare("SELECT Binary, Release, Database, Library, Host, "
-            +Url+" FROM PigData, UpdateData");
+        query.prepare("SELECT Binary, Release, Database, Library, Host, Url FROM PigData");
         if (!query.exec()) {
             _db->close();
             emit sig_fail_database();
@@ -86,28 +72,41 @@ void Update::get(const QString *const host, const QStringList *const urls
 
 void Update::check_versions(const QString *const str)
 {
-    const QStringList split = (*str).split(",");
+    QStringList last;
+    const QStringList split = (*str).split(QRegExp("[\r\n]"));
+    const int i = sizeof(void*);
+#ifdef __linux__
+    if (i == 4)
+        last = split[0].split(",");
+    else
+        last = split[1].split(",");
+#else
+    if (i == 4)
+        last = split[2].split(",");
+    else
+        last = split[3].split(",");
+#endif
     urls.clear();
-    host = split[4];
-    if ((split[0].toInt()+split[1].toInt()) > binary+release) {
-        newBinary = split[0].toInt();
-        newRelease = split[1].toInt();
-        urls << split[5];
-        sums << split[8];
+    host = last[4];
+    if ((last[0].toInt()+last[1].toInt()) > binary+release) {
+        newBinary = last[0].toInt();
+        newRelease = last[1].toInt();
+        urls << last[5];
+        sums << last[8];
         targets << "update_bin.zip";
         binaryAvailable = true;
     }
-    if (split[2].toInt() > database) {
-        newDatabase = split[2].toInt();
-        urls << split[6];
-        sums << split[9];
+    if (last[2].toInt() > database) {
+        newDatabase = last[2].toInt();
+        urls << last[6];
+        sums << last[9];
         targets << "update_db.zip";
         databaseAvailable = true;
     }
-    if (split[3].toInt() > library) {
-        newLibrary = split[3].toInt();
-        urls << split[7];
-        sums << split[10];
+    if (last[3].toInt() > library) {
+        newLibrary = last[3].toInt();
+        urls << last[7];
+        sums << last[10];
         targets << "update_lib.zip";
         libraryAvailable = true;
     }

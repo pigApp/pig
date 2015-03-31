@@ -7,8 +7,8 @@ Item {
 
     onMb_downloadedChanged: {
 
-        console.log("PLAYER: "+((player.position/player.duration)+0.001))
-        console.log("DOWN: "+(mb_downloaded/root.n_mb))
+        console.log("PLAYER: "+((player.position/player.duration)+0.001))//
+        console.log("DOWN: "+(mb_downloaded/root.n_mb))//
 
         if (!videoPlayer.sandbox) {
             if (!videoPlayer.stanby && (player.position/player.duration)+0.001
