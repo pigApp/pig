@@ -86,7 +86,7 @@ Item {
                     NumberAnimation { target: root; easing.amplitude: 1.7; properties: "screenB"
                         ; to: 0.047; duration: 600; easing.type: Easing.OutQuart }
                     NumberAnimation { target: root; easing.amplitude: 1.7; properties: "screenA"
-                        ; to: 0.9; duration: 600; easing.type: Easing.OutQuart }
+                        ; to: 0.8; duration: 600; easing.type: Easing.OutQuart }
                 }
                 PropertyAction { target: news; property: "visible"; value: true }
             }

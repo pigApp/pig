@@ -1,22 +1,21 @@
 import QtQuick 2.4
 import "_setting/"
 
-Rectangle {
+Item {
     id: setting
-    color: "black"
 
     Row {
         Column {
             id: column_a
             About {
                 id: about
-                width: screen.width/4
-                height: screen.height/4
+                width: screen.width/3
+                height: screen.height/2
             }
             Password {
                 id: password
-                width: screen.width/4
-                height: screen.height/4
+                width: screen.width/3
+                height: screen.height/2
                 onSet: true
             }
         }

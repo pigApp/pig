@@ -50,6 +50,7 @@ Item {
                 onClicked: {
                     columnStatus.enabled = false
                     columnStatus.visible = false
+                    update.state = "clean"
                     root.sig_qml_update_get()
                 }
             }
@@ -77,6 +78,9 @@ Item {
 
     states: [
         State {
+            name: "clean"
+        },
+        State {
             name: "available"
         },
         State {
@@ -92,11 +96,24 @@ Item {
             PropertyChanges { target: root; screenR: 1; restoreEntryValues: false }
             PropertyChanges { target: root; screenG: 0; restoreEntryValues: false }
             PropertyChanges { target: root; screenB: 0; restoreEntryValues: false }
-            PropertyChanges { target: root; screenA: 0.9; restoreEntryValues: false }
+            PropertyChanges { target: root; screenA: 1; restoreEntryValues: false }
             PropertyChanges { target: columnStatus; visible: true; restoreEntryValues: false }
         }
     ]
     transitions: [
+        Transition {
+            to: "clean"
+            ParallelAnimation {
+                NumberAnimation { target: root; easing.amplitude: 1.7; properties: "screenR"
+                    ; to: 0; duration: 600; easing.type: Easing.OutQuart }
+                NumberAnimation { target: root; easing.amplitude: 1.7; properties: "screenG"
+                    ; to: 0; duration: 600; easing.type: Easing.OutQuart }
+                NumberAnimation { target: root; easing.amplitude: 1.7; properties: "screenB"
+                    ; to: 0; duration: 600; easing.type: Easing.OutQuart }
+                NumberAnimation { target: root; easing.amplitude: 1.7; properties: "screenA"
+                    ; to: 0.4; duration: 600; easing.type: Easing.OutQuart }
+            }
+        },
         Transition {
             to: "available"
             SequentialAnimation {
@@ -109,6 +126,8 @@ Item {
                         ; to: 0; duration: 600; easing.type: Easing.OutQuart }
                     NumberAnimation { target: root; easing.amplitude: 1.7; properties: "screenA"
                         ; to: 0.2; duration: 600; easing.type: Easing.OutQuart }
+                    NumberAnimation { target: root; easing.amplitude: 1.7; properties: "blurRadius"
+                        ; to: 64; duration: 600; easing.type: Easing.OutQuart }
                 }
                 PropertyAction { target: columnStatus; property: "visible"; value: true }
                 PropertyAction { target: columnStatus; property: "enabled"; value: true }

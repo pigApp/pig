@@ -92,8 +92,6 @@
         <file>src/qml/global/_setting/About.qml</file>
         <file>src/qml/global/_setting/Password.qml</file>
         <file>src/qml/global/Help.qml</file>
-        <file>src/qml/global/_help/Help_finder.qml</file>
-        <file>src/qml/global/_help/Help_viewer.qml</file>
         <file>src/qml/global/Db_error.qml</file>
     </qresource>
 </RCC>

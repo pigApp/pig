@@ -5,7 +5,6 @@ import "../global/"
 
 Item {
     id: finder
-    enabled: { screen.state !== "show_help" }
 
     property bool onCategory
 
@@ -107,7 +106,7 @@ Item {
                         ; to: 0; duration: 600; easing.type: Easing.OutQuart }
                     NumberAnimation { target: root; easing.amplitude: 1.7; properties: "screenA"
                         ; to: 0; duration: 600; easing.type: Easing.OutQuart }
-                    NumberAnimation { target: backgroundBlur; easing.amplitude: 1.7; properties: "radius"
+                    NumberAnimation { target: root; easing.amplitude: 1.7; properties: "blurRadius"
                         ; to: 0; duration: 600; easing.type: Easing.OutQuart }
                 }
                 ParallelAnimation {
@@ -136,7 +135,7 @@ Item {
                 ParallelAnimation {
                     NumberAnimation { target: root; easing.amplitude: 1.7; properties: "screenA"
                         ; to: 0.4; duration: 600; easing.type: Easing.OutQuart }
-                    NumberAnimation { target: backgroundBlur; easing.amplitude: 1.7; properties: "radius"
+                    NumberAnimation { target: root; easing.amplitude: 1.7; properties: "blurRadius"
                         ; to: 32; duration: 600; easing.type: Easing.OutQuart }
                 }
                 PropertyAction { target: screen; property: "state"; value: "show_viewer" }
@@ -182,7 +181,7 @@ Item {
                 ParallelAnimation {
                     NumberAnimation { target: root; easing.amplitude: 1.7; properties: "xa"
                         ; to: screen.width+10; duration: 600; easing.type: Easing.OutQuart }
-                    NumberAnimation { target: backgroundBlur; easing.amplitude: 1.7; properties: "radius"
+                    NumberAnimation { target: root; easing.amplitude: 1.7; properties: "blurRadius"
                         ; to: 32; duration: 600; easing.type: Easing.OutQuart }
                 }
                 NumberAnimation { target: root; easing.amplitude: 1.7; properties: "screenA"
@@ -204,7 +203,6 @@ Item {
         } else if ((event.key === Qt.Key_H)
             && (event.modifiers & Qt.ControlModifier)) {
             if (finder.state !== "show_filter") {
-                root.helpSource = "_help/Help_finder.qml"
                 screen.state = "show_help"
                 event.accepted = true
             }

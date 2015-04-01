@@ -10,7 +10,7 @@ Rectangle {
         id: userInput
         color: "white"
         font.family: fontGlobal.name
-        font.pixelSize: { if (onSet) screen.height/74.2; else screen.height/43.2 }
+        font.pixelSize: screen.height/43.2
         echoMode: TextInput.Password
         maximumLength: 16
         cursorVisible: false
@@ -27,9 +27,9 @@ Rectangle {
         onFocusChanged: {
             if (onSet && enabled) {
                 if (focus)
-                    password.color = "#202020"
-                else
                     password.color = "black"
+                else
+                    password.color = Qt.rgba(0, 0, 0, 0)
             }
         }
         onAccepted: {
@@ -60,19 +60,18 @@ Rectangle {
         anchors.centerIn: parent
         Text {
             id: label
-            text: { if (onSet) "INTRO NEW PASSWORD"; else "PASSWORD" }
+            text: { if (onSet) "NEW PASSWORD"; else "PASSWORD" }
             color: "white"
             font.family: fontGlobal.name
-            font.bold: onSet
-            font.pixelSize: { if (onSet) screen.height/54; else screen.height/23 }
+            font.bold: { text === "DONE" || text === "FAIL" }
+            font.pixelSize: screen.height/23
         }
         Text {
             id: labelInformation
             text: "CHECK PERMISSIONS"
             color: "white"
             font.family: fontGlobal.name
-            font.bold: true
-            font.pixelSize: screen.height/54
+            font.pixelSize: screen.height/23
             visible: { label.text === "FAIL" }
         }
     }

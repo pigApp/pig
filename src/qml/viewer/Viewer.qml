@@ -86,7 +86,7 @@ Item {
                             ; to: 0; duration: 1200; easing.type: Easing.OutQuart }
                         NumberAnimation { target: root; easing.amplitude: 1.7; properties: "screenA"
                             ; to: 0.8; duration: 1200; easing.type: Easing.OutQuart }
-                        NumberAnimation { target: backgroundBlur; easing.amplitude: 1.7; properties: "radius"
+                        NumberAnimation { target: root; easing.amplitude: 1.7; properties: "blurRadius"
                             ; to: 64; duration: 1200; easing.type: Easing.OutQuart }
                     }
                     PropertyAction { target: view; property: "enabled"; value: true }
@@ -101,7 +101,7 @@ Item {
                             ; to: screen.width+10; duration: 600; easing.type: Easing.OutQuart }
                         NumberAnimation { target: root; easing.amplitude: 1.7; properties: "screenA"
                             ; to: 0.4; duration: 600; easing.type: Easing.OutQuart }
-                        NumberAnimation { target: backgroundBlur; easing.amplitude: 1.7; properties: "radius"
+                        NumberAnimation { target: root; easing.amplitude: 1.7; properties: "blurRadius"
                             ; to: 32; duration: 600; easing.type: Easing.OutQuart }
                     }
                     PropertyAction { target: viewer; property: "updateData"; value: true }
@@ -113,7 +113,7 @@ Item {
                     ParallelAnimation {
                         NumberAnimation { target: root; easing.amplitude: 1.7; properties: "xb"
                             ; to: screen.width+10; duration: 600; easing.type: Easing.OutQuart }
-                        NumberAnimation { target: backgroundBlur; easing.amplitude: 1.7; properties: "radius"
+                        NumberAnimation { target: root; easing.amplitude: 1.7; properties: "blurRadius"
                             ; to: 0; duration: 600; easing.type: Easing.OutQuart }
                     }
                     PropertyAction { target: screen; property: "state"; value: "show_finder" }
@@ -140,17 +140,6 @@ Item {
                     n_blockMovies = 5
                     view.state = "hide"
                 }
-            } else if (event.key === Qt.Key_Right) {
-                view.enabled = false
-                delayEnable.start()
-                incrementCurrentIndex()
-                if (locationOnBlockMovies === (n_blockMovies-1)) {
-                    locationOnBlockMovies = 0
-                    currentMovie = (view.counter-n_blockMovies)+1
-                } else {
-                    ++locationOnBlockMovies
-                    ++currentMovie
-                }
             } else if (event.key === Qt.Key_Left) {
                 view.enabled = false
                 delayEnable.start()
@@ -162,12 +151,17 @@ Item {
                     --locationOnBlockMovies
                     --currentMovie
                 }
-            } else if ((event.key === Qt.Key_H)
-                && (event.modifiers & Qt.ControlModifier)
-                && !timeOutNetwork.running) {
-                root.helpSource = "_help/Help_viewer.qml"
-                screen.state = "show_help"
-                event.accepted = true
+            } else if (event.key === Qt.Key_Right) {
+                view.enabled = false
+                delayEnable.start()
+                incrementCurrentIndex()
+                if (locationOnBlockMovies === (n_blockMovies-1)) {
+                    locationOnBlockMovies = 0
+                    currentMovie = (view.counter-n_blockMovies)+1
+                } else {
+                    ++locationOnBlockMovies
+                    ++currentMovie
+                }
             } else if (event.key === Qt.Key_Escape) {
                 view.state = "hide_viewer_show_finder"
                 event.accepted = true

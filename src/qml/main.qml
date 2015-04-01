@@ -15,7 +15,6 @@ Item {
     property string database
     property string binaryNews: ""
     property string databaseNews: ""
-    property string helpSource: ""
     property string userInput: ""
     property string category: ""
     property string pornstar: ""
@@ -25,6 +24,7 @@ Item {
     property string debug: ""
     property string tmp
     property string movie_file_path: ""
+    property int blurRadius: 32
     property int xa: screen.width
     property int xb: 0
     property int n_movies
@@ -60,7 +60,7 @@ Item {
     FastBlur {
         id: backgroundBlur
         source: background
-        radius: 32
+        radius: blurRadius
         visible: false
         anchors.fill: background
     }
@@ -83,20 +83,6 @@ Item {
             asynchronous: true
             visible: { status === Loader.Ready }
             anchors.fill: parent
-        }
-        Loader {
-            id: loader_help
-            asynchronous: true
-            visible: { status === Loader.Ready }
-            anchors.fill: parent
-            onSourceChanged: {
-                if (source == "") {
-                    if (loader_root.source != "")
-                        loader_root.focus = true
-                    else
-                        loader_root_b.focus = true
-                }
-            }
         }
 
         states: [
@@ -121,7 +107,13 @@ Item {
             },
             State {
                 name: "show_setting"
+                PropertyChanges { target: loader_root_b; visible: false
+                    ; restoreEntryValues: false }
                 PropertyChanges { target: loader_root_b; enabled: false
+                    ; restoreEntryValues: false }
+                PropertyChanges { target: root; screenA: 0.8
+                    ; restoreEntryValues: false }
+                PropertyChanges { target: root; blurRadius: 64
                     ; restoreEntryValues: false }
                 PropertyChanges { target: loader_root; source: "global/Setting.qml"
                     ; restoreEntryValues: false }
@@ -130,20 +122,43 @@ Item {
                 name: "hide_setting"
                 PropertyChanges { target: loader_root; source: ""
                     ; restoreEntryValues: false }
+                PropertyChanges { target: loader_root_b; visible: true
+                    ; restoreEntryValues: false }
                 PropertyChanges { target: loader_root_b; enabled: true
                     ; restoreEntryValues: false }
                 PropertyChanges { target: loader_root_b; focus: true
                     ; restoreEntryValues: false }
-
+                PropertyChanges { target: root; screenA: 0
+                    ; restoreEntryValues: false }
+                PropertyChanges { target: root; blurRadius: 0
+                    ; restoreEntryValues: false }
             },
             State {
                 name: "show_help"
-                PropertyChanges { target: loader_help; source: "global/Help.qml"
+                PropertyChanges { target: loader_root_b; visible: false
+                    ; restoreEntryValues: false }
+                PropertyChanges { target: loader_root_b; enabled: false
+                    ; restoreEntryValues: false }
+                PropertyChanges { target: root; screenA: 0.8
+                    ; restoreEntryValues: false }
+                PropertyChanges { target: root; blurRadius: 64
+                    ; restoreEntryValues: false }
+                PropertyChanges { target: loader_root; source: "global/Help.qml"
                     ; restoreEntryValues: false }
             },
             State {
                 name: "hide_help"
-                PropertyChanges { target: loader_help; source: ""
+                PropertyChanges { target: loader_root; source: ""
+                    ; restoreEntryValues: false }
+                PropertyChanges { target: loader_root_b; visible: true
+                    ; restoreEntryValues: false }
+                PropertyChanges { target: loader_root_b; enabled: true
+                    ; restoreEntryValues: false }
+                PropertyChanges { target: loader_root_b; focus: true
+                    ; restoreEntryValues: false }
+                PropertyChanges { target: root; screenA: 0
+                    ; restoreEntryValues: false }
+                PropertyChanges { target: root; blurRadius: 0
                     ; restoreEntryValues: false }
             },
             State {
@@ -223,3 +238,4 @@ Item {
         onSig_show_db_err: { screen.state = "show_db_error" }
     }
 }
+// Tabs hechos.

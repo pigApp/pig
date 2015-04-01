@@ -5,7 +5,7 @@ Rectangle {
     color: "red"
 
     Column {
-        spacing: -parent.height/216
+        spacing: -parent.height/108
         anchors.centerIn: parent
         Row {
             id: rowStatus
@@ -29,11 +29,10 @@ Rectangle {
         Text {
             id: labelLink
             text: "<style type='text/css'>a:link{color:#ffffff;font-style:normal;text-decoration:none}</style>"+
-                  "<a href=\'http://google.com\'>GET LATEST DATABASE &nbsp;&nbsp;➟</a>"
+                  "<a href=\'http://google.com\'>GET DATABASE ➟</a>"
             textFormat: Text.RichText
             font.family: fontGlobal.name
-            font.bold: true
-            font.pixelSize: screen.height/54
+            font.pixelSize: screen.height/23
             anchors.horizontalCenter: rowStatus.horizontalCenter
             onLinkActivated: Qt.openUrlExternally(link)
         }
