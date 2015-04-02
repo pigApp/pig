@@ -43,7 +43,10 @@ Item {
         onStatusChanged: {
             if ((player.status === 7) && ((player.position+1) !== player.duration)) { // FIX: Hacer que no se vuelva a cumplir al poner play nuevamente.
                 player.seek(player.position-100)
-                player.pause()
+                if (player.playbackState === MediaPlayer.StoppedState)
+                    player.pause()
+                else if (player.playbackState === MediaPlayer.PausedState)
+                    player.play()
             }
         }
     }
@@ -76,7 +79,6 @@ Item {
                 if (player.playbackState === MediaPlayer.PlayingState) {
                     player.pause()
                 } else if (player.playbackState === MediaPlayer.PausedState) {
-                    player.seek(player.position) // TODO: Posiblemente no sea necesario.
                     player.play()
                } else if (player.playbackState === MediaPlayer.StoppedState) {
                     icon.visible = false

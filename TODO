@@ -1,19 +1,16 @@
-- Centrado, colores y cuadro de 'GLOBAL HELP' en finder_help.qml. Hacer viewer_help.qml
+
+- Sourceforge installer como principal.
+- Flechas.
 
 - Revisar el error del socket al desconectarse.
 - Control de repoduccion en previewPlayer.
 - Descomentar Cover.qml
 
 - Setting torrent.
-- Help,
-- Icono scenes.
 - Esconder el puntero del mouse en el reproductor.
 
-- Crear db limpia y copiar la actual.
 - Verificar los enleces simbolicos al actualizar librerias.
 - Agregar UNSIGNED SHORT a int
-- Agregar todas las imagenes a CATEGORY y PORNSTAR.
-- Terminar la imagen de background.
 - PLAYER
   - Audio.
 - Links para update en la db. Distintos para windows, linux, 32 y 64.
@@ -25,6 +22,4 @@
   - traducciones.
 
 
---
-http://dl.bintray.com/test%20bintray/testApp/pig.tar.xz
 gstreamer0.10-{{base,good}{,-plugins},ffmpeg}

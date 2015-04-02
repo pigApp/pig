@@ -85,7 +85,6 @@ Rectangle {
         target: cpp
         onSig_ret_password: {
             if (success) {
-                color = Qt.rgba(0, 0.28, 0.047, 1)
                 userInput.text = ""
                 label.text = "DONE" 
                 label.visible = true

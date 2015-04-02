@@ -111,7 +111,7 @@ Item {
                     ; restoreEntryValues: false }
                 PropertyChanges { target: loader_root_b; enabled: false
                     ; restoreEntryValues: false }
-                PropertyChanges { target: root; screenA: 0.8
+                PropertyChanges { target: root; screenA: 0.4
                     ; restoreEntryValues: false }
                 PropertyChanges { target: root; blurRadius: 64
                     ; restoreEntryValues: false }
@@ -139,7 +139,7 @@ Item {
                     ; restoreEntryValues: false }
                 PropertyChanges { target: loader_root_b; enabled: false
                     ; restoreEntryValues: false }
-                PropertyChanges { target: root; screenA: 0.8
+                PropertyChanges { target: root; screenA: 0.4
                     ; restoreEntryValues: false }
                 PropertyChanges { target: root; blurRadius: 64
                     ; restoreEntryValues: false }
@@ -182,7 +182,7 @@ Item {
             },
             State {
                 name: "show_movie"
-                PropertyChanges { target: root; status: "DOWNLOAD METADATA"
+                PropertyChanges { target: root; status: "GET TORRENT FILE"
                     ; restoreEntryValues: false }
                 PropertyChanges { target: loader_root; source: "movie/Movie.qml"
                     ; restoreEntryValues: false }

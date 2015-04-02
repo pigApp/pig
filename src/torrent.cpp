@@ -61,7 +61,7 @@ void Torrent::start(const QString *const tmp, const QStringList *const file)
     s->set_alert_mask(2147483647); //TODO: Limitar (1864) (2147483647)
     s->start_dht();
     p.save_path = tmp->toStdString();
-    p.ti = new libtorrent::torrent_info(tmp->toStdString()+file->at(0).toStdString(), ec);
+    p.ti = new libtorrent::torrent_info(file->at(0).toStdString(), ec);
     h = s->add_torrent(p, ec);
     h.set_sequential_download(true);
     h.set_priority(255);

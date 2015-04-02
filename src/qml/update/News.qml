@@ -2,50 +2,50 @@ import QtQuick 2.4
 
 Item {
     id: news
-    visible: false
 
-    Row {
-        spacing: parent.width/96
-        anchors.centerIn: parent
-        Column {
-            Text {
-                id: labelBinary
-                text: " PIG "+root.binary+"."+root.release
-                color: "white"
-                font.family: fontGlobal.name
-                font.bold: true
-                font.pixelSize: screen.height/23
-            }
-            Text {
-                id: labelBinaryNews
-                text: root.binaryNews
-                textFormat: Text.RichText
-                color: "white"
-                font.family: fontGlobal.name
-                font.bold: true
-                font.pixelSize: screen.height/54
-            }
+    Column {
+        anchors.left: parent.left
+        anchors.leftMargin: parent.width/4.8
+        anchors.verticalCenter: parent.verticalCenter
+        Text {
+            id: labelBinary
+            text: "··· PIG "+root.binary+"."+root.release
+            color: "white"
+            font.family: fontGlobal.name
+            font.bold: true
+            font.pixelSize: screen.height/23
         }
-        Column {
-            Text {
-                id: labelDatabase
-                text: " DB "+root.database
-                color: "white"
-                font.family: fontGlobal.name
-                font.bold: true
-                font.pixelSize: screen.height/23
-            }
-            Text {
-                id: labelDatabaseNews
-                text: root.databaseNews
-                textFormat: Text.RichText
-                color: "white"
-                font.family: fontGlobal.name
-                font.bold: true
-                font.pixelSize: screen.height/54
-            }
+        Text {
+            id: labelBinaryNews
+            text: root.binaryNews
+            textFormat: Text.RichText
+            color: "white"
+            font.family: fontGlobal.name
+            font.pixelSize: screen.height/23
         }
     }
+    Column {
+        anchors.right: parent.right
+        anchors.rightMargin: parent.width/4.8
+        anchors.verticalCenter: parent.verticalCenter
+        Text {
+            id: labelDatabase
+            text: "··· DB "+root.database
+            color: "white"
+            font.family: fontGlobal.name
+            font.bold: true
+            font.pixelSize: screen.height/23
+        }
+        Text {
+            id: labelDatabaseNews
+            text: root.databaseNews
+            textFormat: Text.RichText
+            color: "white"
+            font.family: fontGlobal.name
+            font.pixelSize: screen.height/23
+        }
+    }
+
     Text {
         id: labelLink
         text: "<style type='text/css'>a:link{color:#ffffff;font-style:normal;text-decoration:none}</style>"+
@@ -71,31 +71,6 @@ Item {
         }
     }
 
-    states: State {
-        name: "show"
-    }
-    transitions: [
-        Transition {
-            to: "show"
-            SequentialAnimation {
-                ParallelAnimation {
-                    NumberAnimation { target: root; easing.amplitude: 1.7; properties: "screenR"
-                        ; to: 0; duration: 600; easing.type: Easing.OutQuart }
-                    NumberAnimation { target: root; easing.amplitude: 1.7; properties: "screenG"
-                        ; to: 0.28; duration: 600; easing.type: Easing.OutQuart }
-                    NumberAnimation { target: root; easing.amplitude: 1.7; properties: "screenB"
-                        ; to: 0.047; duration: 600; easing.type: Easing.OutQuart }
-                    NumberAnimation { target: root; easing.amplitude: 1.7; properties: "screenA"
-                        ; to: 0.8; duration: 600; easing.type: Easing.OutQuart }
-                }
-                PropertyAction { target: news; property: "visible"; value: true }
-            }
-        }
-    ]
-
-    Component.onCompleted: {
-        news.state = "show"
-        forceActiveFocus()
-    }
+    Component.onCompleted: forceActiveFocus()
 }
 // Tabs hechos.

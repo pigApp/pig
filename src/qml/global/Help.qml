@@ -12,7 +12,7 @@ Item {
             Text {
                 id: labelBackKey
                 text: "ESC"
-                color: "gold"
+                color: "white"
                 font.family: fontGlobal.name
                 font.bold: true
                 font.pixelSize: screen.height/23
@@ -30,7 +30,7 @@ Item {
             Text {
                 id: labelQuitKey
                 text: "CTRL Q"
-                color: "red"
+                color: "white"
                 font.family: fontGlobal.name
                 font.bold: true
                 font.pixelSize: screen.height/23
@@ -83,10 +83,9 @@ Item {
     Text {
         id: labelTroubleshooting
         text: "<style type='text/css'>a:link{color:#ffffff;font-style:normal;text-decoration:none}</style>"+
-              "<a href=\'http://google.com\'><font color='#009418'>TROUBLESHOOTING</font> ➟</a>"
+              "<a href=\'http://google.com\'>TROUBLESHOOTING</font> ➟</a>"
         textFormat: Text.RichText
         font.family: fontGlobal.name
-        font.bold: true
         font.pixelSize: screen.height/23
         anchors.top: columnHelp.bottom
         anchors.topMargin: -screen.height/108

@@ -230,7 +230,7 @@ void Update::check_exit(int exitCode)
                 _db->close();
             }
         }
-        (*_root)->setProperty("status", "UPDATED");
+        (*_root)->setProperty("status", "DONE");
         (*_root)->setProperty("information", "RESTART PIG");
     } else if (exitCode == -1) {
         (*_root)->setProperty("status", "FAIL");
