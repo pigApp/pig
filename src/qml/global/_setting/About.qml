@@ -16,32 +16,32 @@ Item {
         }
         Text {
             id: labelMovies
-            text: "<style type='text/css'>a:link{color:#ffffff;font-style:normal;text-decoration:none}</style>"+
-                  "<a href=\'http://google.com\'>MOVIES ➟</a>"
+            text: "<style type='text/css'>a:link{color:#ffffff;text-decoration:none}</style>"+
+                  "<a href=\'http://google.com\'>MOVIES</a>"
             textFormat: Text.RichText
-            color: "white"
             font.family: fontGlobal.name
             font.pixelSize: screen.height/23
+            onLinkHovered: { font.bold = !font.bold }
             onLinkActivated: Qt.openUrlExternally(link)
         }
         Text {
             id: labelCode
-            text: "<style type='text/css'>a:link{color:#ffffff;font-style:normal;text-decoration:none}</style>"+
-                  "<a href=\'http://google.com\'>CODE ➟</a>"
+            text: "<style type='text/css'>a:link{color:#ffffff;text-decoration:none}</style>"+
+                  "<a href=\'http://google.com\'>CODE</a>"
             textFormat: Text.RichText
-            color: "white"
             font.family: fontGlobal.name
             font.pixelSize: screen.height/23
+            onLinkHovered: { font.bold = !font.bold }
             onLinkActivated: Qt.openUrlExternally(link)
         }
         Text {
             id: labelBugs
-            text:"<style type='text/css'>a:link{color:#ffffff;font-style:normal;text-decoration:none}</style>"+
-                  "<a href=\'http://google.com\'>BUGS ➟</a>"
+            text: "<style type='text/css'>a:link{color:#ffffff;text-decoration:none}</style>"+
+                  "<a href=\'http://google.com\'>BUGS</a>"
             textFormat: Text.RichText
-            color: "white"
             font.family: fontGlobal.name
             font.pixelSize: screen.height/23
+            onLinkHovered: { font.bold = !font.bold }
             onLinkActivated: Qt.openUrlExternally(link)
         }
         Text {

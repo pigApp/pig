@@ -28,12 +28,13 @@ Rectangle {
         }
         Text {
             id: labelLink
-            text: "<style type='text/css'>a:link{color:#ffffff;font-style:normal;text-decoration:none}</style>"+
-                  "<a href=\'http://google.com\'>GET DATABASE ➟</a>"
+            text: "<style type='text/css'>a:link{color:#ffffff;text-decoration:none}</style>"+
+                  "<a href=\'http://google.com\'>GET DATABASE</a>"
             textFormat: Text.RichText
             font.family: fontGlobal.name
             font.pixelSize: screen.height/23
             anchors.horizontalCenter: rowStatus.horizontalCenter
+            onLinkHovered: { font.bold = !font.bold }
             onLinkActivated: Qt.openUrlExternally(link)
         }
     }

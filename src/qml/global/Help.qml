@@ -80,18 +80,6 @@ Item {
             }
         }
     }
-    Text {
-        id: labelTroubleshooting
-        text: "<style type='text/css'>a:link{color:#ffffff;font-style:normal;text-decoration:none}</style>"+
-              "<a href=\'http://google.com\'>TROUBLESHOOTING</font> ➟</a>"
-        textFormat: Text.RichText
-        font.family: fontGlobal.name
-        font.pixelSize: screen.height/23
-        anchors.top: columnHelp.bottom
-        anchors.topMargin: -screen.height/108
-        anchors.left: columnHelp.left
-        onLinkActivated: Qt.openUrlExternally(link)
-    }
 
     Keys.onPressed: {
         screen.state = "hide_help"

@@ -27,7 +27,7 @@ Rectangle {
         onFocusChanged: {
             if (onSet && enabled) {
                 if (focus)
-                    password.color = "black"
+                    password.color = Qt.rgba(0, 0, 0, 0.1)
                 else
                     password.color = Qt.rgba(0, 0, 0, 0)
             }
@@ -60,7 +60,7 @@ Rectangle {
         anchors.centerIn: parent
         Text {
             id: label
-            text: { if (onSet) "NEW PASSWORD"; else "PASSWORD" }
+            text: "PASSWORD"
             color: "white"
             font.family: fontGlobal.name
             font.bold: { text === "DONE" || text === "FAIL" }
