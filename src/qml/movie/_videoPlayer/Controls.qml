@@ -61,23 +61,25 @@ Item {
             event.accepted = true
         } else if ((event.key === Qt.Key_Q)
             && (event.modifiers & Qt.ControlModifier)) {
+            // TODO: Detener el reproductor desde aca.
             cpp.quit()
             event.accepted = true
         }
     }
     
     function playback(state, offset) {
-        if (!videoPlayer.standby) {
+        //if (!videoPlayer.standby) {// !sandbox
             if (state) {
                 if ((player.playbackState === MediaPlayer.PausedState)
-                    || (player.playbackState === MediaPlayer.StoppedState))
+                    || (player.playbackState === MediaPlayer.StoppedState)) {
+                    //videoPlayer.standby = false;//
                     player.play()
-                else
+                }else
                     player.pause()
             } else {
                 player.seek(player.position+offset)
             }
-        }
+        //}
     }
     function volume(mute, offset) {
         if (mute) {

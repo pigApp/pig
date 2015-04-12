@@ -31,7 +31,7 @@ Item {
         Text {
             id: labelFull
             text: "FULL"
-            color: { if (full === "1") "white"; else "red" }
+            color: { if (full === "1") "white"; else "gray" }
             font.family: fontGlobal.name
             font.pixelSize: screen.height/23
         }

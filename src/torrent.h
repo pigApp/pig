@@ -5,6 +5,7 @@
 
 //#include <libtorrent/torrent.hpp>//
 #include <libtorrent/session.hpp>
+//  #include <libtorrent/disk_io_thread.hpp>
 
 #include <stdlib.h>
 
@@ -31,9 +32,12 @@ private:
     libtorrent::session *s;
     libtorrent::torrent_handle h;
     libtorrent::file_storage fs;
+    //libtorrent::cache_status cache;
+
+    QFile test_file;//
 
     int _scene, piece_first, mb_required, mb_skip_global, n_mb;
-    bool metadata_ready, dump, skip, abort;
+    bool metadata_ready, dump, skip, aborted;
 
 private slots:
     void start(const QString * const tmp, const QStringList * const file);

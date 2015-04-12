@@ -21,7 +21,7 @@ Item {
         sourceSize.width: width
         sourceSize.height: height
         opacity: 0.5
-        source:  { if (!cached) "qrc:/img-download"; else "qrc:/img-replay" }
+        source: { if (!cached) "qrc:/img-download"; else "qrc:/img-replay" }
         anchors.centerIn: parent
     }
 
@@ -41,12 +41,13 @@ Item {
             }
         }
         onStatusChanged: {
-            if ((player.status === 7) && ((player.position+1) !== player.duration)) { // FIX: Hacer que no se vuelva a cumplir al poner play nuevamente.
-                player.seek(player.position-100)
-                if (player.playbackState === MediaPlayer.StoppedState)
+            if ((player.status === MediaPlayer.EndOfMedia) && ((player.position+1) !== player.duration)) { 
+                if (player.playbackState === MediaPlayer.StoppedState) {
+                    player.seek(player.position-800)
                     player.pause()
-                else if (player.playbackState === MediaPlayer.PausedState)
+                } else if (player.playbackState === MediaPlayer.PausedState) {
                     player.play()
+                }
             }
         }
     }

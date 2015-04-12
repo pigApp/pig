@@ -27,7 +27,7 @@ Rectangle {
         onFocusChanged: {
             if (onSet && enabled) {
                 if (focus)
-                    password.color = Qt.rgba(0, 0, 0, 0.1)
+                    password.color = Qt.rgba(1, 1, 1, 0.02)
                 else
                     password.color = Qt.rgba(0, 0, 0, 0)
             }

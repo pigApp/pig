@@ -13,7 +13,84 @@ Item {
     property int n_covers: 0
     property int n_previews: 0
 
-    ListModel { id: model }
+    ListModel {
+        id: model
+    }
+
+    Component {
+        id: delegate
+        Item {
+            id: recipe
+            z: PathView.recipe_z
+            width: view.width
+            height: view.height
+            scale: PathView.recipe_scale
+            onScaleChanged:  {
+                if (scale === 1.0) {
+                    preview.enabled = true
+                    preview.visible = true
+                } else {
+                    preview.enabled = false
+                    preview.visible = false
+                }
+            }
+            Text {
+                id: labelTitle
+                text: title
+                color: "white"
+                font.family: fontGlobal.name
+                font.pixelSize: screen.height/10
+                visible: recipe.PathView.isCurrentItem
+                anchors.left: cover.left
+                anchors.bottom: labelCast.top
+                anchors.bottomMargin: -parent.height/54
+            }
+            Text {
+                id: labelCast
+                text: cast
+                color: "#FD2790"
+                font.family: fontGlobal.name
+                font.bold: true
+                font.pixelSize: screen.height/46
+                visible: recipe.PathView.isCurrentItem
+                anchors.left: cover.left
+                anchors.bottom: cover.top
+                anchors.bottomMargin: parent.height/36
+            }
+            Cover {
+                id: cover
+                width: parent.width/4.58
+                height: parent.height/1.8
+                anchors.centerIn: parent
+                anchors.horizontalCenterOffset: -parent.width/15.86
+                anchors.verticalCenterOffset: -parent.height/43.2
+            }
+            Dates {
+                id: dates
+                visible: recipe.PathView.isCurrentItem
+                anchors.top: cover.bottom
+                anchors.topMargin: parent.height/54
+                anchors.left: cover.left
+            }
+            Preview {
+                id: preview
+                width: parent.width/3
+                height: parent.height/2.25
+                anchors.right: parent.right
+                anchors.rightMargin: parent.width/18.28
+                anchors.verticalCenter: cover.verticalCenter
+            }
+            Scenes {
+                id: btnScenes
+                totalScenes: scenes
+                enabled: recipe.PathView.isCurrentItem
+                visible: recipe.PathView.isCurrentItem
+                anchors.top: cover.bottom
+                anchors.left: cover.right
+                anchors.leftMargin: parent.width/32
+            }
+        }
+    }
 
     Rectangle {
         id: layerPreview
@@ -25,7 +102,6 @@ Item {
         anchors.verticalCenter: parent.verticalCenter
         anchors.verticalCenterOffset: -parent.height/43.2
     }
-
     PathView {
         id: view
         model: model
@@ -177,81 +253,6 @@ Item {
     
         onEnabledChanged: { if (view.enabled) view.forceActiveFocus() }
         onFocusChanged: { if (!view.focus) view.forceActiveFocus() }
-    }
-
-    Component {
-        id: delegate
-        Item {
-            id: recipe
-            z: PathView.recipe_z
-            width: view.width
-            height: view.height
-            scale: PathView.recipe_scale
-            onScaleChanged:  {
-                if (scale === 1.0) {
-                    preview.enabled = true
-                    preview.visible = true
-                } else {
-                    preview.enabled = false
-                    preview.visible = false
-                }
-            }
-            Text {
-                id: labelTitle
-                text: title
-                color: "white"
-                font.family: fontGlobal.name
-                font.pixelSize: screen.height/10
-                visible: recipe.PathView.isCurrentItem
-                anchors.left: cover.left
-                anchors.bottom: labelCast.top
-                anchors.bottomMargin: -parent.height/54
-            }
-            Text {
-                id: labelCast
-                text: cast
-                color: "#FD2790"
-                font.family: fontGlobal.name
-                font.bold: true
-                font.pixelSize: screen.height/46
-                visible: recipe.PathView.isCurrentItem
-                anchors.left: cover.left
-                anchors.bottom: cover.top
-                anchors.bottomMargin: parent.height/36
-            }
-            Cover {
-                id: cover
-                width: parent.width/4.58
-                height: parent.height/1.8
-                anchors.centerIn: parent
-                anchors.horizontalCenterOffset: -parent.width/15.86
-                anchors.verticalCenterOffset: -parent.height/43.2
-            }
-            Dates {
-                id: dates
-                visible: recipe.PathView.isCurrentItem
-                anchors.top: cover.bottom
-                anchors.topMargin: parent.height/54
-                anchors.left: cover.left
-            }
-            Preview {
-                id: preview
-                width: parent.width/3
-                height: parent.height/2.25
-                anchors.right: parent.right
-                anchors.rightMargin: parent.width/18.28
-                anchors.verticalCenter: cover.verticalCenter
-            }
-            Scenes {
-                id: btnScenes
-                totalScenes: scenes
-                enabled: recipe.PathView.isCurrentItem
-                visible: recipe.PathView.isCurrentItem
-                anchors.top: cover.bottom
-                anchors.left: cover.right
-                anchors.leftMargin: parent.width/32
-            }
-        }
     }
 
     Timer {

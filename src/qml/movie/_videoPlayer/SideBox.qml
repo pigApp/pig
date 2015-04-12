@@ -12,7 +12,7 @@ Item {
             id: layerTime
             width: sidebox.width
             height: screen.height/10.8
-            color: Qt.rgba(0, 0, 0, 0.5)
+            color: Qt.rgba(1, 1, 1, 0.02)
             Column {
                 spacing: -screen.height/54
                 anchors.left: parent.left
@@ -28,7 +28,7 @@ Item {
                 Text {
                     id: labelTotalTime
                     text: formatTime(player.duration)
-                    color: Qt.rgba(0.1, 0.1, 0.1, 1)
+                    color: "gray"
                     font.family: fontGlobal.name
                     font.pixelSize: screen.height/23
                 }
@@ -38,7 +38,7 @@ Item {
             id: layerPlayerState
             width: sidebox.width
             height: screen.height/10.8
-            color: Qt.rgba(0, 0, 0, 0.5)
+            color: Qt.rgba(1, 1, 1, 0.02)
             Column {
                 spacing: screen.height/154.28
                 anchors.left: parent.left
@@ -93,12 +93,7 @@ Item {
                                 "0.0"
                             }
                         }
-                        color: {
-                            if (player.muted || (player.volume === 0.0))
-                                Qt.rgba(0.1, 0.1, 0.1, 1)
-                            else
-                                "white"
-                        }
+                        color: "white"
                         font.family: fontGlobal.name
                         font.pixelSize: screen.height/23
                         anchors.verticalCenter: iconVolume.verticalCenter
@@ -108,10 +103,10 @@ Item {
             }
         }
         Rectangle {
-            id: layerTorrentStatus
+            id: layerTorrentInformation
             width: sidebox.width
             height: screen.height/10.8
-            color: Qt.rgba(0, 0, 0, 0.5)
+            color: Qt.rgba(1, 1, 1, 0.02)
             Column {
                 spacing: -screen.height/49.09
                 anchors.left: parent.left
@@ -131,7 +126,7 @@ Item {
                     Text {
                         id: labelBitRate
                         text: { if (root.bitRate !== "") root.bitRate; else "" }
-                        color: Qt.rgba(0.1, 0.1, 0.1, 1)
+                        color: "gray"
                         font.family: fontGlobal.name
                         font.pixelSize: screen.height/23
                         anchors.verticalCenter: iconBitRate.verticalCenter
@@ -140,7 +135,7 @@ Item {
                     Text {
                         id: labelKb
                         text: { if (root.bitRate !== "") "Kb/s"; else "" }
-                        color: Qt.rgba(0.1, 0.1, 0.1, 1)
+                        color: "gray"
                         font.family: fontGlobal.name
                         font.bold: true
                         font.pixelSize: screen.height/54
@@ -161,7 +156,7 @@ Item {
                     Text {
                         id: labelPeers
                         text: { if (root.peers !== "") root.peers }
-                        color: Qt.rgba(0.1, 0.1, 0.1, 1)
+                        color: "gray"
                         font.family: fontGlobal.name
                         font.pixelSize: screen.height/23
                         anchors.verticalCenter: iconPeers.verticalCenter

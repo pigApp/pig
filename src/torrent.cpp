@@ -20,17 +20,18 @@ Torrent::Torrent(QObject *parent, QObject **root, const int *const scene) : QObj
     dump = true;
     metadata_ready = false;
     skip = false;
-    abort = false;
-    mb_required = 10;//10;
+    aborted = false;
+    mb_required = 5;//10;
     mb_skip_global = 0;
 }
 
 Torrent::~Torrent()
 {
-    abort = true;
+    aborted = true;
     if (mSocket != NULL)
         delete mSocket;
-    s->remove_torrent(h);
+    if (h.is_valid())
+        s->remove_torrent(h);
     (*_root)->disconnect(this);
 }
 
@@ -58,10 +59,11 @@ void Torrent::start(const QString *const tmp, const QStringList *const file)
     s = new libtorrent::session();
     ss.disable_hash_checks = true;
     s->set_settings(ss);
-    s->set_alert_mask(2147483647); //TODO: Limitar (1864) (2147483647)
+    s->set_alert_mask(1864);
     s->start_dht();
     p.save_path = tmp->toStdString();
-    p.ti = new libtorrent::torrent_info(file->at(0).toStdString(), ec);
+    p.ti = new libtorrent::torrent_info("/home/lxfb/.pig/tmp/test.torrent", ec);//
+    //p.ti = new libtorrent::torrent_info(file->at(0).toStdString(), ec);
     h = s->add_torrent(p, ec);
     h.set_sequential_download(true);
     h.set_priority(255);
@@ -74,7 +76,7 @@ void Torrent::start(const QString *const tmp, const QStringList *const file)
 
 void Torrent::main_loop()
 {
-    if (!abort) {
+    if (!aborted) {
         std::auto_ptr<libtorrent::alert> a = s->pop_alert();
         switch (a->type())
         {
@@ -100,7 +102,7 @@ void Torrent::main_loop()
         if (metadata_ready) information();
 
         (*_root)->setProperty("debug", QString::fromStdString(a->message()));
-        std::cout << "MSG : " << a->message() << std::endl;//
+        //std::cout << "MSG : " << a->message() << std::endl;//
 
         QTimer::singleShot(1000, this, SLOT(main_loop()));
     }
@@ -108,6 +110,7 @@ void Torrent::main_loop()
 
 void Torrent::filter_files()
 {
+    /* //TODO: LLAMAR A FILTER_FILES AL INICIO.
     bool check = true;
     int ctrl = 1;
     QStringList formats; formats << ".avi" << ".divx" << ".flv" << ".h264"
@@ -139,7 +142,10 @@ void Torrent::filter_files()
             priorities.push_back(0);
         }
     }
-    h.prioritize_files(priorities);
+    h.prioritize_files(priorities); //TODO: PROBAR ESTO SOLO.
+    */
+
+    _scene = 0;//
 
     fs = h.torrent_file().get()->files();
     piece_first = fs.map_file(_scene, 0, 0).piece;
@@ -148,6 +154,8 @@ void Torrent::filter_files()
     (*_root)->setProperty("mb_required", mb_required);
     (*_root)->setProperty("n_mb", n_mb);
     (*_root)->setProperty("status", "");
+
+    //qDebug() << fs.piece_length();//
 
     metadata_ready = true;
 }
@@ -165,21 +173,26 @@ void Torrent::ret()
 
 void Torrent::information()
 {
-    if (!abort) {
-        const int mb_downloaded = h.status(2).total_payload_download/MB;
-        //qDebug() << "DOWN: " << h.status(2).total_wanted_done/MB; //NO SUMA CHACHE.
-        //qDebug() << "DOWN: " << h.status(2).total_payload_download/MB; //SUMA CACHE.
+    if (!aborted) {
+        h.flush_cache();//
+        const int mb_downloaded = ((s->get_cache_status().blocks_written)*16)/KB; //h.status(2).total_payload_download/MB; //const
         (*_root)->setProperty("bitRate", QString::number(h.status(2).download_rate/KB));
         (*_root)->setProperty("peers", h.status(2).num_peers);
-        (*_root)->setProperty("mb_downloaded", mb_downloaded);
         if (dump) {
+            (*_root)->setProperty("mb_downloaded", mb_downloaded);
+
             if ((mb_downloaded-mb_skip_global) >= mb_required) {
                 dump = false;
-                h.flush_cache(); // TODO: Recibirlo con un Alert.
+                //h.flush_cache(); // TODO: Recibirlo con un Alert.
                 //ret();
-                QTimer::singleShot(3000, this, SLOT(ret()));//
+                QTimer::singleShot(5000, this, SLOT(ret()));//3000
             }
-        }
+        } //else {
+            //mb_downloaded = ((s->get_cache_status().blocks_written)*16)/KB;
+            //(*_root)->setProperty("mb_downloaded", mb_downloaded);
+        //}
+
+        qDebug() << mb_downloaded;
     }
 }
 
@@ -197,13 +210,12 @@ void Torrent::error()
 
 
 
-
 /*
 void Torrent::get()
 {
     std::cout << "VALID: " << h.is_valid() << std::endl;
 
-    if (!abort) { //TODO: Hacerlo con alert.
+    if (!aborted) { //TODO: Hacerlo con alert.
         if ((h.status(32).state != 0) && (h.status(32).state != 1) && (h.status(32).state != 2))
             filter_files();
         else
@@ -296,7 +308,7 @@ offsetPiecesLast_file = piece_offset;
 /*
 void Torrent::main_loop()
 {
-    if (!abort) {
+    if (!aborted) {
         if (!skip) {
             const qint64 kb_downloaded = offset+(h.status().total_wanted_done/1024);
             //(*_player)->information(total, kb_downloaded, 220);

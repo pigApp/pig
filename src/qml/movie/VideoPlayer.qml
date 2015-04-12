@@ -9,6 +9,7 @@ Rectangle {
 
     property bool sandbox: true
     property bool standby
+    property int standbyPosition
     property int timeLeft: 9
     property int sideBoxMargin: 0
     property int barsMargin: 0
@@ -24,6 +25,7 @@ Rectangle {
                 if ((player.status === MediaPlayer.Buffered) && !player.error) {
                     movie.sandboxStatus = "SUCCESS"
                     videoPlayer.sandbox = false
+                    control.enabled = true
                     controls.forceActiveFocus()
                 } else if (((player.status === MediaPlayer.NoMedia)
                     || (player.status === MediaPlayer.InvalidMedia)
@@ -32,7 +34,12 @@ Rectangle {
                     movie.sandboxStatus = "FAIL"
                 }
             } else {
-                //...
+                if (((player.status === MediaPlayer.EndOfMedia)
+                    && ((player.position+1) !== player.duration))
+                    || (player.status === MediaPlayer.InvalidMedia)) {
+
+                    //ERROR EN LA REPRODUCCION O FRAME INVALIDO
+                }
             }
         }
     }
@@ -50,7 +57,9 @@ Rectangle {
             }
         }
     }
-    Control {}
+    Control {
+        id: control
+    }
 
     SideBox {
         id: sideBox
@@ -104,10 +113,12 @@ Rectangle {
         }
     ]
     
-    onStandbyChanged: { 
-        if (!sandbox)
-            if (standby) player.pause(); else player.play()
-    } 
+    onStandbyChanged: {
+        if (standby)
+            player.pause()
+        else
+            player.play()
+    }
 
     Component.onCompleted: { player.source = "file://"+root.movie_file_path }
     Component.onDestruction: {

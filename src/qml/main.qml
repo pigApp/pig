@@ -182,7 +182,7 @@ Item {
             },
             State {
                 name: "show_movie"
-                PropertyChanges { target: root; status: "GET TORRENT FILE"
+                PropertyChanges { target: root; status: "GET TORRENT"
                     ; restoreEntryValues: false }
                 PropertyChanges { target: loader_root; source: "movie/Movie.qml"
                     ; restoreEntryValues: false }
