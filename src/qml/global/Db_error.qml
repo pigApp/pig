@@ -28,10 +28,13 @@ Rectangle {
         }
         Text {
             id: labelLink
+            width: contentWidth
+            height: contentHeight-(screen.height/108)
             text: "<style type='text/css'>a:link{color:#ffffff;text-decoration:none}</style>"+
                   "<a href=\'http://google.com\'>GET DATABASE</a>"
             textFormat: Text.RichText
             font.family: fontGlobal.name
+            font.bold: true
             font.pixelSize: screen.height/23
             anchors.horizontalCenter: rowStatus.horizontalCenter
             onLinkHovered: { font.bold = !font.bold }

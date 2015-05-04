@@ -10,6 +10,8 @@
 #include <stdlib.h>
 
 #include <QObject>
+#include <QVideoFrame>//
+
 
 class Torrent : public QObject
 {
@@ -36,7 +38,8 @@ private:
 
     QFile test_file;//
 
-    int _scene, piece_first, mb_required, mb_skip_global, n_mb;
+    int _scene, piece_first;
+    double kb_required, kb_skip_global, n_kb;
     bool metadata_ready, dump, skip, aborted;
 
 private slots:
@@ -44,8 +47,10 @@ private slots:
     void main_loop();
     void filter_files();
     void ret();
-    void information();
+    void stats();
     void error();
+
+    void processFrame(const QVideoFrame fr);//
 };
 
 #endif

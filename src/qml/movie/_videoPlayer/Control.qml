@@ -13,15 +13,17 @@ Item {
     }
 
     function check() {
-        console.log("PLAYER: "+((player.position/player.duration)+0.003))//
-        console.log("DOWN: "+(mb_downloaded/root.n_mb))//
+        console.log("PLAYER_MS "+player.position)
+        console.log("READY__MS "+((kb_writen*player.duration)/root.n_kb))
+        console.log("N_MS "+player.duration)
+        console.log("WRITEN_KB "+kb_writen)
 
-        if (((player.position/player.duration)+0.01) >= (root.mb_downloaded/root.n_mb)) {
+        if ( player.position >= ((kb_writen*player.duration)/root.n_kb)) {
             videoPlayer.standby = true
-            console.log("//// STANDBY-TRUE")//
-        } else if (((player.position/player.duration)+0.01) < (root.mb_downloaded/root.n_mb)) {
+            console.log("STANDBY-TRUE")//
+        } else {
             videoPlayer.standby = false
-            console.log("//// STANDBY-FALSE")//
+            console.log("STANDBY-FALSE")//
         }
     }
 }

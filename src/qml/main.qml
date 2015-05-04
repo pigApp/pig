@@ -28,9 +28,9 @@ Item {
     property int xa: screen.width
     property int xb: 0
     property int n_movies
-    property int mb_required: 0
-    property int mb_downloaded: 0
-    property int n_mb: 0
+    property double kb_required: 0
+    property double kb_writen: 0
+    property double n_kb: 0
     property int peers: 0
     property var data_movies
     property var categories
@@ -199,11 +199,11 @@ Item {
                     ; restoreEntryValues: false }
                 PropertyChanges { target: root; movie_file_path: ""
                     ; restoreEntryValues: false }
-                PropertyChanges { target: root; mb_required: 0
+                PropertyChanges { target: root; kb_required: 0
                     ; restoreEntryValues: false }
-                PropertyChanges { target: root; mb_downloaded: 0
+                PropertyChanges { target: root; kb_writen: 0
                     ; restoreEntryValues: false }
-                PropertyChanges { target: root; n_mb: 0
+                PropertyChanges { target: root; n_kb: 0
                     ; restoreEntryValues: false }
             },
             State {

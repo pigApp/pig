@@ -2,8 +2,8 @@
 #define PIG_H
 
 #include "update.h"
-#include "torrent.h"
 #include "tcpSocket.h"
+#include "torrent.h"
 
 #include <QObject>
 #include <QtSql>
@@ -42,8 +42,8 @@ signals:
 private:
     QObject *mRoot;
     Update *mUpdate;
-    Torrent *mTorrent;
     TcpSocket *mSocket[5];
+    Torrent *mTorrent;
 
     QSqlDatabase db;
 

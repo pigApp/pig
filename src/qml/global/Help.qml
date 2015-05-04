@@ -28,24 +28,6 @@ Item {
         Row {
             spacing: screen.width/128
             Text {
-                id: labelQuitKey
-                text: "CTRL Q"
-                color: "white"
-                font.family: fontGlobal.name
-                font.bold: true
-                font.pixelSize: screen.height/23
-            }
-            Text {
-                id: labelQuit
-                text: "QUIT"
-                color: "white"
-                font.family: fontGlobal.name
-                font.pixelSize: screen.height/23
-            }
-        }
-        Row {
-            spacing: screen.width/128
-            Text {
                 id: labelHelpKey
                 text: "CTRL H"
                 color: "white"
@@ -74,6 +56,24 @@ Item {
             Text {
                 id: labelSetting
                 text: "SETTING"
+                color: "white"
+                font.family: fontGlobal.name
+                font.pixelSize: screen.height/23
+            }
+        }
+        Row {
+            spacing: screen.width/128
+            Text {
+                id: labelQuitKey
+                text: "CTRL Q"
+                color: "white"
+                font.family: fontGlobal.name
+                font.bold: true
+                font.pixelSize: screen.height/23
+            }
+            Text {
+                id: labelQuit
+                text: "QUIT"
                 color: "white"
                 font.family: fontGlobal.name
                 font.pixelSize: screen.height/23

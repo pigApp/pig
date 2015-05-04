@@ -29,7 +29,7 @@ Rectangle {
     }
 
     Row {
-        id: rowInformation
+        id: rowStats
         spacing: parent.width/96
         visible: downloading
         anchors.centerIn: parent
@@ -94,7 +94,7 @@ Rectangle {
         font.bold: true
         font.pixelSize: screen.height/54
         visible: { movie.sandboxStatus === "FAIL" }
-        anchors.top: rowInformation.bottom
+        anchors.top: rowStats.bottom
         anchors.topMargin: -screen.height/72
         anchors.horizontalCenter: parent.horizontalCenter
     }
@@ -126,7 +126,7 @@ Rectangle {
         cursorVisible: false
         wrapMode: Text.Wrap
         horizontalAlignment: TextEdit.AlignHCenter
-        anchors.top: rowInformation.bottom
+        anchors.top: rowStats.bottom
         anchors.topMargin: {
             if (movie.sandboxStatus === "FAIL")
                 parent.height/54
@@ -143,7 +143,7 @@ Rectangle {
 
     Rectangle {
        id: barDownload
-       width: { (parent.width*root.mb_downloaded)/root.mb_required }
+       width: { (parent.width*root.kb_writen)/root.kb_required }
        height: parent.height/540
        color: { if (movie.sandboxStatus !== "FAIL") "white"; else "gold" }
        visible: downloading

@@ -1,5 +1,4 @@
 - Revisar el filtrado de filas en Torrent.
-- Crear array cache para las filas .torrent.
 - Revisar el error del socket al desconectarse.
 - Terminar Help.
 - Descomentar Cover.qml
@@ -17,7 +16,8 @@
 - Metadata.
 
 - PROXIMA VERSION
-  - traducciones.
+  - Traducciones.
+  - Array cache para las filas .torrent.
 
 
 gstreamer0.10-{{base,good}{,-plugins},ffmpeg}

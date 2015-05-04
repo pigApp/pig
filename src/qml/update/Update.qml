@@ -47,6 +47,7 @@ Item {
                 id: btnGet
                 label: "GET"
                 labelSize: screen.height/23
+                labelColorIn: "gray"
                 onClicked: {
                     columnStatus.enabled = false
                     columnStatus.visible = false
@@ -57,6 +58,7 @@ Item {
                 id: btnSkip
                 label: "SKIP"
                 labelSize: screen.height/23
+                labelColorIn: "gray"
                 onClicked: root.sig_qml_update_skip()
             }
         }

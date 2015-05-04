@@ -103,7 +103,7 @@ Item {
             }
         }
         Rectangle {
-            id: layerTorrentInformation
+            id: layerTorrentStats
             width: sidebox.width
             height: screen.height/10.8
             color: Qt.rgba(1, 1, 1, 0.02)

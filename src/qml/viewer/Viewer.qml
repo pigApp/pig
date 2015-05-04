@@ -102,6 +102,7 @@ Item {
         anchors.verticalCenter: parent.verticalCenter
         anchors.verticalCenterOffset: -parent.height/43.2
     }
+
     PathView {
         id: view
         model: model

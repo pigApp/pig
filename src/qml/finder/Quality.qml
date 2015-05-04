@@ -6,6 +6,7 @@ Item {
     id: quality
 
     Row {
+        spacing: screen.width/192
         anchors.left: parent.left
         anchors.verticalCenter: parent.verticalCenter
         Button {

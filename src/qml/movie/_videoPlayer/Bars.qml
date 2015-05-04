@@ -14,12 +14,15 @@ Item {
     }
     Rectangle {
        id: barDownload
-       width: { (parent.width*root.mb_downloaded)/root.n_mb }
+       width: { (parent.width*((kb_writen*player.duration)/root.n_kb))/player.duration }
        height: screen.height/540
        color: "gray"
        opacity: 0.5
        anchors.bottom: parent.bottom
     }
 
-    onStatusChanged: { if (status === "TORRENT ERROR") barDownload.color = "red" }
+    onStatusChanged: {
+        if ((status === "TORRENT ERROR") && (root.bitRate === "0"))
+            barDownload.color = "red"
+    }
 }

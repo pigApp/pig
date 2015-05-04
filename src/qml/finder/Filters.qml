@@ -60,6 +60,7 @@ Item {
         spacing: screen.width/384
         visible: false
         anchors.right: parent.right
+        anchors.rightMargin: parent.width/384
         anchors.bottom: parent.bottom
         Image {
             id: iconCheck

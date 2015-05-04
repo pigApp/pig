@@ -8,9 +8,11 @@
 #include <QDir>
 #include <QTimer>
 #include <QDebug>//
+#include <QMediaPlayer>//
+#include <QVideoProbe>//
+#include <QVideoWidget>//
 
 const int KB = 1024;
-const int MB = 1048576;
 
 Torrent::Torrent(QObject *parent, QObject **root, const int *const scene) : QObject(parent)
 {
@@ -21,8 +23,8 @@ Torrent::Torrent(QObject *parent, QObject **root, const int *const scene) : QObj
     metadata_ready = false;
     skip = false;
     aborted = false;
-    mb_required = 5;//10;
-    mb_skip_global = 0;
+    kb_required = 5120;
+    kb_skip_global = 0;
 }
 
 Torrent::~Torrent()
@@ -55,11 +57,10 @@ void Torrent::start(const QString *const tmp, const QStringList *const file)
     libtorrent::session_settings ss;
     libtorrent::add_torrent_params p;
     libtorrent::error_code ec;
-
     s = new libtorrent::session();
     ss.disable_hash_checks = true;
     s->set_settings(ss);
-    s->set_alert_mask(1864);
+    s->set_alert_mask(2147483647); //(1864);
     s->start_dht();
     p.save_path = tmp->toStdString();
     p.ti = new libtorrent::torrent_info("/home/lxfb/.pig/tmp/test.torrent", ec);//
@@ -85,6 +86,7 @@ void Torrent::main_loop()
                 filter_files();
                 break;
             }
+            // HACER UN FLUSH DESDE ACA CADA VEZ QUE SE DESCARGUEN 2 PIEZAS COMPLETAS.
             case libtorrent::cache_flushed_alert::alert_type: // No lo toma.
             {
                 std::cout << "//// CHACHE_FLUSHED" << std::endl;
@@ -99,10 +101,9 @@ void Torrent::main_loop()
             }
             default: break;
         }
-        if (metadata_ready) information();
-
         (*_root)->setProperty("debug", QString::fromStdString(a->message()));
-        //std::cout << "MSG : " << a->message() << std::endl;//
+
+        if (metadata_ready) stats();
 
         QTimer::singleShot(1000, this, SLOT(main_loop()));
     }
@@ -110,13 +111,13 @@ void Torrent::main_loop()
 
 void Torrent::filter_files()
 {
-    /* //TODO: LLAMAR A FILTER_FILES AL INICIO.
     bool check = true;
     int ctrl = 1;
     QStringList formats; formats << ".avi" << ".divx" << ".flv" << ".h264"
         << ".mkv" << ".mp4" << ".mpg" << ".mpeg" << ".ogm"<< ".ogv" << ".wmv";
     std::vector<int> priorities;
 
+    /*
     fs = h.torrent_file().get()->orig_files();
 
     for (int i=0; i<fs.num_files(); i++) {
@@ -142,26 +143,38 @@ void Torrent::filter_files()
             priorities.push_back(0);
         }
     }
-    h.prioritize_files(priorities); //TODO: PROBAR ESTO SOLO.
     */
+    h.prioritize_files(priorities); //TODO: PROBAR ESTO SOLO.
 
     _scene = 0;//
 
     fs = h.torrent_file().get()->files();
     piece_first = fs.map_file(_scene, 0, 0).piece;
-    n_mb = fs.file_size(_scene)/MB;
+    n_kb = fs.file_size(_scene)/KB;
 
-    (*_root)->setProperty("mb_required", mb_required);
-    (*_root)->setProperty("n_mb", n_mb);
+    (*_root)->setProperty("kb_required", kb_required);
+    (*_root)->setProperty("n_kb", n_kb);
     (*_root)->setProperty("status", "");
-
-    //qDebug() << fs.piece_length();//
 
     metadata_ready = true;
 }
 
 void Torrent::ret()
 {
+    QMediaPlayer *player = new QMediaPlayer();
+    QVideoProbe *probe = new QVideoProbe;
+    probe->setSource(player);
+    connect(probe, SIGNAL(videoFrameProbed(QVideoFrame)), this, SLOT(processFrame(QVideoFrame)));
+
+    QVideoWidget *videoWidget = new QVideoWidget;
+    player->setVideoOutput(videoWidget);
+    player->setMedia(QUrl::fromLocalFile(QString::fromStdString(fs.file_path(_scene, h.status(128).save_path))));
+    player->play();
+    videoWidget->show();
+
+    //TODO: BORRAR multimediawidgets EN PIG.PRO, BORRAR #includes Y SLOT processFrame(QVideoFrame fr)
+
+    /*
     if (!skip) {
         (*_root)->setProperty("movie_file_path"
             , QString::fromStdString(fs.file_path(_scene, h.status(128).save_path)));
@@ -169,30 +182,35 @@ void Torrent::ret()
         skip = false;
         //UPDATE PLAYER
     }
+    */
 }
 
-void Torrent::information()
+void Torrent::processFrame(QVideoFrame fr)
+{
+    qDebug() << fr.isValid();
+}
+
+void Torrent::stats()
 {
     if (!aborted) {
         h.flush_cache();//
-        const int mb_downloaded = ((s->get_cache_status().blocks_written)*16)/KB; //h.status(2).total_payload_download/MB; //const
+        const double kb_writen = (s->get_cache_status().blocks_written)*16;
+        (*_root)->setProperty("kb_writen", kb_writen);
         (*_root)->setProperty("bitRate", QString::number(h.status(2).download_rate/KB));
         (*_root)->setProperty("peers", h.status(2).num_peers);
         if (dump) {
-            (*_root)->setProperty("mb_downloaded", mb_downloaded);
-
-            if ((mb_downloaded-mb_skip_global) >= mb_required) {
+            if ((kb_writen-kb_skip_global) >= kb_required) {
                 dump = false;
                 //h.flush_cache(); // TODO: Recibirlo con un Alert.
                 //ret();
-                QTimer::singleShot(5000, this, SLOT(ret()));//3000
+                //QTimer::singleShot(1000, this, SLOT(ret()));//3000
             }
         } //else {
-            //mb_downloaded = ((s->get_cache_status().blocks_written)*16)/KB;
-            //(*_root)->setProperty("mb_downloaded", mb_downloaded);
+            //kb_writen = ((s->get_cache_status().blocks_written)*16)/KB;
+            //(*_root)->setProperty("kb_writen", kb_writen);
         //}
 
-        qDebug() << mb_downloaded;
+        qDebug() << kb_writen;
     }
 }
 
@@ -241,7 +259,7 @@ void Torrent::piece_update(qint64 total_msec, qint64 offset_msec)
     //piece_offset = 475; //piece_offset_global+(((offset_msec)*n_pieces)/total_msec);
     piece_offset = piece_offset_global+((99*n_pieces)/100);
     offset = (piece_offset_global+((offset_msec*n_pieces)/total_msec))*(piece_length/1024);
-    mb_skip_global = h.status().total_done/MB;
+    kb_skip_global = h.status().total_done/MB;
 
     qDebug() << "-- SCENE: " << scene;
     qDebug() << "-- TOTAL_MSEC: " << total_msec;
@@ -251,7 +269,7 @@ void Torrent::piece_update(qint64 total_msec, qint64 offset_msec)
     qDebug() << "-- PIECE_TOTAL: " << n_pieces;
     qDebug() << "-- PIECE_TOTAL_GLOBAL: " << n_pieces_global;
     qDebug() << "-- PIECES_OFFSET_GLOBAL: " << piece_offset_global;
-    qDebug() << "-- TOTAL_PRE_SKIP: " << mb_skip_global;
+    qDebug() << "-- TOTAL_PRE_SKIP: " << kb_skip_global;
     qDebug() << "-- OFFSET_PIECE_FILE: " << piece_offset;
     
     for (int i=0; i < (n_pieces_global+1); i++)
@@ -265,9 +283,9 @@ void Torrent::piece_update(qint64 total_msec, qint64 offset_msec)
 
     //const qint64 remnant = n_pieces_global-((offset_msec*n_pieces)/total_msec);
     //if (((remnant*piece_length)/MB) < 15)
-        //mb_required = remnant-1; //TODO: Cuando este solucionado el tema del slider, revisar esto.
+        //kb_required = remnant-1; //TODO: Cuando este solucionado el tema del slider, revisar esto.
     //else
-        //mb_required = 15;
+        //kb_required = 15;
 
 
     h.prioritize_pieces(piecePriority);
@@ -313,7 +331,7 @@ void Torrent::main_loop()
             const qint64 kb_downloaded = offset+(h.status().total_wanted_done/1024);
             //(*_player)->information(total, kb_downloaded, 220);
         } else {
-            const int downloadedSkip_mb = (h.status().total_done/MB)-mb_skip_global;
+            const int downloadedSkip_mb = (h.status().total_done/MB)-kb_skip_global;
             //(*_player)->information(0, 0, downloadedSkip_mb);
         }
         QTimer::singleShot(1000, this, SLOT(main_loop()));

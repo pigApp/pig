@@ -5,7 +5,7 @@ Item {
 
     Text {
         id: label
-        text: "WELCOME &nbsp; <font color='#000000'>CTRL H TO HELP</font>"
+        text: "WELCOME &nbsp;<font color='#000000'>CTRL H HELP</font>"
         color: "#FD2790"
         font.family: fontGlobal.name
         font.bold: true
