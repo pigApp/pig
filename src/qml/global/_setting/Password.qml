@@ -2,7 +2,7 @@ import QtQuick 2.4
 
 Rectangle {
     id: password
-    color: "black"
+    color: Qt.rgba(0, 0, 0, 0)
 
     property bool onSet
 
@@ -17,8 +17,8 @@ Rectangle {
         anchors.centerIn: parent
         onCursorVisibleChanged: { if (cursorVisible) cursorVisible = false }
         onCursorPositionChanged: {
-            if (password.color == "#ff0000" && enabled)
-                password.color = "black"
+            if ((password.color == Qt.rgba(1, 0, 0, 0.4)) && enabled)
+                password.color = Qt.rgba(0, 0, 0, 0)
             if (text === "")
                 label.visible = true
             else
@@ -86,10 +86,10 @@ Rectangle {
         onSig_ret_password: {
             if (success) {
                 userInput.text = ""
-                label.text = "DONE" 
+                label.text = "DONE"
                 label.visible = true
             } else {
-                color = "red"
+                color = Qt.rgba(1, 0, 0, 0.4)
                 if (onSet) {
                     userInput.text = ""
                     label.text = "FAIL"

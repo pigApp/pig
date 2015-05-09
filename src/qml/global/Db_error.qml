@@ -1,8 +1,7 @@
 import QtQuick 2.4
 
-Rectangle {
+Item {
     id: db_error
-    color: "red"
 
     Column {
         spacing: -parent.height/108
@@ -30,7 +29,7 @@ Rectangle {
             id: labelLink
             width: contentWidth
             height: contentHeight-(screen.height/108)
-            text: "<style type='text/css'>a:link{color:#ffffff;text-decoration:none}</style>"+
+            text: "<style type='text/css'>a:link{color:#FFFFFF;text-decoration:none}</style>"+
                   "<a href=\'http://google.com\'>GET DATABASE</a>"
             textFormat: Text.RichText
             font.family: fontGlobal.name

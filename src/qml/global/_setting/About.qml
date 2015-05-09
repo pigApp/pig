@@ -19,7 +19,7 @@ Item {
             id: labelMovies
             width: contentWidth
             height: contentHeight-(screen.height/108)
-            text: "<style type='text/css'>a:link{color:#ffffff;text-decoration:none}</style>"+
+            text: "<style type='text/css'>a:link{color:#FFFFFF;text-decoration:none}</style>"+
                   "<a href=\'http://google.com\'>MOVIES</a>"
             textFormat: Text.RichText
             font.family: fontGlobal.name
@@ -32,7 +32,7 @@ Item {
             id: labelCode
             width: contentWidth
             height: contentHeight-(screen.height/108)
-            text: "<style type='text/css'>a:link{color:#ffffff;text-decoration:none}</style>"+
+            text: "<style type='text/css'>a:link{color:#FFFFFF;text-decoration:none}</style>"+
                   "<a href=\'http://google.com\'>CODE</a>"
             textFormat: Text.RichText
             font.family: fontGlobal.name
@@ -45,7 +45,7 @@ Item {
             id: labelBugs
             width: contentWidth
             height: contentHeight-(screen.height/108)
-            text: "<style type='text/css'>a:link{color:#ffffff;text-decoration:none}</style>"+
+            text: "<style type='text/css'>a:link{color:#FFFFFF;text-decoration:none}</style>"+
                   "<a href=\'http://google.com\'>BUGS</a>"
             textFormat: Text.RichText
             font.family: fontGlobal.name
@@ -79,26 +79,12 @@ Item {
                 }
             }
         }
-        Text {
-            id: labelContact
-            text: "PIG@MAIL.COM"
-            color: "white"
-            font.family: fontGlobal.name
-            font.pixelSize: screen.height/23
-        }
-    }
-    Rectangle {
-        id: layerLabelWallet
-        color: "green"
-        visible: labelWallet.visible
-        anchors.fill: labelWallet
     }
     TextEdit {
         id: labelWallet
         text: "159yedWATJUr9r4NGe2A8Zw87rCzbGwNFV"
         color: "white"
         font.family: fontGlobal.name
-        font.bold: true
         font.pixelSize: screen.height/54
         visible: false
         selectByMouse: true
@@ -107,7 +93,7 @@ Item {
         anchors.left: columnAbout.left
         anchors.leftMargin: screen.width/21.33
         anchors.bottom: columnAbout.bottom
-        anchors.bottomMargin: screen.height/18.62
+        anchors.bottomMargin: -screen.height/540
     }
 }
 // Tabs hechos.

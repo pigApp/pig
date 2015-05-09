@@ -42,13 +42,14 @@ Item {
                 font.pixelSize: screen.height/10
                 visible: recipe.PathView.isCurrentItem
                 anchors.left: cover.left
+                anchors.leftMargin: -parent.width/960
                 anchors.bottom: labelCast.top
-                anchors.bottomMargin: -parent.height/54
+                anchors.bottomMargin: -parent.height/64
             }
             Text {
                 id: labelCast
                 text: cast
-                color: "#FD2790"
+                color: "darkgray"
                 font.family: fontGlobal.name
                 font.bold: true
                 font.pixelSize: screen.height/46
@@ -67,6 +68,7 @@ Item {
             }
             Dates {
                 id: dates
+                totalScenes: scenes
                 visible: recipe.PathView.isCurrentItem
                 anchors.top: cover.bottom
                 anchors.topMargin: parent.height/54
@@ -79,15 +81,6 @@ Item {
                 anchors.right: parent.right
                 anchors.rightMargin: parent.width/18.28
                 anchors.verticalCenter: cover.verticalCenter
-            }
-            Scenes {
-                id: btnScenes
-                totalScenes: scenes
-                enabled: recipe.PathView.isCurrentItem
-                visible: recipe.PathView.isCurrentItem
-                anchors.top: cover.bottom
-                anchors.left: cover.right
-                anchors.leftMargin: parent.width/32
             }
         }
     }

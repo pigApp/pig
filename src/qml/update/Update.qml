@@ -39,15 +39,16 @@ Item {
             }
         }
         Row {
-            spacing: screen.width/384
+            spacing: screen.width/192
             enabled: { label.text === "UPDATE AVAILABLE" }
             visible: { label.text === "UPDATE AVAILABLE" }
             anchors.horizontalCenter: rowStatus.horizontalCenter
             Button {
                 id: btnGet
                 label: "GET"
+                labelColor: "darkgray"
                 labelSize: screen.height/23
-                labelColorIn: "gray"
+                labelColorIn: "white"
                 onClicked: {
                     columnStatus.enabled = false
                     columnStatus.visible = false
@@ -57,8 +58,9 @@ Item {
             Button {
                 id: btnSkip
                 label: "SKIP"
+                labelColor: "darkgray"
                 labelSize: screen.height/23
-                labelColorIn: "gray"
+                labelColorIn: "white"
                 onClicked: root.sig_qml_update_skip()
             }
         }
@@ -90,7 +92,7 @@ Item {
             PropertyChanges { target: root; screenR: 1; restoreEntryValues: false }
             PropertyChanges { target: root; screenG: 0; restoreEntryValues: false }
             PropertyChanges { target: root; screenB: 0; restoreEntryValues: false }
-            PropertyChanges { target: root; screenA: 1; restoreEntryValues: false }
+            PropertyChanges { target: root; screenA: 0.4; restoreEntryValues: false }
             PropertyChanges { target: columnStatus; visible: true; restoreEntryValues: false }
         }
     ]
@@ -98,8 +100,6 @@ Item {
         Transition {
             to: "available"
             SequentialAnimation {
-                NumberAnimation { target: root; easing.amplitude: 1.7; properties: "blurRadius"
-                    ; to: 64; duration: 600; easing.type: Easing.OutQuart }
                 PropertyAction { target: columnStatus; property: "visible"; value: true }
                 PropertyAction { target: columnStatus; property: "enabled"; value: true }
             }

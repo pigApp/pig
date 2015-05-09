@@ -31,14 +31,6 @@
         <file alias="img-cat-TOYS">resources/images/finder/filters/categories/TOYS.jpg</file>
         <file alias="img-cat-VOYEUR">resources/images/finder/filters/categories/VOYEUR.jpg</file>
         <file alias="img-star-BELLADONNA">resources/images/finder/filters/pornstars/BELLADONNA.jpg</file>
-        <file alias="img-sd">resources/images/finder/quality/sd.svg</file>
-        <file alias="img-sd-off">resources/images/finder/quality/sd-off.svg</file>
-        <file alias="img-hd">resources/images/finder/quality/hd.svg</file>
-        <file alias="img-hd-off">resources/images/finder/quality/hd-off.svg</file>
-        <file alias="img-fhd">resources/images/finder/quality/fhd.svg</file>
-        <file alias="img-fhd-off">resources/images/finder/quality/fhd-off.svg</file>
-        <file alias="img-fm">resources/images/finder/quality/fm.svg</file>
-        <file alias="img-fm-off">resources/images/finder/quality/fm-off.svg</file>
         <file alias="img-scene">resources/images/viewer/scene.svg</file>
         <file alias="img-scene-off">resources/images/viewer/scene-off.svg</file>
         <file alias="img-play">resources/images/viewer/preview/play.svg</file>
@@ -56,7 +48,6 @@
         <file alias="img-download-dark">resources/images/global/network/download-dark.svg</file>
         <file alias="img-peers">resources/images/global/network/peers.svg</file>
         <file alias="img-peers-dark">resources/images/global/network/peers-dark.svg</file>
-        <file alias="img_warning">resources/images/global/warning.svg</file>
         <file alias="img_err">resources/images/global/err.svg</file>
         <file>resources/images/global/icon.ico</file>
         <file>resources/images/global/icon.jpg</file>
@@ -76,7 +67,6 @@
         <file>src/qml/viewer/Viewer.qml</file>
         <file>src/qml/viewer/Cover.qml</file>
         <file>src/qml/viewer/Dates.qml</file>
-        <file>src/qml/viewer/Scenes.qml</file>
         <file>src/qml/viewer/preview/Preview.qml</file>
         <file>src/qml/viewer/preview/PreviewPlayer.qml</file>
         <file>src/qml/movie/Movie.qml</file>

@@ -32,9 +32,9 @@ Item {
         Button {
             id: btnFilterCategory
             label: "CATEGORY"
-            labelColor: "#FA6900"
+            labelColor: "darkgray"
             labelSize: screen.height/20
-            labelColorIn: "gray"
+            labelColorIn: "#FA6900"
             onClicked: {
                 onCategory = true
                 finder.state = "show_filter"
@@ -43,9 +43,9 @@ Item {
         Button {
             id: btnFilterPornstar
             label: "PORNSTAR"
-            labelColor: "#FD2790"
+            labelColor: "darkgray"
             labelSize: screen.height/20
-            labelColorIn: "gray"
+            labelColorIn: "#FD2790"
             onClicked: {
                 onCategory = false
                 finder.state = "show_filter"
@@ -72,9 +72,9 @@ Item {
         id: btnSetting
         x: parent.width+700
         label: "SETTING"
-        labelColor: "black"
+        labelColor: "darkgray"
         labelSize: screen.height/20
-        labelColorIn: "gray"
+        labelColorIn: "black"
         anchors.verticalCenter: input.verticalCenter
         onClicked: {
             if (finder.state !== "show_filter")
@@ -133,7 +133,7 @@ Item {
                     NumberAnimation { target: quality; properties: "x"
                         ; to: screen.width/1.84; duration: 1200; easing.type: Easing.InOutCubic }
                     NumberAnimation { target: btnSetting; properties: "x"
-                        ; to: screen.width/1.38; duration: 1400; easing.type: Easing.InOutQuart }
+                        ; to: screen.width/1.43; duration: 1400; easing.type: Easing.InOutQuart }
                 }
                 PropertyAction { target: input; property: "enabled"; value: true }
             }
@@ -191,7 +191,7 @@ Item {
                     NumberAnimation { target: quality; properties: "x"
                         ; to: screen.width/1.84; duration: 1100; easing.type: Easing.InOutQuart }
                     NumberAnimation { target: btnSetting; properties: "x"
-                        ; to: screen.width/1.38; duration: 1200; easing.type: Easing.InOutQuart }
+                        ; to: screen.width/1.43; duration: 1200; easing.type: Easing.InOutQuart }
                     NumberAnimation { target: root; easing.amplitude: 1.7; properties: "xa"
                         ; to: screen.width+10; duration: 1200; easing.type: Easing.OutQuart }
                 }
@@ -219,12 +219,7 @@ Item {
 
     Keys.onPressed: {
         root.init = false
-        if ((event.key === Qt.Key_S)
-            && (event.modifiers & Qt.ControlModifier)) {
-            if (finder.state !== "show_filter")
-                screen.state = "show_setting"
-            event.accepted = true
-        } else if ((event.key === Qt.Key_H)
+        if ((event.key === Qt.Key_H)
             && (event.modifiers & Qt.ControlModifier)) {
             if (finder.state !== "show_filter") {
                 screen.state = "show_help"

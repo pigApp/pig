@@ -5,8 +5,8 @@ Item {
 
     Text {
         id: label
-        text: "WELCOME &nbsp;<font color='#000000'>CTRL H HELP</font>"
-        color: "#FD2790"
+        text: "CTRL H HELP"
+        color: "darkgray"
         font.family: fontGlobal.name
         font.bold: true
         font.pixelSize: screen.height/54

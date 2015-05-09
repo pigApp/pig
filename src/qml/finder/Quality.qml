@@ -11,9 +11,10 @@ Item {
         anchors.verticalCenter: parent.verticalCenter
         Button {
             id: btnSd
-            width: screen.width/25.26
-            height: screen.height/14.21
-            iconSource: { if (root.quality === "SD") "qrc:/img-sd"; else "qrc:/img-sd-off" }
+            label: "SD"
+            labelColor: { if (root.quality === "SD") "white"; else "gray" }
+            labelSize: screen.height/20
+            labelColorIn: "white"
             MouseArea {
                 anchors.fill: parent
                 onClicked: { if (root.quality === "SD") root.quality = ""; else root.quality = "SD" }
@@ -21,19 +22,21 @@ Item {
         }
         Button {
             id: btnHd
-            width: screen.width/25.26
-            height: screen.height/14.21
-            iconSource: { if (root.quality === "HD") "qrc:/img-hd"; else "qrc:/img-hd-off" }
+            label: "HD"
+            labelColor: { if (root.quality === "HD") "white"; else "gray" }
+            labelSize: screen.height/20
+            labelColorIn: "white"
             MouseArea {
                 anchors.fill: parent
                 onClicked: { if (root.quality === "HD") root.quality = ""; else root.quality = "HD" }
             }
         }
         Button {
-            id: btnFhd
-            width: screen.width/25.26
-            height: screen.height/14.21
-            iconSource: { if (root.quality === "FD") "qrc:/img-fhd"; else "qrc:/img-fhd-off" }
+            id: btnFd
+            label: "FD"
+            labelColor: { if (root.quality === "FD") "white"; else "gray" }
+            labelSize: screen.height/20
+            labelColorIn: "white"
             MouseArea {
                 anchors.fill: parent
                 onClicked: { if (root.quality === "FD") root.quality = ""; else root.quality = "FD" }
@@ -41,9 +44,10 @@ Item {
         }
         Button {
             id: btnFm
-            width: screen.width/25.26
-            height: screen.height/14.21
-            iconSource: { if (root.full === "1") "qrc:/img-fm"; else "qrc:/img-fm-off" }
+            label: "FM"
+            labelColor: { if (root.full === "1") "#CACACA"; else "gray" }
+            labelSize: screen.height/20
+            labelColorIn: "#CACACA"
             MouseArea {
                 anchors.fill: parent
                 onClicked: { if (root.full === "1") root.full = ""; else root.full = "1" }

@@ -10,19 +10,9 @@ Item {
 
     property string labelColor: "white"
     property string labelColorIn
-    property string iconSource: ""
 
     signal clicked()
 
-    Image {
-        id: icon
-        width: button.width
-        height: button.height
-        sourceSize.width: width
-        sourceSize.height: height
-        source: iconSource
-        anchors.centerIn: parent
-    }
     Text {
         id: label
         width: contentWidth
@@ -41,16 +31,12 @@ Item {
             anchors.bottomMargin: screen.height/90
             anchors.fill: parent
             onEntered: {
-                if (iconSource === "") {
-                    labelOut.running = false
-                    labelIn.running = true
-                }
+                labelOut.running = false
+                labelIn.running = true
             }
             onHoveredChanged: {
-                if (iconSource === "") {
-                    labelIn.running = false
-                    labelOut.running = true
-                }
+                labelIn.running = false
+                labelOut.running = true
             }
             onClicked: button.clicked()
         }

@@ -49,7 +49,7 @@ Item {
         id: labelLink
         width: contentWidth
         height: contentHeight-(parent.height/360)
-        text: "<style type='text/css'>a:link{color:#ffffff;text-decoration:none}</style>"+
+        text: "<style type='text/css'>a:link{color:#FFFFFF;text-decoration:none}</style>"+
               "<a href=\'http://google.com\'>READ MORE</a>"
         textFormat: Text.RichText
         font.family: fontGlobal.name

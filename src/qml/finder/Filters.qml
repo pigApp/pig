@@ -55,35 +55,21 @@ Item {
         }
     }
 
-    Row {
-        id: rowCheck
-        spacing: screen.width/384
+    Text {
+        id: labelCheck
+        text: "¡CHECK QUALITY SELECTOR!"
+        color: "white"
+        font.family: fontGlobal.name
+        font.bold: true
+        font.pixelSize: screen.height/54
         visible: false
         anchors.right: parent.right
-        anchors.rightMargin: parent.width/384
         anchors.bottom: parent.bottom
-        Image {
-            id: iconCheck
-            width: screen.width/58.18
-            height: screen.height/32.72
-            sourceSize.width: width
-            sourceSize.height: height
-            source: "qrc:/img_warning"
-            anchors.verticalCenter: labelCheck.verticalCenter
-        }
-        Text {
-            id: labelCheck
-            text: "CHECK QUALITY SELECTOR"
-            color: "white"
-            font.family: fontGlobal.name
-            font.bold: true
-            font.pixelSize: screen.height/54
-        }
     }
     Timer {
-        id: delayCheck
+        id: delayHideCheck
         interval: 5000
-        onTriggered: { rowCheck.visible = false }
+        onTriggered: { labelCheck.visible = false }
     }
 
     Keys.onPressed: {
@@ -114,8 +100,8 @@ Item {
             if (n_movies === 0) {
                 root.category = ""
                 root.pornstar = ""
-                rowCheck.visible = true
-                delayCheck.start()
+                labelCheck.visible = true
+                delayHideCheck.start()
             }
         }
     }

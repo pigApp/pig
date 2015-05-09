@@ -53,15 +53,12 @@ Item {
     Image {
         id: background
         source: "qrc:/img-background"
-        cache: false
-        visible: false
         anchors.fill: parent
     }
     FastBlur {
         id: backgroundBlur
         source: background
         radius: blurRadius
-        visible: false
         anchors.fill: background
     }
 
@@ -93,10 +90,6 @@ Item {
             },
             State {
                 name: "show_update"
-                PropertyChanges { target: background; visible: true
-                    ; restoreEntryValues: false }
-                PropertyChanges { target: backgroundBlur; visible: true
-                    ; restoreEntryValues: false }
                 PropertyChanges { target: loader_root; source: "update/Update.qml"
                     ; restoreEntryValues: false }
             },
@@ -113,7 +106,7 @@ Item {
                     ; restoreEntryValues: false }
                 PropertyChanges { target: root; screenA: 0.4
                     ; restoreEntryValues: false }
-                PropertyChanges { target: root; blurRadius: 64
+                PropertyChanges { target: root; blurRadius: 32
                     ; restoreEntryValues: false }
                 PropertyChanges { target: loader_root; source: "global/Setting.qml"
                     ; restoreEntryValues: false }
@@ -141,7 +134,7 @@ Item {
                     ; restoreEntryValues: false }
                 PropertyChanges { target: root; screenA: 0.4
                     ; restoreEntryValues: false }
-                PropertyChanges { target: root; blurRadius: 64
+                PropertyChanges { target: root; blurRadius: 32
                     ; restoreEntryValues: false }
                 PropertyChanges { target: loader_root; source: "global/Help.qml"
                     ; restoreEntryValues: false }
@@ -209,6 +202,14 @@ Item {
             State {
                 name: "show_db_error"
                 PropertyChanges { target: loader_root_b; source: ""
+                    ; restoreEntryValues: false }
+                PropertyChanges { target: root; screenR: 1
+                    ; restoreEntryValues: false }
+                PropertyChanges { target: root; screenG: 0
+                    ; restoreEntryValues: false }
+                PropertyChanges { target: root; screenB: 0
+                    ; restoreEntryValues: false }
+                PropertyChanges { target: root; screenA: 0.4
                     ; restoreEntryValues: false }
                 PropertyChanges { target: loader_root; source: "global/Db_error.qml"
                     ; restoreEntryValues: false }
