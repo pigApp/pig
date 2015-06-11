@@ -5,25 +5,25 @@
 #include <libtorrent/alert_types.hpp>
 //#include <libtorrent/extensions/ut_pex.hpp>// Por defecto enable.
 
+#include <vlc/vlc.h> //<pig/vlc/vlc.h>
+
 #include <QDir>
 #include <QTimer>
 #include <QDebug>//
-#include <QMediaPlayer>//
-#include <QVideoProbe>//
-#include <QVideoWidget>//
 
 const int KB = 1024;
 
 Torrent::Torrent(QObject *parent, QObject **root, const int *const scene) : QObject(parent)
 {
     mSocket = NULL;
+    mPlayer = NULL;
     _root = root;
     _scene = (*scene);
     dump = true;
     metadata_ready = false;
     skip = false;
     aborted = false;
-    kb_required = 5120;
+    kb_required = 20480; //5120;
     kb_skip_global = 0;
 }
 
@@ -32,6 +32,8 @@ Torrent::~Torrent()
     aborted = true;
     if (mSocket != NULL)
         delete mSocket;
+    if (mPlayer != NULL)
+        delete mPlayer;
     if (h.is_valid())
         s->remove_torrent(h);
     (*_root)->disconnect(this);
@@ -159,58 +161,44 @@ void Torrent::filter_files()
     metadata_ready = true;
 }
 
-void Torrent::ret()
-{
-    QMediaPlayer *player = new QMediaPlayer();
-    QVideoProbe *probe = new QVideoProbe;
-    probe->setSource(player);
-    connect(probe, SIGNAL(videoFrameProbed(QVideoFrame)), this, SLOT(processFrame(QVideoFrame)));
-
-    QVideoWidget *videoWidget = new QVideoWidget;
-    player->setVideoOutput(videoWidget);
-    player->setMedia(QUrl::fromLocalFile(QString::fromStdString(fs.file_path(_scene, h.status(128).save_path))));
-    player->play();
-    videoWidget->show();
-
-    //TODO: BORRAR multimediawidgets EN PIG.PRO, BORRAR #includes Y SLOT processFrame(QVideoFrame fr)
-
-    /*
-    if (!skip) {
-        (*_root)->setProperty("movie_file_path"
-            , QString::fromStdString(fs.file_path(_scene, h.status(128).save_path)));
-    } else {
-        skip = false;
-        //UPDATE PLAYER
-    }
-    */
-}
-
-void Torrent::processFrame(QVideoFrame fr)
-{
-    qDebug() << fr.isValid();
-}
-
 void Torrent::stats()
 {
     if (!aborted) {
-        h.flush_cache();//
-        const double kb_writen = (s->get_cache_status().blocks_written)*16;
+        h.flush_cache();
+        const qint64 kb_writen = (s->get_cache_status().blocks_written)*16;
         (*_root)->setProperty("kb_writen", kb_writen);
         (*_root)->setProperty("bitRate", QString::number(h.status(2).download_rate/KB));
         (*_root)->setProperty("peers", h.status(2).num_peers);
         if (dump) {
             if ((kb_writen-kb_skip_global) >= kb_required) {
                 dump = false;
-                //h.flush_cache(); // TODO: Recibirlo con un Alert.
-                //ret();
-                //QTimer::singleShot(1000, this, SLOT(ret()));//3000
+                //h.flush_cache(); //TODO: Recibirlo con un Alert.
+                QString fl = "/home/lxfb/.pig/tmp/The Gambler (2014)/The.Gambler.2014.720p.BluRay.x264.YIFY.mp4";//
+                mPlayer = new Player(NULL, &fl);
             }
         } //else {
             //kb_writen = ((s->get_cache_status().blocks_written)*16)/KB;
             //(*_root)->setProperty("kb_writen", kb_writen);
         //}
 
-        qDebug() << kb_writen;
+        if (mPlayer != NULL) {
+            int total_sec = 6658730/1000;
+            int total_mb = 836600/1024;
+            int current_sec = libvlc_media_player_get_time(mPlayer->mediaplayer)/1000;
+            qint64 current_mb_to_sec = ((total_sec*(kb_writen/1024))/total_mb);
+
+            if (current_sec >= 10) {
+                if ((current_sec >= current_mb_to_sec) && libvlc_media_player_is_playing(mPlayer->mediaplayer)) {
+                    libvlc_media_player_pause(mPlayer->mediaplayer);
+                    qDebug() << "-- PAUSED";
+                } else if ((current_sec <= current_mb_to_sec) && !libvlc_media_player_is_playing(mPlayer->mediaplayer)) {
+                    libvlc_media_player_play(mPlayer->mediaplayer);
+                    qDebug() << "-- PLAY";
+                }
+            }
+
+            qDebug() << "SEC " << current_sec << "|" << "MB_TO_SEC" << current_mb_to_sec;
+        }
     }
 }
 
@@ -218,6 +206,27 @@ void Torrent::error()
 {
     (*_root)->setProperty("status", "TORRENT ERROR");
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

@@ -5,7 +5,8 @@
 #include <QDir>
 #include <QFile>
 
-PIG::PIG(QObject *parent) : QObject(parent), mRoot(0)
+PIG::PIG(QObject *parent) : QObject(parent)
+    , mRoot(0)
 {
     mUpdate = NULL;
     mTorrent = NULL;

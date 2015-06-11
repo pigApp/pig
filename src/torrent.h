@@ -1,7 +1,8 @@
 #ifndef TORRENT_H
 #define TORRENT_H
 
-#include "tcpSocket.h"//
+#include "tcpSocket.h"
+#include "player.h"
 
 //#include <libtorrent/torrent.hpp>//
 #include <libtorrent/session.hpp>
@@ -10,8 +11,6 @@
 #include <stdlib.h>
 
 #include <QObject>
-#include <QVideoFrame>//
-
 
 class Torrent : public QObject
 {
@@ -35,8 +34,7 @@ private:
     libtorrent::torrent_handle h;
     libtorrent::file_storage fs;
     //libtorrent::cache_status cache;
-
-    QFile test_file;//
+    Player *mPlayer;
 
     int _scene, piece_first;
     double kb_required, kb_skip_global, n_kb;
@@ -46,11 +44,8 @@ private slots:
     void start(const QString * const tmp, const QStringList * const file);
     void main_loop();
     void filter_files();
-    void ret();
     void stats();
     void error();
-
-    void processFrame(const QVideoFrame fr);//
 };
 
 #endif

@@ -8,7 +8,7 @@ win32 {
     QMAKE_MOC = $$QMAKE_MOC -DBOOST_TT_HAS_OPERATOR_HPP_INCLUDED
 }
 
-QT += qml quick sql network widgets multimediawidgets
+QT += qml quick widgets sql opengl network multimediawidgets
 
 SOURCES += src/main.cpp\
            src/pig.cpp\
@@ -16,6 +16,7 @@ SOURCES += src/main.cpp\
            src/update.cpp\
            src/tcpSocket.cpp\
            src/torrent.cpp\
+           src/player.cpp\
            src/unzip.cpp\
            src/su.cpp
 
@@ -24,6 +25,7 @@ HEADERS += src/pig.h\
            src/update.h\
            src/tcpSocket.h\
            src/torrent.h\
+           src/player.h\
            src/unzip.h\
            src/su.h
 
@@ -34,7 +36,7 @@ RC_FILE = resources/images/global/icon.rc
 unix {
     CONFIG += link_pkgconfig
     QMAKE_RPATHDIR += /usr/lib/pig
-    LIBS += -L/usr/lib/pig -ltorrent-rasterbar -lboost_system -lquazip -lz
+    LIBS += -L/usr/lib/pig -ltorrent-rasterbar -lboost_system -lquazip -lz -lvlc
     INCLUDEPATH += /usr/include/pig
 
     target.path = /usr/bin
