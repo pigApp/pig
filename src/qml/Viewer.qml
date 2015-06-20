@@ -1,7 +1,5 @@
 import QtQuick 2.4
 
-import "preview/"
-
 Item {
     id: viewer
     x: root.xb
@@ -49,7 +47,7 @@ Item {
             Text {
                 id: labelCast
                 text: cast
-                color: "darkgray"
+                color: "#CACACA"
                 font.family: fontGlobal.name
                 font.bold: true
                 font.pixelSize: screen.height/46
@@ -276,7 +274,7 @@ Item {
             })
             row += 15
         }
-        loader_root.source = "../global/Network.qml"
+        loader_root.source = "Network.qml"
         timeOutNetwork.start()
     }
 

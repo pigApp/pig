@@ -3,8 +3,10 @@ import QtGraphicalEffects 1.0
 
 Item {
     id: root
+    enabled: active
+    visible: active
 
-    property bool init
+    property bool active: true
     property bool network
     property bool network_err
     property bool stop_preview_quit
@@ -21,16 +23,11 @@ Item {
     property string quality: ""
     property string full: ""
     property string bitRate: ""
-    property string debug: ""
     property string tmp
-    property string movie_file_path: ""
     property int blurRadius: 32
     property int xa: screen.width
     property int xb: 0
     property int n_movies
-    property double kb_required: 0
-    property double kb_writen: 0
-    property double n_kb: 0
     property int peers: 0
     property var data_movies
     property var categories
@@ -85,17 +82,17 @@ Item {
         states: [
             State {
                 name: "ask_password"
-                PropertyChanges { target: loader_root; source: "global/_setting/Password.qml"
+                PropertyChanges { target: loader_root; source: "Password.qml"
                     ; restoreEntryValues: false }
             },
             State {
                 name: "show_update"
-                PropertyChanges { target: loader_root; source: "update/Update.qml"
+                PropertyChanges { target: loader_root; source: "Update.qml"
                     ; restoreEntryValues: false }
             },
             State {
                 name: "show_news"
-                PropertyChanges { target: loader_root; source: "update/News.qml"
+                PropertyChanges { target: loader_root; source: "News.qml"
                     ; restoreEntryValues: false }
             },
             State {
@@ -108,39 +105,11 @@ Item {
                     ; restoreEntryValues: false }
                 PropertyChanges { target: root; blurRadius: 32
                     ; restoreEntryValues: false }
-                PropertyChanges { target: loader_root; source: "global/Setting.qml"
+                PropertyChanges { target: loader_root; source: "Setting.qml"
                     ; restoreEntryValues: false }
             },
             State {
                 name: "hide_setting"
-                PropertyChanges { target: loader_root; source: ""
-                    ; restoreEntryValues: false }
-                PropertyChanges { target: loader_root_b; visible: true
-                    ; restoreEntryValues: false }
-                PropertyChanges { target: loader_root_b; enabled: true
-                    ; restoreEntryValues: false }
-                PropertyChanges { target: loader_root_b; focus: true
-                    ; restoreEntryValues: false }
-                PropertyChanges { target: root; screenA: 0
-                    ; restoreEntryValues: false }
-                PropertyChanges { target: root; blurRadius: 0
-                    ; restoreEntryValues: false }
-            },
-            State {
-                name: "show_help"
-                PropertyChanges { target: loader_root_b; visible: false
-                    ; restoreEntryValues: false }
-                PropertyChanges { target: loader_root_b; enabled: false
-                    ; restoreEntryValues: false }
-                PropertyChanges { target: root; screenA: 0.4
-                    ; restoreEntryValues: false }
-                PropertyChanges { target: root; blurRadius: 32
-                    ; restoreEntryValues: false }
-                PropertyChanges { target: loader_root; source: "global/Help.qml"
-                    ; restoreEntryValues: false }
-            },
-            State {
-                name: "hide_help"
                 PropertyChanges { target: loader_root; source: ""
                     ; restoreEntryValues: false }
                 PropertyChanges { target: loader_root_b; visible: true
@@ -162,7 +131,7 @@ Item {
                     ; restoreEntryValues: false }
                 PropertyChanges { target: loader_root; source: ""
                     ; restoreEntryValues: false }
-                PropertyChanges { target: loader_root_b; source: "finder/Finder.qml"
+                PropertyChanges { target: loader_root_b; source: "Finder.qml"
                     ; restoreEntryValues: false }
                 PropertyChanges { target: root; xb: 0
                     ; restoreEntryValues: false }
@@ -170,33 +139,23 @@ Item {
             State {
                 name: "show_viewer"
                 PropertyChanges { target: root; xb: screen.width+50 }
-                PropertyChanges { target: loader_root_b; source: "viewer/Viewer.qml"
+                PropertyChanges { target: loader_root_b; source: "Viewer.qml"
                     ; restoreEntryValues: false }
             },
             State {
-                name: "show_movie"
-                PropertyChanges { target: root; status: "GET TORRENT"
+                name: "show_torrent_status"
+                PropertyChanges { target: root; status: "TORRENT"
                     ; restoreEntryValues: false }
-                PropertyChanges { target: loader_root; source: "movie/Movie.qml"
+                PropertyChanges { target: loader_root; source: "TorrentStatus.qml"
                     ; restoreEntryValues: false }
             },
             State {
-                name: "hide_movie"
+                name: "hide_torrent_status"
                 PropertyChanges { target: loader_root; source: ""
                     ; restoreEntryValues: false }
                 PropertyChanges { target: root; status: ""
                     ; restoreEntryValues: false }
                 PropertyChanges { target: root; bitRate: ""
-                    ; restoreEntryValues: false }
-                PropertyChanges { target: root; debug: ""
-                    ; restoreEntryValues: false }
-                PropertyChanges { target: root; movie_file_path: ""
-                    ; restoreEntryValues: false }
-                PropertyChanges { target: root; kb_required: 0
-                    ; restoreEntryValues: false }
-                PropertyChanges { target: root; kb_writen: 0
-                    ; restoreEntryValues: false }
-                PropertyChanges { target: root; n_kb: 0
                     ; restoreEntryValues: false }
             },
             State {
@@ -211,7 +170,7 @@ Item {
                     ; restoreEntryValues: false }
                 PropertyChanges { target: root; screenA: 0.4
                     ; restoreEntryValues: false }
-                PropertyChanges { target: loader_root; source: "global/Db_error.qml"
+                PropertyChanges { target: loader_root; source: "Db_error.qml"
                     ; restoreEntryValues: false }
             }
         ]

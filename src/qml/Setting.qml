@@ -1,5 +1,4 @@
 import QtQuick 2.4
-import "_setting/"
 
 Item {
     id: setting
@@ -12,6 +11,14 @@ Item {
                 width: screen.width/3
                 height: screen.height/2
             }
+            Shortcuts {
+                id: shortcuts
+                width: screen.width/3
+                height: screen.height/2
+            }
+        }
+        Column {
+            id: column_b
             Password {
                 id: password
                 width: screen.width/3

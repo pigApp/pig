@@ -37,8 +37,8 @@ private:
     Player *mPlayer;
 
     int _scene, piece_first;
-    double kb_required, kb_skip_global, n_kb;
-    bool metadata_ready, dump, skip, aborted;
+    int piece_length, n_pieces;//
+    bool metadata_ready, aborted;
 
 private slots:
     void start(const QString * const tmp, const QStringList * const file);

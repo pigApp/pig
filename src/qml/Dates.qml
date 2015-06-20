@@ -29,8 +29,8 @@ Item {
             spacing: screen.width/128
             Text {
                 id: labelFullMovie
-                text: "FULL MOVIE"
-                color: { if (full === "1") "white"; else "gray" }
+                text: "FM"
+                color: { if (full === "1") "white"; else "red" }
                 font.family: fontGlobal.name
                 font.bold: true
                 font.pixelSize: screen.height/23
@@ -72,9 +72,9 @@ Item {
                             onClicked: {
                                 icon.viewed = true
                                 icon.source = "qrc:/img-scene-off"
-                                screen.state = "show_movie"
-                                cpp.torrent_handler(hostTorrent, urlTorrent
+                                cpp.torrent(hostTorrent, urlTorrent
                                     , id_movie+"t.torrent", index+1, false)
+                                root.active = false
                             }
                         }
                     }

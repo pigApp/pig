@@ -1,7 +1,5 @@
 import QtQuick 2.4
 
-import "_filters/"
-
 Item {
     id: filters
     x: root.xa-(screen.width/192)
@@ -25,7 +23,6 @@ Item {
                 delegate: Box {
                     id: box
                     width: filters.width/4
-                    color: { if (onCategory) "#FA6900"; else "#FD2790" }
                     label: {
                         if (onCategory)
                             if (index < root.categories.length)

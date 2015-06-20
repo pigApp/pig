@@ -16,19 +16,6 @@ Item {
             font.pixelSize: screen.height/23
         }
         Text {
-            id: labelMovies
-            width: contentWidth
-            height: contentHeight-(screen.height/108)
-            text: "<style type='text/css'>a:link{color:#FFFFFF;text-decoration:none}</style>"+
-                  "<a href=\'http://google.com\'>MOVIES</a>"
-            textFormat: Text.RichText
-            font.family: fontGlobal.name
-            font.bold: true
-            font.pixelSize: screen.height/23
-            onLinkHovered: { font.bold = !font.bold }
-            onLinkActivated: Qt.openUrlExternally(link)
-        }
-        Text {
             id: labelCode
             width: contentWidth
             height: contentHeight-(screen.height/108)
@@ -47,6 +34,19 @@ Item {
             height: contentHeight-(screen.height/108)
             text: "<style type='text/css'>a:link{color:#FFFFFF;text-decoration:none}</style>"+
                   "<a href=\'http://google.com\'>BUGS</a>"
+            textFormat: Text.RichText
+            font.family: fontGlobal.name
+            font.bold: true
+            font.pixelSize: screen.height/23
+            onLinkHovered: { font.bold = !font.bold }
+            onLinkActivated: Qt.openUrlExternally(link)
+        }
+        Text {
+            id: labelMovies
+            width: contentWidth
+            height: contentHeight-(screen.height/108)
+            text: "<style type='text/css'>a:link{color:#FFFFFF;text-decoration:none}</style>"+
+                  "<a href=\'http://google.com\'>MOVIES</a>"
             textFormat: Text.RichText
             font.family: fontGlobal.name
             font.bold: true
@@ -79,12 +79,26 @@ Item {
                 }
             }
         }
+        Text {
+            id: labelHelp
+            width: contentWidth
+            height: contentHeight-(screen.height/108)
+            text: "<style type='text/css'>a:link{color:#FFFFFF;text-decoration:none}</style>"+
+                  "<a href=\'http://google.com\'>HELP</a>"
+            textFormat: Text.RichText
+            font.family: fontGlobal.name
+            font.bold: true
+            font.pixelSize: screen.height/23
+            onLinkHovered: { font.bold = !font.bold }
+            onLinkActivated: Qt.openUrlExternally(link)
+        }
     }
     TextEdit {
         id: labelWallet
         text: "159yedWATJUr9r4NGe2A8Zw87rCzbGwNFV"
         color: "white"
         font.family: fontGlobal.name
+        font.bold: true
         font.pixelSize: screen.height/54
         visible: false
         selectByMouse: true
@@ -93,7 +107,7 @@ Item {
         anchors.left: columnAbout.left
         anchors.leftMargin: screen.width/21.33
         anchors.bottom: columnAbout.bottom
-        anchors.bottomMargin: -screen.height/540
+        anchors.bottomMargin: screen.height/25.11
     }
 }
 // Tabs hechos.

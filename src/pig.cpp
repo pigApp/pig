@@ -22,12 +22,6 @@ PIG::~PIG()
     exit(0);
 }
 
-//QUIT
-void PIG::quit()
-{
-    this->~PIG();
-}
-
 //QML_GUI
 void PIG::set_root_object(QObject *root)
 {
@@ -37,7 +31,7 @@ void PIG::set_root_object(QObject *root)
 }
 
 //PASSWORD
-void PIG::password_handler(const bool require, const QString plain
+void PIG::password(const bool require, const QString plain
     , const bool check, const bool write)
 {
     if (require) {
@@ -50,11 +44,11 @@ void PIG::password_handler(const bool require, const QString plain
        if (file.exists(target))
            emit sig_ret_password(true);
        else
-           update_handler();
+           update();
     } else if (check) {
         Password mPassword;
         if (mPassword.check(&plain))
-            update_handler();
+            update();
         else
             emit sig_ret_password();
     } else if (write) {
@@ -67,7 +61,7 @@ void PIG::password_handler(const bool require, const QString plain
 }
 
 //UPDATE
-void PIG::update_handler()
+void PIG::update()
 {
     //cleanup();
 #ifdef __linux__
@@ -119,11 +113,9 @@ void PIG::start()
             const QString strDatabase = QString::number(database);
 
 #ifdef __linux__
-    const QString init = QDir::homePath()+"/.pig/.init";
     const QString news = QDir::homePath()+"/.pig/news";
     const QString tmp = QDir::homePath()+"/.pig/tmp/";
 #else
-    const QString init = "C:/PIG/.pig/.init";
     const QString news = "C:/PIG/.pig/news.txt";
     const QString tmp = "C:/PIG/.pig/tmp/";
 #endif
@@ -137,12 +129,7 @@ void PIG::start()
             mRoot->setProperty("n_pornstars", nPornstars);
 
             QFile file;
-            if (file.exists(init)) {
-                file.rename(init, tmp+"init.trash");
-                mRoot->setProperty("init", true);
-            }
-            file.setFileName(news);
-            if (file.exists()) {
+            if (file.exists(news)) {
                 file.open(QIODevice::ReadOnly|QIODevice::Text);
                 bool binaryData = true;
                 QString binaryNews;
@@ -171,7 +158,7 @@ void PIG::start()
 }
 
 //PREVIEW
-void PIG::preview_handler(const int id, const QString host, const QString url
+void PIG::preview(const int id, const QString host, const QString url
     , const QString target, const bool ready, const bool success, const bool error
     , const bool abort)
 {
@@ -185,7 +172,7 @@ void PIG::preview_handler(const int id, const QString host, const QString url
         mSocket[id]->start();
         connect (mSocket[id], SIGNAL(sig_ret_stream(const int, const QString
             , const QString, const QString, const bool, const bool, const bool, const bool))
-            , this, SLOT(preview_handler(const int, const QString, const QString
+            , this, SLOT(preview(const int, const QString, const QString
             , const QString, const bool, const bool, const bool, const bool)));
     } else if (ready || success || error || abort) {
         if (!abort)
@@ -196,7 +183,7 @@ void PIG::preview_handler(const int id, const QString host, const QString url
 }
 
 //TORRENT
-void PIG::torrent_handler(const QString host, const QString url, const QString target
+void PIG::torrent(const QString host, const QString url, const QString target
     , const int scene, const bool abort)
 {
     //cleanup();
@@ -288,4 +275,10 @@ void PIG::cleanup()
 void PIG::db_error()
 {
     emit sig_show_db_err();
+}
+
+//QUIT
+void PIG::quit()
+{
+    this->~PIG();
 }

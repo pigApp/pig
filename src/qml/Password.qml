@@ -36,10 +36,10 @@ Rectangle {
             if (text !== "") {
                 if (onSet) {
                     enabled = false
-                    cpp.password_handler(false, text, false, true)
+                    cpp.password(false, text, false, true)
                     setting.forceActiveFocus()
                 } else {
-                    cpp.password_handler(false, text, true, false)
+                    cpp.password(false, text, true, false)
                 }
             }
         }

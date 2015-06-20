@@ -1,7 +1,5 @@
 import QtQuick 2.4
 
-import "../global/"
-
 Item {
     id: update
 
@@ -46,9 +44,9 @@ Item {
             Button {
                 id: btnGet
                 label: "GET"
-                labelColor: "darkgray"
+                labelColor: "white"
                 labelSize: screen.height/23
-                labelColorIn: "white"
+                labelColorIn: "green"
                 onClicked: {
                     columnStatus.enabled = false
                     columnStatus.visible = false
@@ -58,9 +56,9 @@ Item {
             Button {
                 id: btnSkip
                 label: "SKIP"
-                labelColor: "darkgray"
+                labelColor: "white"
                 labelSize: screen.height/23
-                labelColorIn: "white"
+                labelColorIn: "gold"
                 onClicked: root.sig_qml_update_skip()
             }
         }

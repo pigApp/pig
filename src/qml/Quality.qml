@@ -1,7 +1,5 @@
 import QtQuick 2.4
 
-import "../global/"
-
 Item {
     id: quality
 
@@ -12,9 +10,9 @@ Item {
         Button {
             id: btnSd
             label: "SD"
-            labelColor: { if (root.quality === "SD") "white"; else "gray" }
+            labelColor: { if (root.quality === "SD") "gold"; else "#CACACA" }
             labelSize: screen.height/20
-            labelColorIn: "white"
+            labelColorIn: "gold"
             MouseArea {
                 anchors.fill: parent
                 onClicked: { if (root.quality === "SD") root.quality = ""; else root.quality = "SD" }
@@ -23,9 +21,9 @@ Item {
         Button {
             id: btnHd
             label: "HD"
-            labelColor: { if (root.quality === "HD") "white"; else "gray" }
+            labelColor: { if (root.quality === "HD") "gold"; else "#CACACA" }
             labelSize: screen.height/20
-            labelColorIn: "white"
+            labelColorIn: "gold"
             MouseArea {
                 anchors.fill: parent
                 onClicked: { if (root.quality === "HD") root.quality = ""; else root.quality = "HD" }
@@ -34,9 +32,9 @@ Item {
         Button {
             id: btnFd
             label: "FD"
-            labelColor: { if (root.quality === "FD") "white"; else "gray" }
+            labelColor: { if (root.quality === "FD") "gold"; else "#CACACA" }
             labelSize: screen.height/20
-            labelColorIn: "white"
+            labelColorIn: "gold"
             MouseArea {
                 anchors.fill: parent
                 onClicked: { if (root.quality === "FD") root.quality = ""; else root.quality = "FD" }
@@ -45,9 +43,9 @@ Item {
         Button {
             id: btnFm
             label: "FM"
-            labelColor: { if (root.full === "1") "#CACACA"; else "gray" }
+            labelColor: { if (root.full === "1") "gold"; else "#CACACA" }
             labelSize: screen.height/20
-            labelColorIn: "#CACACA"
+            labelColorIn: "gold"
             MouseArea {
                 anchors.fill: parent
                 onClicked: { if (root.full === "1") root.full = ""; else root.full = "1" }

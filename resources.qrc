@@ -1,4 +1,27 @@
 <RCC>
+    <qresource prefix="QML">
+        <file>src/qml/main.qml</file>
+        <file>src/qml/Update.qml</file>
+        <file>src/qml/News.qml</file>
+        <file>src/qml/Finder.qml</file>
+        <file>src/qml/Input.qml</file>
+        <file>src/qml/Filters.qml</file>
+        <file>src/qml/Box.qml</file>
+        <file>src/qml/Quality.qml</file>
+        <file>src/qml/Viewer.qml</file>
+        <file>src/qml/Cover.qml</file>
+        <file>src/qml/Dates.qml</file>
+        <file>src/qml/Preview.qml</file>
+        <file>src/qml/PreviewPlayer.qml</file>
+        <file>src/qml/TorrentStatus.qml</file>
+        <file>src/qml/Button.qml</file>
+        <file>src/qml/Network.qml</file>
+        <file>src/qml/Setting.qml</file>
+        <file>src/qml/About.qml</file>
+        <file>src/qml/Shortcuts.qml</file>
+        <file>src/qml/Password.qml</file>
+        <file>src/qml/Db_error.qml</file>
+    </qresource>
     <qresource prefix="/">
         <file alias="img-cat-AMATEUR">resources/images/finder/filters/categories/AMATEUR.jpg</file>
         <file alias="img-cat-ANAL">resources/images/finder/filters/categories/ANAL.jpg</file>
@@ -33,14 +56,14 @@
         <file alias="img-star-BELLADONNA">resources/images/finder/filters/pornstars/BELLADONNA.jpg</file>
         <file alias="img-scene">resources/images/viewer/scene.svg</file>
         <file alias="img-scene-off">resources/images/viewer/scene-off.svg</file>
-        <file alias="img-play">resources/images/viewer/preview/play.svg</file>
-        <file alias="img-replay">resources/images/viewer/preview/replay.svg</file>
         <file alias="img-cover_err">resources/images/viewer/cover_err.jpg</file>
-        <file alias="img-playing">resources/images/movie/videoPlayer/playing.svg</file>
-        <file alias="img-paused">resources/images/movie/videoPlayer/paused.svg</file>
-        <file alias="img-standby">resources/images/movie/videoPlayer/standby.svg</file>
-        <file alias="img-volume">resources/images/movie/videoPlayer/volume.svg</file>
-        <file alias="img-volume-off">resources/images/movie/videoPlayer/volume-off.svg</file>
+        <file alias="img-play">resources/images/player/play.svg</file>
+        <file alias="img-replay">resources/images/player/replay.svg</file>
+        <file alias="img-playing">resources/images/player/playing.svg</file>
+        <file alias="img-paused">resources/images/player/paused.svg</file>
+        <file alias="img-standby">resources/images/player/standby.svg</file>
+        <file alias="img-volume">resources/images/player/volume.svg</file>
+        <file alias="img-volume-off">resources/images/player/volume-off.svg</file>
         <file alias="img-background">resources/images/global/background.jpg</file>
         <file alias="img-network">resources/images/global/network/network.svg</file>
         <file alias="img-network_err">resources/images/global/network/network_err.svg</file>
@@ -53,35 +76,5 @@
         <file>resources/images/global/icon.jpg</file>
         <file>resources/images/global/icon.rc</file>
         <file alias="font-global">resources/fonts/global.ttf</file>
-    </qresource>
-    <qresource prefix="QML">
-        <file>src/qml/main.qml</file>
-        <file>src/qml/update/Update.qml</file>
-        <file>src/qml/update/News.qml</file>
-        <file>src/qml/finder/Finder.qml</file>
-        <file>src/qml/finder/Input.qml</file>
-        <file>src/qml/finder/Filters.qml</file>
-        <file>src/qml/finder/_filters/Box.qml</file>
-        <file>src/qml/finder/Quality.qml</file>
-        <file>src/qml/finder/Welcome.qml</file>
-        <file>src/qml/viewer/Viewer.qml</file>
-        <file>src/qml/viewer/Cover.qml</file>
-        <file>src/qml/viewer/Dates.qml</file>
-        <file>src/qml/viewer/preview/Preview.qml</file>
-        <file>src/qml/viewer/preview/PreviewPlayer.qml</file>
-        <file>src/qml/movie/Movie.qml</file>
-        <file>src/qml/movie/TorrentStatus.qml</file>
-        <file>src/qml/movie/VideoPlayer.qml</file>
-        <file>src/qml/movie/_videoPlayer/SideBox.qml</file>
-        <file>src/qml/movie/_videoPlayer/Bars.qml</file>
-        <file>src/qml/movie/_videoPlayer/Controls.qml</file>
-        <file>src/qml/movie/_videoPlayer/Control.qml</file>
-        <file>src/qml/global/Button.qml</file>
-        <file>src/qml/global/Network.qml</file>
-        <file>src/qml/global/Setting.qml</file>
-        <file>src/qml/global/_setting/About.qml</file>
-        <file>src/qml/global/_setting/Password.qml</file>
-        <file>src/qml/global/Help.qml</file>
-        <file>src/qml/global/Db_error.qml</file>
     </qresource>
 </RCC>

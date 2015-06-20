@@ -1,3 +1,7 @@
+- Crear clase Movie
+    - Un widget negro que instancie torrent, muestre el status e instancie player pasandole un puntero a torrent.
+    - Cambiar el nombre de la funcion que llama el boton scene, de torrent a movie.
+    - Borrar TorrentStatus Qml y todo lo relacionado.
 - Agregar librerias e include de vlc a /usr/lib/pig y /usr/include/pig.
 - Revisar el filtrado de filas en Torrent.
 - Revisar el error del socket al desconectarse.

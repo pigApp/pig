@@ -17,7 +17,7 @@ int main(int argc, char *argv[])
     view->setIcon(QIcon("/resources/images/global/icon.jpg"));
 
     pig.set_root_object(view->rootObject());
-    pig.password_handler(true, "", false, false);
+    pig.password(true, "", false, false);
 
     view->showFullScreen();
 

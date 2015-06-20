@@ -17,27 +17,27 @@ public:
     ~PIG();
 
 public slots:
-    void quit();
     void set_root_object(QObject *root);
-    void password_handler(const bool require, const QString plain
+    void password(const bool require, const QString plain
         , const bool check, const bool write);
-    void preview_handler(const int id, const QString host, const QString url
+    void preview(const int id, const QString host, const QString url
         , const QString target
         , const bool ready, const bool success, const bool error, const bool abort);
-    void torrent_handler(const QString host, const QString url, const QString target
+    void torrent(const QString host, const QString url, const QString target
         , const int scene, const bool abort);
     void find(const QString userInput, const QString category
         , const QString pornstar, const QString quality, const QString full);
+    void quit();
 
 signals:
-    void sig_ret_password(const bool require = false, const bool success = false);
     void sig_show_update();
     void sig_show_news(const QString binaryNews, const QString databaseNews);
     void sig_show_finder();
+    void sig_show_db_err();
+    void sig_ret_password(const bool require = false, const bool success = false);
     void sig_ret_db(int nMovies, QStringList dataMovies);
     void sig_ret_stream(const int id, const bool ready, const bool success
         , const bool error);
-    void sig_show_db_err();
 
 private:
     QObject *mRoot;
@@ -48,7 +48,7 @@ private:
     QSqlDatabase db;
 
 private slots:
-    void update_handler();
+    void update();
     void start();
     void cleanup();
     void db_error();

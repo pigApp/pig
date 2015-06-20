@@ -1,15 +1,28 @@
 import QtQuick 2.4
 
 Item {
-    id: help
+    id: shortcuts
 
     Column {
-        id: columnHelp
-        spacing: -screen.height/108
-        anchors.centerIn: parent
-        anchors.verticalCenterOffset: -screen.height/108
+        id: columnKeys
+        spacing: -screen.height/72
+        anchors.left: parent.left
+        anchors.leftMargin: screen.width/16
+        anchors.verticalCenter: parent.verticalCenter
+        Text {
+            id: labelKeys
+            text: "KEYS"
+            color: "white"
+            font.family: fontGlobal.name
+            font.pixelSize: screen.height/23
+        }
+        Text {
+            text: " "
+            font.family: fontGlobal.name
+            font.pixelSize: screen.height/58
+        }
         Row {
-            spacing: screen.width/25.26
+            spacing: screen.width/128
             Text {
                 id: labelBackKey
                 text: "ESC"
@@ -44,26 +57,6 @@ Item {
                 font.pixelSize: screen.height/23
             }
         }
-        Text {
-            id: labelLink
-            width: contentWidth
-            height: contentHeight-(screen.height/108)
-            text: "<style type='text/css'>a:link{color:#FFFFFF;text-decoration:none}</style>"+
-                  "<a href=\'http://google.com\'>MORE</a>"
-            textFormat: Text.RichText
-            font.family: fontGlobal.name
-            font.bold: true
-            font.pixelSize: screen.height/23
-            onLinkHovered: { font.bold = !font.bold }
-            onLinkActivated: Qt.openUrlExternally(link)
-        }
     }
-
-    Keys.onPressed: {
-        screen.state = "hide_help"
-        event.accepted = true
-    }
-
-    Component.onCompleted: help.forceActiveFocus()
 }
 // Tabs hechos.

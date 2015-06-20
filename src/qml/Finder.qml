@@ -1,8 +1,6 @@
 import QtQuick 2.4
 import QtGraphicalEffects 1.0
 
-import "../global/"
-
 Item {
     id: finder
 
@@ -32,9 +30,9 @@ Item {
         Button {
             id: btnFilterCategory
             label: "CATEGORY"
-            labelColor: "darkgray"
+            labelColor: "#CACACA"
             labelSize: screen.height/20
-            labelColorIn: "#FA6900"
+            labelColorIn: "green"
             onClicked: {
                 onCategory = true
                 finder.state = "show_filter"
@@ -43,9 +41,9 @@ Item {
         Button {
             id: btnFilterPornstar
             label: "PORNSTAR"
-            labelColor: "darkgray"
+            labelColor: "#CACACA"
             labelSize: screen.height/20
-            labelColorIn: "#FD2790"
+            labelColorIn: "green"
             onClicked: {
                 onCategory = false
                 finder.state = "show_filter"
@@ -72,23 +70,14 @@ Item {
         id: btnSetting
         x: parent.width+700
         label: "SETTING"
-        labelColor: "darkgray"
+        labelColor: "#CACACA"
         labelSize: screen.height/20
-        labelColorIn: "black"
+        labelColorIn: "green"
         anchors.verticalCenter: input.verticalCenter
         onClicked: {
             if (finder.state !== "show_filter")
                 screen.state = "show_setting"
         }
-    }
-
-    Welcome {
-        id: welcome
-        visible: root.init
-        anchors.right: parent.right
-        anchors.rightMargin: parent.width/128
-        anchors.bottom: parent.bottom
-        anchors.bottomMargin: parent.height/154.28
     }
 
     states: [
@@ -100,7 +89,6 @@ Item {
         },
         State {
             name: "show_filter"
-            PropertyChanges { target: root; init: false; restoreEntryValues: false }
         },
         State {
             name: "hide_filter"
@@ -177,6 +165,8 @@ Item {
                         ; to: screen.width+10; duration: 120; easing.type: Easing.InOutQuart }
                     NumberAnimation { target: root; easing.amplitude: 1.7; properties: "xa"
                         ; to: 0; duration: 1200; easing.type: Easing.OutQuart }
+                    NumberAnimation { target: root; easing.amplitude: 1.7; properties: "blurRadius"
+                        ; to: 32; duration: 600; easing.type: Easing.OutQuart }
                 }
             }
         },
@@ -194,6 +184,8 @@ Item {
                         ; to: screen.width/1.43; duration: 1200; easing.type: Easing.InOutQuart }
                     NumberAnimation { target: root; easing.amplitude: 1.7; properties: "xa"
                         ; to: screen.width+10; duration: 1200; easing.type: Easing.OutQuart }
+                    NumberAnimation { target: root; easing.amplitude: 1.7; properties: "blurRadius"
+                        ; to: 0; duration: 600; easing.type: Easing.OutQuart }
                 }
                 PropertyAction { target: loader_filter; property: "source"; value: "" }
                 PropertyAction { target: input; property: "enabled"; value: true }
@@ -218,14 +210,7 @@ Item {
     ]
 
     Keys.onPressed: {
-        root.init = false
-        if ((event.key === Qt.Key_H)
-            && (event.modifiers & Qt.ControlModifier)) {
-            if (finder.state !== "show_filter") {
-                screen.state = "show_help"
-                event.accepted = true
-            }
-        } else if ((event.key === Qt.Key_Q)
+        if ((event.key === Qt.Key_Q)
             && (event.modifiers & Qt.ControlModifier)) {
             cpp.quit()
             event.accepted = true

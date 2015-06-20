@@ -11,15 +11,18 @@ class Player : public QWidget
     Q_OBJECT
 
 public:
-    explicit Player(QWidget *parent = 0, QString *file = NULL);
+    explicit Player(QWidget *parent = 0, QString file = NULL);
     ~Player();
 
     libvlc_media_player_t *mediaplayer;
 
+public slots:
+    void stats (float progress_file, const int *const bitRate, const int *const peers);
+
 private:
     libvlc_instance_t *instance;
     libvlc_media_t *media;
-    libvlc_media_stats_t *stats;
+    //libvlc_media_stats_t *stats;
 };
 
 #endif

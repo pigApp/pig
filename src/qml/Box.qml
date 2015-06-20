@@ -3,8 +3,8 @@ import QtQuick 2.4
 Rectangle {
     id: box
     height: screen.height/4
+    color: Qt.rgba(1, 0.7, 0, 0.5)
 
-    property alias color: box.color
     property alias label: label.text
     property alias label_n: label_n.text
 
