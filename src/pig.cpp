@@ -1,37 +1,118 @@
 #include "pig.h"
-#include "password.h"
 
-#include <QTextStream>
 #include <QDir>
-#include <QFile>
+#include <QDebug>//
 
-PIG::PIG(QObject *parent) : QObject(parent)
-    , mRoot(0)
+PIG::PIG(QWidget *parent) : QWidget(parent)
 {
-    mUpdate = NULL;
-    mTorrent = NULL;
+#ifdef __linux__
+    path = QDir::homePath()+"/.pig/";
+#else
+    path = "C:/PIG/.pig/";
+#endif
+
+    setupUi();
+    authorization(false);
 }
 
 PIG::~PIG()
 {
-    if (mUpdate != NULL)
-        delete mUpdate;
-    if (mTorrent != NULL)
-        delete mTorrent;
-    mRoot->disconnect(this);
-    exit(0);
+    delete pTopbar;
+    delete layout;
 }
 
+<<<<<<< HEAD
 //QML_GUI
 void PIG::set_root_object(QObject *root)
+=======
+void PIG::authorization(const bool toWrite)
 {
-    if (mRoot != NULL)
-        mRoot->disconnect(this);
-    mRoot = root;
+    Password *pPassword = new Password(NULL, path, toWrite);
+
+    QObject::connect(pPassword, &Password::ready, [=] {
+        pTopbar->group->setDisabled(true);
+        layout->addWidget(pPassword->group);
+    });
+    QObject::connect(pPassword, &Password::finished, [=] { //TODO: REVISAR 'PUBLIC'.
+        //pTopbar->group->setDisabled(false);              //COMPROBAR SI 'PPASSWORD' SE AGREGO AL LAYOUT ANTES DE SACARLO
+        //pPassword->group->hide();
+        //layout->removeWidget(pPassword->group);
+        pPassword->deleteLater();
+    });
+
+    pPassword->check();
 }
 
+void PIG::showMoviesData(const QStringList &data)
+>>>>>>> port
+{
+    qDebug() << data[1];
+}
+
+void PIG::setupUi()
+{
+    QBrush b(QColor(0, 0, 0, 255));
+
+    QPalette p;
+    p.setBrush(QPalette::Active, QPalette::Base, b);
+    p.setBrush(QPalette::Active, QPalette::Window, b);
+    p.setBrush(QPalette::Disabled, QPalette::Base, b);
+    p.setBrush(QPalette::Disabled, QPalette::Window, b);
+    setPalette(p);
+
+    pTopbar = new TopBar(NULL, path);
+
+    QObject::connect(pTopbar, &TopBar::sendMoviesData, [&] (const QStringList data) {
+        if (!data.isEmpty()) showMoviesData(data);
+    });
+
+    layout = new QVBoxLayout(this);
+    layout->addWidget(pTopbar->group);
+    layout->setAlignment(pTopbar->group, Qt::AlignTop);
+
+    setLayout(layout);
+}
+
+<<<<<<< HEAD
 //PASSWORD
 void PIG::password(const bool require, const QString plain
+=======
+
+
+
+
+
+
+
+
+
+
+
+
+/*
+TODO
+*/
+
+
+/*
+IMAGEN
+    QLabel *logo;
+    logo = new QLabel;
+    logo->setPixmap(QPixmap(":/img-background"));
+
+
+FIND
+void TopBar::find(const QString userInput, const QString category, const QString pornstar
+    , const QString quality, const QString full)
+
+
+LAMBDA
+    QObject::connect(pTopbar->category, &QPushButton::clicked, [=]() { qDebug() << "CLICKED"; });
+
+
+AUTHORIZATION
+void PIG::authorization(const bool require, const QString plain
+>>>>>>> port
     , const bool check, const bool write)
 {
     if (require) {
@@ -42,23 +123,38 @@ void PIG::password(const bool require, const QString plain
 #endif
        QFile file;
        if (file.exists(target))
-           emit sig_ret_password(true);
+           //emit sig_ret_password(true);
+           qDebug() << "x";
        else
+<<<<<<< HEAD
            update();
     } else if (check) {
         Password mPassword;
         if (mPassword.check(&plain))
             update();
+=======
+           //update_handler();
+           qDebug() << "x";
+    } else if (check) {
+        Password mPassword;
+        if (mPassword.check(&plain))
+            //update_handler();
+            qDebug() << "x";
+>>>>>>> port
         else
-            emit sig_ret_password();
+            //emit sig_ret_password();
+            qDebug() << "x";
     } else if (write) {
         Password mPassword;
         if (mPassword.write(&plain))
-            emit sig_ret_password(false, true);
+            //emit sig_ret_password(false, true);
+            qDebug() << "x";
         else
-            emit sig_ret_password();
+            //emit sig_ret_password();
+            qDebug() << "x";
     }
 }
+<<<<<<< HEAD
 
 //UPDATE
 void PIG::update()
@@ -282,3 +378,6 @@ void PIG::quit()
 {
     this->~PIG();
 }
+=======
+*/
+>>>>>>> port

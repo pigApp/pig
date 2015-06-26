@@ -1,21 +1,24 @@
-﻿#ifndef PIG_H
+#ifndef PIG_H
 #define PIG_H
 
-#include "update.h"
-#include "tcpSocket.h"
-#include "torrent.h"
+#include "topbar.h"
+#include "password.h"
 
-#include <QObject>
-#include <QtSql>
+#include <QString>
+#include <QStringList>
 
-class PIG : public QObject
+#include <QWidget>
+#include <QVBoxLayout>
+
+class PIG : public QWidget
 {
     Q_OBJECT
 
 public:
-    PIG(QObject *parent = 0);
+    PIG(QWidget *parent = 0);
     ~PIG();
 
+<<<<<<< HEAD
 public slots:
     void set_root_object(QObject *root);
     void password(const bool require, const QString plain
@@ -39,19 +42,25 @@ signals:
     void sig_ret_stream(const int id, const bool ready, const bool success
         , const bool error);
 
+=======
+>>>>>>> port
 private:
-    QObject *mRoot;
-    Update *mUpdate;
-    TcpSocket *mSocket[5];
-    Torrent *mTorrent;
+    TopBar *pTopbar;
 
-    QSqlDatabase db;
+    QString path;
+    QVBoxLayout *layout;
 
 private slots:
+<<<<<<< HEAD
     void update();
     void start();
     void cleanup();
     void db_error();
+=======
+    void authorization(const bool toWrite);
+    void showMoviesData(const QStringList &data);
+    void setupUi();
+>>>>>>> port
 };
 
 #endif

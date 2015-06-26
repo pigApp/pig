@@ -1,16 +1,14 @@
 #include "pig.h"
 
 #include <QApplication>
-#include <QQuickView>
-#include <QQuickItem>
-#include <QQmlContext>
 
 int main(int argc, char *argv[])
 {
-    QApplication app(argc, argv);
-    QQuickView *view = new QQuickView();
-    PIG pig;
+    QApplication a(argc, argv);
+    PIG p;
+    p.showFullScreen();
 
+<<<<<<< HEAD
     view->rootContext()->setContextProperty("cpp", &pig);
     view->setSource(QUrl("qrc:/QML/src/qml/main.qml"));
     view->setResizeMode(QQuickView::SizeRootObjectToView);
@@ -22,4 +20,7 @@ int main(int argc, char *argv[])
     view->showFullScreen();
 
     return app.exec();
+=======
+    return a.exec();
+>>>>>>> port
 }
