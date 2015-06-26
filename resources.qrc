@@ -54,34 +54,4 @@
         <file>resources/images/global/icon.rc</file>
         <file alias="font-global">resources/fonts/global.ttf</file>
     </qresource>
-    <qresource prefix="QML">
-        <file>src/qml/main.qml</file>
-        <file>src/qml/update/Update.qml</file>
-        <file>src/qml/update/News.qml</file>
-        <file>src/qml/finder/Finder.qml</file>
-        <file>src/qml/finder/Input.qml</file>
-        <file>src/qml/finder/Filters.qml</file>
-        <file>src/qml/finder/_filters/Box.qml</file>
-        <file>src/qml/finder/Quality.qml</file>
-        <file>src/qml/finder/Welcome.qml</file>
-        <file>src/qml/viewer/Viewer.qml</file>
-        <file>src/qml/viewer/Cover.qml</file>
-        <file>src/qml/viewer/Dates.qml</file>
-        <file>src/qml/viewer/preview/Preview.qml</file>
-        <file>src/qml/viewer/preview/PreviewPlayer.qml</file>
-        <file>src/qml/movie/Movie.qml</file>
-        <file>src/qml/movie/TorrentStatus.qml</file>
-        <file>src/qml/movie/VideoPlayer.qml</file>
-        <file>src/qml/movie/_videoPlayer/SideBox.qml</file>
-        <file>src/qml/movie/_videoPlayer/Bars.qml</file>
-        <file>src/qml/movie/_videoPlayer/Controls.qml</file>
-        <file>src/qml/movie/_videoPlayer/Control.qml</file>
-        <file>src/qml/global/Button.qml</file>
-        <file>src/qml/global/Network.qml</file>
-        <file>src/qml/global/Setting.qml</file>
-        <file>src/qml/global/_setting/About.qml</file>
-        <file>src/qml/global/_setting/Password.qml</file>
-        <file>src/qml/global/Help.qml</file>
-        <file>src/qml/global/Db_error.qml</file>
-    </qresource>
 </RCC>

@@ -8,33 +8,23 @@ win32 {
     QMAKE_MOC = $$QMAKE_MOC -DBOOST_TT_HAS_OPERATOR_HPP_INCLUDED
 }
 
-QT += qml quick widgets sql opengl network multimediawidgets
+QT += sql opengl network widgets 
 
 SOURCES += src/main.cpp\
            src/pig.cpp\
-           src/password.cpp\
-           src/update.cpp\
-           src/tcpSocket.cpp\
-           src/torrent.cpp\
-           src/player.cpp\
-           src/unzip.cpp\
-           src/su.cpp
+           src/topbar.cpp\
+           src/password.cpp
 
 HEADERS += src/pig.h\
-           src/password.h\
-           src/update.h\
-           src/tcpSocket.h\
-           src/torrent.h\
-           src/player.h\
-           src/unzip.h\
-           src/su.h
+           src/topbar.h\
+           src/password.h
 
 RESOURCES = resources.qrc
 
 RC_FILE = resources/images/global/icon.rc
 
 unix {
-    CONFIG += link_pkgconfig
+    CONFIG += link_pkgconfig c++11
     QMAKE_RPATHDIR += /usr/lib/pig
     LIBS += -L/usr/lib/pig -ltorrent-rasterbar -lboost_system -lquazip -lz -lvlc
     INCLUDEPATH += /usr/include/pig
@@ -49,6 +39,7 @@ unix {
 }
 
 win32 {
+    CONFIG += c++11
     LIBS += -LC:/boost/lib -lpsapi\
             -LC:/libtorrent-rasterbar-1.0.2/bin/msvc-12.0/release/address-model-64/architecture-x86/boost-link-shared/boost-source/resolve-countries-off/threading-multi -ltorrent
     INCLUDEPATH += C:/boost/include/boost-1_56\
