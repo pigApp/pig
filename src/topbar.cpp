@@ -8,12 +8,12 @@
 #include <QPushButton>
 #include <QHBoxLayout>
 
-TopBar::TopBar(QObject *parent, const QString path) : QObject(parent)
+TopBar::TopBar(const QString *path, QObject *parent) : QObject(parent)
 {
     QFile file;
-    if (file.exists(path+"db.sqlite")) {
+    if (file.exists(*path+"db.sqlite")) {
         db = QSqlDatabase::addDatabase("QSQLITE");
-        db.setDatabaseName(path+"db.sqlite");
+        db.setDatabaseName(*path+"db.sqlite");
     } else {
         //emit db_error();
         qDebug() << "db_error";
@@ -24,62 +24,55 @@ TopBar::TopBar(QObject *parent, const QString path) : QObject(parent)
 
 TopBar::~TopBar()
 {
-    delete group;
 }
 
-void TopBar::request(const QString str)
+void TopBar::querydb(const QString &str, const bool getData)
 {
     const QString category = "";
     const QString pornstar = "";
     const QString quality = "";
     const QString full = "";
 
-    data.clear();
-
-    if (!str.isEmpty() && db.open()) {
+    if (db.open()) {
         QSqlQuery query;
-        query.prepare("SELECT id, Title, Cas, Category, Quality, Time, Full \
-                      , HostCover, UrlCoverFront, UrlCoverBack, HostPreview, UrlPreview \
-                      , HostTorrent, UrlTorrent, Scenes FROM Movies WHERE Title LIKE \
-                      '%"+str+"%' AND Cas LIKE '%"+pornstar+"%' AND Category LIKE \
-                      '%"+category+"%' AND Quality LIKE '%"+quality+"%' AND Full LIKE \
-                      '%"+full+"%' ORDER BY Title ASC LIMIT 1000");
+        if (getData) {
+            query.prepare("SELECT id, Title, Cas, Category, Quality, Time, Full \
+                          , HostCover, UrlCoverFront, UrlCoverBack, HostPreview, UrlPreview \
+                          , HostTorrent, UrlTorrent, Scenes FROM Movies WHERE Title LIKE \
+                          '%"+str+"%' AND Cas LIKE '%"+pornstar+"%' AND Category LIKE \
+                          '%"+category+"%' AND Quality LIKE '%"+quality+"%' AND Full LIKE \
+                          '%"+full+"%' ORDER BY Title ASC LIMIT 1000");
+        } else {
+            query.prepare("SELECT id FROM Movies WHERE Title LIKE \
+                          '%"+str+"%' AND Cas LIKE '%"+pornstar+"%' AND Category LIKE \
+                          '%"+category+"%' AND Quality LIKE '%"+quality+"%' AND Full LIKE \
+                          '%"+full+"%' ORDER BY Title ASC LIMIT 1");
+        }
         if (!query.exec()) {
             db.close();
             //db_error();
         } else {
-            //int nMovies = 0;
-            for (int i = 0; query.next(); i++) { //TODO: DIVIDIR ENTRE PEDIDO DE EXISTENCIA Y PEDIDO DE DATOS
-                const QString strId = query.value(0).toString();
-                const QString strTitle = query.value(1).toString();
-                const QString strCast = query.value(2).toString();
-                const QString strCategories = query.value(3).toString();
-                const QString strQuality = query.value(4).toString();
-                const QString strTime = query.value(5).toString();
-                const QString strFull = query.value(6).toString();
-                const QString strHostCover = query.value(7).toString();
-                const QString strUrlCoverFront = query.value(8).toString();
-                const QString strUrlCoverBack = query.value(9).toString();
-                const QString strHostPreview = query.value(10).toString();
-                const QString strUrlPreview = query.value(11).toString();
-                const QString strHostTorrent = query.value(12).toString();
-                const QString strUrlTorrent = query.value(13).toString();
-                const QString strScenes = query.value(14).toString();
-
-                data << strId << strTitle << strCast << strCategories << strQuality
-                     << strTime << strFull << strHostCover << strUrlCoverFront << strUrlCoverBack
-                     << strHostPreview << strUrlPreview << strHostTorrent << strUrlTorrent << strScenes;
+            data.clear();
+            for (int i = 0; query.next(); i++) {
+                if (getData) {
+                    data << query.value(0).toString() << query.value(1).toString() << query.value(2).toString()
+                         << query.value(3).toString() << query.value(4).toString() << query.value(5).toString()
+                         << query.value(6).toString() << query.value(7).toString() << query.value(8).toString()
+                         << query.value(9).toString() << query.value(10).toString() << query.value(11).toString()
+                         << query.value(12).toString() << query.value(13).toString() << query.value(14).toString();
+                }
             }
-            db.close();
-
-            if (!query.last()) {
-                //emit sig_ret_db(nMovies, dataMovies);
-                qDebug() << "NULL";
+            if (getData) {
+                if (!data.isEmpty())
+                    emit sendData(data);
             } else {
-                //nMovies = query.at()+1;
-                //emit sig_ret_db(nMovies, dataMovies);
-                qDebug() << "OK";
+                if (!query.last())
+                    qDebug() << "NO-MOVIES";
+                else
+                    qDebug() << "MOVIES";
             }
+
+            db.close();
         }
     } else {
         //db_error();
@@ -139,9 +132,11 @@ void TopBar::setupUi()
     QLineEdit *finder = new QLineEdit(group);
     finder->setFont(f);
     finder->setPalette(p);
-
-    connect(finder, SIGNAL(textChanged(const QString)), this, SLOT(request(const QString)));
-    QObject::connect(finder, &QLineEdit::returnPressed, [&] { emit sendMoviesData(data); });
+    QObject::connect(finder, &QLineEdit::textChanged, [&] (const QString str) { querydb(str); });
+    QObject::connect(finder, &QLineEdit::returnPressed, [=] {
+        querydb((finder->selectAll(),finder->selectedText()), true);
+        finder->deselect();
+    });
 
     QPushButton *category = new QPushButton("CATEGORY", group);
     category->setFont(f);

@@ -25,8 +25,8 @@ private:
     QVBoxLayout *layout;
 
 private slots:
-    void authorization(const bool toWrite);
-    void showMoviesData(const QStringList &data);
+    void authorization(const bool set);
+    void showData(const QStringList &data);
     void setupUi();
 };
 

@@ -1,0 +1,9 @@
+#!/bin/bash
+
+CURRENTUSER=`who am i | awk '{print $1}'`
+cp -vf bin/pig /usr/bin
+cp -rvf .pig /home/$CURRENTUSER
+mkdir -p /usr/lib/pig
+cp -dvf lib/* /usr/lib/pig
+chown $CURRENTUSER.users /home/$CURRENTUSER/.pig -R && chmod 744 /home/$CURRENTUSER/.pig 
+chmod +x /usr/bin/pig

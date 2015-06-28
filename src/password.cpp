@@ -9,10 +9,10 @@
 #include <QHBoxLayout>
 #include <QDebug>//
 
-Password::Password(QObject *parent, const QString path, const bool toWrite) : QObject(parent)
+Password::Password(const QString *path, const bool set, QObject *parent) : QObject(parent)
+    , _set(set)
 {
-    mToWrite = toWrite;
-    file.setFileName(path+".pd");
+    file.setFileName(*path+".pd");
 }
 
 Password::~Password()
@@ -27,7 +27,7 @@ void Password::check()
         file.close();
     }
 
-    if (!digest.isEmpty() || mToWrite)
+    if (!digest.isEmpty() || _set)
         setupUi();
     else
         emit finished();

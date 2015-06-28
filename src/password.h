@@ -13,7 +13,7 @@ class Password : public QObject
     Q_OBJECT
 
 public:
-    explicit Password(QObject *parent = 0, const QString path = NULL, const bool toWrite = NULL);
+    explicit Password(const QString *path = NULL, const bool set = NULL, QObject *parent = 0);
     ~Password();
 
     QGroupBox *group;
@@ -29,7 +29,7 @@ private:
     QFile file;
     QString digest;
 
-    bool mToWrite;
+    bool _set;
 
 private slots:
     bool isMatch(const QString *plain);

@@ -17,16 +17,13 @@ PIG::PIG(QWidget *parent) : QWidget(parent)
 
 PIG::~PIG()
 {
-    delete pTopbar;
-    delete layout;
 }
 
-void PIG::authorization(const bool toWrite)
+void PIG::authorization(const bool set)
 {
-    Password *pPassword = new Password(NULL, path, toWrite);
-
+    Password *pPassword = new Password(&path, set);
     QObject::connect(pPassword, &Password::ready, [=] {
-        pTopbar->group->setDisabled(true);
+        //pTopbar->group->setDisabled(true);
         layout->addWidget(pPassword->group);
     });
     QObject::connect(pPassword, &Password::finished, [=] { //TODO: REVISAR 'PUBLIC'.
@@ -39,7 +36,7 @@ void PIG::authorization(const bool toWrite)
     pPassword->check();
 }
 
-void PIG::showMoviesData(const QStringList &data)
+void PIG::showData(const QStringList &data)
 {
     qDebug() << data[1];
 }
@@ -55,15 +52,12 @@ void PIG::setupUi()
     p.setBrush(QPalette::Disabled, QPalette::Window, b);
     setPalette(p);
 
-    pTopbar = new TopBar(NULL, path);
-
-    QObject::connect(pTopbar, &TopBar::sendMoviesData, [&] (const QStringList data) {
-        if (!data.isEmpty()) showMoviesData(data);
-    });
+    pTopbar = new TopBar(&path, this);
+    QObject::connect(pTopbar, &TopBar::sendData, [&] (const QStringList data) { showData(data); });
 
     layout = new QVBoxLayout(this);
-    layout->addWidget(pTopbar->group);
-    layout->setAlignment(pTopbar->group, Qt::AlignTop);
+    layout->addWidget(pTopbar->getGroup());
+    layout->setAlignment(pTopbar->getGroup(), Qt::AlignTop);
 
     setLayout(layout);
 }

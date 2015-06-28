@@ -13,20 +13,21 @@ class TopBar : public QObject
     Q_OBJECT
 
 public:
-    explicit TopBar(QObject *parent = 0, const QString path = NULL);
+    explicit TopBar(const QString *path = NULL, QObject *parent = 0);
     ~TopBar();
 
-    QGroupBox *group; //TODO: LLAMARLO DESDE UNA FUNCION
+    inline QGroupBox *getGroup() { return group; }
 
 signals:
-    void sendMoviesData(const QStringList data);
+    void sendData(const QStringList data);
 
 private:
     QSqlDatabase db;
     QStringList data;
+    QGroupBox *group;
 
 private slots:
-    void request(const QString str);//TODO: USAR UN PUNTERO
+    void querydb(const QString &str = NULL, const bool getData = false);
     void setupUi();
 };
 
