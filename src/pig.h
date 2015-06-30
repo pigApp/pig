@@ -26,8 +26,8 @@ private:
 
 private slots:
     void authorization(const bool set);
-    void showData(const QStringList &data);
-    void setupUi();
+    void show_data(const QStringList &data);
+    void setup_ui();
 };
 
 #endif

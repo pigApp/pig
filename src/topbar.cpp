@@ -19,14 +19,14 @@ TopBar::TopBar(const QString *path, QObject *parent) : QObject(parent)
         qDebug() << "db_error";
     }
 
-    setupUi();
+    setup_ui();
 }
 
 TopBar::~TopBar()
 {
 }
 
-void TopBar::querydb(const QString &str, const bool getData)
+void TopBar::query_db(const QString &str, const bool getData)
 {
     const QString category = "";
     const QString pornstar = "";
@@ -79,7 +79,7 @@ void TopBar::querydb(const QString &str, const bool getData)
     }
 }
 
-void TopBar::setupUi()
+void TopBar::setup_ui()
 {
     group = new QGroupBox;
     group->setStyleSheet("QGroupBox{ border:0; }");
@@ -132,9 +132,9 @@ void TopBar::setupUi()
     QLineEdit *finder = new QLineEdit(group);
     finder->setFont(f);
     finder->setPalette(p);
-    QObject::connect(finder, &QLineEdit::textChanged, [&] (const QString str) { querydb(str); });
+    QObject::connect(finder, &QLineEdit::textChanged, [&] (const QString str) { query_db(str); });
     QObject::connect(finder, &QLineEdit::returnPressed, [=] {
-        querydb((finder->selectAll(),finder->selectedText()), true);
+        query_db((finder->selectAll(),finder->selectedText()), true);
         finder->deselect();
     });
 

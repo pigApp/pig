@@ -16,7 +16,7 @@ public:
     explicit Password(const QString *path = NULL, const bool set = NULL, QObject *parent = 0);
     ~Password();
 
-    QGroupBox *group;
+    inline QGroupBox *getGroup() { return group; }
 
 public slots:
     void check();
@@ -28,14 +28,16 @@ signals:
 private:
     QFile file;
     QString digest;
+    QGroupBox *group;
 
     bool _set;
 
 private slots:
-    bool isMatch(const QString *plain);
-    bool isWritten(const QString *plain);
-    const QString calculate(const QString **plain);
-    void setupUi();
+    void set(const QString &str);
+    void reset();
+    void match(const QString &str);
+    const QString calculate(const QString *plain);
+    void setup_ui();
 };
 
 #endif

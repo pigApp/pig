@@ -9,9 +9,12 @@
 #include <QHBoxLayout>
 #include <QDebug>//
 
-Password::Password(const QString *path, const bool set, QObject *parent) : QObject(parent)
+Password::Password(const QString *path, const bool set, QObject *parent)
+    : QObject(parent)
     , _set(set)
 {
+    group = NULL;
+
     file.setFileName(*path+".pd");
 }
 
@@ -23,44 +26,52 @@ void Password::check()
 {
     if (file.open(QIODevice::ReadOnly | QIODevice::Text)) {
         while (!file.atEnd())
-            digest = QString(file.readLine()).toUtf8();
+            digest = QString(file.readLine()).toUtf8().simplified();
         file.close();
     }
 
     if (!digest.isEmpty() || _set)
-        setupUi();
+        setup_ui();
     else
         emit finished();
 }
 
-bool Password::isMatch(const QString *plain)
-{
-    if (calculate(&plain) == digest)
-        return true;
-
-    return false;
-}
-
-bool Password::isWritten(const QString *plain)
+void Password::set(const QString &str)
 {
     if (file.open(QIODevice::WriteOnly)) {
-        QTextStream write(&file);
-        write << calculate(&plain);
+        QTextStream stream(&file);
+        stream << calculate(&str).simplified();
         file.close();
-
-        return true;
+        emit finished();
+    } else {
+        qDebug() << "NO-SET";
     }
-
-    return false;
 }
 
-const QString Password::calculate(const QString **plain)
+void Password::reset()
 {
-    return QString(QCryptographicHash::hash(QString(**plain).toUtf8()
-           , QCryptographicHash::Md5).toHex());
+    if (file.remove()) {
+        qDebug() << "REMOVED";
+    } else {
+        qDebug() << "NO-REMOVED";
+    }
 }
 
-void Password::setupUi()
+void Password::match(const QString &str)
+{
+    if (calculate(&str) == digest)
+        emit finished();
+    else
+        qDebug() << "NO-MATCH";
+}
+
+const QString Password::calculate(const QString *plain)
+{
+    return QString(QCryptographicHash::hash(QString(*plain).toUtf8()
+                   , QCryptographicHash::Md5).toHex());
+}
+
+void Password::setup_ui()
 {
     group = new QGroupBox;
     group->setStyleSheet("QGroupBox{border:0;}");
@@ -68,7 +79,6 @@ void Password::setupUi()
 
     QFont f(":/font-global");
     f.setPointSize(24); //TODO: CAMBIAR A PORCENTAJE
-    f.setCapitalization(QFont::AllUppercase);
     f.setBold(true);
 
     QBrush b(QColor(0, 0, 0, 255));
@@ -91,11 +101,20 @@ void Password::setupUi()
     QLineEdit *input = new QLineEdit(group);
     input->setFont(f);
     input->setPalette(p);
+    QObject::connect(input, &QLineEdit::returnPressed, [=] {
+        if (_set)
+            set((input->selectAll(),input->selectedText()));
+        else
+            match((input->selectAll(),input->selectedText()));
+        input->deselect();
+    });
 
     QPushButton *reset = new QPushButton("RESET", group);
     reset->setFont(f);
     reset->setPalette(p);
     reset->setFlat(true);
+    if (!_set) reset->hide();
+    connect(reset, SIGNAL(clicked()), this, SLOT(reset()));
 
     QHBoxLayout *layout = new QHBoxLayout(group);
     layout->addWidget(input);

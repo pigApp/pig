@@ -11,7 +11,7 @@ PIG::PIG(QWidget *parent) : QWidget(parent)
     path = "C:/PIG/.pig/";
 #endif
 
-    setupUi();
+    setup_ui();
     authorization(false);
 }
 
@@ -21,27 +21,30 @@ PIG::~PIG()
 
 void PIG::authorization(const bool set)
 {
-    Password *pPassword = new Password(&path, set);
+    Password *pPassword = new Password(&path, set, this);
+
     QObject::connect(pPassword, &Password::ready, [=] {
-        //pTopbar->group->setDisabled(true);
-        layout->addWidget(pPassword->group);
+        layout->addWidget(pPassword->getGroup());
+        pTopbar->getGroup()->setDisabled(true);
     });
-    QObject::connect(pPassword, &Password::finished, [=] { //TODO: REVISAR 'PUBLIC'.
-        //pTopbar->group->setDisabled(false);              //COMPROBAR SI 'PPASSWORD' SE AGREGO AL LAYOUT ANTES DE SACARLO
-        //pPassword->group->hide();
-        //layout->removeWidget(pPassword->group);
+    QObject::connect(pPassword, &Password::finished, [=] {
+        if (pPassword->getGroup() != NULL) {
+            pPassword->getGroup()->hide();
+            layout->removeWidget(pPassword->getGroup());
+            pTopbar->getGroup()->setDisabled(false);
+        }
         pPassword->deleteLater();
     });
 
     pPassword->check();
 }
 
-void PIG::showData(const QStringList &data)
+void PIG::show_data(const QStringList &data)
 {
     qDebug() << data[1];
 }
 
-void PIG::setupUi()
+void PIG::setup_ui()
 {
     QBrush b(QColor(0, 0, 0, 255));
 
@@ -53,7 +56,7 @@ void PIG::setupUi()
     setPalette(p);
 
     pTopbar = new TopBar(&path, this);
-    QObject::connect(pTopbar, &TopBar::sendData, [&] (const QStringList data) { showData(data); });
+    QObject::connect(pTopbar, &TopBar::sendData, [&] (const QStringList data) { show_data(data); });
 
     layout = new QVBoxLayout(this);
     layout->addWidget(pTopbar->getGroup());

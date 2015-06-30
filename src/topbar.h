@@ -27,8 +27,8 @@ private:
     QGroupBox *group;
 
 private slots:
-    void querydb(const QString &str = NULL, const bool getData = false);
-    void setupUi();
+    void query_db(const QString &str = NULL, const bool getData = false);
+    void setup_ui();
 };
 
 #endif
