@@ -1,29 +1,24 @@
-#ifndef PASSWORD_H
-#define PASSWORD_H
+#ifndef AUTHORIZATION_H
+#define AUTHORIZATION_H
 
 #include <QObject>
 #include <QCryptographicHash>
 #include <QFile>
-#include <QString>
-
 #include <QGroupBox>
 
-class Password : public QObject
+class Auth : public QObject
 {
     Q_OBJECT
 
 public:
-    explicit Password(const QString *path = NULL, const bool set = NULL, QObject *parent = 0);
-    ~Password();
-
-    inline QGroupBox *getGroup() { return group; }
+    explicit Auth(const QString *PIG_PATH = NULL, const bool set = NULL, QObject *parent = 0);
+    ~Auth();
 
 public slots:
     void check();
 
 signals:
-    void ready();
-    void finished();
+    void sendGroup(QGroupBox *group = NULL, const bool add = false);
 
 private:
     QFile file;
@@ -33,9 +28,9 @@ private:
     bool _set;
 
 private slots:
+    void match(const QString &str);
     void set(const QString &str);
     void reset();
-    void match(const QString &str);
     const QString calculate(const QString *plain);
     void setup_ui();
 };

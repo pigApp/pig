@@ -13,11 +13,11 @@ QT += sql opengl network widgets
 SOURCES += src/main.cpp\
            src/pig.cpp\
            src/topbar.cpp\
-           src/password.cpp
+           src/authorization.cpp
 
 HEADERS += src/pig.h\
            src/topbar.h\
-           src/password.h
+           src/authorization.h
 
 RESOURCES = resources.qrc
 

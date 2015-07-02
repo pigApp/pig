@@ -1,4 +1,5 @@
 #include "pig.h"
+#include "authorization.h"
 
 #include <QDir>
 #include <QDebug>//
@@ -6,9 +7,9 @@
 PIG::PIG(QWidget *parent) : QWidget(parent)
 {
 #ifdef __linux__
-    path = QDir::homePath()+"/.pig/";
+    PIG_PATH = QDir::homePath()+"/.pig/";
 #else
-    path = "C:/PIG/.pig/";
+    PIG_PATH = "C:/PIG/.pig/";
 #endif
 
     setup_ui();
@@ -21,27 +22,30 @@ PIG::~PIG()
 
 void PIG::authorization(const bool set)
 {
-    Password *pPassword = new Password(&path, set, this);
+    Auth *auth = new Auth(&PIG_PATH, set, this);
+    connect(auth, SIGNAL(sendGroup(QGroupBox*, const bool))
+            , this, SLOT(groupHandler(QGroupBox*, const bool)));
 
-    QObject::connect(pPassword, &Password::ready, [=] {
-        layout->addWidget(pPassword->getGroup());
-        pTopbar->getGroup()->setDisabled(true);
-    });
-    QObject::connect(pPassword, &Password::finished, [=] {
-        if (pPassword->getGroup() != NULL) {
-            pPassword->getGroup()->hide();
-            layout->removeWidget(pPassword->getGroup());
-            pTopbar->getGroup()->setDisabled(false);
-        }
-        pPassword->deleteLater();
-    });
-
-    pPassword->check();
+    auth->check();
 }
 
-void PIG::show_data(const QStringList &data)
+void PIG::showData(const QStringList &data)
 {
     qDebug() << data[1];
+}
+
+void PIG::groupHandler(QGroupBox *group, const bool add)
+{
+    if (add) {
+        mainLayout->addWidget(group);
+        topbar->getGroup()->setDisabled(true);
+    } else {
+        if (group != NULL){
+            group->hide();
+            mainLayout->removeWidget(group);
+            topbar->getGroup()->setDisabled(false);
+        }
+    }
 }
 
 void PIG::setup_ui()
@@ -55,15 +59,36 @@ void PIG::setup_ui()
     p.setBrush(QPalette::Disabled, QPalette::Window, b);
     setPalette(p);
 
-    pTopbar = new TopBar(&path, this);
-    QObject::connect(pTopbar, &TopBar::sendData, [&] (const QStringList data) { show_data(data); });
+    topbar = new TopBar(&PIG_PATH, this);
+    connect(topbar, SIGNAL(sendData(const QStringList))
+            , this, SLOT(showData(const QStringList)));
+    connect(topbar, SIGNAL(sendGroup(QGroupBox*, const bool))
+            , this, SLOT(groupHandler(QGroupBox*, const bool)));
 
-    layout = new QVBoxLayout(this);
-    layout->addWidget(pTopbar->getGroup());
-    layout->setAlignment(pTopbar->getGroup(), Qt::AlignTop);
+    mainLayout = new QVBoxLayout(this);
+    mainLayout->addWidget(topbar->getGroup());
+    mainLayout->setAlignment(topbar->getGroup(), Qt::AlignTop);
 
-    setLayout(layout);
+    setLayout(mainLayout);
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -95,7 +120,22 @@ void TopBar::find(const QString userInput, const QString category, const QString
 
 
 LAMBDA
-    QObject::connect(pTopbar->category, &QPushButton::clicked, [=]() { qDebug() << "CLICKED"; });
+    QObject::connect(topbar->category, &QPushButton::clicked, [=]() { qDebug() << "CLICKED"; });
+    QObject::connect(topbar, &TopBar::sendData, [&] (const QStringList &data) { showData(data); });
+    QObject::connect(topbar, &TopBar::addGroup, [&] (QGroupBox *filterGroup) { groupsHandler(&filterGroup); });//{ mainLayout->addWidget(filterGroup); });
+
+    QObject::connect(auth, &Auth::ready, [=] { //TODO: PASAR EL GRUPO EN LA SEÑAL.
+        mainLayout->addWidget(auth->getGroup());
+        topbar->getGroup()->setDisabled(true);
+    });
+    QObject::connect(auth, &Auth::finished, [=] {
+        if (auth->getGroup() != NULL) {
+            auth->getGroup()->hide();
+            mainLayout->removeWidget(auth->getGroup());
+            topbar->getGroup()->setDisabled(false);
+        }
+        auth->deleteLater();
+    });
 
 
 AUTHORIZATION
@@ -116,7 +156,7 @@ void PIG::authorization(const bool require, const QString plain
            //update_handler();
            qDebug() << "x";
     } else if (check) {
-        Password mPassword;
+        Auth mPassword;
         if (mPassword.check(&plain))
             //update_handler();
             qDebug() << "x";
@@ -124,7 +164,7 @@ void PIG::authorization(const bool require, const QString plain
             //emit sig_ret_password();
             qDebug() << "x";
     } else if (write) {
-        Password mPassword;
+        Auth mPassword;
         if (mPassword.write(&plain))
             //emit sig_ret_password(false, true);
             qDebug() << "x";

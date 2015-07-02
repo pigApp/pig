@@ -1,28 +1,25 @@
-#include "password.h"
+#include "authorization.h"
 
 #include <QTextStream>
-
-#include <QFont>
-#include <QPalette>
 #include <QLineEdit>
 #include <QPushButton>
 #include <QHBoxLayout>
 #include <QDebug>//
 
-Password::Password(const QString *path, const bool set, QObject *parent)
+Auth::Auth(const QString *PIG_PATH, const bool set, QObject *parent)
     : QObject(parent)
     , _set(set)
 {
     group = NULL;
 
-    file.setFileName(*path+".pd");
+    file.setFileName(*PIG_PATH+".pd");
 }
 
-Password::~Password()
+Auth::~Auth()
 {
 }
 
-void Password::check()
+void Auth::check()
 {
     if (file.open(QIODevice::ReadOnly | QIODevice::Text)) {
         while (!file.atEnd())
@@ -33,22 +30,33 @@ void Password::check()
     if (!digest.isEmpty() || _set)
         setup_ui();
     else
-        emit finished();
+        this->deleteLater();
 }
 
-void Password::set(const QString &str)
+void Auth::match(const QString &str)
+{
+    if (calculate(&str) == digest) {
+        emit sendGroup(group);
+        this->deleteLater();
+    } else {
+        qDebug() << "NO-MATCH";
+    }
+}
+
+void Auth::set(const QString &str)
 {
     if (file.open(QIODevice::WriteOnly)) {
         QTextStream stream(&file);
         stream << calculate(&str).simplified();
         file.close();
-        emit finished();
+        emit sendGroup(group);
+        this->deleteLater();
     } else {
         qDebug() << "NO-SET";
     }
 }
 
-void Password::reset()
+void Auth::reset()
 {
     if (file.remove()) {
         qDebug() << "REMOVED";
@@ -57,21 +65,13 @@ void Password::reset()
     }
 }
 
-void Password::match(const QString &str)
-{
-    if (calculate(&str) == digest)
-        emit finished();
-    else
-        qDebug() << "NO-MATCH";
-}
-
-const QString Password::calculate(const QString *plain)
+const QString Auth::calculate(const QString *plain)
 {
     return QString(QCryptographicHash::hash(QString(*plain).toUtf8()
                    , QCryptographicHash::Md5).toHex());
 }
 
-void Password::setup_ui()
+void Auth::setup_ui()
 {
     group = new QGroupBox;
     group->setStyleSheet("QGroupBox{border:0;}");
@@ -109,18 +109,18 @@ void Password::setup_ui()
         input->deselect();
     });
 
-    QPushButton *reset = new QPushButton("RESET", group);
-    reset->setFont(f);
-    reset->setPalette(p);
-    reset->setFlat(true);
-    if (!_set) reset->hide();
-    connect(reset, SIGNAL(clicked()), this, SLOT(reset()));
+    QPushButton *btnReset = new QPushButton("RESET", group);
+    btnReset->setFont(f);
+    btnReset->setPalette(p);
+    btnReset->setFlat(true);
+    if (!_set) btnReset->hide();
+    connect(btnReset, SIGNAL(clicked()), this, SLOT(reset()));
 
     QHBoxLayout *layout = new QHBoxLayout(group);
     layout->addWidget(input);
-    layout->addWidget(reset);
+    layout->addWidget(btnReset);
 
     group->setLayout(layout);
 
-    emit ready();
+    emit sendGroup(group, true);
 }
