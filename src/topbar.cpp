@@ -1,23 +1,15 @@
 #include "topbar.h"
 
-#include <QFile>
 #include <QLineEdit>
 #include <QPushButton>
 #include <QHBoxLayout>
 #include <QGridLayout>
+#include <QScrollArea>
 #include <QDesktopWidget>
 
-TopBar::TopBar(const QString *PIG_PATH, QObject *parent) : QObject(parent)
+TopBar::TopBar(QSqlDatabase *db, QObject *parent) : QObject(parent)
+  ,_db(db)
 {
-    QFile file;
-    if (file.exists(*PIG_PATH+"db.sqlite")) {
-        db = QSqlDatabase::addDatabase("QSQLITE");
-        db.setDatabaseName(*PIG_PATH+"db.sqlite");
-    } else {
-        //emit db_error();
-        qDebug() << "db_error";
-    }
-
     setup_ui();
 }
 
@@ -27,11 +19,17 @@ TopBar::~TopBar()
 
 QGroupBox *TopBar::filterGroup(const QString &filter, const QStringList &filterData)
 {
+    QString icon_path;
+    if (filter == "Categories")
+        icon_path = ":/img-cat-";
+    else
+        icon_path = ":/img-star-";
+
+    QDesktopWidget desk; //TODO: MOVERLO AL CONSTRUCTOR DE PIG.
+
     QGroupBox *filterGroup = new QGroupBox;
     filterGroup->setStyleSheet("QGroupBox{ border:0; }");
     filterGroup->setFlat(true);
-
-    QDesktopWidget desk; //TODO: MOVERLO AL CONSTRUCTOR DE PIG.
 
     QFont f(":/font-global");
     f.setPointSize(24); //TODO: PASAR A PORCENTAJE
@@ -53,36 +51,26 @@ QGroupBox *TopBar::filterGroup(const QString &filter, const QStringList &filterD
     p1.setBrush(QPalette::Disabled, QPalette::Window, b);
     p1.setBrush(QPalette::Disabled, QPalette::Highlight, b);
 
-    QString icon_path;
-    if (filter == "Categories")
-        icon_path = ":/img-cat-";
-    else
-        icon_path = ":/img-star-";
-
     QPushButton *btn[filterData.count()];
     QGridLayout *filterLayout = new QGridLayout(filterGroup);
 
-    for (int i = 0; i < filterData.count(); ++i) {
-        btn[i] = new QPushButton(filterGroup);
-        btn[i]->setFont(f);
-        btn[i]->setPalette(p1);
-        btn[i]->setFlat(true);
-        btn[i]->setIcon(QIcon(icon_path+filterData[i]));
-        btn[i]->setIconSize(QSize((desk.width()/4), (desk.height()/4)));
+    //QScrollArea *area = new QScrollArea();
+    //area->setWidget(filterGroup);
 
-        if (i < 7) {
-            filterLayout->addWidget(btn[i], 0, i + 1); //TODO: HACER EL CALCULO BIEN
-        } else if (i > 6 && i < 14) {
-            filterLayout->addWidget(btn[i], 1, (i-7) + 1);
-        } else if (i > 13 && i < 21) {
-            filterLayout->addWidget(btn[i], 2, (i-14) + 1);
-        } else if (i > 20 && i < 28){
-            filterLayout->addWidget(btn[i], 3, (i-21) + 1);
-        } else if (i > 27 && i < 35){
-            filterLayout->addWidget(btn[i], 4, (i-28) + 1);
+    int i = 0;
+    for(int row = 0; row < 7; row++) {
+        for(int column = 0; column < 4; column++) { //TODO: COMPROBAR QUE NO LEA UN ELEMENTO DEL ARRAY QUE NO EXISTE.
+            btn[i] = new QPushButton(filterGroup);
+            btn[i]->setFont(f);
+            btn[i]->setPalette(p1);
+            btn[i]->setFlat(true);
+            btn[i]->setIcon(QIcon(icon_path+filterData[i]));
+            btn[i]->setIconSize(QSize((desk.width()/5), (desk.height()/5)));
+
+            filterLayout->addWidget(btn[i], row, column);
+            i++;
         }
     }
-
     filterGroup->setLayout(filterLayout);
 
     return filterGroup;
@@ -95,7 +83,7 @@ void TopBar::query(const QString &str, const bool getData, const bool getFilter)
     const QString quality = "";
     const QString full = "";
 
-    if (db.open()) {
+    if (_db->open()) {
         QSqlQuery query;
 
         if (getData) {
@@ -115,7 +103,7 @@ void TopBar::query(const QString &str, const bool getData, const bool getFilter)
         }
 
         if (!query.exec()) {
-            db.close();
+            _db->close();
             //db_error();
         } else {
             QStringList data;
@@ -132,7 +120,7 @@ void TopBar::query(const QString &str, const bool getData, const bool getFilter)
                     filterData << query.value(0).toString().split(",");
                 }
             }
-            db.close();
+            _db->close();
 
             if (getData && !data.isEmpty()) {
                 emit sendData(data);
@@ -152,9 +140,9 @@ void TopBar::query(const QString &str, const bool getData, const bool getFilter)
 
 void TopBar::setup_ui()
 {
-    group = new QGroupBox;
-    group->setStyleSheet("QGroupBox{ border:0; }");
-    group->setFlat(true);
+    m_group = new QGroupBox;
+    m_group->setStyleSheet("QGroupBox{ border:0; }");
+    m_group->setFlat(true);
 
     QFont f(":/font-global");
     f.setPointSize(24); //TODO: PASAR A PORCENTAJE
@@ -200,7 +188,7 @@ void TopBar::setup_ui()
     p2.setBrush(QPalette::Disabled, QPalette::Window, b);
     p2.setBrush(QPalette::Disabled, QPalette::Highlight, b);
 
-    QLineEdit *input = new QLineEdit(group);
+    QLineEdit *input = new QLineEdit(m_group);
     input->setFont(f);
     input->setPalette(p);
     QObject::connect(input, &QLineEdit::textChanged, [&] (const QString str) { query(str); });
@@ -209,22 +197,22 @@ void TopBar::setup_ui()
         input->deselect();
     });
 
-    QPushButton *btnCategory = new QPushButton("CATEGORY", group);
+    QPushButton *btnCategory = new QPushButton("CATEGORY", m_group);
     btnCategory->setFont(f);
     btnCategory->setPalette(p1);
     btnCategory->setFlat(true);
     QObject::connect(btnCategory, &QPushButton::pressed, [&] { query("Categories", false, true); });
 
-    QPushButton *btnPornstar = new QPushButton("PORNSTAR", group);
+    QPushButton *btnPornstar = new QPushButton("PORNSTAR", m_group);
     btnPornstar->setFont(f);
     btnPornstar->setPalette(p2);
     btnPornstar->setFlat(true);
     QObject::connect(btnPornstar, &QPushButton::pressed, [&] { query("Pornstars", false, true); });
 
-    QHBoxLayout *layout = new QHBoxLayout(group);
+    QHBoxLayout *layout = new QHBoxLayout(m_group);
     layout->addWidget(input);
     layout->addWidget(btnCategory);
     layout->addWidget(btnPornstar);
 
-    group->setLayout(layout);
+    m_group->setLayout(layout);
 }

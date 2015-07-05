@@ -11,7 +11,7 @@ class Auth : public QObject
     Q_OBJECT
 
 public:
-    explicit Auth(const QString *PIG_PATH = NULL, const bool set = NULL, QObject *parent = 0);
+    explicit Auth(const QString *PIG_PATH, const bool set, QObject *parent = 0);
     ~Auth();
 
 public slots:
@@ -19,6 +19,7 @@ public slots:
 
 signals:
     void sendGroup(QGroupBox *group = NULL, const bool add = false);
+    void finished();
 
 private:
     QFile file;

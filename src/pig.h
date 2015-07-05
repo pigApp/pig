@@ -18,10 +18,12 @@ private:
     TopBar *topbar;
 
     QString PIG_PATH;
+    QSqlDatabase db;
     QVBoxLayout *mainLayout;
 
 private slots:
     void authorization(const bool set);
+    void update();
     void showData(const QStringList &data);
     void groupHandler(QGroupBox *group, const bool add);
     void setup_ui();

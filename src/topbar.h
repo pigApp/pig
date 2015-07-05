@@ -10,18 +10,18 @@ class TopBar : public QObject
     Q_OBJECT
 
 public:
-    explicit TopBar(const QString *PIG_PATH = NULL, QObject *parent = 0);
+    explicit TopBar(QSqlDatabase *db, QObject *parent = 0);
     ~TopBar();
 
-    inline QGroupBox *getGroup() { return group; }
+    inline QGroupBox *getGroup() { return m_group; }
 
 signals:
     void sendData(const QStringList data);
     void sendGroup(QGroupBox *group = NULL, const bool add = false);
 
 private:
-    QSqlDatabase db;
-    QGroupBox *group;
+    QSqlDatabase *_db;
+    QGroupBox *m_group;
 
 private slots:
     QGroupBox *filterGroup(const QString &filter, const QStringList &filterData);

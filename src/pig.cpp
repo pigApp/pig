@@ -1,5 +1,6 @@
 #include "pig.h"
 #include "authorization.h"
+#include "update.h"
 
 #include <QDir>
 #include <QDebug>//
@@ -7,10 +8,19 @@
 PIG::PIG(QWidget *parent) : QWidget(parent)
 {
 #ifdef __linux__
-    PIG_PATH = QDir::homePath()+"/.pig/";
+    PIG_PATH = QDir::homePath()+"/.pig";
 #else
-    PIG_PATH = "C:/PIG/.pig/";
+    PIG_PATH = "C:/PIG/.pig";
 #endif
+
+    QFile file;
+    if (file.exists(PIG_PATH+"/db.sqlite")) {
+        db = QSqlDatabase::addDatabase("QSQLITE");
+        db.setDatabaseName(PIG_PATH+"/db.sqlite");
+    } else {
+        //emit db_error();
+        qDebug() << "db_error";
+    }
 
     setup_ui();
     authorization(false);
@@ -23,10 +33,22 @@ PIG::~PIG()
 void PIG::authorization(const bool set)
 {
     Auth *auth = new Auth(&PIG_PATH, set, this);
+
     connect(auth, SIGNAL(sendGroup(QGroupBox*, const bool))
             , this, SLOT(groupHandler(QGroupBox*, const bool)));
 
+    QObject::connect(auth, &Auth::finished, [=] {
+        auth->deleteLater(); //TODO: VER EL ORDEN.
+        update();
+    });
+
     auth->check();
+}
+
+void PIG::update()
+{
+    Update *update = new Update(&PIG_PATH, &db, this);
+    update->start();
 }
 
 void PIG::showData(const QStringList &data)
@@ -59,7 +81,7 @@ void PIG::setup_ui()
     p.setBrush(QPalette::Disabled, QPalette::Window, b);
     setPalette(p);
 
-    topbar = new TopBar(&PIG_PATH, this);
+    topbar = new TopBar(&db, this);
     connect(topbar, SIGNAL(sendData(const QStringList))
             , this, SLOT(showData(const QStringList)));
     connect(topbar, SIGNAL(sendGroup(QGroupBox*, const bool))

@@ -12,7 +12,7 @@ Auth::Auth(const QString *PIG_PATH, const bool set, QObject *parent)
 {
     group = NULL;
 
-    file.setFileName(*PIG_PATH+".pd");
+    file.setFileName(*PIG_PATH+"/.pd");
 }
 
 Auth::~Auth()
@@ -30,14 +30,14 @@ void Auth::check()
     if (!digest.isEmpty() || _set)
         setup_ui();
     else
-        this->deleteLater();
+        emit finished();
 }
 
 void Auth::match(const QString &str)
 {
     if (calculate(&str) == digest) {
         emit sendGroup(group);
-        this->deleteLater();
+        emit finished();
     } else {
         qDebug() << "NO-MATCH";
     }
@@ -50,7 +50,7 @@ void Auth::set(const QString &str)
         stream << calculate(&str).simplified();
         file.close();
         emit sendGroup(group);
-        this->deleteLater();
+        emit finished();
     } else {
         qDebug() << "NO-SET";
     }
