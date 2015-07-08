@@ -15,17 +15,17 @@ SOURCES += src/main.cpp\
            src/topbar.cpp\
            src/authorization.cpp\
            src/update.cpp\
-           src/tcpsocket.cpp\
-           src/unzip.cpp\
-           src/su.cpp
+           src/unpack.cpp\
+           src/su.cpp \
+           src/threadedsocket.cpp
 
 HEADERS += src/pig.h\
            src/topbar.h\
            src/authorization.h\
            src/update.h\
-           src/tcpsocket.h\
-           src/unzip.h\
-           src/su.h
+           src/unpack.h\
+           src/su.h \
+           src/threadedsocket.h
 
 RESOURCES = resources.qrc
 

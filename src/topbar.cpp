@@ -20,6 +20,7 @@ TopBar::~TopBar()
 QGroupBox *TopBar::filterGroup(const QString &filter, const QStringList &filterData)
 {
     QString icon_path;
+
     if (filter == "Categories")
         icon_path = ":/img-cat-";
     else
@@ -76,7 +77,7 @@ QGroupBox *TopBar::filterGroup(const QString &filter, const QStringList &filterD
     return filterGroup;
 }
 
-void TopBar::query(const QString &str, const bool getData, const bool getFilter)
+void TopBar::query(const QString &str, bool getData, bool getFilter)
 {
     const QString category = "";
     const QString pornstar = "";
@@ -120,6 +121,7 @@ void TopBar::query(const QString &str, const bool getData, const bool getFilter)
                     filterData << query.value(0).toString().split(",");
                 }
             }
+
             _db->close();
 
             if (getData && !data.isEmpty()) {
@@ -191,6 +193,7 @@ void TopBar::setup_ui()
     QLineEdit *input = new QLineEdit(m_group);
     input->setFont(f);
     input->setPalette(p);
+
     QObject::connect(input, &QLineEdit::textChanged, [&] (const QString str) { query(str); });
     QObject::connect(input, &QLineEdit::returnPressed, [=] {
         query((input->selectAll(),input->selectedText()), true);
@@ -201,12 +204,14 @@ void TopBar::setup_ui()
     btnCategory->setFont(f);
     btnCategory->setPalette(p1);
     btnCategory->setFlat(true);
+
     QObject::connect(btnCategory, &QPushButton::pressed, [&] { query("Categories", false, true); });
 
     QPushButton *btnPornstar = new QPushButton("PORNSTAR", m_group);
     btnPornstar->setFont(f);
     btnPornstar->setPalette(p2);
     btnPornstar->setFlat(true);
+
     QObject::connect(btnPornstar, &QPushButton::pressed, [&] { query("Pornstars", false, true); });
 
     QHBoxLayout *layout = new QHBoxLayout(m_group);

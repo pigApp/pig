@@ -30,17 +30,13 @@ PIG::~PIG()
 {
 }
 
-void PIG::authorization(const bool set)
+void PIG::authorization(bool set)
 {
     Auth *auth = new Auth(&PIG_PATH, set, this);
 
-    connect(auth, SIGNAL(sendGroup(QGroupBox*, const bool))
-            , this, SLOT(groupHandler(QGroupBox*, const bool)));
-
-    QObject::connect(auth, &Auth::finished, [=] {
-        auth->deleteLater(); //TODO: VER EL ORDEN.
-        update();
-    });
+    connect(auth, SIGNAL(sendGroup(QGroupBox*, bool)), this, SLOT(groupHandler(QGroupBox*, bool)));
+    connect(auth, SIGNAL(finished()), auth, SLOT(deleteLater()), Qt::QueuedConnection);
+    QObject::connect(auth, &Auth::finished, [&] { if (!set) update(); });
 
     auth->check();
 }
@@ -48,7 +44,9 @@ void PIG::authorization(const bool set)
 void PIG::update()
 {
     Update *update = new Update(&PIG_PATH, &db, this);
-    update->start();
+
+    connect(update, SIGNAL(sendGroup(QGroupBox*, bool)), this, SLOT(groupHandler(QGroupBox*, bool)));
+    connect(update, SIGNAL(finished()), update, SLOT(deleteLater()), Qt::QueuedConnection);
 }
 
 void PIG::showData(const QStringList &data)
@@ -56,13 +54,13 @@ void PIG::showData(const QStringList &data)
     qDebug() << data[1];
 }
 
-void PIG::groupHandler(QGroupBox *group, const bool add)
+void PIG::groupHandler(QGroupBox *group, bool add)
 {
     if (add) {
         mainLayout->addWidget(group);
         topbar->getGroup()->setDisabled(true);
     } else {
-        if (group != NULL){
+        if (group != NULL) {
             group->hide();
             mainLayout->removeWidget(group);
             topbar->getGroup()->setDisabled(false);
@@ -82,10 +80,9 @@ void PIG::setup_ui()
     setPalette(p);
 
     topbar = new TopBar(&db, this);
-    connect(topbar, SIGNAL(sendData(const QStringList))
-            , this, SLOT(showData(const QStringList)));
-    connect(topbar, SIGNAL(sendGroup(QGroupBox*, const bool))
-            , this, SLOT(groupHandler(QGroupBox*, const bool)));
+
+    connect(topbar, SIGNAL(sendData(const QStringList&)), this, SLOT(showData(const QStringList&)));
+    connect(topbar, SIGNAL(sendGroup(QGroupBox*, bool)), this, SLOT(groupHandler(QGroupBox*, bool)));
 
     mainLayout = new QVBoxLayout(this);
     mainLayout->addWidget(topbar->getGroup());

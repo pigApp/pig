@@ -6,8 +6,7 @@
 #include <QHBoxLayout>
 #include <QDebug>//
 
-Auth::Auth(const QString *PIG_PATH, const bool set, QObject *parent)
-    : QObject(parent)
+Auth::Auth(const QString *PIG_PATH, bool set, QObject *parent) : QObject(parent)
     , _set(set)
 {
     group = NULL;
@@ -21,16 +20,18 @@ Auth::~Auth()
 
 void Auth::check()
 {
-    if (file.open(QIODevice::ReadOnly | QIODevice::Text)) {
-        while (!file.atEnd())
-            digest = QString(file.readLine()).toUtf8().simplified();
-        file.close();
-    }
-
-    if (!digest.isEmpty() || _set)
+    if (_set) {
         setup_ui();
-    else
-        emit finished();
+    } else {
+        if (file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+            while (!file.atEnd())
+                digest = QString(file.readLine()).toUtf8().simplified();
+            file.close();
+            setup_ui();
+        } else {
+            emit finished();
+        }
+    }
 }
 
 void Auth::match(const QString &str)
@@ -101,6 +102,7 @@ void Auth::setup_ui()
     QLineEdit *input = new QLineEdit(group);
     input->setFont(f);
     input->setPalette(p);
+
     QObject::connect(input, &QLineEdit::returnPressed, [=] {
         if (_set)
             set((input->selectAll(),input->selectedText()));
@@ -114,6 +116,7 @@ void Auth::setup_ui()
     btnReset->setPalette(p);
     btnReset->setFlat(true);
     if (!_set) btnReset->hide();
+
     connect(btnReset, SIGNAL(clicked()), this, SLOT(reset()));
 
     QHBoxLayout *layout = new QHBoxLayout(group);

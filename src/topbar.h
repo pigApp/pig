@@ -16,8 +16,8 @@ public:
     inline QGroupBox *getGroup() { return m_group; }
 
 signals:
-    void sendData(const QStringList data);
-    void sendGroup(QGroupBox *group = NULL, const bool add = false);
+    void sendData(const QStringList &data);
+    void sendGroup(QGroupBox *group = NULL, bool add = false);
 
 private:
     QSqlDatabase *_db;
@@ -25,7 +25,7 @@ private:
 
 private slots:
     QGroupBox *filterGroup(const QString &filter, const QStringList &filterData);
-    void query(const QString &str = NULL, const bool getData = false, const bool getFilter = false);
+    void query(const QString &str = NULL, bool getData = false, bool getFilter = false);
     void setup_ui();
 };
 

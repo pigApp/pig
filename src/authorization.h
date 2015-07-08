@@ -11,14 +11,14 @@ class Auth : public QObject
     Q_OBJECT
 
 public:
-    explicit Auth(const QString *PIG_PATH, const bool set, QObject *parent = 0);
+    explicit Auth(const QString *PIG_PATH, bool set, QObject *parent = 0);
     ~Auth();
 
 public slots:
     void check();
 
 signals:
-    void sendGroup(QGroupBox *group = NULL, const bool add = false);
+    void sendGroup(QGroupBox *group = NULL, bool add = false);
     void finished();
 
 private:

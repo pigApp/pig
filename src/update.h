@@ -1,11 +1,12 @@
 #ifndef UPDATE_H
 #define UPDATE_H
 
-#include "tcpsocket.h"
 #include "su.h"
 
 #include <QObject>
 #include <QtSql>
+#include <QLabel>
+#include <QGroupBox>
 
 class Update : public QObject
 {
@@ -15,35 +16,38 @@ public:
     explicit Update(const QString *PIG_PATH, QSqlDatabase *db, QObject *parent = 0);
     ~Update();
 
-public slots:
-    void start();
-
 signals:
+    void sendGroup(QGroupBox *group = NULL, bool add = false);
     void finished();
     void sig_error();
 
 private:
-    TcpSocket *socket;
-    Su *su;
-
     const QString *_PIG_PATH;
     QSqlDatabase *_db;
 
-    QString host;
-    QStringList urls, sums, targets;
+    Su *su;
 
-    bool hasNewBin, hasNewDb, hasNewLib;
-    int bin, rel, db, lib;
-    int updatedBin, updatedRel, updatedDb, updatedLib;
+    QFile file;
+    QString origin;
+    QString target;
+    QString backup;
+    QString host;
+    QStringList urls, sums, pkgs;
+    QLabel *label;
+    QGroupBox *group;
+
+    bool hasBin, hasDb, hasLib;
+    int bin_v, rel_v, db_v, lib_v;
+    int new_bin_v, new_rel_v, new_db_v, new_lib_v;
 
 private slots:
     void get();
-    void check_versions(const QString *const str);
-    void user_confirmation();
-    void unzip_files(const QStringList *const files);
-    void update_files();
-    void check_exit(int exitCode);
+    void check(QString data);
+    void unpack(QString path);
+    void update();
+    void status(int exitCode);
     void error();
+    void setup_ui();
 };
 
 #endif

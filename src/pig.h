@@ -22,10 +22,10 @@ private:
     QVBoxLayout *mainLayout;
 
 private slots:
-    void authorization(const bool set);
+    void authorization(bool set);
     void update();
     void showData(const QStringList &data);
-    void groupHandler(QGroupBox *group, const bool add);
+    void groupHandler(QGroupBox *group, bool add);
     void setup_ui();
 };
 
