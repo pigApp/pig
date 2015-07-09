@@ -9,9 +9,10 @@
 #include <QHBoxLayout>
 #include <QDebug>//
 
-Update::Update(const QString *PIG_PATH, QSqlDatabase *db, QObject *parent) : QObject(parent)
-    ,_PIG_PATH(PIG_PATH)
-    ,_db(db)
+Update::Update(const QString *PIG_PATH, QSqlDatabase *db_, QObject *parent)
+    : QObject(parent)
+    , _PIG_PATH(PIG_PATH)
+    , _db(db_)
 {
     su = NULL;
     group = NULL;
@@ -20,25 +21,27 @@ Update::Update(const QString *PIG_PATH, QSqlDatabase *db, QObject *parent) : QOb
     hasDb = false;
     hasLib = false;
 
+    nUnpacked = 0;
+
     if (_db->open()) {
         QSqlQuery query;
         query.prepare("SELECT Binary, Release, Database, Library, Host, Url FROM PigData");
+
         if (!query.exec()) {
             _db->close();
             emit sig_error();
         } else {
             query.next();
-            bin_v = query.value(0).toInt();
-            rel_v = query.value(1).toInt();
-            db_v = query.value(2).toInt();
-            lib_v = query.value(3).toInt();
+
+            bin = query.value(0).toInt();
+            rel = query.value(1).toInt();
+            db = query.value(2).toInt();
+            lib = query.value(3).toInt();
             host = query.value(4).toString();
             urls << query.value(5).toString();
-            //urls << "/project/prepotest/bin/linux/x86_64/pig-bin-0.1.zip";//
-            _db->close();
-
             pkgs << NULL;
-            //pkgs << "update_bin.zip";
+
+            _db->close();
 
             get();
         }
@@ -49,8 +52,6 @@ Update::Update(const QString *PIG_PATH, QSqlDatabase *db, QObject *parent) : QOb
 
 Update::~Update()
 {
-    qDebug() << "DELETE UPDATE";
-
     if (su != NULL)
         delete su;
 }
@@ -60,56 +61,55 @@ void Update::get()
     ThreadedSocket *thread[pkgs.count()];
 
     for(int i = 0; i < pkgs.count(); i++) {
-        thread[i] = new ThreadedSocket(_PIG_PATH, &host, &urls[i], &pkgs[i]);
-        connect(thread[i], SIGNAL(sendData(QString)), this, SLOT(check(QString)));
-        connect(thread[i], SIGNAL(sendFile(QString)), this, SLOT(unpack(QString)));
-        connect(thread[i], SIGNAL(finished()), thread[i], SLOT(deleteLater()));
-        QObject::connect(thread[i], &ThreadedSocket::destroyed, [=] { qDebug() << "DELETE THREAD"; });//
+        thread[i] = new ThreadedSocket(_PIG_PATH, &host, &urls[i], &pkgs[i], i, this);
+        connect (thread[i], SIGNAL(sendData(QString)), this, SLOT(check(QString)));
+        connect (thread[i], SIGNAL(sendFile(QString, int)), this, SLOT(unpack(QString, int)));
+        connect (thread[i], SIGNAL(finished()), thread[i], SLOT(deleteLater()));
         thread[i]->start();
     }
 }
 
 void Update::check(QString data)
 {
-    QStringList last_v;
-    const QStringList split = data.split(QRegExp("[\r\n]"));
-    const int i = sizeof(void*);
+    const QStringList dataSplit = data.split(QRegExp("[\r\n]"));
+    QStringList last;
+    const int arch = (sizeof(void*))*8;
 
 #ifdef __linux__
-    if (i == 4)
-        last_v = split[0].split(",");
+    if (arch == 32)
+        last = dataSplit[0].split(",");
     else
-        last_v = split[1].split(",");
+        last = dataSplit[1].split(",");
 #else
-    if (i == 4)
-        last_v = split[2].split(",");
+    if (arch == 32)
+        last = dataSplit[2].split(",");
     else
-        last_v = split[3].split(",");
+        last = dataSplit[3].split(",");
 #endif
 
-    host = last_v[4];
+    host = last[4];
     urls.clear();
     pkgs.clear();
 
-    if ((last_v[0].toInt()+last_v[1].toInt()) > bin_v+rel_v) {
-        new_bin_v = last_v[0].toInt();
-        new_rel_v = last_v[1].toInt();
-        urls << last_v[5];
-        sums << last_v[8];
+    if ((last[0].toInt()+last[1].toInt()) > bin+rel) {
+        newBin = last[0].toInt();
+        newRel = last[1].toInt();
+        urls << last[5];
+        sums << last[8];
         pkgs << "update_bin.zip";
         hasBin = true;
     }
-    if (last_v[2].toInt() > db_v) {
-        new_db_v = last_v[2].toInt();
-        urls << last_v[6];
-        sums << last_v[9];
+    if (last[2].toInt() > db) {
+        newDb = last[2].toInt();
+        urls << last[6];
+        sums << last[9];
         pkgs << "update_db.zip";
         hasDb = true;
     }
-    if (last_v[3].toInt() > lib_v) {
-        new_lib_v = last_v[3].toInt();
-        urls << last_v[7];
-        sums << last_v[10];
+    if (last[3].toInt() > lib) {
+        newLib = last[3].toInt();
+        urls << last[7];
+        sums << last[10];
         pkgs << "update_lib.zip";
         hasLib = true;
     }
@@ -121,24 +121,27 @@ void Update::check(QString data)
     }
 }
 
-void Update::unpack(QString path)
+void Update::unpack(QString path, int ID)
 {
-    qDebug() << path;
+    Unpack *unpack = new Unpack(this);
 
-    /*
-    Unpack unpack;
-    if (unpack.unpack(_PIG_PATH, path, &sums)) {
-        update();
-    } else {
-        qDebug() << "UPDATE FAIL";//
-        QTimer::singleShot(5000, this, SLOT(error()));
-    }
-    */
+    QObject::connect (unpack, &Unpack::finished, [&] (int exitCode) {
+        unpack->deleteLater();
+        if (exitCode == 0) {
+            ++nUnpacked;
+            if (pkgs.count() == nUnpacked)
+                update();
+        } else {
+            error();
+        }
+    });
+
+    unpack->unzip(_PIG_PATH, &path, &sums[ID]);
 }
 
 void Update::update()
 {
-    origin = *_PIG_PATH+"/tmp/news"; // TODO: SACAR news
+    origin = *_PIG_PATH+"/tmp/news";
     target = *_PIG_PATH+"/news";
 
     file.copy(origin, target);
@@ -147,6 +150,7 @@ void Update::update()
         origin = *_PIG_PATH+"/tmp/db.sqlite";
         target = *_PIG_PATH+"/db.sqlite";
         backup = *_PIG_PATH+"/tmp/db.sqlite.bk";
+
         if (file.exists(target))
             file.rename(target, backup);
         if (file.copy(origin, target)) {
@@ -161,6 +165,7 @@ void Update::update()
     if (hasBin) {
 #ifdef __linux__
     su = new Su();
+
     connect (su, SIGNAL(sig_ret_su(int)), this, SLOT(status(int)));
 
     if (!hasLib)
@@ -197,18 +202,21 @@ void Update::status(int exitCode)
         if (!hasDb) {
             if (_db->open()) {
                 if (!hasBin) {
-                    new_bin_v = bin_v;
-                    new_rel_v = rel_v;
+                    newBin = bin;//FIX: NO USAR 'newBin, newRel...'
+                    newRel = rel;
                 }
                 if (!hasLib)
-                    new_lib_v = lib_v;
+                    newLib = lib;
+
                 QSqlQuery query;
-                query.prepare("UPDATE PigData SET Binary='"+QString::number(new_bin_v)+"'");
+                query.prepare("UPDATE PigData SET Binary='"+QString::number(newBin)+"'");
                 query.exec();
-                query.prepare("UPDATE PigData SET Release='"+QString::number(new_rel_v)+"'");
+                query.prepare("UPDATE PigData SET Release='"+QString::number(newRel)+"'");
                 query.exec();
-                query.prepare("UPDATE PigData SET Library='"+QString::number(new_lib_v)+"'");
+                query.prepare("UPDATE PigData SET Library='"+QString::number(newLib)+"'");
+
                 query.exec();
+
                 _db->close();
             }
         }
@@ -225,17 +233,17 @@ void Update::status(int exitCode)
         if (!hasDb) {
             if (_db->open()) {
                 if (!hasBin) {
-                    new_bin_v = bin_v;
-                    new_rel_v = rel_v;
+                    newBin = bin;
+                    newRel = rel;
                 }
                 if (!hasLib)
-                    new_lib_v = lib_v;
+                    newLib = lib;
                 QSqlQuery query;
-                query.prepare("UPDATE PigData SET Binary='"+QString::number(new_bin_v)+"'");
+                query.prepare("UPDATE PigData SET Binary='"+QString::number(newBin)+"'");
                 query.exec();
-                query.prepare("UPDATE PigData SET Release='"+QString::number(new_rel_v)+"'");
+                query.prepare("UPDATE PigData SET Release='"+QString::number(newRel)+"'");
                 query.exec();
-                query.prepare("UPDATE PigData SET Library='"+QString::number(new_lib_v)+"'");
+                query.prepare("UPDATE PigData SET Library='"+QString::number(newLib)+"'");
                 query.exec();
                 _db->close();
             }
@@ -309,7 +317,7 @@ void Update::setup_ui()
     btnAccept->setPalette(p);
     btnAccept->setFlat(true);
 
-    QObject::connect(btnAccept, &QPushButton::clicked, [=] {
+    QObject::connect (btnAccept, &QPushButton::clicked, [=] {
         label->setText("DOWNLOADING...");
         get();
     });
@@ -319,7 +327,7 @@ void Update::setup_ui()
     btnCancel->setPalette(p);
     btnCancel->setFlat(true);
 
-    QObject::connect(btnCancel, &QPushButton::clicked, [&] { emit sendGroup(group); emit finished(); });
+    QObject::connect (btnCancel, &QPushButton::clicked, [&] { emit sendGroup(group); emit finished(); });
 
     QHBoxLayout *layout = new QHBoxLayout(group);
     layout->addWidget(label);

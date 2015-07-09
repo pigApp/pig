@@ -1,14 +1,15 @@
 #include "threadedsocket.h"
 
 #include <QDataStream>
-#include <QDebug>//
 
 ThreadedSocket::ThreadedSocket(const QString *_PIG_PATH, const QString *host, const QString *url
-                               , const QString *pkg, QObject *parent) : QThread(parent)
-    ,__PIG_PATH(_PIG_PATH)
-    ,_host(host)
-    ,_url(url)
-    ,_pkg(pkg)
+                               , const QString *pkg, int ID, QObject *parent)
+    : QThread(parent)
+    , __PIG_PATH(_PIG_PATH)
+    , _host(host)
+    , _url(url)
+    , _pkg(pkg)
+    , _ID(ID)
 {
 }
 
@@ -23,10 +24,8 @@ void ThreadedSocket::run()
 
     connect (socket, SIGNAL(connected()), this, SLOT(connected()), Qt::DirectConnection);
     connect (socket, SIGNAL(readyRead()), this, SLOT(readyRead()), Qt::DirectConnection);
-    connect (socket, SIGNAL(disconnected()), this, SLOT(disconnected()));
-    connect (this, SIGNAL(destroyed()), socket, SLOT(deleteLater()));
-
-    QObject::connect(socket, &QTcpSocket::destroyed, [=] { qDebug() << "DELETE SOCKET"; });//
+    connect (socket, SIGNAL(disconnected()), this, SLOT(disconnected()), Qt::DirectConnection);
+    connect (this, SIGNAL(destroyed()), socket, SLOT(deleteLater()), Qt::DirectConnection);
 
     socket->connectToHost(*_host, 80);
 
@@ -35,7 +34,6 @@ void ThreadedSocket::run()
 
 void ThreadedSocket::connected()
 {
-    //TODO: SIN HEADER. Accept:
     const QByteArray request(QString("GET "+*_url+" HTTP/1.1\r\n"+"Host: "+*_host+"\r\n"
                                      +"Connection: Close\r\n\r\n\r\n").toUtf8());
     socket->write(request);
@@ -69,15 +67,16 @@ void ThreadedSocket::processData()
         file.open(QIODevice::WriteOnly);
         file.write(data);
         file.close();
-        emit sendFile(file.fileName());
+        emit sendFile(file.fileName(), _ID);
     }
 }
 
 void ThreadedSocket::disconnected()
 {
+    socket->deleteLater();
+
     //if (!socket->error)
     processData();
 
-    socket->deleteLater();
     exit(0);
 }

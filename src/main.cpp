@@ -6,7 +6,7 @@ int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
     PIG p;
-    p.showFullScreen();
+    p.show();
 
     return a.exec();
 }

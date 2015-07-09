@@ -13,7 +13,7 @@ class Update : public QObject
     Q_OBJECT
 
 public:
-    explicit Update(const QString *PIG_PATH, QSqlDatabase *db, QObject *parent = 0);
+    explicit Update(const QString *PIG_PATH, QSqlDatabase *db_, QObject *parent = 0);
     ~Update();
 
 signals:
@@ -37,13 +37,14 @@ private:
     QGroupBox *group;
 
     bool hasBin, hasDb, hasLib;
-    int bin_v, rel_v, db_v, lib_v;
-    int new_bin_v, new_rel_v, new_db_v, new_lib_v;
+    int bin, rel, db, lib;
+    int newBin, newRel, newDb, newLib;
+    int nUnpacked;
 
 private slots:
     void get();
     void check(QString data);
-    void unpack(QString path);
+    void unpack(QString path, int ID);
     void update();
     void status(int exitCode);
     void error();

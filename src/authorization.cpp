@@ -6,7 +6,8 @@
 #include <QHBoxLayout>
 #include <QDebug>//
 
-Auth::Auth(const QString *PIG_PATH, bool set, QObject *parent) : QObject(parent)
+Auth::Auth(const QString *PIG_PATH, bool set, QObject *parent)
+    : QObject(parent)
     , _set(set)
 {
     group = NULL;
@@ -34,16 +35,6 @@ void Auth::check()
     }
 }
 
-void Auth::match(const QString &str)
-{
-    if (calculate(&str) == digest) {
-        emit sendGroup(group);
-        emit finished();
-    } else {
-        qDebug() << "NO-MATCH";
-    }
-}
-
 void Auth::set(const QString &str)
 {
     if (file.open(QIODevice::WriteOnly)) {
@@ -66,10 +57,19 @@ void Auth::reset()
     }
 }
 
+void Auth::match(const QString &str)
+{
+    if (calculate(&str) == digest) {
+        emit sendGroup(group);
+        emit finished();
+    } else {
+        qDebug() << "NO-MATCH";
+    }
+}
+
 const QString Auth::calculate(const QString *plain)
 {
-    return QString(QCryptographicHash::hash(QString(*plain).toUtf8()
-                   , QCryptographicHash::Md5).toHex());
+    return QString(QCryptographicHash::hash(QString(*plain).toUtf8(), QCryptographicHash::Md5).toHex());
 }
 
 void Auth::setup_ui()
@@ -103,7 +103,7 @@ void Auth::setup_ui()
     input->setFont(f);
     input->setPalette(p);
 
-    QObject::connect(input, &QLineEdit::returnPressed, [=] {
+    QObject::connect (input, &QLineEdit::returnPressed, [=] {
         if (_set)
             set((input->selectAll(),input->selectedText()));
         else
@@ -117,7 +117,7 @@ void Auth::setup_ui()
     btnReset->setFlat(true);
     if (!_set) btnReset->hide();
 
-    connect(btnReset, SIGNAL(clicked()), this, SLOT(reset()));
+    connect (btnReset, SIGNAL(clicked()), this, SLOT(reset()));
 
     QHBoxLayout *layout = new QHBoxLayout(group);
     layout->addWidget(input);

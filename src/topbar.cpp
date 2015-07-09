@@ -7,8 +7,9 @@
 #include <QScrollArea>
 #include <QDesktopWidget>
 
-TopBar::TopBar(QSqlDatabase *db, QObject *parent) : QObject(parent)
-  ,_db(db)
+TopBar::TopBar(QSqlDatabase *db, QObject *parent)
+    : QObject(parent)
+    , _db(db)
 {
     setup_ui();
 }
@@ -67,7 +68,6 @@ QGroupBox *TopBar::filterGroup(const QString &filter, const QStringList &filterD
             btn[i]->setFlat(true);
             btn[i]->setIcon(QIcon(icon_path+filterData[i]));
             btn[i]->setIconSize(QSize((desk.width()/5), (desk.height()/5)));
-
             filterLayout->addWidget(btn[i], row, column);
             i++;
         }
@@ -194,8 +194,8 @@ void TopBar::setup_ui()
     input->setFont(f);
     input->setPalette(p);
 
-    QObject::connect(input, &QLineEdit::textChanged, [&] (const QString str) { query(str); });
-    QObject::connect(input, &QLineEdit::returnPressed, [=] {
+    QObject::connect (input, &QLineEdit::textChanged, [&] (const QString str) { query(str); });
+    QObject::connect (input, &QLineEdit::returnPressed, [=] {
         query((input->selectAll(),input->selectedText()), true);
         input->deselect();
     });
@@ -205,14 +205,14 @@ void TopBar::setup_ui()
     btnCategory->setPalette(p1);
     btnCategory->setFlat(true);
 
-    QObject::connect(btnCategory, &QPushButton::pressed, [&] { query("Categories", false, true); });
+    QObject::connect (btnCategory, &QPushButton::pressed, [&] { query("Categories", false, true); });
 
     QPushButton *btnPornstar = new QPushButton("PORNSTAR", m_group);
     btnPornstar->setFont(f);
     btnPornstar->setPalette(p2);
     btnPornstar->setFlat(true);
 
-    QObject::connect(btnPornstar, &QPushButton::pressed, [&] { query("Pornstars", false, true); });
+    QObject::connect (btnPornstar, &QPushButton::pressed, [&] { query("Pornstars", false, true); });
 
     QHBoxLayout *layout = new QHBoxLayout(m_group);
     layout->addWidget(input);

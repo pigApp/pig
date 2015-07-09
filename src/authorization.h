@@ -29,9 +29,9 @@ private:
     bool _set;
 
 private slots:
-    void match(const QString &str);
     void set(const QString &str);
     void reset();
+    void match(const QString &str);
     const QString calculate(const QString *plain);
     void setup_ui();
 };

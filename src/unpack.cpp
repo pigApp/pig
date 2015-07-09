@@ -3,8 +3,8 @@
 #include <quazip/quazipfile.h>
 #include <quazip/quachecksum32.h>
 
-#include <QCryptographicHash>
 #include <QFile>
+#include <QCryptographicHash>
 
 Unpack::Unpack(QObject *parent) : QObject(parent)
 {
@@ -14,50 +14,38 @@ Unpack::~Unpack()
 {
 }
 
-bool Unpack::unpack(const QString *_PIG_PATH, const QString path, const QStringList *sums)
+void Unpack::unzip(const QString *_PIG_PATH, const QString *path, const QString *sum)
 {
-    /*
-    QFile file;
+    QFile origin(*path);
 
-    for (int i=0; i<(*files).count(); i++) {
-
-        file.setFileName((*files)[i]);
-
-        if (file.open(QIODevice::ReadOnly) && ((*sums)[i] == QCryptographicHash::hash(file.readAll(), QCryptographicHash::Md5).toHex())) {
-            file.close();
-
-            QuaZip zip((*files)[i]);
-
-            if (zip.open(QuaZip::mdUnzip)) {
-                QuaZipFile zipFile(&zip);
-
-                for(bool f=zip.goToFirstFile(); f; f=zip.goToNextFile()) {
-
-                    zipFile.open(QIODevice::ReadOnly);
-
-                    QFile outFile(*_PIG_PATH+"/tmp/"+zipFile.getActualFileName());
-                    outFile.open(QIODevice::WriteOnly);
-
-                    if (outFile.write(zipFile.readAll()) == -1) {
-                        zipFile.close();
-                        zip.close();
-                        outFile.close();
-                        return false;
-                    }
-
+    if ((origin.open(QIODevice::ReadOnly))
+        && (*sum == (QCryptographicHash::hash(origin.readAll(), QCryptographicHash::Md5).toHex()))) {
+        origin.close();
+        QuaZip zip(*path);
+        if (zip.open(QuaZip::mdUnzip)) {
+            QuaZipFile zipFile(&zip);
+            for (bool f = zip.goToFirstFile(); f; f = zip.goToNextFile()) {
+                zipFile.open(QIODevice::ReadOnly);
+                QFile target(*_PIG_PATH+"/tmp/"+zipFile.getActualFileName());
+                target.open(QIODevice::WriteOnly);
+                if (target.write(zipFile.readAll()) == -1) {
                     zipFile.close();
-                    outFile.close();
+                    zip.close();
+                    target.close();
+                    emit finished(-1);
                 }
-                zip.close();
-
-            } else {
-                return false;
+                zipFile.close();
+                target.close();
             }
+            zip.close();
         } else {
-            file.close();
-            return false;
+            emit finished(-1);
         }
+    } else {
+        if (origin.isOpen())
+            origin.close();
+        emit finished(-1);
     }
-    */
-    return true;
+
+    emit finished(0);
 }

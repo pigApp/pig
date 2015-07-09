@@ -34,9 +34,9 @@ void PIG::authorization(bool set)
 {
     Auth *auth = new Auth(&PIG_PATH, set, this);
 
-    connect(auth, SIGNAL(sendGroup(QGroupBox*, bool)), this, SLOT(groupHandler(QGroupBox*, bool)));
-    connect(auth, SIGNAL(finished()), auth, SLOT(deleteLater()), Qt::QueuedConnection);
-    QObject::connect(auth, &Auth::finished, [&] { if (!set) update(); });
+    connect (auth, SIGNAL(sendGroup(QGroupBox*, bool)), this, SLOT(groupHandler(QGroupBox*, bool)));
+    connect (auth, SIGNAL(finished()), auth, SLOT(deleteLater()), Qt::QueuedConnection);
+    QObject::connect (auth, &Auth::finished, [&] { if (!set) update(); });
 
     auth->check();
 }
@@ -45,8 +45,8 @@ void PIG::update()
 {
     Update *update = new Update(&PIG_PATH, &db, this);
 
-    connect(update, SIGNAL(sendGroup(QGroupBox*, bool)), this, SLOT(groupHandler(QGroupBox*, bool)));
-    connect(update, SIGNAL(finished()), update, SLOT(deleteLater()), Qt::QueuedConnection);
+    connect (update, SIGNAL(sendGroup(QGroupBox*, bool)), this, SLOT(groupHandler(QGroupBox*, bool)));
+    connect (update, SIGNAL(finished()), update, SLOT(deleteLater()), Qt::QueuedConnection);
 }
 
 void PIG::showData(const QStringList &data)
@@ -81,8 +81,8 @@ void PIG::setup_ui()
 
     topbar = new TopBar(&db, this);
 
-    connect(topbar, SIGNAL(sendData(const QStringList&)), this, SLOT(showData(const QStringList&)));
-    connect(topbar, SIGNAL(sendGroup(QGroupBox*, bool)), this, SLOT(groupHandler(QGroupBox*, bool)));
+    connect (topbar, SIGNAL(sendData(const QStringList&)), this, SLOT(showData(const QStringList&)));
+    connect (topbar, SIGNAL(sendGroup(QGroupBox*, bool)), this, SLOT(groupHandler(QGroupBox*, bool)));
 
     mainLayout = new QVBoxLayout(this);
     mainLayout->addWidget(topbar->getGroup());

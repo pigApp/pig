@@ -12,7 +12,10 @@ public:
     ~Unpack();
 
 public slots:
-    bool unpack(const QString *_PIG_PATH, const QString path, const QStringList *sums);
+    void unzip(const QString *_PIG_PATH, const QString *path, const QString *sum);
+
+signals:
+    void finished(int exitCode);
 };
 
 #endif
