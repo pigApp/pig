@@ -149,46 +149,27 @@ void TopBar::setup_ui()
     QFont f(":/font-global");
     f.setPointSize(24); //TODO: PASAR A PORCENTAJE
     f.setCapitalization(QFont::AllUppercase);
-    f.setBold(true);
+    //f.setBold(true);
 
     QBrush b(QColor(0, 0, 0, 255));
-    QBrush b1(QColor(255, 255, 255, 255));
+    QBrush b1(QColor(30, 30, 30, 255));
     QBrush b2(QColor(255, 255, 255, 255));
-    QBrush b3(QColor(255, 255, 255, 255));
 
     QPalette p;
-    p.setBrush(QPalette::Active, QPalette::Text, b1);
+    p.setBrush(QPalette::Active, QPalette::Button, b);
+    p.setBrush(QPalette::Active, QPalette::ButtonText, b2);
+    p.setBrush(QPalette::Active, QPalette::Text, b2);
     p.setBrush(QPalette::Active, QPalette::Base, b);
     p.setBrush(QPalette::Active, QPalette::Window, b);
+    p.setBrush(QPalette::Active, QPalette::WindowText, b2);
     p.setBrush(QPalette::Active, QPalette::Highlight, b);
-    p.setBrush(QPalette::Disabled, QPalette::Text, b);
+    p.setBrush(QPalette::Disabled, QPalette::Button, b);
+    p.setBrush(QPalette::Disabled, QPalette::ButtonText, b1);
+    p.setBrush(QPalette::Disabled, QPalette::Text, b1);
     p.setBrush(QPalette::Disabled, QPalette::Base, b);
     p.setBrush(QPalette::Disabled, QPalette::Window, b);
+    p.setBrush(QPalette::Disabled, QPalette::WindowText, b1);
     p.setBrush(QPalette::Disabled, QPalette::Highlight, b);
-
-    QPalette p1;
-    p1.setBrush(QPalette::Active, QPalette::Button, b);
-    p1.setBrush(QPalette::Active, QPalette::ButtonText, b2);
-    p1.setBrush(QPalette::Active, QPalette::Base, b);
-    p1.setBrush(QPalette::Active, QPalette::Window, b);
-    p1.setBrush(QPalette::Active, QPalette::Highlight, b);
-    p1.setBrush(QPalette::Disabled, QPalette::Button, b);
-    p1.setBrush(QPalette::Disabled, QPalette::ButtonText, b);
-    p1.setBrush(QPalette::Disabled, QPalette::Base, b);
-    p1.setBrush(QPalette::Disabled, QPalette::Window, b);
-    p1.setBrush(QPalette::Disabled, QPalette::Highlight, b);
-
-    QPalette p2;
-    p2.setBrush(QPalette::Active, QPalette::Button, b);
-    p2.setBrush(QPalette::Active, QPalette::ButtonText, b3);
-    p2.setBrush(QPalette::Active, QPalette::Base, b);
-    p2.setBrush(QPalette::Active, QPalette::Window, b);
-    p2.setBrush(QPalette::Active, QPalette::Highlight, b);
-    p2.setBrush(QPalette::Disabled, QPalette::Button, b);
-    p2.setBrush(QPalette::Disabled, QPalette::ButtonText, b);
-    p2.setBrush(QPalette::Disabled, QPalette::Base, b);
-    p2.setBrush(QPalette::Disabled, QPalette::Window, b);
-    p2.setBrush(QPalette::Disabled, QPalette::Highlight, b);
 
     QLineEdit *input = new QLineEdit(m_group);
     input->setFont(f);
@@ -200,24 +181,28 @@ void TopBar::setup_ui()
         input->deselect();
     });
 
+    f.setBold(true);
+
     QPushButton *btnCategory = new QPushButton("CATEGORY", m_group);
     btnCategory->setFont(f);
-    btnCategory->setPalette(p1);
+    btnCategory->setPalette(p);
     btnCategory->setFlat(true);
+    btnCategory->hide();//
 
     QObject::connect (btnCategory, &QPushButton::pressed, [&] { query("Categories", false, true); });
 
     QPushButton *btnPornstar = new QPushButton("PORNSTAR", m_group);
     btnPornstar->setFont(f);
-    btnPornstar->setPalette(p2);
+    btnPornstar->setPalette(p);
     btnPornstar->setFlat(true);
+    btnPornstar->hide();
 
     QObject::connect (btnPornstar, &QPushButton::pressed, [&] { query("Pornstars", false, true); });
 
     QHBoxLayout *layout = new QHBoxLayout(m_group);
     layout->addWidget(input);
-    layout->addWidget(btnCategory);
-    layout->addWidget(btnPornstar);
+    //layout->addWidget(btnCategory);
+    //layout->addWidget(btnPornstar);
 
     m_group->setLayout(layout);
 }

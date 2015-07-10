@@ -1,10 +1,10 @@
 #include "update.h"
 #include "threadedsocket.h"
 #include "unpack.h"
+#include "su.h"
 
 #include <QProcess>
 #include <QTextStream>
-#include <QTimer>
 #include <QPushButton>
 #include <QHBoxLayout>
 #include <QDebug>//
@@ -14,7 +14,6 @@ Update::Update(const QString *PIG_PATH, QSqlDatabase *db_, QObject *parent)
     , _PIG_PATH(PIG_PATH)
     , _db(db_)
 {
-    su = NULL;
     group = NULL;
 
     hasBin = false;
@@ -52,8 +51,6 @@ Update::Update(const QString *PIG_PATH, QSqlDatabase *db_, QObject *parent)
 
 Update::~Update()
 {
-    if (su != NULL)
-        delete su;
 }
 
 void Update::get()
@@ -92,22 +89,22 @@ void Update::check(QString data)
     pkgs.clear();
 
     if ((last[0].toInt()+last[1].toInt()) > bin+rel) {
-        newBin = last[0].toInt();
-        newRel = last[1].toInt();
+        bin = last[0].toInt();
+        rel = last[1].toInt();
         urls << last[5];
         sums << last[8];
         pkgs << "update_bin.zip";
         hasBin = true;
     }
     if (last[2].toInt() > db) {
-        newDb = last[2].toInt();
+        db = last[2].toInt();
         urls << last[6];
         sums << last[9];
         pkgs << "update_db.zip";
         hasDb = true;
     }
     if (last[3].toInt() > lib) {
-        newLib = last[3].toInt();
+        lib = last[3].toInt();
         urls << last[7];
         sums << last[10];
         pkgs << "update_lib.zip";
@@ -123,6 +120,8 @@ void Update::check(QString data)
 
 void Update::unpack(QString path, int ID)
 {
+    qDebug() << "ID " << ID;//
+
     Unpack *unpack = new Unpack(this);
 
     QObject::connect (unpack, &Unpack::finished, [&] (int exitCode) {
@@ -132,7 +131,8 @@ void Update::unpack(QString path, int ID)
             if (pkgs.count() == nUnpacked)
                 update();
         } else {
-            error();
+            qDebug() << "ERROR UNPACK";//
+            //error();
         }
     });
 
@@ -141,11 +141,14 @@ void Update::unpack(QString path, int ID)
 
 void Update::update()
 {
+//NEWS
     origin = *_PIG_PATH+"/tmp/news";
     target = *_PIG_PATH+"/news";
 
-    file.copy(origin, target);
+    file.rename(origin, target);
+//NEWS
 
+//DB
     if (hasDb) {
         origin = *_PIG_PATH+"/tmp/db.sqlite";
         target = *_PIG_PATH+"/db.sqlite";
@@ -153,128 +156,137 @@ void Update::update()
 
         if (file.exists(target))
             file.rename(target, backup);
-        if (file.copy(origin, target)) {
-            if (!hasBin && !hasLib)
+        if (file.rename(origin, target)) {
+            if (!hasBin) {
+                emit sendGroup(group);
                 emit finished();
+            }
         } else {
-            qDebug() << "UPDATE FAIL";//
-            QTimer::singleShot(5000, this, SLOT(error()));
+            qDebug() << "ERROR UPDATE-DB";//
+            //error();
         }
     }
+//DB
 
+//BIN-LIB
     if (hasBin) {
 #ifdef __linux__
-    su = new Su();
+    Su *su = new Su(this);
 
-    connect (su, SIGNAL(sig_ret_su(int)), this, SLOT(status(int)));
+    QObject::connect (su, &Su::finished, [=] (int exitCode) { status(exitCode); su->deleteLater(); });
 
-    if (!hasLib)
-        su->update("'mv "+*_PIG_PATH+"/tmp/pig /usr/bin/ \
-                   ; chown root.root /usr/bin/pig \
-                   ; chmod +x /usr/bin/pig'");
-    else
+    if (hasLib) {
         su->update("'mv "+*_PIG_PATH+"/tmp/pig /usr/bin/ \
                    ; mv "+*_PIG_PATH+"/tmp/*.so* /usr/lib/pig/ \
                    ; chown root.root /usr/bin/pig \
                    ; chown root.root /usr/lib/pig/* \
                    ; chmod +x /usr/bin/pig \
                    ; chmod +x /usr/lib/pig/*'");
+    } else {
+        su->update("'mv "+*_PIG_PATH+"/tmp/pig /usr/bin/ \
+                   ; chown root.root /usr/bin/pig \
+                   ; chmod +x /usr/bin/pig'");
+    }
 #else
-    QProcess proc;
-    if (!hasLib)
-        if (proc.startDetached("C:\\PIG\\.pig\\update.bat"))
-            status(0);
-        else
-            status(1);
-    else
+    QProcess proc; //FIX: USAR SEÑALES.
+
+    if (hasLib) {
         if (proc.startDetached("C:\\PIG\\.pig\\update.bat lib"))
             status(0);
         else
             status(1);
+    } else {
+        if (proc.startDetached("C:\\PIG\\.pig\\update.bat"))
+            status(0);
+        else
+            status(1);
+    }
 #endif
     }
+//BIN-LIB
 }
 
 void Update::status(int exitCode)
 {
+    qDebug() << "EXIT CODE " << exitCode;//
+
 #ifdef __linux__
     if (exitCode == 0) {
         if (!hasDb) {
             if (_db->open()) {
-                if (!hasBin) {
-                    newBin = bin;//FIX: NO USAR 'newBin, newRel...'
-                    newRel = rel;
-                }
-                if (!hasLib)
-                    newLib = lib;
-
                 QSqlQuery query;
-                query.prepare("UPDATE PigData SET Binary='"+QString::number(newBin)+"'");
-                query.exec();
-                query.prepare("UPDATE PigData SET Release='"+QString::number(newRel)+"'");
-                query.exec();
-                query.prepare("UPDATE PigData SET Library='"+QString::number(newLib)+"'");
 
+                query.prepare("UPDATE PigData SET Binary='"+QString::number(bin)+"'");
                 query.exec();
+                query.prepare("UPDATE PigData SET Release='"+QString::number(rel)+"'");
+                query.exec();
+                if (hasLib) {
+                    query.prepare("UPDATE PigData SET Library='"+QString::number(lib)+"'");
+                    query.exec();
+                }
 
                 _db->close();
             }
         }
-        qDebug() << "RESTART PIG";
+        qDebug() << "RESTART PIG";//
     } else if (exitCode == -1) {
-        qDebug() << "GKSU-KDESU NEEDED";
-        QTimer::singleShot(10000, this, SLOT(error()));
+        qDebug() << "ERROR SU";//
+        //error();
     } else {
-        qDebug() << "UPDATE FAIL";
-        QTimer::singleShot(5000, this, SLOT(error()));
+        qDebug() << "ERROR UPDATE-BIN/LIB";//
+        //error();
     }
 #else
     if (exitCode == 0) {
         if (!hasDb) {
             if (_db->open()) {
-                if (!hasBin) {
-                    newBin = bin;
-                    newRel = rel;
-                }
-                if (!hasLib)
-                    newLib = lib;
                 QSqlQuery query;
-                query.prepare("UPDATE PigData SET Binary='"+QString::number(newBin)+"'");
+
+                query.prepare("UPDATE PigData SET Binary='"+QString::number(bin)+"'");
                 query.exec();
-                query.prepare("UPDATE PigData SET Release='"+QString::number(newRel)+"'");
+                query.prepare("UPDATE PigData SET Release='"+QString::number(rel)+"'");
                 query.exec();
-                query.prepare("UPDATE PigData SET Library='"+QString::number(newLib)+"'");
-                query.exec();
+                if (hasLib) {
+                    query.prepare("UPDATE PigData SET Library='"+QString::number(lib)+"'");
+                    query.exec();
+                }
+
                 _db->close();
             }
         }
         exit(0);
     } else {
-        qDebug() << "UPDATE FAIL";
-        QTimer::singleShot(5000, this, SLOT(error()));
+        qDebug() << "UPDATE FAIL";//
+        //error();
     }
 #endif
 }
 
 void Update::error()
 {
+//CLEAN UP NEWS
     origin = *_PIG_PATH+"/news";
     target = *_PIG_PATH+"/tmp/news.trash";
 
     if (file.exists(origin))
         file.rename(origin, target);
+//CLEAN UP NEWS
 
+//CLEAN UP DB
     origin = *_PIG_PATH+"/db.sqlite";
     target = *_PIG_PATH+"/tmp/db.sqlite.trash";
     backup = *_PIG_PATH+"/tmp/db.sqlite.bk";
 
     if (hasDb) {
-        if (file.exists(origin) && file.exists(backup))
+        if (file.exists(origin) && file.exists(backup)) {
             file.rename(origin, target);
-        file.rename(backup, origin);
+            file.rename(backup, origin);
+        }
     }
+//CLEAN UP DB
 
-    emit finished();
+    //TODO: MOSTRAR MENSAJE Y BOTON DE ERROR.
+    //emit finished();
 }
 
 void Update::setup_ui()
@@ -288,7 +300,7 @@ void Update::setup_ui()
     f.setBold(true);
 
     QBrush b(QColor(0, 0, 0, 255));
-    QBrush b1(QColor(63, 63, 63, 255));
+    QBrush b1(QColor(30, 30, 30, 255));
     QBrush b2(QColor(255, 255, 255, 255));
 
     QPalette p;

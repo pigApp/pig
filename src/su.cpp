@@ -1,40 +1,43 @@
 #include "su.h"
 
-#include <QDir>
-
 Su::Su(QObject *parent) : QObject(parent)
 {
-    proc = new QProcess(this);
-    proc->start("/bin/bash", QStringList() << "-c" << "ls /usr/bin/gksu");
-    proc->waitForFinished(500);
-    if (proc->exitCode() == 0) {
+    p = new QProcess(this);
+
+    p->start("/bin/bash", QStringList() << "-c" << "ls /usr/bin/gksu");
+    p->waitForFinished(500);
+
+    if (p->exitCode() == 0) {
         manager = "gksu";
     } else {
-        proc->start("/bin/bash", QStringList() << "-c" << "ls /usr/bin/kdesu");
-        proc->waitForFinished(500);
-        if (proc->exitCode() == 0)
+        p->start("/bin/bash", QStringList() << "-c" << "ls /usr/bin/kdesu");
+        p->waitForFinished(500);
+        if (p->exitCode() == 0)
             manager = "kdesu";
     }
 }
 
 Su::~Su()
 {
-    delete proc;
+    delete p;
 }
 
 void Su::update(const QString arg)
 {
     if (manager.isEmpty())
-        emit sig_ret_su(-1);
+        emit finished(-1);
     else
+        //TODO: SIMULAR EL PROCESO ANTES DE EJECUTARLO.
         if (manager == "gksu")
-            proc->start("/bin/bash", QStringList() << "-c" << manager+" -m 'root password' "+arg);
+            p->start("/bin/bash", QStringList() << "-c" << manager+" -m 'root password' "+arg);
         else
-            proc->start("/bin/bash", QStringList() << "-c" << manager+" -c "+arg);
-    connect (proc, SIGNAL(finished(int)), this, SIGNAL(sig_ret_su(int)));
+            p->start("/bin/bash", QStringList() << "-c" << manager+" -c "+arg);
+
+    connect (p, SIGNAL(finished(int)), this, SIGNAL(finished(int)));
 }
 
-void Su::password(const QString)
+void Su::auth(const QString arg)
 {
-    // TODO: Set permissions to password file.
+    Q_UNUSED(arg);
+    //TODO: SET PERMISSIONS TO PASSWORD FILE.
 }

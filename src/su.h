@@ -14,14 +14,14 @@ public:
 
 public slots:
     void update(const QString arg);
-    void password(const QString arg);
+    void auth(const QString arg);
 
 signals:
-    void sig_ret_su(int exitCode);
+    void finished(int exitCode);
 
 private:
     QString manager;
-    QProcess *proc;
+    QProcess *p;
 };
 
 #endif

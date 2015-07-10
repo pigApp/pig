@@ -1,8 +1,6 @@
 #ifndef UPDATE_H
 #define UPDATE_H
 
-#include "su.h"
-
 #include <QObject>
 #include <QtSql>
 #include <QLabel>
@@ -25,8 +23,6 @@ private:
     const QString *_PIG_PATH;
     QSqlDatabase *_db;
 
-    Su *su;
-
     QFile file;
     QString origin;
     QString target;
@@ -38,7 +34,6 @@ private:
 
     bool hasBin, hasDb, hasLib;
     int bin, rel, db, lib;
-    int newBin, newRel, newDb, newLib;
     int nUnpacked;
 
 private slots:

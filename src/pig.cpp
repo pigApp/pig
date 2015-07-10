@@ -70,7 +70,7 @@ void PIG::groupHandler(QGroupBox *group, bool add)
 
 void PIG::setup_ui()
 {
-    QBrush b(QColor(0, 0, 0, 255));
+    QBrush b(QColor(10, 10, 10, 255));
 
     QPalette p;
     p.setBrush(QPalette::Active, QPalette::Base, b);
