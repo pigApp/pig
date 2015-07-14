@@ -1,6 +1,7 @@
 #include "pig.h"
 #include "authorization.h"
 #include "update.h"
+#include "viewer.h"
 
 #include <QDir>
 #include <QDebug>//
@@ -36,7 +37,7 @@ void PIG::authorization(bool set)
 
     connect (auth, SIGNAL(sendGroup(QGroupBox*, bool)), this, SLOT(groupHandler(QGroupBox*, bool)));
     connect (auth, SIGNAL(finished()), auth, SLOT(deleteLater()), Qt::QueuedConnection);
-    QObject::connect (auth, &Auth::finished, [&] { if (!set) update(); });
+    QObject::connect (auth, &Auth::finished, [&] { if (!set) viewer(); });//update();
 
     auth->check();
 }
@@ -47,23 +48,71 @@ void PIG::update()
 
     connect (update, SIGNAL(sendGroup(QGroupBox*, bool)), this, SLOT(groupHandler(QGroupBox*, bool)));
     connect (update, SIGNAL(finished()), update, SLOT(deleteLater()), Qt::QueuedConnection);
+
+    viewer();
 }
 
-void PIG::showData(const QStringList &data)
+//void PIG::viewer(const QStringList &data)
+void PIG::viewer()
 {
-    qDebug() << data[1];
+    //if (data == NULL) {
+        test << "i.cubeupload.com";
+        test << "/xj5Msc.jpg";
+        test << "a.jpg";
+
+        test << "i.cubeupload.com";
+        test << "/Empeai.jpg";
+        test << "b.jpg";
+
+        test << "i.cubeupload.com";
+        test << "/NhZ15k.jpg";
+        test << "c.jpg";
+
+        test << "i.cubeupload.com";
+        test << "/CR9eLw.jpg";
+        test << "d.jpg";
+
+        test << "i.cubeupload.com";
+        test << "/VUke0K.jpg";
+        test << "e.jpg";
+
+        test << "i.cubeupload.com";
+        test << "/vsiE1o.jpg";
+        test << "f.jpg";
+
+        test << "i.cubeupload.com";
+        test << "/1gO1Gr.jpg";
+        test << "g.jpg";
+
+        test << "i.cubeupload.com";
+        test << "/kojoX1.jpg";
+        test << "h.jpg";
+
+        test << "i.cubeupload.com";
+        test << "/iTIX6n.jpg";
+        test << "i.jpg";
+
+        test << "i.cubeupload.com";
+        test << "/kojoX1.jpg";
+        test << "j.jpg";
+    //}
+
+    Viewer *view = new Viewer(&PIG_PATH, this);
+    connect (view, SIGNAL(sendGroup(QGroupBox*, bool)), this, SLOT(groupHandler(QGroupBox*, bool)));
+
+    view->get(test);
 }
 
 void PIG::groupHandler(QGroupBox *group, bool add)
 {
     if (add) {
         mainLayout->addWidget(group);
-        topbar->getGroup()->setDisabled(true);
+        //topbar->getGroup()->setDisabled(true);
     } else {
         if (group != NULL) {
             group->hide();
             mainLayout->removeWidget(group);
-            topbar->getGroup()->setDisabled(false);
+            //topbar->getGroup()->setDisabled(false);
         }
     }
 }
@@ -81,12 +130,12 @@ void PIG::setup_ui()
 
     topbar = new TopBar(&db, this);
 
-    connect (topbar, SIGNAL(sendData(const QStringList&)), this, SLOT(showData(const QStringList&)));
-    connect (topbar, SIGNAL(sendGroup(QGroupBox*, bool)), this, SLOT(groupHandler(QGroupBox*, bool)));
+    //connect (topbar, SIGNAL(sendData(const QStringList&)), this, SLOT(showData(const QStringList&)));
+    //connect (topbar, SIGNAL(sendGroup(QGroupBox*, bool)), this, SLOT(groupHandler(QGroupBox*, bool)));
 
     mainLayout = new QVBoxLayout(this);
-    mainLayout->addWidget(topbar->getGroup());
-    mainLayout->setAlignment(topbar->getGroup(), Qt::AlignTop);
+    mainLayout->addWidget(topbar);
+    mainLayout->setAlignment(topbar, Qt::AlignTop);
 
     setLayout(mainLayout);
 }

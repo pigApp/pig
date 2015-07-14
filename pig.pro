@@ -12,20 +12,26 @@ QT += sql opengl network widgets
 
 SOURCES += src/main.cpp\
            src/pig.cpp\
-           src/topbar.cpp\
            src/authorization.cpp\
            src/update.cpp\
+           src/topbar.cpp\
+           src/finder.cpp\
+           src/viewer.cpp\
            src/unpack.cpp\
-           src/su.cpp \
+           src/su.cpp\
            src/threadedsocket.cpp
 
+
 HEADERS += src/pig.h\
-           src/topbar.h\
            src/authorization.h\
            src/update.h\
+           src/topbar.h\
+           src/finder.h\
+           src/viewer.h\
            src/unpack.h\
-           src/su.h \
-           src/threadedsocket.h
+           src/su.h\
+           src/threadedsocket.h\
+           src/ui.h
 
 RESOURCES = resources.qrc
 

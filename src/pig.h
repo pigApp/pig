@@ -4,6 +4,7 @@
 #include "topbar.h"
 
 #include <QWidget>
+#include <QGroupBox>
 #include <QVBoxLayout>
 
 class PIG : public QWidget
@@ -21,10 +22,13 @@ private:
     QSqlDatabase db;
     QVBoxLayout *mainLayout;
 
+    QStringList test;//
+
 private slots:
     void authorization(bool set);
     void update();
-    void showData(const QStringList &data);
+    //void viewer(const QStringList &data);
+    void viewer();
     void groupHandler(QGroupBox *group, bool add);
     void setup_ui();
 };

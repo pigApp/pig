@@ -14,12 +14,12 @@ public:
     explicit Auth(const QString *PIG_PATH, bool set, QObject *parent = 0);
     ~Auth();
 
-public slots:
-    void check();
-
 signals:
     void sendGroup(QGroupBox *group = NULL, bool add = false);
     void finished();
+
+public slots:
+    void check();
 
 private:
     QFile file;

@@ -11,11 +11,11 @@ public:
     explicit Unpack(QObject *parent = 0);
     ~Unpack();
 
-public slots:
-    void unzip(const QString *_PIG_PATH, const QString *path, const QString *sum);
-
 signals:
     void finished(int exitCode);
+
+public slots:
+    void unzip(const QString *_PIG_PATH, const QString *path, const QString *sum);
 };
 
 #endif

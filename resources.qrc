@@ -1,47 +1,14 @@
 <RCC>
     <qresource prefix="/">
-        <file alias="img-cat-AMATEUR">resources/images/finder/filters/categories/AMATEUR.jpg</file>
-        <file alias="img-cat-ANAL">resources/images/finder/filters/categories/ANAL.jpg</file>
-        <file alias="img-cat-ASIAN">resources/images/finder/filters/categories/ASIAN.jpg</file>
-        <file alias="img-cat-ASS">resources/images/finder/filters/categories/ASS.jpg</file>
-        <file alias="img-cat-BBW">resources/images/finder/filters/categories/BBW.jpg</file>
-        <file alias="img-cat-BISEXUAL">resources/images/finder/filters/categories/BISEXUAL.jpg</file>
-        <file alias="img-cat-BLOWJOB">resources/images/finder/filters/categories/BLOWJOB.jpg</file>
-        <file alias="img-cat-CLASSIC">resources/images/finder/filters/categories/CLASSIC.jpg</file>
-        <file alias="img-cat-CUM">resources/images/finder/filters/categories/CUM.jpg</file>
-        <file alias="img-cat-DOUBLE">resources/images/finder/filters/categories/DOUBLE.jpg</file>
-        <file alias="img-cat-EBONY">resources/images/finder/filters/categories/EBONY.jpg</file>
-        <file alias="img-cat-EXTREME">resources/images/finder/filters/categories/EXTREME.jpg</file>
-        <file alias="img-cat-FETISH">resources/images/finder/filters/categories/FETISH.jpg</file>
-        <file alias="img-cat-GANGBANG">resources/images/finder/filters/categories/GANGBANG.jpg</file>
-        <file alias="img-cat-GAY">resources/images/finder/filters/categories/GAY.jpg</file>
-        <file alias="img-cat-HARDCORE">resources/images/finder/filters/categories/HARDCORE.jpg</file>
-        <file alias="img-cat-HANDJOB">resources/images/finder/filters/categories/HANDJOB.jpg</file>
-        <file alias="img-cat-HENTAI">resources/images/finder/filters/categories/HENTAI.jpg</file>
-        <file alias="img-cat-INTERRACIAL">resources/images/finder/filters/categories/INTERRACIAL.jpg</file>
-        <file alias="img-cat-LESBIAN">resources/images/finder/filters/categories/LESBIAN.jpg</file>
-        <file alias="img-cat-MATURE">resources/images/finder/filters/categories/MATURE.jpg</file>
-        <file alias="img-cat-OLD YOUNG">resources/images/finder/filters/categories/OLD YOUNG.jpg</file>
-        <file alias="img-cat-PUBLIC">resources/images/finder/filters/categories/PUBLIC.jpg</file>
-        <file alias="img-cat-SHEMALE">resources/images/finder/filters/categories/SHEMALE.jpg</file>
-        <file alias="img-cat-SOFT">resources/images/finder/filters/categories/SOFT.jpg</file>
-        <file alias="img-cat-SOLO">resources/images/finder/filters/categories/SOLO.jpg</file>
-        <file alias="img-cat-TEEN">resources/images/finder/filters/categories/TEEN.jpg</file>
-        <file alias="img-cat-THREESOME">resources/images/finder/filters/categories/THREESOME.jpg</file>
-        <file alias="img-cat-TOYS">resources/images/finder/filters/categories/TOYS.jpg</file>
-        <file alias="img-cat-VOYEUR">resources/images/finder/filters/categories/VOYEUR.jpg</file>
-        <file alias="img-star-BELLADONNA">resources/images/finder/filters/pornstars/BELLADONNA.jpg</file>
         <file alias="img-scene">resources/images/viewer/scene.svg</file>
         <file alias="img-scene-off">resources/images/viewer/scene-off.svg</file>
         <file alias="img-play">resources/images/player/play.svg</file>
         <file alias="img-replay">resources/images/player/replay.svg</file>
-        <file alias="img-cover_err">resources/images/viewer/cover_err.jpg</file>
         <file alias="img-playing">resources/images/player/playing.svg</file>
         <file alias="img-paused">resources/images/player/paused.svg</file>
         <file alias="img-standby">resources/images/player/standby.svg</file>
         <file alias="img-volume">resources/images/player/volume.svg</file>
         <file alias="img-volume-off">resources/images/player/volume-off.svg</file>
-        <file alias="img-background">resources/images/global/background.jpg</file>
         <file alias="img-network">resources/images/global/network/network.svg</file>
         <file alias="img-network_err">resources/images/global/network/network_err.svg</file>
         <file alias="img-download">resources/images/global/network/download.svg</file>
@@ -49,6 +16,7 @@
         <file alias="img-peers">resources/images/global/network/peers.svg</file>
         <file alias="img-peers-dark">resources/images/global/network/peers-dark.svg</file>
         <file alias="img_err">resources/images/global/err.svg</file>
+        <file alias="img-cover_err">resources/images/viewer/cover_err.jpg</file>
         <file>resources/images/global/icon.ico</file>
         <file>resources/images/global/icon.jpg</file>
         <file>resources/images/global/icon.rc</file>

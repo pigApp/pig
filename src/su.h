@@ -12,12 +12,12 @@ public:
     explicit Su(QObject *parent = 0);
     ~Su();
 
+signals:
+    void finished(int exitCode);
+
 public slots:
     void update(const QString arg);
     void auth(const QString arg);
-
-signals:
-    void finished(int exitCode);
 
 private:
     QString manager;
