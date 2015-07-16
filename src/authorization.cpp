@@ -1,36 +1,37 @@
 #include "authorization.h"
 
 #include <QTextStream>
-#include <QLineEdit>
-#include <QPushButton>
-#include <QHBoxLayout>
+#include <QCryptographicHash>
 #include <QDebug>//
 
-Auth::Auth(const QString *PIG_PATH, bool set, QObject *parent)
-    : QObject(parent)
-    , _set(set)
+Auth::Auth(const QString *PIG_PATH, bool set_, QWidget *parent) :
+    QWidget(parent),
+    _set(set_),
+    ui(NULL)
 {
-    group = NULL;
-
     file.setFileName(*PIG_PATH+"/.pd");
+
+    this->hide();
 }
 
 Auth::~Auth()
 {
+    if (ui != NULL)
+        delete ui;
 }
 
 void Auth::check()
 {
     if (_set) {
-        setup_ui();
+        initUi();
     } else {
         if (file.open(QIODevice::ReadOnly | QIODevice::Text)) {
             while (!file.atEnd())
                 digest = QString(file.readLine()).toUtf8().simplified();
             file.close();
-            setup_ui();
+            initUi();
         } else {
-            emit finished();
+            delete this;
         }
     }
 }
@@ -41,8 +42,7 @@ void Auth::set(const QString &str)
         QTextStream stream(&file);
         stream << calculate(&str).simplified();
         file.close();
-        emit sendGroup(group);
-        emit finished();
+        emit sendWidget(this);
     } else {
         qDebug() << "NO-SET";
     }
@@ -60,8 +60,7 @@ void Auth::reset()
 void Auth::match(const QString &str)
 {
     if (calculate(&str) == digest) {
-        emit sendGroup(group);
-        emit finished();
+        emit sendWidget(this);
     } else {
         qDebug() << "NO-MATCH";
     }
@@ -69,61 +68,27 @@ void Auth::match(const QString &str)
 
 const QString Auth::calculate(const QString *plain)
 {
-    return QString(QCryptographicHash::hash(QString(*plain).toUtf8(), QCryptographicHash::Md5).toHex());
+    return QString(QCryptographicHash::hash(QString(*plain).toUtf8(),
+                                            QCryptographicHash::Md5).toHex());
 }
 
-void Auth::setup_ui()
+void Auth::initUi()
 {
-    group = new QGroupBox;
-    group->setStyleSheet("QGroupBox{border:0;}");
-    group->setFlat(true);
+    ui = new Ui::Auth;
+    ui->setupUi(this);
 
-    QFont f(":/font-global");
-    f.setPointSize(24); //TODO: CAMBIAR A PORCENTAJE
-    f.setBold(true);
+    if (!_set) ui->btn_reset->hide();
 
-    QBrush b(QColor(0, 0, 0, 255));
-    QBrush b1(QColor(255, 255, 255, 255));
-
-    QPalette p;
-    p.setBrush(QPalette::Active, QPalette::Button, b);
-    p.setBrush(QPalette::Active, QPalette::ButtonText, b1);
-    p.setBrush(QPalette::Active, QPalette::Text, b1);
-    p.setBrush(QPalette::Active, QPalette::Base, b);
-    p.setBrush(QPalette::Active, QPalette::Window, b);
-    p.setBrush(QPalette::Active, QPalette::Highlight, b);
-    p.setBrush(QPalette::Disabled, QPalette::Button, b);
-    p.setBrush(QPalette::Disabled, QPalette::ButtonText, b);
-    p.setBrush(QPalette::Disabled, QPalette::Text, b);
-    p.setBrush(QPalette::Disabled, QPalette::Base, b);
-    p.setBrush(QPalette::Disabled, QPalette::Window, b);
-    p.setBrush(QPalette::Disabled, QPalette::Highlight, b);
-
-    QLineEdit *input = new QLineEdit(group);
-    input->setFont(f);
-    input->setPalette(p);
-
-    QObject::connect (input, &QLineEdit::returnPressed, [=] {
+    QObject::connect (ui->input, &QLineEdit::returnPressed, [&] {
         if (_set)
-            set((input->selectAll(),input->selectedText()));
+            set((ui->input->selectAll(), ui->input->selectedText()));
         else
-            match((input->selectAll(),input->selectedText()));
-        input->deselect();
+            match((ui->input->selectAll(), ui->input->selectedText()));
+        ui->input->deselect();
     });
+    connect (ui->btn_reset, SIGNAL(clicked()), this, SLOT(reset()));
 
-    QPushButton *btnReset = new QPushButton("RESET", group);
-    btnReset->setFont(f);
-    btnReset->setPalette(p);
-    btnReset->setFlat(true);
-    if (!_set) btnReset->hide();
+    emit sendWidget(this, true);
 
-    connect (btnReset, SIGNAL(clicked()), this, SLOT(reset()));
-
-    QHBoxLayout *layout = new QHBoxLayout(group);
-    layout->addWidget(input);
-    layout->addWidget(btnReset);
-
-    group->setLayout(layout);
-
-    emit sendGroup(group, true);
+    this->show();
 }

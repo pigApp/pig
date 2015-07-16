@@ -19,11 +19,13 @@ public:
     ~Finder();
 
 signals:
-    void sendData(const QStringList &data);
-    //void sendGroup(QGroupBox *group = NULL, bool add = false);
+    void sendData(const QStringList *data);
 
 private:
     QSqlDatabase *_db;
+
+    QStringList data;
+
     Ui::Finder *ui;
 
 private slots:

@@ -1,22 +1,27 @@
 #ifndef UPDATE_H
 #define UPDATE_H
 
-#include <QObject>
+#include "ui.h"
+
+#include <QWidget>
+
 #include <QtSql>
 #include <QLabel>
-#include <QGroupBox>
 
-class Update : public QObject
+namespace Ui {
+class Update;
+}
+
+class Update : public QWidget
 {
     Q_OBJECT
 
 public:
-    explicit Update(const QString *PIG_PATH, QSqlDatabase *db_, QObject *parent = 0);
+    explicit Update(const QString *PIG_PATH, QSqlDatabase *db_, QWidget *parent = 0);
     ~Update();
 
 signals:
-    void sendGroup(QGroupBox *group = NULL, bool add = false);
-    void finished();
+    void sendWidget(QWidget *w = NULL, bool add = false);
     void sig_error();
 
 private:
@@ -29,8 +34,8 @@ private:
     QString backup;
     QString host;
     QStringList urls, sums, pkgs;
-    QLabel *label;
-    QGroupBox *group;
+
+    Ui::Update *ui;
 
     bool hasBin, hasDb, hasLib;
     int bin, rel, db, lib;
@@ -43,7 +48,7 @@ private slots:
     void update();
     void status(int exitCode);
     void error();
-    void setup_ui();
+    void initUi();
 };
 
 #endif

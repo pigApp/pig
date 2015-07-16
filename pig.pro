@@ -16,7 +16,7 @@ SOURCES += src/main.cpp\
            src/update.cpp\
            src/topbar.cpp\
            src/finder.cpp\
-           src/viewer.cpp\
+           src/view.cpp\
            src/unpack.cpp\
            src/su.cpp\
            src/threadedsocket.cpp
@@ -27,7 +27,7 @@ HEADERS += src/pig.h\
            src/update.h\
            src/topbar.h\
            src/finder.h\
-           src/viewer.h\
+           src/view.h\
            src/unpack.h\
            src/su.h\
            src/threadedsocket.h\

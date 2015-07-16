@@ -5,22 +5,21 @@
 
 #include <QProcess>
 #include <QTextStream>
-#include <QPushButton>
-#include <QHBoxLayout>
 #include <QDebug>//
 
-Update::Update(const QString *PIG_PATH, QSqlDatabase *db_, QObject *parent)
-    : QObject(parent)
-    , _PIG_PATH(PIG_PATH)
-    , _db(db_)
+Update::Update(const QString *PIG_PATH, QSqlDatabase *db_, QWidget *parent) :
+    QWidget(parent),
+    _PIG_PATH(PIG_PATH),
+    _db(db_),
+    ui(NULL)
 {
-    group = NULL;
-
     hasBin = false;
     hasDb = false;
     hasLib = false;
-
     nUnpacked = 0;
+
+    this->hide();
+
 
     if (_db->open()) {
         QSqlQuery query;
@@ -51,6 +50,8 @@ Update::Update(const QString *PIG_PATH, QSqlDatabase *db_, QObject *parent)
 
 Update::~Update()
 {
+    if (ui != NULL)
+        delete ui;
 }
 
 void Update::get()
@@ -112,16 +113,14 @@ void Update::check(QString data)
     }
 
     if (hasBin || hasDb || hasLib) {
-        setup_ui();
+        initUi();
     } else {
-        emit finished();
+        delete this;
     }
 }
 
 void Update::unpack(QString path, int ID)
 {
-    qDebug() << "ID " << ID;//
-
     Unpack *unpack = new Unpack(this);
 
     QObject::connect (unpack, &Unpack::finished, [&] (int exitCode) {
@@ -158,8 +157,7 @@ void Update::update()
             file.rename(target, backup);
         if (file.rename(origin, target)) {
             if (!hasBin) {
-                emit sendGroup(group);
-                emit finished();
+                emit sendWidget(this);
             }
         } else {
             qDebug() << "ERROR UPDATE-DB";//
@@ -173,7 +171,10 @@ void Update::update()
 #ifdef __linux__
     Su *su = new Su(this);
 
-    QObject::connect (su, &Su::finished, [=] (int exitCode) { status(exitCode); su->deleteLater(); });
+    QObject::connect (su, &Su::finished, [&] (int exitCode) {
+        status(exitCode);
+        su->deleteLater();
+    });
 
     if (hasLib) {
         su->update("'mv "+*_PIG_PATH+"/tmp/pig /usr/bin/ \
@@ -289,64 +290,18 @@ void Update::error()
     //emit finished();
 }
 
-void Update::setup_ui()
+void Update::initUi()
 {
-    group = new QGroupBox;
-    group->setStyleSheet("QGroupBox{ border:0; }");
-    group->setFlat(true);
+    ui = new Ui::Update;
+    ui->setupUi(this);
 
-    QFont f(":/font-global");
-    f.setPointSize(24); //TODO: CAMBIAR A PORCENTAJE
-    f.setBold(true);
-
-    QBrush b(QColor(0, 0, 0, 255));
-    QBrush b1(QColor(30, 30, 30, 255));
-    QBrush b2(QColor(255, 255, 255, 255));
-
-    QPalette p;
-    p.setBrush(QPalette::Active, QPalette::Button, b);
-    p.setBrush(QPalette::Active, QPalette::ButtonText, b2);
-    p.setBrush(QPalette::Active, QPalette::Text, b2);
-    p.setBrush(QPalette::Active, QPalette::Base, b);
-    p.setBrush(QPalette::Active, QPalette::Window, b);
-    p.setBrush(QPalette::Active, QPalette::WindowText, b2);
-    p.setBrush(QPalette::Active, QPalette::Highlight, b);
-    p.setBrush(QPalette::Disabled, QPalette::Button, b);
-    p.setBrush(QPalette::Disabled, QPalette::ButtonText, b1);
-    p.setBrush(QPalette::Disabled, QPalette::Text, b1);
-    p.setBrush(QPalette::Disabled, QPalette::Base, b);
-    p.setBrush(QPalette::Disabled, QPalette::Window, b);
-    p.setBrush(QPalette::Disabled, QPalette::WindowText, b1);
-    p.setBrush(QPalette::Disabled, QPalette::Highlight, b);
-
-    label = new QLabel(group);
-    label->setFont(f);
-    label->setPalette(p);
-    label->setText("UPDATE AVAILABLE");
-
-    QPushButton *btnAccept = new QPushButton("ACCEPT", group);
-    btnAccept->setFont(f);
-    btnAccept->setPalette(p);
-    btnAccept->setFlat(true);
-
-    QObject::connect (btnAccept, &QPushButton::clicked, [=] {
-        label->setText("DOWNLOADING...");
+    QObject::connect (ui->btn_accept, &QPushButton::clicked, [&] {
+        ui->label->setText("DOWNLOADING...");
         get();
     });
+    QObject::connect (ui->btn_cancel, &QPushButton::clicked, [&] { emit sendWidget(this); });
 
-    QPushButton *btnCancel = new QPushButton("CANCEL", group);
-    btnCancel->setFont(f);
-    btnCancel->setPalette(p);
-    btnCancel->setFlat(true);
+    emit sendWidget(this, true);
 
-    QObject::connect (btnCancel, &QPushButton::clicked, [&] { emit sendGroup(group); emit finished(); });
-
-    QHBoxLayout *layout = new QHBoxLayout(group);
-    layout->addWidget(label);
-    layout->addWidget(btnAccept);
-    layout->addWidget(btnCancel);
-
-    group->setLayout(layout);
-
-    emit sendGroup(group, true);
+    this->show();
 }

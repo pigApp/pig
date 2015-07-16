@@ -1,6 +1,7 @@
 #ifndef TOPBAR_H
 #define TOPBAR_H
 
+#include "finder.h"
 #include "ui.h"
 
 #include <QWidget>
@@ -18,7 +19,11 @@ public:
     explicit TopBar(QSqlDatabase *db, QWidget *parent = 0);
     ~TopBar();
 
+    Finder *getPtrObject() { return finder; }
+
 private:
+    Finder *finder;
+
     Ui::TopBar *ui;
 };
 

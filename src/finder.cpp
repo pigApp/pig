@@ -10,13 +10,12 @@ Finder::Finder(QSqlDatabase *db, QWidget *parent) :
     ui->setupUi(this);
 
     QObject::connect (ui->input, &QLineEdit::textChanged, [&] (const QString str) { query(str); });
-    QObject::connect (ui->input, &QLineEdit::returnPressed, [=] {
+    QObject::connect (ui->input, &QLineEdit::returnPressed, [&] {
         query((ui->input->selectAll(),ui->input->selectedText()), true);
         ui->input->deselect();
     });
-
-    QObject::connect (ui->btnCategory, &QPushButton::pressed, [&] { query("Categories", false, true); });
-    QObject::connect (ui->btnPornstar, &QPushButton::pressed, [&] { query("Pornstars", false, true); });
+    QObject::connect (ui->btn_category, &QPushButton::pressed, [&] { query("Categories", false, true); });
+    QObject::connect (ui->btn_pornstar, &QPushButton::pressed, [&] { query("Pornstars", false, true); });
 }
 
 Finder::~Finder()
@@ -30,6 +29,8 @@ void Finder::query(const QString &str, bool getData, bool getFilter)
     const QString pornstar = "";
     const QString quality = "";
     const QString full = "";
+
+    data.clear();
 
     if (_db->open()) {
         QSqlQuery query;
@@ -54,15 +55,23 @@ void Finder::query(const QString &str, bool getData, bool getFilter)
             (_db)->close();
             //db_error();
         } else {
-            QStringList data;
-
             for (int i = 0; query.next(); i++) {
                 if (getData) {
-                    data << query.value(0).toString() << query.value(1).toString() << query.value(2).toString()
-                         << query.value(3).toString() << query.value(4).toString() << query.value(5).toString()
-                         << query.value(6).toString() << query.value(7).toString() << query.value(8).toString()
-                         << query.value(9).toString() << query.value(10).toString() << query.value(11).toString()
-                         << query.value(12).toString() << query.value(13).toString() << query.value(14).toString();
+                    data.append(query.value(0).toString());
+                    data.append(query.value(1).toString());
+                    data.append(query.value(2).toString());
+                    data.append(query.value(3).toString());
+                    data.append(query.value(4).toString());
+                    data.append(query.value(5).toString());
+                    data.append(query.value(6).toString());
+                    data.append(query.value(7).toString());
+                    data.append(query.value(8).toString());
+                    data.append(query.value(9).toString());
+                    data.append(query.value(10).toString());
+                    data.append(query.value(11).toString());
+                    data.append(query.value(12).toString());
+                    data.append(query.value(13).toString());
+                    data.append(query.value(14).toString());
                 } else if (getFilter) {
                     data << query.value(0).toString().split(",");
                 }
@@ -71,7 +80,7 @@ void Finder::query(const QString &str, bool getData, bool getFilter)
             (_db)->close();
 
             if (getData && !data.isEmpty()) {
-                emit sendData(data);
+                emit sendData(&data);
             } else if (getFilter) {
                 //emit sendGroup(filterGroup(str, filterData), true);
                 qDebug() << "FILTER";

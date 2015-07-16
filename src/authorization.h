@@ -1,39 +1,44 @@
 #ifndef AUTHORIZATION_H
 #define AUTHORIZATION_H
 
-#include <QObject>
-#include <QCryptographicHash>
-#include <QFile>
-#include <QGroupBox>
+#include "ui.h"
 
-class Auth : public QObject
+#include <QWidget>
+
+#include <QFile>
+
+namespace Ui {
+class Auth;
+}
+
+class Auth : public QWidget
 {
     Q_OBJECT
 
 public:
-    explicit Auth(const QString *PIG_PATH, bool set, QObject *parent = 0);
+    explicit Auth(const QString *PIG_PATH, bool set_, QWidget *parent = 0);
     ~Auth();
 
 signals:
-    void sendGroup(QGroupBox *group = NULL, bool add = false);
-    void finished();
+    void sendWidget(QWidget *w = NULL, bool add = false);
 
 public slots:
     void check();
 
 private:
+    bool _set;
+
     QFile file;
     QString digest;
-    QGroupBox *group;
 
-    bool _set;
+    Ui::Auth *ui;
 
 private slots:
     void set(const QString &str);
     void reset();
     void match(const QString &str);
     const QString calculate(const QString *plain);
-    void setup_ui();
+    void initUi();
 };
 
 #endif

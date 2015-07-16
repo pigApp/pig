@@ -1,5 +1,4 @@
 #include "topbar.h"
-#include "finder.h"
 
 TopBar::TopBar(QSqlDatabase *db, QWidget *parent) :
     QWidget(parent),
@@ -7,7 +6,7 @@ TopBar::TopBar(QSqlDatabase *db, QWidget *parent) :
 {
     ui->setupUi(this);
 
-    Finder *finder = new Finder(db, this);
+    finder = new Finder(db, this);
     ui->layout->addWidget(finder);
 }
 
@@ -15,3 +14,4 @@ TopBar::~TopBar()
 {
     delete ui;
 }
+

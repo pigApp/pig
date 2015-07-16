@@ -2,10 +2,14 @@
 #define PIG_H
 
 #include "topbar.h"
+#include "view.h"
+#include "ui.h"
 
 #include <QWidget>
-#include <QGroupBox>
-#include <QVBoxLayout>
+
+namespace Ui {
+class PIG;
+}
 
 class PIG : public QWidget
 {
@@ -16,21 +20,19 @@ public:
     ~PIG();
 
 private:
-    TopBar *topbar;
-
     QString PIG_PATH;
     QSqlDatabase db;
-    QVBoxLayout *mainLayout;
 
-    QStringList test;//
+    TopBar *topbar;
+    View *view;
+
+    Ui::PIG *ui;
 
 private slots:
     void authorization(bool set);
     void update();
-    //void viewer(const QStringList &data);
-    void viewer();
-    void groupHandler(QGroupBox *group, bool add);
-    void setup_ui();
+    void viewer(const QStringList *data);
+    void widgetsHandler(QWidget *w, bool add);
 };
 
 #endif

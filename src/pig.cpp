@@ -1,12 +1,14 @@
 #include "pig.h"
 #include "authorization.h"
 #include "update.h"
-#include "viewer.h"
 
 #include <QDir>
 #include <QDebug>//
 
-PIG::PIG(QWidget *parent) : QWidget(parent)
+PIG::PIG(QWidget *parent) :
+    QWidget(parent),
+    view(NULL),
+    ui(new Ui::PIG)
 {
 #ifdef __linux__
     PIG_PATH = QDir::homePath()+"/.pig";
@@ -23,21 +25,30 @@ PIG::PIG(QWidget *parent) : QWidget(parent)
         qDebug() << "db_error";
     }
 
-    setup_ui();
+
+    ui->setupUi(this);
+
+    topbar = new TopBar(&db, this);
+
+    connect (topbar->getPtrObject(), SIGNAL(sendData(const QStringList*)), this, SLOT(viewer(const QStringList*)));
+
+    ui->mainLayout->addWidget(topbar);
+    ui->mainLayout->setAlignment(topbar, Qt::AlignTop);
+
     authorization(false);
 }
 
 PIG::~PIG()
 {
+    delete ui;
 }
 
 void PIG::authorization(bool set)
 {
     Auth *auth = new Auth(&PIG_PATH, set, this);
 
-    connect (auth, SIGNAL(sendGroup(QGroupBox*, bool)), this, SLOT(groupHandler(QGroupBox*, bool)));
-    connect (auth, SIGNAL(finished()), auth, SLOT(deleteLater()), Qt::QueuedConnection);
-    QObject::connect (auth, &Auth::finished, [&] { if (!set) viewer(); });//update();
+    connect (auth, SIGNAL(sendWidget(QWidget*, bool)), this, SLOT(widgetsHandler(QWidget*, bool)));
+    QObject::connect (auth, &Auth::destroyed, [&] { update(); });
 
     auth->check();
 }
@@ -46,101 +57,32 @@ void PIG::update()
 {
     Update *update = new Update(&PIG_PATH, &db, this);
 
-    connect (update, SIGNAL(sendGroup(QGroupBox*, bool)), this, SLOT(groupHandler(QGroupBox*, bool)));
-    connect (update, SIGNAL(finished()), update, SLOT(deleteLater()), Qt::QueuedConnection);
-
-    viewer();
+    connect (update, SIGNAL(sendWidget(QWidget*, bool)), this, SLOT(widgetsHandler(QWidget*, bool))); //TODO: PROBAR NO USAR 'widgetsHandler'.
 }
 
-//void PIG::viewer(const QStringList &data)
-void PIG::viewer()
+void PIG::viewer(const QStringList *data)
 {
-    //if (data == NULL) {
-        test << "i.cubeupload.com";
-        test << "/xj5Msc.jpg";
-        test << "a.jpg";
+    if (view == NULL) {
+        view = new View(&PIG_PATH, this);
+        ui->mainLayout->addWidget(view);
+    }
 
-        test << "i.cubeupload.com";
-        test << "/Empeai.jpg";
-        test << "b.jpg";
-
-        test << "i.cubeupload.com";
-        test << "/NhZ15k.jpg";
-        test << "c.jpg";
-
-        test << "i.cubeupload.com";
-        test << "/CR9eLw.jpg";
-        test << "d.jpg";
-
-        test << "i.cubeupload.com";
-        test << "/VUke0K.jpg";
-        test << "e.jpg";
-
-        test << "i.cubeupload.com";
-        test << "/vsiE1o.jpg";
-        test << "f.jpg";
-
-        test << "i.cubeupload.com";
-        test << "/1gO1Gr.jpg";
-        test << "g.jpg";
-
-        test << "i.cubeupload.com";
-        test << "/kojoX1.jpg";
-        test << "h.jpg";
-
-        test << "i.cubeupload.com";
-        test << "/iTIX6n.jpg";
-        test << "i.jpg";
-
-        test << "i.cubeupload.com";
-        test << "/kojoX1.jpg";
-        test << "j.jpg";
-    //}
-
-    Viewer *view = new Viewer(&PIG_PATH, this);
-    connect (view, SIGNAL(sendGroup(QGroupBox*, bool)), this, SLOT(groupHandler(QGroupBox*, bool)));
-
-    view->get(test);
+    view->get(data);
 }
 
-void PIG::groupHandler(QGroupBox *group, bool add)
+void PIG::widgetsHandler(QWidget *w, bool add)
 {
     if (add) {
-        mainLayout->addWidget(group);
+        ui->mainLayout->addWidget(w);
         //topbar->getGroup()->setDisabled(true);
     } else {
-        if (group != NULL) {
-            group->hide();
-            mainLayout->removeWidget(group);
+        if (w != NULL) {
+            ui->mainLayout->removeWidget(w);
+            w->deleteLater();
             //topbar->getGroup()->setDisabled(false);
         }
     }
 }
-
-void PIG::setup_ui()
-{
-    QBrush b(QColor(10, 10, 10, 255));
-
-    QPalette p;
-    p.setBrush(QPalette::Active, QPalette::Base, b);
-    p.setBrush(QPalette::Active, QPalette::Window, b);
-    p.setBrush(QPalette::Disabled, QPalette::Base, b);
-    p.setBrush(QPalette::Disabled, QPalette::Window, b);
-    setPalette(p);
-
-    topbar = new TopBar(&db, this);
-
-    //connect (topbar, SIGNAL(sendData(const QStringList&)), this, SLOT(showData(const QStringList&)));
-    //connect (topbar, SIGNAL(sendGroup(QGroupBox*, bool)), this, SLOT(groupHandler(QGroupBox*, bool)));
-
-    mainLayout = new QVBoxLayout(this);
-    mainLayout->addWidget(topbar);
-    mainLayout->setAlignment(topbar, Qt::AlignTop);
-
-    setLayout(mainLayout);
-}
-
-
 
 
 
