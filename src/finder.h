@@ -19,7 +19,7 @@ public:
     ~Finder();
 
 signals:
-    void sendData(const QStringList *data);
+    void sendData(const QStringList *data, const QString *filter = NULL);
 
 private:
     QSqlDatabase *_db;
@@ -28,14 +28,10 @@ private:
 
     Ui::Finder *ui;
 
+    QString filter;//
+
 private slots:
     void query(const QString &str = NULL, bool getData = false, bool getFilter = false);
 };
 
 #endif
-
-
-/*
-    QGroupBox *resultGroup(const QStringList &titles, const QStringList &categories);
-    QGroupBox *filterGroup(const QString &filter, const QStringList &filterData);
-*/

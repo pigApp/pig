@@ -5,6 +5,7 @@
 #include <QLabel>
 #include <QLineEdit>
 #include <QPushButton>
+#include <QGroupBox>
 #include <QHBoxLayout>
 #include <QVBoxLayout>
 #include <QGridLayout>
@@ -151,14 +152,16 @@ public:
 
         btn_category = new QPushButton("CATEGORY", Finder);
         btn_category->setFlat(true);
+        //btn_category->hide();//
 
         btn_pornstar = new QPushButton("PORNSTAR", Finder);
         btn_pornstar->setFlat(true);
+        btn_pornstar->hide();//
 
         layout = new QHBoxLayout(Finder);
         layout->addWidget(btn_category);
         layout->addWidget(input);
-        layout->addWidget(btn_pornstar);
+        //layout->addWidget(btn_pornstar);
 
         Finder->setLayout(layout);
     }
@@ -167,21 +170,54 @@ public:
 class Ui_View
 {
 public:
-    QVector<QPushButton*> btn_vector;
-    QGridLayout *layout;
+    QVector<QPushButton*> btn_cover_vector;
+    QPushButton *btn_hide_data;
+    QLabel *label[5];
+    QGroupBox *group_cover;
+    QGroupBox *group_data;
+    QGridLayout *layout_cover;
+    QVBoxLayout *layout_data;
+    QVBoxLayout *layout_view;
 
     void setupUi(QWidget *View)
     {
-        QBrush b(QColor(10, 10, 10, 255));
+        QFont f(":/font-global");//
+        f.setPointSize(24); //TODO: PASAR A PORCENTAJE
+        f.setCapitalization(QFont::AllUppercase);//
+        f.setBold(true);//
 
-        QPalette p;
-        p.setBrush(QPalette::Active, QPalette::Button, b);
-        p.setBrush(QPalette::Disabled, QPalette::Button, b);
+        group_cover = new QGroupBox(View);
+        group_cover->setStyleSheet("QGroupBox{ border: 0; }");
+        group_cover->setFlat(true);
 
-        layout = new QGridLayout(View);
+        layout_cover = new QGridLayout(View);
 
-        View->setPalette(p);
-        View->setLayout(layout);
+        group_cover->setLayout(layout_cover);
+
+        group_data = new QGroupBox(View);
+        group_data->setStyleSheet("QGroupBox{ border: 0; }");
+        group_data->setFlat(true);
+
+        btn_hide_data = new QPushButton("CLOSE", View);
+        btn_hide_data->setFlat(true);
+
+        layout_data = new QVBoxLayout(View);
+        layout_data->addWidget(btn_hide_data);
+        for (int i = 0; i < 5; i++) {
+            label[i] = new QLabel(View);
+            label[i]->setStyleSheet("QLabel { color : white; }");//
+            label[i]->setFont(f);//
+            layout_data->addWidget(label[i]);
+        }
+
+        group_data->setLayout(layout_data);
+        group_data->setDisabled(true);
+        group_data->hide();
+
+        layout_view = new QVBoxLayout(View);
+        layout_view->addWidget(group_cover);
+
+        View->setLayout(layout_view);
     }
 };
 

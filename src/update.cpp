@@ -61,7 +61,7 @@ void Update::get()
     for(int i = 0; i < pkgs.count(); i++) {
         thread[i] = new ThreadedSocket(_PIG_PATH, &host, &urls[i], &pkgs[i], i, this);
         connect (thread[i], SIGNAL(sendData(QString)), this, SLOT(check(QString)));
-        connect (thread[i], SIGNAL(sendFile(QString, int)), this, SLOT(unpack(QString, int)));
+        connect (thread[i], SIGNAL(sendFile(int, QString)), this, SLOT(unpack(int, QString)));
         connect (thread[i], SIGNAL(finished()), thread[i], SLOT(deleteLater()));
         thread[i]->start();
     }
@@ -119,7 +119,7 @@ void Update::check(QString data)
     }
 }
 
-void Update::unpack(QString path, int ID)
+void Update::unpack(int ID, QString path)
 {
     Unpack *unpack = new Unpack(this);
 

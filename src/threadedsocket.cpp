@@ -2,14 +2,14 @@
 
 #include <QDataStream>
 
-ThreadedSocket::ThreadedSocket(const QString *_PIG_PATH, const QString *host, const QString *url
-                               , const QString *pkg, int ID, QObject *parent)
-    : QThread(parent)
-    , __PIG_PATH(_PIG_PATH)
-    , _host(host)
-    , _url(url)
-    , _pkg(pkg)
-    , _ID(ID)
+ThreadedSocket::ThreadedSocket(const QString *_PIG_PATH, const QString *host, const QString *url,
+                               const QString *pkg, int ID, QObject *parent) :
+    QThread(parent),
+    __PIG_PATH(_PIG_PATH),
+    _host(host),
+    _url(url),
+    _pkg(pkg),
+    _ID(ID)
 {
 }
 
@@ -34,8 +34,8 @@ void ThreadedSocket::run()
 
 void ThreadedSocket::connected()
 {
-    const QByteArray request(QString("GET "+*_url+" HTTP/1.1\r\n"+"Host: "+*_host+"\r\n"
-                                     +"Connection: Close\r\n\r\n\r\n").toUtf8());
+    const QByteArray request(QString("GET "+*_url+" HTTP/1.1\r\n"+"Host: "+*_host+"\r\n"+
+                                     "Connection: Close\r\n\r\n\r\n").toUtf8());
     socket->write(request);
 }
 
@@ -67,7 +67,7 @@ void ThreadedSocket::processData()
         file.open(QIODevice::WriteOnly);
         file.write(data);
         file.close();
-        emit sendFile(file.fileName(), _ID);
+        emit sendFile(_ID, file.fileName());
     }
 }
 

@@ -30,7 +30,7 @@ PIG::PIG(QWidget *parent) :
 
     topbar = new TopBar(&db, this);
 
-    connect (topbar->getPtrObject(), SIGNAL(sendData(const QStringList*)), this, SLOT(viewer(const QStringList*)));
+    connect (topbar->getPtrObject(), SIGNAL(sendData(const QStringList*, const QString*)), this, SLOT(viewer(const QStringList*, const QString*)));
 
     ui->mainLayout->addWidget(topbar);
     ui->mainLayout->setAlignment(topbar, Qt::AlignTop);
@@ -60,14 +60,23 @@ void PIG::update()
     connect (update, SIGNAL(sendWidget(QWidget*, bool)), this, SLOT(widgetsHandler(QWidget*, bool))); //TODO: PROBAR NO USAR 'widgetsHandler'.
 }
 
-void PIG::viewer(const QStringList *data)
+void PIG::viewer(const QStringList *data, const QString *filter)
 {
     if (view == NULL) {
         view = new View(&PIG_PATH, this);
+        QObject::connect (view, &View::handleTopbar, [&] (bool hide ){
+            if (hide)
+                topbar->hide();
+            else
+                topbar->show();
+        });
         ui->mainLayout->addWidget(view);
     }
 
-    view->get(data);
+    if (filter == NULL)//TODO: CAMBIAR.
+        view->get(data);
+    else
+        view->filter_covers(filter);
 }
 
 void PIG::widgetsHandler(QWidget *w, bool add)

@@ -44,7 +44,7 @@ private:
 private slots:
     void get();
     void check(QString data);
-    void unpack(QString path, int ID);
+    void unpack(int ID, QString path);
     void update();
     void status(int exitCode);
     void error();

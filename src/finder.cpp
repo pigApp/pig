@@ -14,8 +14,11 @@ Finder::Finder(QSqlDatabase *db, QWidget *parent) :
         query((ui->input->selectAll(),ui->input->selectedText()), true);
         ui->input->deselect();
     });
-    QObject::connect (ui->btn_category, &QPushButton::pressed, [&] { query("Categories", false, true); });
+    //QObject::connect (ui->btn_category, &QPushButton::pressed, [&] { query("Categories", false, true); });
     QObject::connect (ui->btn_pornstar, &QPushButton::pressed, [&] { query("Pornstars", false, true); });
+
+    filter = "ANAL";//
+    QObject::connect (ui->btn_category, &QPushButton::pressed, [&] { emit sendData(&data, &filter); });//
 }
 
 Finder::~Finder()

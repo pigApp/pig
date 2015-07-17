@@ -10,15 +10,15 @@ class ThreadedSocket : public QThread
     Q_OBJECT
 
 public:
-    explicit ThreadedSocket(const QString *_PIG_PATH, const QString *host, const QString *url
-                            , const QString *pkg = NULL, int ID = 0, QObject *parent = 0);
+    explicit ThreadedSocket(const QString *_PIG_PATH, const QString *host, const QString *url,
+                            const QString *pkg = NULL, int ID = 0, QObject *parent = 0);
     ~ThreadedSocket();
 
     void run();
 
 signals:
     void sendData(QString data);
-    void sendFile(QString path, int ID);
+    void sendFile(int ID, QString path);
     //void error(QTcpSocket::SocketError socketerror); //TODO: SOCKET ERROR.
 
 private:

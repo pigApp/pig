@@ -19,9 +19,11 @@ public:
 
 signals:
     void sendWidget(QWidget *w = NULL, bool add = false);
+    void handleTopbar(bool hide);
 
 public slots:
     void get(const QStringList *data = NULL);
+    void filter_covers(const QString *filter = NULL);//TODO: PUNTERO A FILTER.
 
 private:
     const QString *_PIG_PATH;
@@ -29,14 +31,16 @@ private:
 
     Ui::View *ui;
 
+    int index;
     int row, column;
-    int i_movies, n_movies;
-    int offset_data, offset_movies;
+    int offsetData, offsetCovers;
+    int i_covers, n_covers;
 
 private slots:
-    void add(QString path, int _offset_data);
-    void del();
-    void print(int __offset_data);
+    void add_cover(int ID, QString path);
+    void delete_covers();
+    void show_data(int _index);
+    void hide_data(int _index);
 };
 
 #endif

@@ -31,7 +31,7 @@ private:
 private slots:
     void authorization(bool set);
     void update();
-    void viewer(const QStringList *data);
+    void viewer(const QStringList *data, const QString *filter);
     void widgetsHandler(QWidget *w, bool add);
 };
 
