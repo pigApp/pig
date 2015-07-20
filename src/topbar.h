@@ -19,7 +19,7 @@ public:
     explicit TopBar(QSqlDatabase *db, QWidget *parent = 0);
     ~TopBar();
 
-    Finder *getPtrObject() { return finder; }
+    Finder *getObject() { return finder; }
 
 private:
     Finder *finder;

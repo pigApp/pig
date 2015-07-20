@@ -16,7 +16,7 @@ Auth::Auth(const QString *PIG_PATH, bool set_, QWidget *parent) :
 
 Auth::~Auth()
 {
-    if (ui != NULL)
+    if (ui != 0)
         delete ui;
 }
 
@@ -42,7 +42,7 @@ void Auth::set(const QString &str)
         QTextStream stream(&file);
         stream << calculate(&str).simplified();
         file.close();
-        emit sendWidget(this);
+        emit setWidget(this);
     } else {
         qDebug() << "NO-SET";
     }
@@ -60,7 +60,7 @@ void Auth::reset()
 void Auth::match(const QString &str)
 {
     if (calculate(&str) == digest) {
-        emit sendWidget(this);
+        emit setWidget(this);
     } else {
         qDebug() << "NO-MATCH";
     }
@@ -77,7 +77,7 @@ void Auth::initUi()
     ui = new Ui::Auth;
     ui->setupUi(this);
 
-    if (!_set) ui->btn_reset->hide();
+    if (!_set) ui->btnReset->hide();
 
     QObject::connect (ui->input, &QLineEdit::returnPressed, [&] {
         if (_set)
@@ -86,9 +86,9 @@ void Auth::initUi()
             match((ui->input->selectAll(), ui->input->selectedText()));
         ui->input->deselect();
     });
-    connect (ui->btn_reset, SIGNAL(clicked()), this, SLOT(reset()));
+    connect (ui->btnReset, SIGNAL(clicked()), this, SLOT(reset()));
 
-    emit sendWidget(this, true);
+    emit setWidget(this, true);
 
     this->show();
 }

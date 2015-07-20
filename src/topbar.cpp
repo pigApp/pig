@@ -8,6 +8,8 @@ TopBar::TopBar(QSqlDatabase *db, QWidget *parent) :
 
     finder = new Finder(db, this);
     ui->layout->addWidget(finder);
+    ui->layout->addWidget(ui->btnSetup);
+    ui->layout->setAlignment(Qt::AlignTop);
 }
 
 TopBar::~TopBar()

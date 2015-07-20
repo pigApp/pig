@@ -3,7 +3,6 @@
 Su::Su(QObject *parent) : QObject(parent)
 {
     p = new QProcess(this);
-
     p->start("/bin/bash", QStringList() << "-c" << "ls /usr/bin/gksu");
     p->waitForFinished(500);
 
@@ -27,11 +26,12 @@ void Su::update(const QString arg)
     if (manager.isEmpty())
         emit finished(-1);
     else
-        //TODO: SIMULAR EL PROCESO ANTES DE EJECUTARLO.
         if (manager == "gksu")
-            p->start("/bin/bash", QStringList() << "-c" << manager+" -m 'root password' "+arg);
+            p->start("/bin/bash", QStringList()
+                     << "-c" << manager+" -m 'root password' "+arg);
         else
-            p->start("/bin/bash", QStringList() << "-c" << manager+" -c "+arg);
+            p->start("/bin/bash", QStringList()
+                     << "-c" << manager+" -c "+arg);
 
     connect (p, SIGNAL(finished(int)), this, SIGNAL(finished(int)));
 }

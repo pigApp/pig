@@ -7,6 +7,11 @@ View::View(const QString *PIG_PATH, QWidget *parent) :
     ui(new Ui::View)
 {
     ui->setupUi(this);
+
+    QObject::connect (ui->btnClear, &QPushButton::pressed, [&] {
+        del_covers();
+        emit setFilterOnCovers();
+    });//
 }
 
 View::~View()
@@ -16,18 +21,16 @@ View::~View()
 
 void View::get(const QStringList *data)
 {
-    if (data != NULL) {
+    if (data != 0) {
         m_data = data;
-        index = 0;
         row = 0;
         column = 0;
         offsetData = 0;
         offsetCovers = 0;
         i_covers = 0;
         n_covers = ((*m_data).count() / 15);
-
-        if (ui->btn_cover_vector.size() != 0)
-            delete_covers();
+        if (ui->btn_covers_vector.size() != 0)
+            del_covers();
     }
 
     if (n_covers <= 10) {
@@ -42,108 +45,102 @@ void View::get(const QStringList *data)
     ThreadedSocket *thread[i_covers];
 
     for(int i = 0; i < i_covers; i++) {  //TODO: AGREGAR '.jpg' A pkg.
-        thread[i] = new ThreadedSocket(_PIG_PATH, &(*m_data)[offsetData + 7], &(*m_data)[offsetData + 8], &(*m_data)[offsetData + 1], 0, this);
+        thread[i] = new ThreadedSocket(_PIG_PATH, &(*m_data)[offsetData + 7],
+                                       &(*m_data)[offsetData + 8],
+                                       &(*m_data)[offsetData + 1], 0, this);
         connect (thread[i], SIGNAL(sendFile(int, QString)), this, SLOT(add_cover(int, QString)));
         connect (thread[i], SIGNAL(finished()), thread[i], SLOT(deleteLater()));
         thread[i]->start();
         offsetData += 15;
     }
+
     offsetCovers += 10;
 }
 
 void View::add_cover(int ID, QString path)
 {
+    //TODO: ARRAY QUE GUARDE LAS TAPAS YA DESCARGADAS.
     Q_UNUSED(ID);
-    int index_cpy = index;
+    int index = ui->btn_covers_vector.size();
 
     if (row == 5) {
         row = 0;
         ++column;
     }
 
-    ui->btn_cover_vector.push_back(new QPushButton(this));
-    ui->btn_cover_vector.last()->setIconSize(QSize(335, 480));
-    ui->btn_cover_vector.last()->setIcon(QIcon(path));
-    ui->btn_cover_vector.last()->setFlat(true);
-    QObject::connect (ui->btn_cover_vector.last(), &QPushButton::pressed, [=] { show_data(index_cpy); });
+    ui->btn_covers_vector.push_back(new QPushButton(this));
+    ui->btn_covers_vector.last()->setIconSize(QSize(335, 480));
+    ui->btn_covers_vector.last()->setIcon(QIcon(path));
+    ui->btn_covers_vector.last()->setFlat(true);
+    QObject::connect (ui->btn_covers_vector.last(), &QPushButton::pressed, [=] { show_info(index); });
 
-    ui->layout_cover->addWidget(ui->btn_cover_vector.last(), column, row);
-    ui->layout_cover->update();
+    ui->layoutCovers->addWidget(ui->btn_covers_vector.last(), column, row);
+    ui->layoutCovers->update();
 
-    ++index;
     ++row;
 }
 
-void View::filter_covers(const QString *filter)
+void View::set_filter(const QString *filter)
 {
     int offsetFilter = 0;
 
-    qDebug() << *filter;
-
-    for (int i = 0; i < ui->btn_cover_vector.size(); i++) {
-        if (*filter != (*m_data)[offsetFilter + 3])
-            ui->btn_cover_vector.at(i)->setDisabled(true);
-        offsetFilter += 15;
+    if (*filter == "ALL") {
+        for (int i = 0; i < ui->btn_covers_vector.size(); i++)
+            ui->btn_covers_vector.at(i)->setEnabled(true);
+    } else {
+        for (int i = 0; i < ui->btn_covers_vector.size(); i++) {
+            if (*filter != (*m_data)[offsetFilter + 3])
+                ui->btn_covers_vector.at(i)->setDisabled(true);
+            else
+                ui->btn_covers_vector.at(i)->setEnabled(true);
+            offsetFilter += 15;
+        }
     }
 
-    ui->layout_cover->update();
+    ui->layoutCovers->update();
 }
 
-void View::delete_covers()
+void View::del_covers()
 {
-    for (int i = 0; i < ui->btn_cover_vector.size(); i++) {
-        ui->layout_cover->removeWidget(ui->btn_cover_vector.at(i));
-        delete ui->btn_cover_vector.at(i);
+    for (int i = 0; i < ui->btn_covers_vector.size(); i++) {
+        ui->layoutCovers->removeWidget(ui->btn_covers_vector.at(i));
+        delete ui->btn_covers_vector.at(i);
     }
 
-    ui->btn_cover_vector.clear();
-    ui->layout_cover->update();
+    ui->btn_covers_vector.clear();
+    ui->layoutCovers->update();
 }
 
-void View::show_data(int _index)
+void View::show_info(int index)
 {
-    QObject::connect (ui->btn_hide_data, &QPushButton::clicked, [=] { hide_data(_index); });
+    ui->setupInfoUi(index, &m_data, this);
 
-    for (int i = 0; i < 5; i++)
-        ui->label[i]->setText((*m_data)[((_index * 15) + (i+1))]);
+    ui->btn_covers_vector.at(index)->disconnect();
+    QObject::connect (ui->btnHideInfo, &QPushButton::pressed, [=] { del_info(index); });
 
-    ui->btn_cover_vector.at(_index)->disconnect();
-
-    ui->layout_data->addWidget(ui->btn_cover_vector.at(_index));
-    ui->layout_view->addWidget(ui->group_data);
-
-    ui->group_cover->setDisabled(true);
-    ui->group_cover->hide();
-
-    ui->group_data->setEnabled(true);
-    ui->group_data->show();
-
-    emit handleTopbar(true);
+    emit setTopbarState(true);
 }
 
-void View::hide_data(int _index)
+void View::del_info(const int &index)
 {
     int r = 0;
     int c = 0;
 
-    if (_index <= 4) {
-        r = _index;
+    if (index <= 4) {
+        r = index;
         c = 0;
     } else {
-        r = (_index - 5); //FIX: HACER BIEN ESTO. getItemPosition
+        r = (index - 5); //FIX
         c = 1;
     }
 
-    ui->layout_data->removeWidget(ui->btn_cover_vector.at(_index));
+    ui->layoutCovers->addWidget(ui->btn_covers_vector.at(index), c, r);
+    QObject::connect (ui->btn_covers_vector.at(index), &QPushButton::pressed, [=] { show_info(index); });
 
-    ui->layout_cover->addWidget(ui->btn_cover_vector.at(_index), c, r);
-    QObject::connect (ui->btn_cover_vector.at(_index), &QPushButton::pressed, [=] { show_data(_index); });
+    delete ui->groupInfo;
 
-    ui->group_data->setDisabled(true);
-    ui->group_data->hide();
+    ui->groupCovers->setEnabled(true);
+    ui->groupCovers->show();
 
-    ui->group_cover->setEnabled(true);
-    ui->group_cover->show();
-
-    emit handleTopbar(false);
+    emit setTopbarState(false);
 }

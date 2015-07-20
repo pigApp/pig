@@ -20,7 +20,7 @@ public:
     ~Auth();
 
 signals:
-    void sendWidget(QWidget *w = NULL, bool add = false);
+    void setWidget(QWidget *w = NULL, bool add = false);
 
 public slots:
     void check();

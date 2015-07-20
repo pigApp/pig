@@ -18,6 +18,8 @@ public:
     explicit Finder(QSqlDatabase *db, QWidget *parent = 0);
     ~Finder();
 
+    void setFilterOnCovers() { mFilterOnCovers = false; }
+
 signals:
     void sendData(const QStringList *data, const QString *filter = NULL);
 
@@ -25,13 +27,16 @@ private:
     QSqlDatabase *_db;
 
     QStringList data;
+    QStringList filter;
 
     Ui::Finder *ui;
 
-    QString filter;//
+    bool mFilterOnCovers = false;
 
 private slots:
-    void query(const QString &str = NULL, bool getData = false, bool getFilter = false);
+    QStringList *query(const QString &str = NULL, const QString &category = NULL,
+                       const bool &getData = false, const bool &getFilter = false);
+    void filter_handler();
 };
 
 #endif

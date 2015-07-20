@@ -15,14 +15,12 @@ PIG::PIG(QWidget *parent) :
 #else
     PIG_PATH = "C:/PIG/.pig";
 #endif
-
     QFile file;
     if (file.exists(PIG_PATH+"/db.sqlite")) {
         db = QSqlDatabase::addDatabase("QSQLITE");
         db.setDatabaseName(PIG_PATH+"/db.sqlite");
     } else {
         //emit db_error();
-        qDebug() << "db_error";
     }
 
 
@@ -30,10 +28,10 @@ PIG::PIG(QWidget *parent) :
 
     topbar = new TopBar(&db, this);
 
-    connect (topbar->getPtrObject(), SIGNAL(sendData(const QStringList*, const QString*)), this, SLOT(viewer(const QStringList*, const QString*)));
+    connect (topbar->getObject(), SIGNAL(sendData(const QStringList*, const QString*)),
+             this, SLOT(viewer(const QStringList*, const QString*)));
 
     ui->mainLayout->addWidget(topbar);
-    ui->mainLayout->setAlignment(topbar, Qt::AlignTop);
 
     authorization(false);
 }
@@ -47,7 +45,7 @@ void PIG::authorization(bool set)
 {
     Auth *auth = new Auth(&PIG_PATH, set, this);
 
-    connect (auth, SIGNAL(sendWidget(QWidget*, bool)), this, SLOT(widgetsHandler(QWidget*, bool)));
+    connect (auth, SIGNAL(setWidget(QWidget*, bool)), this, SLOT(widgetsHandler(QWidget*, bool)));
     QObject::connect (auth, &Auth::destroyed, [&] { update(); });
 
     auth->check();
@@ -57,26 +55,32 @@ void PIG::update()
 {
     Update *update = new Update(&PIG_PATH, &db, this);
 
-    connect (update, SIGNAL(sendWidget(QWidget*, bool)), this, SLOT(widgetsHandler(QWidget*, bool))); //TODO: PROBAR NO USAR 'widgetsHandler'.
+    connect (update, SIGNAL(setWidget(QWidget*, bool)), this, SLOT(widgetsHandler(QWidget*, bool))); //TODO: PROBAR NO USAR 'widgetsHandler'.
 }
 
 void PIG::viewer(const QStringList *data, const QString *filter)
 {
-    if (view == NULL) {
+    if (view == 0 && data != 0) {
         view = new View(&PIG_PATH, this);
-        QObject::connect (view, &View::handleTopbar, [&] (bool hide ){
+
+        QObject::connect (view, &View::setFilterOnCovers, [&] {
+            topbar->getObject()->setFilterOnCovers();
+        });
+        QObject::connect (view, &View::setTopbarState, [&] (bool hide) {
             if (hide)
                 topbar->hide();
             else
                 topbar->show();
         });
+
         ui->mainLayout->addWidget(view);
     }
 
-    if (filter == NULL)//TODO: CAMBIAR.
+    if (data != 0)
         view->get(data);
-    else
-        view->filter_covers(filter);
+
+    if (filter != 0)
+        view->set_filter(filter);
 }
 
 void PIG::widgetsHandler(QWidget *w, bool add)
@@ -85,7 +89,7 @@ void PIG::widgetsHandler(QWidget *w, bool add)
         ui->mainLayout->addWidget(w);
         //topbar->getGroup()->setDisabled(true);
     } else {
-        if (w != NULL) {
+        if (w != 0) {
             ui->mainLayout->removeWidget(w);
             w->deleteLater();
             //topbar->getGroup()->setDisabled(false);

@@ -21,7 +21,7 @@ public:
     ~Update();
 
 signals:
-    void sendWidget(QWidget *w = NULL, bool add = false);
+    void setWidget(QWidget *w = NULL, bool add = false);
     void sig_error();
 
 private:

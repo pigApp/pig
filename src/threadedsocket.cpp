@@ -59,7 +59,7 @@ void ThreadedSocket::processData()
         }
     }
 
-    if (*_pkg == NULL) {
+    if (*_pkg == 0) {
         emit sendData(QString(data.constData()));
     } else {
         QFile file;

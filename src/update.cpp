@@ -20,7 +20,6 @@ Update::Update(const QString *PIG_PATH, QSqlDatabase *db_, QWidget *parent) :
 
     this->hide();
 
-
     if (_db->open()) {
         QSqlQuery query;
         query.prepare("SELECT Binary, Release, Database, Library, Host, Url FROM PigData");
@@ -50,7 +49,7 @@ Update::Update(const QString *PIG_PATH, QSqlDatabase *db_, QWidget *parent) :
 
 Update::~Update()
 {
-    if (ui != NULL)
+    if (ui != 0)
         delete ui;
 }
 
@@ -157,7 +156,7 @@ void Update::update()
             file.rename(target, backup);
         if (file.rename(origin, target)) {
             if (!hasBin) {
-                emit sendWidget(this);
+                emit setWidget(this);
             }
         } else {
             qDebug() << "ERROR UPDATE-DB";//
@@ -295,13 +294,13 @@ void Update::initUi()
     ui = new Ui::Update;
     ui->setupUi(this);
 
-    QObject::connect (ui->btn_accept, &QPushButton::clicked, [&] {
+    QObject::connect (ui->btnAccept, &QPushButton::clicked, [&] {
         ui->label->setText("DOWNLOADING...");
         get();
     });
-    QObject::connect (ui->btn_cancel, &QPushButton::clicked, [&] { emit sendWidget(this); });
+    QObject::connect (ui->btnCancel, &QPushButton::clicked, [&] { emit setWidget(this); });
 
-    emit sendWidget(this, true);
+    emit setWidget(this, true);
 
     this->show();
 }

@@ -9,16 +9,13 @@ Finder::Finder(QSqlDatabase *db, QWidget *parent) :
 {
     ui->setupUi(this);
 
+    connect (ui->btnFilter, SIGNAL(pressed()), this, SLOT(filter_handler()));
     QObject::connect (ui->input, &QLineEdit::textChanged, [&] (const QString str) { query(str); });
     QObject::connect (ui->input, &QLineEdit::returnPressed, [&] {
-        query((ui->input->selectAll(),ui->input->selectedText()), true);
+        data.clear();
+        emit sendData(query((ui->input->selectAll(), ui->input->selectedText()), NULL, true));
         ui->input->deselect();
     });
-    //QObject::connect (ui->btn_category, &QPushButton::pressed, [&] { query("Categories", false, true); });
-    QObject::connect (ui->btn_pornstar, &QPushButton::pressed, [&] { query("Pornstars", false, true); });
-
-    filter = "ANAL";//
-    QObject::connect (ui->btn_category, &QPushButton::pressed, [&] { emit sendData(&data, &filter); });//
 }
 
 Finder::~Finder()
@@ -26,14 +23,12 @@ Finder::~Finder()
     delete ui;
 }
 
-void Finder::query(const QString &str, bool getData, bool getFilter)
+QStringList *Finder::query(const QString &str, const QString &category,
+                           const bool &getData, const bool &getFilter)
 {
-    const QString category = "";
     const QString pornstar = "";
     const QString quality = "";
     const QString full = "";
-
-    data.clear();
 
     if (_db->open()) {
         QSqlQuery query;
@@ -58,6 +53,7 @@ void Finder::query(const QString &str, bool getData, bool getFilter)
             (_db)->close();
             //db_error();
         } else {
+
             for (int i = 0; query.next(); i++) {
                 if (getData) {
                     data.append(query.value(0).toString());
@@ -76,17 +72,17 @@ void Finder::query(const QString &str, bool getData, bool getFilter)
                     data.append(query.value(13).toString());
                     data.append(query.value(14).toString());
                 } else if (getFilter) {
-                    data << query.value(0).toString().split(",");
+                    filter << query.value(0).toString().split(",");
                 }
             }
 
             (_db)->close();
 
             if (getData && !data.isEmpty()) {
-                emit sendData(&data);
+                mFilterOnCovers = true;
+                return &data;
             } else if (getFilter) {
-                //emit sendGroup(filterGroup(str, filterData), true);
-                qDebug() << "FILTER";
+                return &filter;
             } else {
                 if (!query.last())
                     qDebug() << "NO MOVIE";
@@ -96,6 +92,66 @@ void Finder::query(const QString &str, bool getData, bool getFilter)
         }
     } else {
         //db_error();
+    }
+
+    return 0;
+}
+
+
+void Finder::filter_handler()
+{
+    if (ui->btn_categories_vector.isEmpty()) {
+        const QStringList *categories = query("Categories", NULL, false, true);
+
+        ui->setupFilterUi(this);
+
+        QFont f(":/font-global");
+        f.setPointSize(12); //TODO: PASAR A PORCENTAJE
+        f.setCapitalization(QFont::AllUppercase);
+        f.setBold(true);
+
+        QBrush b(QColor(10, 10, 10, 255));
+        QBrush b1(QColor(60, 60, 60, 255));
+        QBrush b2(QColor(255, 255, 255, 255));
+
+        QPalette p;
+        p.setBrush(QPalette::Active, QPalette::Button, b1);
+        p.setBrush(QPalette::Active, QPalette::ButtonText, b2);
+        p.setBrush(QPalette::Active, QPalette::Text, b2);
+        p.setBrush(QPalette::Active, QPalette::Base, b);
+        p.setBrush(QPalette::Active, QPalette::Window, b);
+        p.setBrush(QPalette::Active, QPalette::WindowText, b2);
+        p.setBrush(QPalette::Active, QPalette::Highlight, b);
+        p.setBrush(QPalette::Disabled, QPalette::Button, b1);
+        p.setBrush(QPalette::Disabled, QPalette::ButtonText, b2);
+        p.setBrush(QPalette::Disabled, QPalette::Text, b2);
+        p.setBrush(QPalette::Disabled, QPalette::Base, b);
+        p.setBrush(QPalette::Disabled, QPalette::Window, b);
+        p.setBrush(QPalette::Disabled, QPalette::WindowText, b2);
+        p.setBrush(QPalette::Disabled, QPalette::Highlight, b);
+
+        //for (int i = 0; i < (*categories).size(); i++) {// ESTE
+        for (int i = 0; i < 20; i++) {
+            ui->btn_categories_vector.push_back(new QPushButton((*categories)[i], ui->groupFilter));
+            ui->btn_categories_vector.last()->setFont(f);
+            ui->btn_categories_vector.last()->setPalette(p);
+            ui->btn_categories_vector.last()->setFlat(true);
+
+            QObject::connect (ui->btn_categories_vector.last(), &QPushButton::pressed, [=] {
+                if (!mFilterOnCovers) {
+                    data.clear();
+                    emit sendData(query(NULL, (*categories)[i], true, false));
+                    ui->input->deselect();
+                } else {
+                    emit sendData(NULL, &(*categories)[i]);
+                }
+            });
+
+            ui->layoutFilter->addWidget(ui->btn_categories_vector.last());
+        }
+    } else {
+        ui->groupFilter->setEnabled(!ui->groupFilter->isEnabled());
+        ui->groupFilter->setVisible(!ui->groupFilter->isVisible());
     }
 }
 

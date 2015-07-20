@@ -18,8 +18,8 @@ void Unpack::unzip(const QString *_PIG_PATH, const QString *path, const QString 
 {
     QFile origin(*path);
 
-    if ((origin.open(QIODevice::ReadOnly))
-        && (*sum == (QCryptographicHash::hash(origin.readAll(), QCryptographicHash::Md5).toHex()))) {
+    if ((origin.open(QIODevice::ReadOnly)) &&
+        (*sum == (QCryptographicHash::hash(origin.readAll(), QCryptographicHash::Md5).toHex()))) {
         origin.close();
         QuaZip zip(*path);
         if (zip.open(QuaZip::mdUnzip)) {

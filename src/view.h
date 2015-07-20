@@ -18,12 +18,13 @@ public:
     ~View();
 
 signals:
-    void sendWidget(QWidget *w = NULL, bool add = false);
-    void handleTopbar(bool hide);
+    void setWidget(QWidget *w = NULL, bool add = false);
+    void setFilterOnCovers();
+    void setTopbarState(const bool &hide);
 
 public slots:
     void get(const QStringList *data = NULL);
-    void filter_covers(const QString *filter = NULL);//TODO: PUNTERO A FILTER.
+    void set_filter(const QString *filter = NULL);
 
 private:
     const QString *_PIG_PATH;
@@ -31,16 +32,15 @@ private:
 
     Ui::View *ui;
 
-    int index;
     int row, column;
     int offsetData, offsetCovers;
     int i_covers, n_covers;
 
 private slots:
     void add_cover(int ID, QString path);
-    void delete_covers();
-    void show_data(int _index);
-    void hide_data(int _index);
+    void del_covers();
+    void show_info(int index);
+    void del_info(const int &index);
 };
 
 #endif
