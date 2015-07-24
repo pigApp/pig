@@ -30,11 +30,19 @@ private:
     const QString *_PIG_PATH;
     const QStringList *m_data = NULL;
 
+    QString baseFilter;
+    QList<int> activeCovers;
+    QList<int> _activeCovers;
+
+
     Ui::View *ui;
 
     int row, column;
     int offsetData, offsetCovers;
     int i_covers, n_covers;
+    int n_activeCovers;
+
+    bool hasMoreCovers;
 
 private slots:
     void add_cover(int ID, QString path);

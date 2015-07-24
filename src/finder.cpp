@@ -1,21 +1,27 @@
 #include "finder.h"
 
+#include <QTimer>
 #include <QDebug>//
 
-Finder::Finder(QSqlDatabase *db, QWidget *parent) :
+Finder::Finder(QSqlDatabase *db, QGridLayout *layoutTopbar, QWidget *parent) :
     QWidget(parent),
     _db(db),
+    quality("ALL"),
+    fullMovie("ALL"),
     ui(new Ui::Finder)
 {
-    ui->setupUi(this);
+    ui->setupUi(layoutTopbar, this);
 
-    connect (ui->btnFilter, SIGNAL(pressed()), this, SLOT(filter_handler()));
+    connect (ui->btnFilters, SIGNAL(pressed()), this, SLOT(filters_handler()));
     QObject::connect (ui->input, &QLineEdit::textChanged, [&] (const QString str) { query(str); });
     QObject::connect (ui->input, &QLineEdit::returnPressed, [&] {
         data.clear();
         emit sendData(query((ui->input->selectAll(), ui->input->selectedText()), NULL, true));
         ui->input->deselect();
     });
+
+    //if (init)
+        QTimer::singleShot(500, this, SLOT(test()));
 }
 
 Finder::~Finder()
@@ -27,8 +33,18 @@ QStringList *Finder::query(const QString &str, const QString &category,
                            const bool &getData, const bool &getFilter)
 {
     const QString pornstar = "";
-    const QString quality = "";
-    const QString full = "";
+
+    QString _quality;
+    if (quality == "ALL")
+        _quality = "";
+    else
+        _quality = quality;
+
+    QString _fullMovie;
+    if (fullMovie == "ALL")
+        _fullMovie = "";
+    else
+        _fullMovie = fullMovie;
 
     if (_db->open()) {
         QSqlQuery query;
@@ -38,15 +54,15 @@ QStringList *Finder::query(const QString &str, const QString &category,
                           , HostCover, UrlCoverFront, UrlCoverBack, HostPreview, UrlPreview \
                           , HostTorrent, UrlTorrent, Scenes FROM Movies WHERE Title LIKE \
                           '"+str+"%' AND Cas LIKE '%"+pornstar+"%' AND Category LIKE \
-                          '%"+category+"%' AND Quality LIKE '%"+quality+"%' AND Full LIKE \
-                          '%"+full+"%' ORDER BY Title ASC LIMIT 1000");
+                          '%"+category+"%' AND Quality LIKE '%"+_quality+"%' AND Full LIKE \
+                          '%"+_fullMovie+"%' ORDER BY Title ASC LIMIT 1000");
         } else if (getFilter) {
             query.prepare("SELECT "+str+" FROM FiltersData");
         } else {
             query.prepare("SELECT id FROM Movies WHERE Title LIKE \
                           '"+str+"%' AND Cas LIKE '%"+pornstar+"%' AND Category LIKE \
-                          '%"+category+"%' AND Quality LIKE '%"+quality+"%' AND Full LIKE \
-                          '%"+full+"%' ORDER BY Title ASC LIMIT 1");
+                          '%"+category+"%' AND Quality LIKE '%"+_quality+"%' AND Full LIKE \
+                          '%"+_fullMovie+"%' ORDER BY Title ASC LIMIT 1");
         }
 
         if (!query.exec()) {
@@ -98,41 +114,65 @@ QStringList *Finder::query(const QString &str, const QString &category,
 }
 
 
-void Finder::filter_handler()
+void Finder::filters_handler()
 {
     if (ui->btn_categories_vector.isEmpty()) {
         const QStringList *categories = query("Categories", NULL, false, true);
 
         ui->setupFilterUi(this);
 
+        QObject::connect (ui->btnAllp, &QRadioButton::released, [=] {
+            quality = "ALL";
+            if (mFilterOnCovers)
+                emit sendData(NULL, &quality);
+        });
+        QObject::connect (ui->btn720p, &QRadioButton::released, [=] {
+            quality = "720p";
+            if (mFilterOnCovers)
+                emit sendData(NULL, &quality);
+        });
+        QObject::connect (ui->btn1080p, &QRadioButton::released, [=] {
+            quality = "1080p";
+            if (mFilterOnCovers)
+                emit sendData(NULL, &quality);
+        });
+
+        QObject::connect (ui->btnFullMovie, &QRadioButton::released, [=] {
+            if (ui->btnFullMovie->isChecked())
+                fullMovie = "FULL";
+            else
+                fullMovie = "ALL";
+
+            if (mFilterOnCovers)
+                emit sendData(NULL, &fullMovie);
+        });
+
         QFont f(":/font-global");
-        f.setPointSize(12); //TODO: PASAR A PORCENTAJE
+        f.setPointSize(12); //TODO: PORCENTAJE
         f.setCapitalization(QFont::AllUppercase);
         f.setBold(true);
 
         QBrush b(QColor(10, 10, 10, 255));
-        QBrush b1(QColor(60, 60, 60, 255));
-        QBrush b2(QColor(255, 255, 255, 255));
+        QBrush b1(QColor(255, 255, 255, 255));
 
         QPalette p;
-        p.setBrush(QPalette::Active, QPalette::Button, b1);
-        p.setBrush(QPalette::Active, QPalette::ButtonText, b2);
-        p.setBrush(QPalette::Active, QPalette::Text, b2);
+        p.setBrush(QPalette::Active, QPalette::Button, b);
+        p.setBrush(QPalette::Active, QPalette::ButtonText, b1);
+        p.setBrush(QPalette::Active, QPalette::Text, b1);
         p.setBrush(QPalette::Active, QPalette::Base, b);
         p.setBrush(QPalette::Active, QPalette::Window, b);
-        p.setBrush(QPalette::Active, QPalette::WindowText, b2);
+        p.setBrush(QPalette::Active, QPalette::WindowText, b1);
         p.setBrush(QPalette::Active, QPalette::Highlight, b);
-        p.setBrush(QPalette::Disabled, QPalette::Button, b1);
-        p.setBrush(QPalette::Disabled, QPalette::ButtonText, b2);
-        p.setBrush(QPalette::Disabled, QPalette::Text, b2);
+        p.setBrush(QPalette::Disabled, QPalette::Button, b);
+        p.setBrush(QPalette::Disabled, QPalette::ButtonText, b1);
+        p.setBrush(QPalette::Disabled, QPalette::Text, b1);
         p.setBrush(QPalette::Disabled, QPalette::Base, b);
         p.setBrush(QPalette::Disabled, QPalette::Window, b);
-        p.setBrush(QPalette::Disabled, QPalette::WindowText, b2);
+        p.setBrush(QPalette::Disabled, QPalette::WindowText, b1);
         p.setBrush(QPalette::Disabled, QPalette::Highlight, b);
 
-        //for (int i = 0; i < (*categories).size(); i++) {// ESTE
-        for (int i = 0; i < 20; i++) {
-            ui->btn_categories_vector.push_back(new QPushButton((*categories)[i], ui->groupFilter));
+        for (int i = 0; i < (*categories).size(); i++) {
+            ui->btn_categories_vector.push_back(new QPushButton((*categories)[i], this));
             ui->btn_categories_vector.last()->setFont(f);
             ui->btn_categories_vector.last()->setPalette(p);
             ui->btn_categories_vector.last()->setFlat(true);
@@ -147,13 +187,28 @@ void Finder::filter_handler()
                 }
             });
 
-            ui->layoutFilter->addWidget(ui->btn_categories_vector.last());
+            ui->layoutFilters->addWidget(ui->btn_categories_vector.last());
         }
     } else {
-        ui->groupFilter->setEnabled(!ui->groupFilter->isEnabled());
-        ui->groupFilter->setVisible(!ui->groupFilter->isVisible());
+        if (isFiltersHidden)
+            ui->__layoutTopbar->addItem(ui->layoutFilters, 1, 0);
+        else
+            ui->__layoutTopbar->removeItem(ui->layoutFilters);
+
+        isFiltersHidden = !isFiltersHidden;
     }
 }
+
+void Finder::test()
+{
+    emit sendData(query("", NULL, true));
+}
+
+
+
+
+
+
 
 
 

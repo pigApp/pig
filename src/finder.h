@@ -15,7 +15,7 @@ class Finder : public QWidget
     Q_OBJECT
 
 public:
-    explicit Finder(QSqlDatabase *db, QWidget *parent = 0);
+    explicit Finder(QSqlDatabase *db, QGridLayout *layoutTopbar, QWidget *parent = 0);
     ~Finder();
 
     void setFilterOnCovers() { mFilterOnCovers = false; }
@@ -29,14 +29,20 @@ private:
     QStringList data;
     QStringList filter;
 
+    QString quality;
+    QString fullMovie;
+
     Ui::Finder *ui;
 
     bool mFilterOnCovers = false;
+    bool isFiltersHidden = false;
 
 private slots:
     QStringList *query(const QString &str = NULL, const QString &category = NULL,
                        const bool &getData = false, const bool &getFilter = false);
-    void filter_handler();
+    void filters_handler();
+
+    void test();
 };
 
 #endif
