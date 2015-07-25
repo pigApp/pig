@@ -294,11 +294,11 @@ void Update::initUi()
     ui = new Ui::Update;
     ui->setupUi(this);
 
-    QObject::connect (ui->btnAccept, &QPushButton::clicked, [&] {
+    QObject::connect (ui->btn_accept, &QPushButton::clicked, [&] {
         ui->label->setText("DOWNLOADING...");
         get();
     });
-    QObject::connect (ui->btnCancel, &QPushButton::clicked, [&] { emit setWidget(this); });
+    QObject::connect (ui->btn_cancel, &QPushButton::clicked, [&] { emit setWidget(this); });
 
     emit setWidget(this, true);
 

@@ -3,16 +3,16 @@
 #include <QTimer>
 #include <QDebug>//
 
-Finder::Finder(QSqlDatabase *db, QGridLayout *layoutTopbar, QWidget *parent) :
+Finder::Finder(QSqlDatabase *db, QGridLayout *layout_topbar, QWidget *parent) :
     QWidget(parent),
     _db(db),
     quality("ALL"),
     fullMovie("ALL"),
     ui(new Ui::Finder)
 {
-    ui->setupUi(layoutTopbar, this);
+    ui->setupUi(layout_topbar, this);
 
-    connect (ui->btnFilters, SIGNAL(pressed()), this, SLOT(filters_handler()));
+    connect (ui->btn_filters, SIGNAL(pressed()), this, SLOT(filters_handler()));
     QObject::connect (ui->input, &QLineEdit::textChanged, [&] (const QString str) { query(str); });
     QObject::connect (ui->input, &QLineEdit::returnPressed, [&] {
         data.clear();
@@ -95,7 +95,7 @@ QStringList *Finder::query(const QString &str, const QString &category,
             (_db)->close();
 
             if (getData && !data.isEmpty()) {
-                mFilterOnCovers = true;
+                m_filterOnCovers = true;
                 return &data;
             } else if (getFilter) {
                 return &filter;
@@ -121,29 +121,29 @@ void Finder::filters_handler()
 
         ui->setupFilterUi(this);
 
-        QObject::connect (ui->btnAllp, &QRadioButton::released, [=] {
+        QObject::connect (ui->radio_allp, &QRadioButton::released, [=] {
             quality = "ALL";
-            if (mFilterOnCovers)
+            if (m_filterOnCovers)
                 emit sendData(NULL, &quality);
         });
-        QObject::connect (ui->btn720p, &QRadioButton::released, [=] {
+        QObject::connect (ui->radio_720p, &QRadioButton::released, [=] {
             quality = "720p";
-            if (mFilterOnCovers)
+            if (m_filterOnCovers)
                 emit sendData(NULL, &quality);
         });
-        QObject::connect (ui->btn1080p, &QRadioButton::released, [=] {
+        QObject::connect (ui->radio_1080p, &QRadioButton::released, [=] {
             quality = "1080p";
-            if (mFilterOnCovers)
+            if (m_filterOnCovers)
                 emit sendData(NULL, &quality);
         });
 
-        QObject::connect (ui->btnFullMovie, &QRadioButton::released, [=] {
-            if (ui->btnFullMovie->isChecked())
+        QObject::connect (ui->radio_fullMovie, &QRadioButton::released, [=] {
+            if (ui->radio_fullMovie->isChecked())
                 fullMovie = "FULL";
             else
                 fullMovie = "ALL";
 
-            if (mFilterOnCovers)
+            if (m_filterOnCovers)
                 emit sendData(NULL, &fullMovie);
         });
 
@@ -178,7 +178,7 @@ void Finder::filters_handler()
             ui->btn_categories_vector.last()->setFlat(true);
 
             QObject::connect (ui->btn_categories_vector.last(), &QPushButton::pressed, [=] {
-                if (!mFilterOnCovers) {
+                if (!m_filterOnCovers) {
                     data.clear();
                     emit sendData(query(NULL, (*categories)[i], true, false));
                     ui->input->deselect();
@@ -187,13 +187,13 @@ void Finder::filters_handler()
                 }
             });
 
-            ui->layoutFilters->addWidget(ui->btn_categories_vector.last());
+            ui->layout_filters->addWidget(ui->btn_categories_vector.last());
         }
     } else {
         if (isFiltersHidden)
-            ui->__layoutTopbar->addItem(ui->layoutFilters, 1, 0);
+            ui->__layout_topbar->addItem(ui->layout_filters, 1, 0);
         else
-            ui->__layoutTopbar->removeItem(ui->layoutFilters);
+            ui->__layout_topbar->removeItem(ui->layout_filters);
 
         isFiltersHidden = !isFiltersHidden;
     }

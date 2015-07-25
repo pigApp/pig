@@ -5,6 +5,7 @@
 #include "ui.h"
 
 #include <QWidget>
+#include <QPushButton>
 #include <QtSql>
 
 namespace Ui {
@@ -19,13 +20,14 @@ public:
     explicit TopBar(QSqlDatabase *db, QWidget *parent = 0);
     ~TopBar();
 
-    Finder *getObject() { return finder; }
+    Finder *getFinderObject() { return m_finder; }
+    QPushButton *getBtnSetupObject() { return m_btn_setup;}
 
 private:
-    Finder *finder;
+    Finder *m_finder;
 
     Ui::TopBar *ui;
+    QPushButton *m_btn_setup;
 };
 
 #endif
-

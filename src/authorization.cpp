@@ -77,7 +77,7 @@ void Auth::initUi()
     ui = new Ui::Auth;
     ui->setupUi(this);
 
-    if (!_set) ui->btnReset->hide();
+    if (!_set) ui->btn_reset->hide();
 
     QObject::connect (ui->input, &QLineEdit::returnPressed, [&] {
         if (_set)
@@ -86,7 +86,7 @@ void Auth::initUi()
             match((ui->input->selectAll(), ui->input->selectedText()));
         ui->input->deselect();
     });
-    connect (ui->btnReset, SIGNAL(clicked()), this, SLOT(reset()));
+    connect (ui->btn_reset, SIGNAL(clicked()), this, SLOT(reset()));
 
     emit setWidget(this, true);
 

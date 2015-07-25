@@ -8,6 +8,7 @@
 PIG::PIG(QWidget *parent) :
     QWidget(parent),
     view(NULL),
+    setup(NULL),
     ui(new Ui::PIG)
 {
 #ifdef __linux__
@@ -28,10 +29,11 @@ PIG::PIG(QWidget *parent) :
 
     topbar = new TopBar(&db, this);
 
-    connect (topbar->getObject(), SIGNAL(sendData(const QStringList*, const QString*)),
+    connect (topbar->getFinderObject(), SIGNAL(sendData(const QStringList*, const QString*)),
              this, SLOT(viewer(const QStringList*, const QString*)));
+    connect (topbar->getBtnSetupObject(), SIGNAL(released()), this, SLOT(setSetup()));
 
-    ui->mainLayout->addWidget(topbar);
+    ui->layout_main->addWidget(topbar);
 
     authorization(false);
 }
@@ -64,7 +66,7 @@ void PIG::viewer(const QStringList *data, const QString *filter)
         view = new View(&PIG_PATH, this);
 
         QObject::connect (view, &View::setFilterOnCovers, [&] {
-            topbar->getObject()->setFilterOnCovers();
+            topbar->getFinderObject()->setFilterOnCovers();
         });
         QObject::connect (view, &View::setTopbarState, [&] (bool hide) {
             if (hide)
@@ -73,7 +75,7 @@ void PIG::viewer(const QStringList *data, const QString *filter)
                 topbar->show();
         });
 
-        ui->mainLayout->addWidget(view);
+        ui->layout_main->addWidget(view);
     }
 
     if (data != 0)
@@ -83,14 +85,28 @@ void PIG::viewer(const QStringList *data, const QString *filter)
         view->set_filter(filter);
 }
 
+void PIG::setSetup()
+{
+    if (setup == 0) {
+        setup = new Setup(this);
+        ui->layout_main->replaceWidget(view, setup);
+        view->hide();
+    } else {
+        ui->layout_main->replaceWidget(setup, view);
+        view->show();
+        setup->deleteLater();
+        setup = NULL;
+    }
+}
+
 void PIG::widgetsHandler(QWidget *w, bool add)
 {
     if (add) {
-        ui->mainLayout->addWidget(w);
+        ui->layout_main->addWidget(w);
         //topbar->getGroup()->setDisabled(true);
     } else {
         if (w != 0) {
-            ui->mainLayout->removeWidget(w);
+            ui->layout_main->removeWidget(w);
             w->deleteLater();
             //topbar->getGroup()->setDisabled(false);
         }
@@ -145,16 +161,16 @@ void TopBar::find(const QString userInput, const QString category, const QString
 LAMBDA
     QObject::connect(topbar->category, &QPushButton::clicked, [=]() { qDebug() << "CLICKED"; });
     QObject::connect(topbar, &TopBar::sendData, [&] (const QStringList &data) { showData(data); });
-    QObject::connect(topbar, &TopBar::addGroup, [&] (QGroupBox *filterGroup) { groupsHandler(&filterGroup); });//{ mainLayout->addWidget(filterGroup); });
+    QObject::connect(topbar, &TopBar::addGroup, [&] (QGroupBox *filterGroup) { groupsHandler(&filterGroup); });//{ layout_main->addWidget(filterGroup); });
 
     QObject::connect(auth, &Auth::ready, [=] { //TODO: PASAR EL GRUPO EN LA SEÑAL.
-        mainLayout->addWidget(auth->getGroup());
+        layout_main->addWidget(auth->getGroup());
         topbar->getGroup()->setDisabled(true);
     });
     QObject::connect(auth, &Auth::finished, [=] {
         if (auth->getGroup() != NULL) {
             auth->getGroup()->hide();
-            mainLayout->removeWidget(auth->getGroup());
+            layout_main->removeWidget(auth->getGroup());
             topbar->getGroup()->setDisabled(false);
         }
         auth->deleteLater();

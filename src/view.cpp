@@ -10,14 +10,14 @@ View::View(const QString *PIG_PATH, QWidget *parent) :
 {
     ui->setupUi(this);
 
-//    QObject::connect (ui->btnClear, &QPushButton::pressed, [&] {
+//    QObject::connect (ui->btn_clear, &QPushButton::pressed, [&] {
 //        del_covers();
 //        emit setFilterOnCovers();
 //    });//
 
-    QObject::connect (ui->scrollAreaCovers->verticalScrollBar(), &QScrollBar::valueChanged, [&] {
-        qDebug() <<  ui->scrollAreaCovers->verticalScrollBar()->sliderPosition();
-        if (ui->scrollAreaCovers->verticalScrollBar()->sliderPosition() > 24 && ui->scrollAreaCovers->verticalScrollBar()->sliderPosition() < 26)
+    QObject::connect (ui->scrollArea_covers->verticalScrollBar(), &QScrollBar::valueChanged, [&] {
+        qDebug() <<  ui->scrollArea_covers->verticalScrollBar()->sliderPosition();
+        if (ui->scrollArea_covers->verticalScrollBar()->sliderPosition() > 24 && ui->scrollArea_covers->verticalScrollBar()->sliderPosition() < 26)
             get();
     });
 }
@@ -89,15 +89,15 @@ void View::add_cover(int ID, QString path)
         ++row;
     }
 
-    ui->btn_covers_vector.push_back(new QPushButton(ui->groupCovers));
+    ui->btn_covers_vector.push_back(new QPushButton(ui->group_covers));
     ui->btn_covers_vector.last()->setIconSize(QSize(335, 480)); //TODO: PORCENTAJE
     ui->btn_covers_vector.last()->setIcon(QIcon(path));
     ui->btn_covers_vector.last()->setFlat(true);
     QObject::connect (ui->btn_covers_vector.last(), &QPushButton::pressed, [=] { show_info(index); });
     //QObject::connect (ui->btn_covers_vector.last(), &QPushButton::pressed, [=] { get(); });
 
-    ui->layoutCovers->addWidget(ui->btn_covers_vector.last(), row, column);
-    ui->layoutCovers->update();
+    ui->layout_covers->addWidget(ui->btn_covers_vector.last(), row, column);
+    ui->layout_covers->update();
 
     activeCovers.append(ui->btn_covers_vector.size()-1);
     _activeCovers.append(ui->btn_covers_vector.size()-1);
@@ -223,18 +223,18 @@ void View::set_filter(const QString *filter)
 
     // TODO: INTERELACIONAR LOS FILTROS
 
-    ui->layoutCovers->update();
+    ui->layout_covers->update();
 }
 
 void View::del_covers()
 {
     for (int i = 0; i < ui->btn_covers_vector.size(); i++) {
-        ui->layoutCovers->removeWidget(ui->btn_covers_vector.at(i));
+        ui->layout_covers->removeWidget(ui->btn_covers_vector.at(i));
         delete ui->btn_covers_vector.at(i);
     }
 
     ui->btn_covers_vector.clear();
-    ui->layoutCovers->update();
+    ui->layout_covers->update();
 }
 
 void View::show_info(int index)
@@ -242,7 +242,7 @@ void View::show_info(int index)
     ui->setupInfoUi(index, &m_data, this);
 
     ui->btn_covers_vector.at(index)->disconnect();
-    QObject::connect (ui->btnHideInfo, &QPushButton::pressed, [=] { del_info(index); });
+    QObject::connect (ui->btn_hideInfo, &QPushButton::pressed, [=] { del_info(index); });
 
     emit setTopbarState(true);
 }
@@ -260,13 +260,13 @@ void View::del_info(const int &index)
         c = 1;
     }
 
-    ui->layoutCovers->addWidget(ui->btn_covers_vector.at(index), c, r);
+    ui->layout_covers->addWidget(ui->btn_covers_vector.at(index), c, r);
     QObject::connect (ui->btn_covers_vector.at(index), &QPushButton::pressed, [=] { show_info(index); });
 
-    delete ui->groupInfo;
+    delete ui->group_info;
 
-    ui->scrollAreaCovers->setEnabled(true);
-    ui->scrollAreaCovers->show();
+    ui->scrollArea_covers->setEnabled(true);
+    ui->scrollArea_covers->show();
 
     emit setTopbarState(false);
 }

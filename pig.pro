@@ -19,7 +19,8 @@ SOURCES += src/main.cpp\
            src/view.cpp\
            src/unpack.cpp\
            src/su.cpp\
-           src/threadedsocket.cpp
+           src/threadedsocket.cpp \
+    src/setup.cpp
 
 
 HEADERS += src/pig.h\
@@ -31,7 +32,8 @@ HEADERS += src/pig.h\
            src/unpack.h\
            src/su.h\
            src/threadedsocket.h\
-           src/ui.h
+           src/ui.h \
+    src/setup.h
 
 RESOURCES = resources.qrc
 

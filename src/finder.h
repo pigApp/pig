@@ -15,10 +15,10 @@ class Finder : public QWidget
     Q_OBJECT
 
 public:
-    explicit Finder(QSqlDatabase *db, QGridLayout *layoutTopbar, QWidget *parent = 0);
+    explicit Finder(QSqlDatabase *db, QGridLayout *layout_topbar, QWidget *parent = 0);
     ~Finder();
 
-    void setFilterOnCovers() { mFilterOnCovers = false; }
+    void setFilterOnCovers() { m_filterOnCovers = false; }
 
 signals:
     void sendData(const QStringList *data, const QString *filter = NULL);
@@ -34,7 +34,7 @@ private:
 
     Ui::Finder *ui;
 
-    bool mFilterOnCovers = false;
+    bool m_filterOnCovers = false;
     bool isFiltersHidden = false;
 
 private slots:
