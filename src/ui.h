@@ -33,22 +33,23 @@ public:
 
         QBrush b(QColor(10, 10, 10, 255));
         QBrush b1(QColor(255, 255, 255, 255));
+        QBrush b2(QColor(0, 0, 0, 255));
 
         QPalette p;
-        p.setBrush(QPalette::Active, QPalette::Button, b);
-        p.setBrush(QPalette::Active, QPalette::ButtonText, b1);
-        p.setBrush(QPalette::Active, QPalette::Text, b1);
         p.setBrush(QPalette::Active, QPalette::Base, b);
         p.setBrush(QPalette::Active, QPalette::Window, b);
         p.setBrush(QPalette::Active, QPalette::WindowText, b1);
-        p.setBrush(QPalette::Active, QPalette::Highlight, b);
-        p.setBrush(QPalette::Disabled, QPalette::Button, b);
-        p.setBrush(QPalette::Disabled, QPalette::ButtonText, b1);
-        p.setBrush(QPalette::Disabled, QPalette::Text, b1);
+        p.setBrush(QPalette::Active, QPalette::Text, b1);
+        p.setBrush(QPalette::Active, QPalette::Highlight, b2);
+        p.setBrush(QPalette::Active, QPalette::Button, b);
+        p.setBrush(QPalette::Active, QPalette::ButtonText, b1);
         p.setBrush(QPalette::Disabled, QPalette::Base, b);
         p.setBrush(QPalette::Disabled, QPalette::Window, b);
-        p.setBrush(QPalette::Disabled, QPalette::WindowText, b1);
+        p.setBrush(QPalette::Disabled, QPalette::WindowText, b2);
+        p.setBrush(QPalette::Disabled, QPalette::Text, b2);
         p.setBrush(QPalette::Disabled, QPalette::Highlight, b);
+        p.setBrush(QPalette::Disabled, QPalette::Button, b);
+        p.setBrush(QPalette::Disabled, QPalette::ButtonText, b2);
 
         layout_main = new QVBoxLayout(PIG);
 
@@ -120,6 +121,7 @@ public:
         btn_setup->setFlat(true);
 
         layout = new QGridLayout(Topbar);
+        layout->setMargin(0);
         layout->setAlignment(Qt::AlignTop);
         layout->addWidget(btn_setup, 0, 1);
 
@@ -149,27 +151,27 @@ public:
     {
         __layout_topbar = _layout_topbar;
 
-        QBrush b(QColor(15, 15, 15, 255)); //(110, 10, 10, 255)
+        QBrush b(QColor(15, 15, 15, 255));
         QBrush b1(QColor(255, 255, 255, 255));
+        QBrush b2(QColor(0, 0, 0, 255));
 
-        p.setBrush(QPalette::Active, QPalette::Button, b);
-        p.setBrush(QPalette::Active, QPalette::ButtonText, b1);
-        p.setBrush(QPalette::Active, QPalette::Text, b1);
         p.setBrush(QPalette::Active, QPalette::Base, b);
         p.setBrush(QPalette::Active, QPalette::Window, b);
         p.setBrush(QPalette::Active, QPalette::WindowText, b1);
-        p.setBrush(QPalette::Active, QPalette::Highlight, b);
-        p.setBrush(QPalette::Disabled, QPalette::Button, b);
-        p.setBrush(QPalette::Disabled, QPalette::ButtonText, b1);
-        p.setBrush(QPalette::Disabled, QPalette::Text, b1);
+        p.setBrush(QPalette::Active, QPalette::Text, b1);
+        p.setBrush(QPalette::Active, QPalette::Highlight, b2);
+        p.setBrush(QPalette::Active, QPalette::Button, b);
+        p.setBrush(QPalette::Active, QPalette::ButtonText, b1);
         p.setBrush(QPalette::Disabled, QPalette::Base, b);
         p.setBrush(QPalette::Disabled, QPalette::Window, b);
-        p.setBrush(QPalette::Disabled, QPalette::WindowText, b1);
+        p.setBrush(QPalette::Disabled, QPalette::WindowText, b2);
+        p.setBrush(QPalette::Disabled, QPalette::Text, b2);
         p.setBrush(QPalette::Disabled, QPalette::Highlight, b);
+        p.setBrush(QPalette::Disabled, QPalette::Button, b);
+        p.setBrush(QPalette::Disabled, QPalette::ButtonText, b2);
 
         input = new QLineEdit(Finder);
         input->setPalette(p);
-        input->setFocus();
         input->setAlignment(Qt::AlignCenter);
 
         btn_filters = new QPushButton("≡", Finder);
@@ -178,12 +180,14 @@ public:
         btn_filters->setParent(input);
 
         layout = new QGridLayout;
-        layout->setContentsMargins(75, 0, 0, 0);// TODO: PORCENTAJE
+        layout->setContentsMargins(82, 0, 2, 0);// TODO: PORCENTAJE
         layout->setSpacing(0); // TODO: PORCENTAJE
         layout->addWidget(input, 0, 0);
         layout->addWidget(btn_filters, 0, 0, 0, 0, Qt::AlignLeft);
 
         __layout_topbar->addLayout(layout, 0, 0);
+
+        input->setFocus();
     }
 
     void setupFilterUi(QWidget *Finder)
@@ -192,6 +196,12 @@ public:
         f.setPointSize(12); // TODO: PORCENTAJE
         f.setCapitalization(QFont::AllUppercase);
         f.setBold(true);
+
+        QBrush b(QColor(50, 50, 50, 255));
+        QBrush b1(QColor(255, 255, 255, 255));
+
+        p.setBrush(QPalette::Active, QPalette::Base, b);
+        p.setBrush(QPalette::Active, QPalette::WindowText, b1);
 
         radio_allp = new QRadioButton("ALL", Finder);
         radio_allp->setFont(f);
@@ -209,6 +219,7 @@ public:
         radio_fullMovie = new QRadioButton("FULLMOVIE", Finder);
         radio_fullMovie->setFont(f);
         radio_fullMovie->setPalette(p);
+        radio_fullMovie->setAutoExclusive(false);
 
         layout_radios = new QHBoxLayout;;
         layout_radios->addWidget(radio_allp);
@@ -218,7 +229,7 @@ public:
         layout_radios->addWidget(radio_fullMovie);
 
         layout_filters = new QHBoxLayout;
-        layout_filters->setContentsMargins(76, 0, 0, 0); // TODO: PORCENTAJE
+        layout_filters->setContentsMargins(115, 0, 10, 0); // TODO: PORCENTAJE
         layout_filters->addLayout(layout_radios);
 
         __layout_topbar->addLayout(layout_filters, 1, 0);
@@ -247,6 +258,7 @@ public:
 class Ui_View
 {
 public:
+    QPalette p;
     QLabel *label_meta[5];
     QPushButton *btn_clear;
     QPushButton *btn_hideInfo;
@@ -264,29 +276,15 @@ public:
 
     void setupUi(QWidget *View)
     {
-        QFont f(":/font-global");
-        f.setPointSize(24); //TODO: PORCENTAJE
-        f.setCapitalization(QFont::AllUppercase);
-        f.setBold(true);
-
         QBrush b(QColor(10, 10, 10, 255));
         QBrush b1(QColor(255, 255, 255, 255));
 
-        QPalette p;
-        p.setBrush(QPalette::Active, QPalette::Button, b);
-        p.setBrush(QPalette::Active, QPalette::ButtonText, b1);
-        p.setBrush(QPalette::Active, QPalette::Text, b1);
         p.setBrush(QPalette::Active, QPalette::Base, b);
         p.setBrush(QPalette::Active, QPalette::Window, b);
         p.setBrush(QPalette::Active, QPalette::WindowText, b1);
-        p.setBrush(QPalette::Active, QPalette::Highlight, b);
-        p.setBrush(QPalette::Disabled, QPalette::Button, b);
-        p.setBrush(QPalette::Disabled, QPalette::ButtonText, b1);
-        p.setBrush(QPalette::Disabled, QPalette::Text, b1);
-        p.setBrush(QPalette::Disabled, QPalette::Base, b);
-        p.setBrush(QPalette::Disabled, QPalette::Window, b);
-        p.setBrush(QPalette::Disabled, QPalette::WindowText, b1);
-        p.setBrush(QPalette::Disabled, QPalette::Highlight, b);
+        p.setBrush(QPalette::Active, QPalette::Text, b1);
+        p.setBrush(QPalette::Active, QPalette::Button, b);
+        p.setBrush(QPalette::Active, QPalette::ButtonText, b1);
 
         scrollArea_covers = new QScrollArea(View);
         scrollArea_covers->setFrameStyle(QFrame::NoFrame);
@@ -301,9 +299,10 @@ public:
         group_covers->setFlat(true);
 
         layout_covers = new QGridLayout(group_covers);
+        layout_covers->setContentsMargins(70, 0, 0, 0);
         layout_covers->setHorizontalSpacing(0);
-        layout_covers->setVerticalSpacing(5);
-        layout_covers->setAlignment(Qt::AlignHCenter | Qt::AlignTop);
+        layout_covers->setVerticalSpacing(5);// TODO: PORCENTAJE
+        layout_covers->setAlignment(Qt::AlignLeft | Qt::AlignTop);
 
         group_covers->setLayout(layout_covers);
 
@@ -329,25 +328,6 @@ public:
         f.setPointSize(24); //TODO: PORCENTAJE
         f.setCapitalization(QFont::AllUppercase);
 
-        QBrush b(QColor(10, 10, 10, 255));
-        QBrush b1(QColor(255, 255, 255, 255));
-
-        QPalette p;
-        p.setBrush(QPalette::Active, QPalette::Button, b);
-        p.setBrush(QPalette::Active, QPalette::ButtonText, b1);
-        p.setBrush(QPalette::Active, QPalette::Text, b1);
-        p.setBrush(QPalette::Active, QPalette::Base, b);
-        p.setBrush(QPalette::Active, QPalette::Window, b);
-        p.setBrush(QPalette::Active, QPalette::WindowText, b1);
-        p.setBrush(QPalette::Active, QPalette::Highlight, b);
-        p.setBrush(QPalette::Disabled, QPalette::Button, b);
-        p.setBrush(QPalette::Disabled, QPalette::ButtonText, b1);
-        p.setBrush(QPalette::Disabled, QPalette::Text, b1);
-        p.setBrush(QPalette::Disabled, QPalette::Base, b);
-        p.setBrush(QPalette::Disabled, QPalette::Window, b);
-        p.setBrush(QPalette::Disabled, QPalette::WindowText, b1);
-        p.setBrush(QPalette::Disabled, QPalette::Highlight, b);
-
         group_info = new QGroupBox(View);
         group_info->setStyleSheet("QGroupBox{ background-color: rgba(10, 10, 10, 255);"
                                   "border: 0; margin: 0; }"
@@ -355,19 +335,18 @@ public:
         group_info->setFlat(true);
 
         layout_meta = new QVBoxLayout;
-        layout_meta->setSpacing(20); // TODO: PORCENTAJE
+        layout_meta->setSpacing(10); // TODO: PORCENTAJE
         layout_meta->setSizeConstraint(QLayout::SetMaximumSize);
 
         QStringList labels;
         labels << "TITLE " << "CASTING " << "CATEGORY " << "QUALITY " << "TIME ";
         for (int i = 0; i < 5; i++) {
             label_meta[i] = new QLabel(group_info);
-            label_meta[i]->setStyleSheet("QLabel{ background-color: rgba(15, 15, 15, 255);" //(110, 10, 10, 255)
+            label_meta[i]->setStyleSheet("QLabel{ background-color: rgba(10, 10, 10, 255);"
                                          "border: 0; margin: 0; }");
             label_meta[i]->setFont(f);
             label_meta[i]->setPalette(p);
             label_meta[i]->setText(" "+(**_data)[((index * 15) + (i + 1))]);
-            label_meta[i]->setSizePolicy(QSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed));
             layout_meta->addWidget(label_meta[i]);
         }
 
@@ -383,15 +362,14 @@ public:
         layout_multi->insertSpacing(2, 20); // TODO: PORCENTAJE
         layout_multi->addWidget(player);
 
-        btn_hideInfo = new QPushButton("", group_info);
-        btn_hideInfo->setFont(f);
-        btn_hideInfo->setPalette(p);
-        btn_hideInfo->setFlat(true);
+//        btn_hideInfo = new QPushButton("", group_info);
+//        btn_hideInfo->setFont(f);
+//        btn_hideInfo->setPalette(p);
+//        btn_hideInfo->setFlat(true);
 
         layout_info = new QVBoxLayout(group_info);
-        layout_info->setSpacing(20); // TODO: PORCENTAJE
+        layout_info->setSpacing(110); // TODO: PORCENTAJE
         layout_info->setAlignment(Qt::AlignVCenter);
-        layout_info->addWidget(btn_hideInfo);
         layout_info->addLayout(layout_meta);
         layout_info->addLayout(layout_multi);
 

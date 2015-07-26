@@ -152,29 +152,9 @@ void Finder::filters_handler()
         f.setCapitalization(QFont::AllUppercase);
         f.setBold(true);
 
-        QBrush b(QColor(10, 10, 10, 255));
-        QBrush b1(QColor(255, 255, 255, 255));
-
-        QPalette p;
-        p.setBrush(QPalette::Active, QPalette::Button, b);
-        p.setBrush(QPalette::Active, QPalette::ButtonText, b1);
-        p.setBrush(QPalette::Active, QPalette::Text, b1);
-        p.setBrush(QPalette::Active, QPalette::Base, b);
-        p.setBrush(QPalette::Active, QPalette::Window, b);
-        p.setBrush(QPalette::Active, QPalette::WindowText, b1);
-        p.setBrush(QPalette::Active, QPalette::Highlight, b);
-        p.setBrush(QPalette::Disabled, QPalette::Button, b);
-        p.setBrush(QPalette::Disabled, QPalette::ButtonText, b1);
-        p.setBrush(QPalette::Disabled, QPalette::Text, b1);
-        p.setBrush(QPalette::Disabled, QPalette::Base, b);
-        p.setBrush(QPalette::Disabled, QPalette::Window, b);
-        p.setBrush(QPalette::Disabled, QPalette::WindowText, b1);
-        p.setBrush(QPalette::Disabled, QPalette::Highlight, b);
-
         for (int i = 0; i < (*categories).size(); i++) {
             ui->btn_categories_vector.push_back(new QPushButton((*categories)[i], this));
             ui->btn_categories_vector.last()->setFont(f);
-            ui->btn_categories_vector.last()->setPalette(p);
             ui->btn_categories_vector.last()->setFlat(true);
 
             QObject::connect (ui->btn_categories_vector.last(), &QPushButton::pressed, [=] {

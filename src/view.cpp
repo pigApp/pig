@@ -242,7 +242,7 @@ void View::show_info(int index)
     ui->setupInfoUi(index, &m_data, this);
 
     ui->btn_covers_vector.at(index)->disconnect();
-    QObject::connect (ui->btn_hideInfo, &QPushButton::pressed, [=] { del_info(index); });
+    //QObject::connect (ui->btn_hideInfo, &QPushButton::pressed, [=] { del_info(index); });
 
     emit setTopbarState(true);
 }
