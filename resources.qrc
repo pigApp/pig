@@ -16,6 +16,7 @@
         <file alias="img-peers">resources/images/global/network/peers.svg</file>
         <file alias="img-peers-dark">resources/images/global/network/peers-dark.svg</file>
         <file alias="img_err">resources/images/global/err.svg</file>
+        <file alias="img-cover-back">resources/images/viewer/cover-back.jpg</file>
         <file alias="img-cover_err">resources/images/viewer/cover_err.jpg</file>
         <file>resources/images/global/icon.ico</file>
         <file>resources/images/global/icon.jpg</file>

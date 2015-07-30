@@ -16,6 +16,17 @@ PIG::PIG(QWidget *parent) :
 #else
     PIG_PATH = "C:/PIG/.pig";
 #endif
+    QDir dir;
+    if (!dir.exists(PIG_PATH+"/tmp"))
+        if (!dir.mkdir(PIG_PATH+"/tmp"))
+            qDebug() << "error"; //error()
+    if (!dir.exists(PIG_PATH+"/tmp/covers"))
+        if (!dir.mkdir(PIG_PATH+"/tmp/covers"))
+            qDebug() << "error"; //error()
+    if (!dir.exists(PIG_PATH+"/tmp/covers/back"))
+        if (!dir.mkdir(PIG_PATH+"/tmp/covers/back"))
+            qDebug() << "error"; //error()
+
     QFile file;
     if (file.exists(PIG_PATH+"/db.sqlite")) {
         db = QSqlDatabase::addDatabase("QSQLITE");

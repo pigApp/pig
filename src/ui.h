@@ -1,19 +1,19 @@
 #ifndef UI_H
 #define UI_H
 
-#include <QObject>
 #include <QWidget>
+#include <QDesktopWidget>//
+#include <QPixmap>
 #include <QLabel>
 #include <QLineEdit>
 #include <QPushButton>
 #include <QRadioButton>
+#include <QScrollArea>
+#include <QScrollBar>
 #include <QGroupBox>
 #include <QHBoxLayout>
 #include <QVBoxLayout>
 #include <QGridLayout>
-#include <QDesktopWidget>//
-#include <QScrollBar>//
-#include <QScrollArea>//
 
 #include <QFont>
 
@@ -260,6 +260,8 @@ class Ui_View
 public:
     QPalette p;
     QLabel *label_meta[5];
+    QLabel *cover;
+    QLabel *backCover;
     QPushButton *btn_clear;
     QPushButton *btn_hideInfo;
     QWidget *player;//
@@ -272,7 +274,7 @@ public:
     QVBoxLayout *layout_info;
     QVBoxLayout *layout;
 
-    QVector<QPushButton*> btn_covers_vector;
+    QVector<QPushButton*> btn_vector_covers;
 
     void setupUi(QWidget *View)
     {
@@ -299,7 +301,7 @@ public:
         group_covers->setFlat(true);
 
         layout_covers = new QGridLayout(group_covers);
-        layout_covers->setContentsMargins(70, 0, 0, 0);
+        layout_covers->setContentsMargins(70, 0, 0, 20);
         layout_covers->setHorizontalSpacing(0);
         layout_covers->setVerticalSpacing(5);// TODO: PORCENTAJE
         layout_covers->setAlignment(Qt::AlignLeft | Qt::AlignTop);
@@ -320,7 +322,7 @@ public:
         //layout_covers->addWidget(btn_clear);
     }
 
-    void setupInfoUi(const int &index,  const QStringList **data, QWidget *View)
+    void setupInfoUi(const int &index, const QString &path, const QStringList **data, QWidget *View)
     {
         const QStringList **_data = data;
 
@@ -338,17 +340,23 @@ public:
         layout_meta->setSpacing(10); // TODO: PORCENTAJE
         layout_meta->setSizeConstraint(QLayout::SetMaximumSize);
 
-        QStringList labels;
-        labels << "TITLE " << "CASTING " << "CATEGORY " << "QUALITY " << "TIME ";
         for (int i = 0; i < 5; i++) {
             label_meta[i] = new QLabel(group_info);
             label_meta[i]->setStyleSheet("QLabel{ background-color: rgba(10, 10, 10, 255);"
                                          "border: 0; margin: 0; }");
             label_meta[i]->setFont(f);
             label_meta[i]->setPalette(p);
-            label_meta[i]->setText(" "+(**_data)[((index * 15) + (i + 1))]);
+            label_meta[i]->setText(" "+(**_data)[((index * 17) + i)]);
             layout_meta->addWidget(label_meta[i]);
         }
+
+        QPixmap pixmap_cover(path);
+        cover = new QLabel(group_info);
+        cover->setPixmap(pixmap_cover.scaled(335, 480, Qt::KeepAspectRatio));//
+
+        QPixmap pixmap_backCover(":/img-cover-back");
+        backCover = new QLabel(group_info);
+        backCover->setPixmap(pixmap_backCover);//
 
         player = new QWidget(group_info);
         player->setStyleSheet("QWidget { background-color: rgba(15, 15, 15, 255); }");
@@ -357,19 +365,21 @@ public:
         layout_multi = new QHBoxLayout;
         layout_multi->setSpacing(0);
         layout_multi->setAlignment(Qt::AlignLeft);
-        layout_multi->addWidget(btn_covers_vector.at(index));
-        layout_multi->addWidget(btn_covers_vector.at(index+1));
-        layout_multi->insertSpacing(2, 20); // TODO: PORCENTAJE
+        layout_multi->addWidget(cover);
+        layout_multi->insertSpacing(1, 20); // TODO: PORCENTAJE
+        layout_multi->addWidget(backCover);
+        layout_multi->insertSpacing(3, 20); // TODO: PORCENTAJE
         layout_multi->addWidget(player);
 
-//        btn_hideInfo = new QPushButton("", group_info);
-//        btn_hideInfo->setFont(f);
-//        btn_hideInfo->setPalette(p);
-//        btn_hideInfo->setFlat(true);
+        btn_hideInfo = new QPushButton("", group_info);
+        btn_hideInfo->setFont(f);
+        btn_hideInfo->setPalette(p);
+        btn_hideInfo->setFlat(true);
 
         layout_info = new QVBoxLayout(group_info);
         layout_info->setSpacing(110); // TODO: PORCENTAJE
         layout_info->setAlignment(Qt::AlignVCenter);
+        layout_info->addWidget(btn_hideInfo);
         layout_info->addLayout(layout_meta);
         layout_info->addLayout(layout_multi);
 

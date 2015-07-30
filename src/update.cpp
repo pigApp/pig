@@ -22,7 +22,7 @@ Update::Update(const QString *PIG_PATH, QSqlDatabase *db_, QWidget *parent) :
 
     if (_db->open()) {
         QSqlQuery query;
-        query.prepare("SELECT Binary, Release, Database, Library, Host, Url FROM PigData");
+        query.prepare("SELECT binary, release, database, library, host, url FROM data");
 
         if (!query.exec()) {
             _db->close();
@@ -216,12 +216,12 @@ void Update::status(int exitCode)
             if (_db->open()) {
                 QSqlQuery query;
 
-                query.prepare("UPDATE PigData SET Binary='"+QString::number(bin)+"'");
+                query.prepare("UPDATE data SET binary='"+QString::number(bin)+"'");
                 query.exec();
-                query.prepare("UPDATE PigData SET Release='"+QString::number(rel)+"'");
+                query.prepare("UPDATE data SET release='"+QString::number(rel)+"'");
                 query.exec();
                 if (hasLib) {
-                    query.prepare("UPDATE PigData SET Library='"+QString::number(lib)+"'");
+                    query.prepare("UPDATE data SET library='"+QString::number(lib)+"'");
                     query.exec();
                 }
 
@@ -242,12 +242,12 @@ void Update::status(int exitCode)
             if (_db->open()) {
                 QSqlQuery query;
 
-                query.prepare("UPDATE PigData SET Binary='"+QString::number(bin)+"'");
+                query.prepare("UPDATE data SET binary='"+QString::number(bin)+"'");
                 query.exec();
-                query.prepare("UPDATE PigData SET Release='"+QString::number(rel)+"'");
+                query.prepare("UPDATE data SET release='"+QString::number(rel)+"'");
                 query.exec();
                 if (hasLib) {
-                    query.prepare("UPDATE PigData SET Library='"+QString::number(lib)+"'");
+                    query.prepare("UPDATE data SET library='"+QString::number(lib)+"'");
                     query.exec();
                 }
 

@@ -50,19 +50,19 @@ QStringList *Finder::query(const QString &str, const QString &category,
         QSqlQuery query;
 
         if (getData) {
-            query.prepare("SELECT id, Title, Cas, Category, Quality, Time, Full \
-                          , HostCover, UrlCoverFront, UrlCoverBack, HostPreview, UrlPreview \
-                          , HostTorrent, UrlTorrent, Scenes FROM Movies WHERE Title LIKE \
-                          '"+str+"%' AND Cas LIKE '%"+pornstar+"%' AND Category LIKE \
-                          '%"+category+"%' AND Quality LIKE '%"+_quality+"%' AND Full LIKE \
-                          '%"+_fullMovie+"%' ORDER BY Title ASC LIMIT 1000");
+            query.prepare("SELECT title, cas, category, quality, time, full \
+                          , hostCovers, urlCover, urlBackCover, hostPreview, urlPreview \
+                          , hostTorrent, urlTorrent, scenes FROM Movies WHERE title LIKE \
+                          '"+str+"%' AND cas LIKE '%"+pornstar+"%' AND category LIKE \
+                          '%"+category+"%' AND quality LIKE '%"+_quality+"%' AND full LIKE \
+                          '%"+_fullMovie+"%' ORDER BY title ASC LIMIT 1000");
         } else if (getFilter) {
-            query.prepare("SELECT "+str+" FROM FiltersData");
+            query.prepare("SELECT "+str+" FROM filters");
         } else {
-            query.prepare("SELECT id FROM Movies WHERE Title LIKE \
-                          '"+str+"%' AND Cas LIKE '%"+pornstar+"%' AND Category LIKE \
-                          '%"+category+"%' AND Quality LIKE '%"+_quality+"%' AND Full LIKE \
-                          '%"+_fullMovie+"%' ORDER BY Title ASC LIMIT 1");
+            query.prepare("SELECT title FROM Movies WHERE title LIKE \
+                          '"+str+"%' AND cas LIKE '%"+pornstar+"%' AND category LIKE \
+                          '%"+category+"%' AND quality LIKE '%"+_quality+"%' AND full LIKE \
+                          '%"+_fullMovie+"%' ORDER BY title ASC LIMIT 1");
         }
 
         if (!query.exec()) {
@@ -80,13 +80,15 @@ QStringList *Finder::query(const QString &str, const QString &category,
                     data.append(query.value(5).toString());
                     data.append(query.value(6).toString());
                     data.append(query.value(7).toString());
+                    data.append(query.value(0).toString()+"_front.jpg");
                     data.append(query.value(8).toString());
+                    data.append(query.value(0).toString()+"_back.jpg");
                     data.append(query.value(9).toString());
                     data.append(query.value(10).toString());
+                    data.append(query.value(0).toString()+".mp4");
                     data.append(query.value(11).toString());
                     data.append(query.value(12).toString());
                     data.append(query.value(13).toString());
-                    data.append(query.value(14).toString());
                 } else if (getFilter) {
                     filter << query.value(0).toString().split(",");
                 }
@@ -117,7 +119,7 @@ QStringList *Finder::query(const QString &str, const QString &category,
 void Finder::filters_handler()
 {
     if (ui->btn_categories_vector.isEmpty()) {
-        const QStringList *categories = query("Categories", NULL, false, true);
+        const QStringList *categories = query("categories", NULL, false, true);
 
         ui->setupFilterUi(this);
 
