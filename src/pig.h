@@ -31,11 +31,11 @@ private:
     Ui::PIG *ui;
 
 private slots:
-    void authorization(bool set);
-    void update();
-    void viewer(const QStringList *data, const QString *filter);
-    void setSetup();
-    void widgetsHandler(QWidget *w, bool add);
+    void init_authorization(bool set);
+    void init_update();
+    void init_topbar();
+    void init_viewer(const QStringList *data, const QString *filter);
+    void init_setup();
 };
 
 #endif

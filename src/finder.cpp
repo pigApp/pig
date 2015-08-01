@@ -10,15 +10,14 @@ Finder::Finder(QSqlDatabase *db, QGridLayout *layout_topbar, QWidget *parent) :
     fullMovie("ALL"),
     ui(new Ui::Finder)
 {
-    ui->setupUi(layout_topbar, this);
+    ui->setupUi(query("", NULL, true), layout_topbar, this);
 
-    connect (ui->btn_filters, SIGNAL(pressed()), this, SLOT(filters_handler()));
-    QObject::connect (ui->input, &QLineEdit::textChanged, [&] (const QString str) { query(str); });
     QObject::connect (ui->input, &QLineEdit::returnPressed, [&] {
         data.clear();
-        emit sendData(query((ui->input->selectAll(), ui->input->selectedText()), NULL, true));
+        emit sendData(query((ui->input->selectAll(), ui->input->selectedText()), NULL, false, true));
         ui->input->deselect();
     });
+    connect (ui->btn_filters, SIGNAL(pressed()), this, SLOT(filters_handler()));
 
     //if (init)
         QTimer::singleShot(500, this, SLOT(test()));
@@ -29,7 +28,7 @@ Finder::~Finder()
     delete ui;
 }
 
-QStringList *Finder::query(const QString &str, const QString &category,
+QStringList *Finder::query(const QString &str, const QString &category, const bool &getList,
                            const bool &getData, const bool &getFilter)
 {
     const QString pornstar = "";
@@ -58,11 +57,11 @@ QStringList *Finder::query(const QString &str, const QString &category,
                           '%"+_fullMovie+"%' ORDER BY title ASC LIMIT 1000");
         } else if (getFilter) {
             query.prepare("SELECT "+str+" FROM filters");
-        } else {
+        } else if (getList){
             query.prepare("SELECT title FROM Movies WHERE title LIKE \
                           '"+str+"%' AND cas LIKE '%"+pornstar+"%' AND category LIKE \
                           '%"+category+"%' AND quality LIKE '%"+_quality+"%' AND full LIKE \
-                          '%"+_fullMovie+"%' ORDER BY title ASC LIMIT 1");
+                          '%"+_fullMovie+"%' ORDER BY title ASC LIMIT 1000");
         }
 
         if (!query.exec()) {
@@ -91,6 +90,8 @@ QStringList *Finder::query(const QString &str, const QString &category,
                     data.append(query.value(13).toString());
                 } else if (getFilter) {
                     filter << query.value(0).toString().split(",");
+                } else if (getList) {
+                    movies << query.value(0).toString().split(",");
                 }
             }
 
@@ -101,11 +102,8 @@ QStringList *Finder::query(const QString &str, const QString &category,
                 return &data;
             } else if (getFilter) {
                 return &filter;
-            } else {
-                if (!query.last())
-                    qDebug() << "NO MOVIE";
-                else
-                    qDebug() << "MOVIE";
+            } else if (getList) {
+                return &movies;
             }
         }
     } else {
@@ -119,7 +117,7 @@ QStringList *Finder::query(const QString &str, const QString &category,
 void Finder::filters_handler()
 {
     if (ui->btn_categories_vector.isEmpty()) {
-        const QStringList *categories = query("categories", NULL, false, true);
+        const QStringList *categories = query("categories", NULL, false, false, true);
 
         ui->setupFilterUi(this);
 
@@ -162,7 +160,7 @@ void Finder::filters_handler()
             QObject::connect (ui->btn_categories_vector.last(), &QPushButton::pressed, [=] {
                 if (!m_filterOnCovers) {
                     data.clear();
-                    emit sendData(query(NULL, (*categories)[i], true, false));
+                    emit sendData(query(NULL, (*categories)[i], false, true, false));
                     ui->input->deselect();
                 } else {
                     emit sendData(NULL, &(*categories)[i]);
@@ -183,7 +181,7 @@ void Finder::filters_handler()
 
 void Finder::test()
 {
-    emit sendData(query("", NULL, true));
+    emit sendData(query("", NULL, false, true));
 }
 
 

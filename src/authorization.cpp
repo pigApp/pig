@@ -4,51 +4,49 @@
 #include <QCryptographicHash>
 #include <QDebug>//
 
-Auth::Auth(const QString *PIG_PATH, bool set_, QWidget *parent) :
+Authorization::Authorization(const QString *PIG_PATH, bool _set, QWidget *parent) :
     QWidget(parent),
-    _set(set_),
+    __set(_set),
     ui(NULL)
 {
     file.setFileName(*PIG_PATH+"/.pd");
-
-    this->hide();
 }
 
-Auth::~Auth()
+Authorization::~Authorization()
 {
     if (ui != 0)
         delete ui;
 }
 
-void Auth::check()
+void Authorization::check()
 {
-    if (_set) {
-        initUi();
+    if (__set) {
+        init_ui();
     } else {
         if (file.open(QIODevice::ReadOnly | QIODevice::Text)) {
             while (!file.atEnd())
                 digest = QString(file.readLine()).toUtf8().simplified();
             file.close();
-            initUi();
+            init_ui();
         } else {
             delete this;
         }
     }
 }
 
-void Auth::set(const QString &str)
+void Authorization::set(const QString &str)
 {
     if (file.open(QIODevice::WriteOnly)) {
         QTextStream stream(&file);
         stream << calculate(&str).simplified();
         file.close();
-        emit setWidget(this);
+        qDebug() << "SET";
     } else {
         qDebug() << "NO-SET";
     }
 }
 
-void Auth::reset()
+void Authorization::reset()
 {
     if (file.remove()) {
         qDebug() << "REMOVED";
@@ -57,30 +55,32 @@ void Auth::reset()
     }
 }
 
-void Auth::match(const QString &str)
+void Authorization::match(const QString &str)
 {
-    if (calculate(&str) == digest) {
-        emit setWidget(this);
-    } else {
-        qDebug() << "NO-MATCH";
-    }
+    if (calculate(&str) == digest)
+        this->deleteLater();
+    else
+        ui->input->setPalette(ui->p1);
 }
 
-const QString Auth::calculate(const QString *plain)
+const QString Authorization::calculate(const QString *plain)
 {
     return QString(QCryptographicHash::hash(QString(*plain).toUtf8(),
                                             QCryptographicHash::Md5).toHex());
 }
 
-void Auth::initUi()
+void Authorization::init_ui()
 {
-    ui = new Ui::Auth;
+    ui = new Ui::Authorization;
     ui->setupUi(this);
 
-    if (!_set) ui->btn_reset->hide();
+    if (__set) ui->btn_reset->setHidden(false);
 
+    QObject::connect (ui->input, &QLineEdit::textChanged, [&] {
+        ui->input->setPalette(ui->p);
+    });
     QObject::connect (ui->input, &QLineEdit::returnPressed, [&] {
-        if (_set)
+        if (__set)
             set((ui->input->selectAll(), ui->input->selectedText()));
         else
             match((ui->input->selectAll(), ui->input->selectedText()));
@@ -88,7 +88,5 @@ void Auth::initUi()
     });
     connect (ui->btn_reset, SIGNAL(clicked()), this, SLOT(reset()));
 
-    emit setWidget(this, true);
-
-    this->show();
+    emit showWidget(this);
 }

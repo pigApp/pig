@@ -16,24 +16,25 @@ SOURCES += src/main.cpp\
            src/update.cpp\
            src/topbar.cpp\
            src/finder.cpp\
+           src/setup.cpp\
            src/view.cpp\
+           src/player.cpp\
            src/unpack.cpp\
            src/su.cpp\
-           src/threadedsocket.cpp \
-    src/setup.cpp
-
+           src/threadedsocket.cpp
 
 HEADERS += src/pig.h\
            src/authorization.h\
            src/update.h\
            src/topbar.h\
            src/finder.h\
+           src/setup.h\
            src/view.h\
+           src/player.h\
            src/unpack.h\
            src/su.h\
            src/threadedsocket.h\
-           src/ui.h \
-    src/setup.h
+           src/ui.h
 
 RESOURCES = resources.qrc
 

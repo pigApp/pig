@@ -8,37 +8,37 @@
 #include <QFile>
 
 namespace Ui {
-class Auth;
+class Authorization;
 }
 
-class Auth : public QWidget
+class Authorization : public QWidget
 {
     Q_OBJECT
 
 public:
-    explicit Auth(const QString *PIG_PATH, bool set_, QWidget *parent = 0);
-    ~Auth();
+    explicit Authorization(const QString *PIG_PATH, bool _set, QWidget *parent = 0);
+    ~Authorization();
 
 signals:
-    void setWidget(QWidget *w = NULL, bool add = false);
+    void showWidget(QWidget *w);
 
 public slots:
     void check();
 
 private:
-    bool _set;
+    bool __set;
 
     QFile file;
     QString digest;
 
-    Ui::Auth *ui;
+    Ui::Authorization *ui;
 
 private slots:
     void set(const QString &str);
     void reset();
     void match(const QString &str);
     const QString calculate(const QString *plain);
-    void initUi();
+    void init_ui();
 };
 
 #endif

@@ -112,7 +112,7 @@ void Update::check(QString data)
     }
 
     if (hasBin || hasDb || hasLib) {
-        initUi();
+        init_ui();
     } else {
         delete this;
     }
@@ -144,7 +144,6 @@ void Update::update()
     target = *_PIG_PATH+"/news";
 
     file.rename(origin, target);
-//NEWS
 
 //DB
     if (hasDb) {
@@ -156,14 +155,15 @@ void Update::update()
             file.rename(target, backup);
         if (file.rename(origin, target)) {
             if (!hasBin) {
-                emit setWidget(this);
+                qDebug() << "DB UPDATED";
+                //MSG "DB UPDATED"
+                //BOTON "OK" -> delete this;
             }
         } else {
             qDebug() << "ERROR UPDATE-DB";//
             //error();
         }
     }
-//DB
 
 //BIN-LIB
     if (hasBin) {
@@ -203,7 +203,6 @@ void Update::update()
     }
 #endif
     }
-//BIN-LIB
 }
 
 void Update::status(int exitCode)
@@ -228,7 +227,9 @@ void Update::status(int exitCode)
                 _db->close();
             }
         }
-        qDebug() << "RESTART PIG";//
+        qDebug() << "UPDATED RESTART PIG";
+        //MSG "UPDATED RESTART PIG"
+        //BOTON EXIT -> delete this;
     } else if (exitCode == -1) {
         qDebug() << "ERROR SU";//
         //error();
@@ -270,7 +271,6 @@ void Update::error()
 
     if (file.exists(origin))
         file.rename(origin, target);
-//CLEAN UP NEWS
 
 //CLEAN UP DB
     origin = *_PIG_PATH+"/db.sqlite";
@@ -283,24 +283,27 @@ void Update::error()
             file.rename(backup, origin);
         }
     }
-//CLEAN UP DB
 
-    //TODO: MOSTRAR MENSAJE Y BOTON DE ERROR.
-    //emit finished();
+    //MSG "ERROR"
+    //BOTON "OK" -> delete this;
 }
 
-void Update::initUi()
+void Update::init_ui()
 {
     ui = new Ui::Update;
     ui->setupUi(this);
 
-    QObject::connect (ui->btn_accept, &QPushButton::clicked, [&] {
-        ui->label->setText("DOWNLOADING...");
-        get();
-    });
-    QObject::connect (ui->btn_cancel, &QPushButton::clicked, [&] { emit setWidget(this); });
-
-    emit setWidget(this, true);
-
-    this->show();
+    switch (ui->ret) {
+        case QMessageBox::Ok:
+            ui->msgBox->setText("DOWNLOADING...");
+            //get();
+            qDebug() << "OK";
+            break;
+        case QMessageBox::Ignore:
+            delete this;
+            qDebug() << "IGNORE";
+            break;
+        default:
+            break;
+    }
 }

@@ -1,6 +1,8 @@
 #ifndef UI_H
 #define UI_H
 
+#include "player.h"
+
 #include <QWidget>
 #include <QDesktopWidget>//
 #include <QPixmap>
@@ -10,12 +12,18 @@
 #include <QRadioButton>
 #include <QScrollArea>
 #include <QScrollBar>
+#include <QMessageBox>
+#include <QCompleter>
 #include <QGroupBox>
 #include <QHBoxLayout>
 #include <QVBoxLayout>
 #include <QGridLayout>
 
 #include <QFont>
+
+#include <QDebug>
+
+#include <QAbstractItemView>
 
 QT_BEGIN_NAMESPACE
 
@@ -59,53 +67,99 @@ public:
     }
 };
 
-class Ui_Auth
+class Ui_Authotization
 {
 public:
+    QPalette p;
+    QPalette p1;
+    QLabel *label;
     QLineEdit *input;
     QPushButton *btn_reset;
-    QHBoxLayout *layout;
+    QHBoxLayout *layout_input;
+    QVBoxLayout *layout;
 
-    void setupUi(QWidget *Auth)
+    void setupUi(QWidget *Authorization)
     {
-        input = new QLineEdit(Auth);
+        QBrush b(QColor(15, 15, 15, 255));
+        QBrush b1(QColor(255, 255, 255, 255));
+        QBrush b2(QColor(0, 0, 0, 255));
+        QBrush b3(QColor(115, 10, 10, 255));
 
-        btn_reset = new QPushButton("RESET", Auth);
+        p.setBrush(QPalette::Active, QPalette::Base, b);
+        p.setBrush(QPalette::Active, QPalette::Window, b);
+        p.setBrush(QPalette::Active, QPalette::Text, b1);
+        p.setBrush(QPalette::Active, QPalette::Highlight, b2);
+
+        p1.setBrush(QPalette::Active, QPalette::Base, b);
+        p1.setBrush(QPalette::Active, QPalette::Window, b);
+        p1.setBrush(QPalette::Active, QPalette::Text, b1);
+        p1.setBrush(QPalette::Active, QPalette::Highlight, b3);
+
+        label = new QLabel("ENTER PASSWORD", Authorization);
+        label->setAlignment(Qt::AlignHCenter);
+
+        input = new QLineEdit(Authorization);
+        input->setPalette(p);
+        input->setEchoMode(QLineEdit::Password);
+        input->setAlignment(Qt::AlignCenter);
+
+        btn_reset = new QPushButton("RESET", Authorization);
         btn_reset->setFlat(true);
+        btn_reset->setHidden(true);
 
-        layout = new QHBoxLayout(Auth);
-        layout->addWidget(input);
-        layout->addWidget(btn_reset);
+        layout_input = new QHBoxLayout;
+        layout_input->addWidget(input);
+        layout_input->addWidget(btn_reset);
 
-        Auth->setLayout(layout);
+        layout = new QVBoxLayout(Authorization);
+        layout->addWidget(label);
+        layout->addLayout(layout_input);
+        layout->setAlignment(Qt::AlignCenter);
+
+        Authorization->setLayout(layout);
     }
 };
 
 class Ui_Update
 {
 public:
-    QLabel *label;
-    QPushButton *btn_accept;
-    QPushButton *btn_cancel;
-    QHBoxLayout *layout;
+    QMessageBox *msgBox;
+    int ret;
 
     void setupUi(QWidget *Update)
     {
-        label = new QLabel(Update);
-        label->setText("UPDATE AVAILABLE");
+        QFont f(":/font-global");
+        f.setPointSize(12); // TODO: PORCENTAJE
+        f.setCapitalization(QFont::AllUppercase);
 
-        btn_accept = new QPushButton("ACCEPT", Update);
-        btn_accept->setFlat(true);
+        QBrush b(QColor(10, 10, 10, 255));
+        QBrush b1(QColor(255, 255, 255, 255));
+        QBrush b2(QColor(0, 0, 0, 255));
 
-        btn_cancel = new QPushButton("CANCEL", Update);
-        btn_cancel->setFlat(true);
+        QPalette p;
+        p.setBrush(QPalette::Active, QPalette::Base, b);
+        p.setBrush(QPalette::Active, QPalette::Window, b);
+        p.setBrush(QPalette::Active, QPalette::WindowText, b1);
+        p.setBrush(QPalette::Active, QPalette::Text, b1);
+        p.setBrush(QPalette::Active, QPalette::Highlight, b2);
+        p.setBrush(QPalette::Active, QPalette::Button, b);
+        p.setBrush(QPalette::Active, QPalette::ButtonText, b1);
+        p.setBrush(QPalette::Disabled, QPalette::Base, b);
+        p.setBrush(QPalette::Disabled, QPalette::Window, b);
+        p.setBrush(QPalette::Disabled, QPalette::WindowText, b2);
+        p.setBrush(QPalette::Disabled, QPalette::Text, b2);
+        p.setBrush(QPalette::Disabled, QPalette::Highlight, b);
+        p.setBrush(QPalette::Disabled, QPalette::Button, b);
+        p.setBrush(QPalette::Disabled, QPalette::ButtonText, b2);
 
-        layout = new QHBoxLayout(Update);
-        layout->addWidget(label);
-        layout->addWidget(btn_accept);
-        layout->addWidget(btn_cancel);
-
-        Update->setLayout(layout);
+        msgBox = new QMessageBox(Update);
+        msgBox->setFont(f);
+        msgBox->setPalette(p);
+        msgBox->setText("UPDATE AVAILABLE");
+        msgBox->setStandardButtons(QMessageBox::Ok | QMessageBox::Ignore);
+        msgBox->setDefaultButton(QMessageBox::Ok);
+        //msgBox->setWindowFlags(Qt::FramelessWindowHint);
+        ret = msgBox->exec();
     }
 };
 
@@ -147,13 +201,21 @@ public:
 
     QVector<QPushButton*> btn_categories_vector;
 
-    void setupUi(QGridLayout *_layout_topbar, QWidget *Finder)
+    void setupUi(QStringList *movies, QGridLayout *_layout_topbar, QWidget *Finder)
     {
         __layout_topbar = _layout_topbar;
+
+        QFont f(":/font-global");
+        f.setPointSize(24); // TODO: PORCENTAJE
+        f.setCapitalization(QFont::AllUppercase);
+        f.setBold(true);
 
         QBrush b(QColor(15, 15, 15, 255));
         QBrush b1(QColor(255, 255, 255, 255));
         QBrush b2(QColor(0, 0, 0, 255));
+        QBrush b3(QColor(10, 10, 10, 255));
+        QBrush b4(QColor(115, 10, 10, 255));
+
 
         p.setBrush(QPalette::Active, QPalette::Base, b);
         p.setBrush(QPalette::Active, QPalette::Window, b);
@@ -170,8 +232,23 @@ public:
         p.setBrush(QPalette::Disabled, QPalette::Button, b);
         p.setBrush(QPalette::Disabled, QPalette::ButtonText, b2);
 
+        QPalette p1;
+        p1.setBrush(QPalette::Active, QPalette::Base, b3);
+        p1.setBrush(QPalette::Active, QPalette::Window, b3);
+        p1.setBrush(QPalette::Active, QPalette::Text, b1);
+        p1.setBrush(QPalette::Active, QPalette::Highlight, b4);
+
+        QCompleter *completer = new QCompleter(*movies, Finder);
+        completer->popup()->setFont(f);
+        completer->popup()->setPalette(p1);
+        completer->setMaxVisibleItems(10);
+        completer->setFilterMode(Qt::MatchContains);
+        completer->setCaseSensitivity(Qt::CaseInsensitive);
+        completer->setCompletionMode(QCompleter::PopupCompletion);
+
         input = new QLineEdit(Finder);
         input->setPalette(p);
+        input->setCompleter(completer);
         input->setAlignment(Qt::AlignCenter);
 
         btn_filters = new QPushButton("≡", Finder);
@@ -258,13 +335,14 @@ public:
 class Ui_View
 {
 public:
+    Player *player;
+
     QPalette p;
     QLabel *label_meta[5];
     QLabel *cover;
     QLabel *backCover;
     QPushButton *btn_clear;
     QPushButton *btn_hideInfo;
-    QWidget *player;//
     QScrollArea *scrollArea_covers;
     QGroupBox *group_covers;
     QGroupBox *group_info;
@@ -358,8 +436,8 @@ public:
         backCover = new QLabel(group_info);
         backCover->setPixmap(pixmap_backCover);//
 
-        player = new QWidget(group_info);
-        player->setStyleSheet("QWidget { background-color: rgba(15, 15, 15, 255); }");
+        QString preview = "http://"+((**_data)[((index * 17) + 11)])+((**_data)[((index * 17) + 12)]);
+        player = new Player(&preview, group_info);
         player->setFixedSize(QSize(640, 480)); // TODO: PORCENTAJE
 
         layout_multi = new QHBoxLayout;
@@ -394,7 +472,7 @@ public:
 
 namespace Ui {
     class PIG: public Ui_PIG {};
-    class Auth: public Ui_Auth {};
+    class Authorization: public Ui_Authotization {};
     class Update: public Ui_Update {};
     class TopBar: public Ui_Topbar {};
     class Finder: public Ui_Finder {};

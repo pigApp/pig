@@ -3,6 +3,7 @@
 #include "update.h"
 
 #include <QDir>
+
 #include <QDebug>//
 
 PIG::PIG(QWidget *parent) :
@@ -35,18 +36,9 @@ PIG::PIG(QWidget *parent) :
         //emit db_error();
     }
 
-
     ui->setupUi(this);
 
-    topbar = new TopBar(&db, this);
-
-    connect (topbar->getFinderObject(), SIGNAL(sendData(const QStringList*, const QString*)),
-             this, SLOT(viewer(const QStringList*, const QString*)));
-    connect (topbar->getBtnSetupObject(), SIGNAL(released()), this, SLOT(setSetup()));
-
-    ui->layout_main->addWidget(topbar);
-
-    authorization(false);
+    init_authorization(false);
 }
 
 PIG::~PIG()
@@ -54,24 +46,38 @@ PIG::~PIG()
     delete ui;
 }
 
-void PIG::authorization(bool set)
+void PIG::init_authorization(bool set)
 {
-    Auth *auth = new Auth(&PIG_PATH, set, this);
+    Authorization *authorization = new Authorization(&PIG_PATH, set, this);
 
-    connect (auth, SIGNAL(setWidget(QWidget*, bool)), this, SLOT(widgetsHandler(QWidget*, bool)));
-    QObject::connect (auth, &Auth::destroyed, [&] { update(); });
+    QObject::connect (authorization, &Authorization::showWidget, [&] (QWidget *w) {
+        ui->layout_main->addWidget(w);
+    });
+    QObject::connect (authorization, &Authorization::destroyed, [&] { init_update(); });
 
-    auth->check();
+    authorization->check();
 }
 
-void PIG::update()
+void PIG::init_update()
 {
     Update *update = new Update(&PIG_PATH, &db, this);
+    Q_UNUSED(update);
 
-    connect (update, SIGNAL(setWidget(QWidget*, bool)), this, SLOT(widgetsHandler(QWidget*, bool))); //TODO: PROBAR NO USAR 'widgetsHandler'.
+    init_topbar();
 }
 
-void PIG::viewer(const QStringList *data, const QString *filter)
+void PIG::init_topbar()
+{
+    topbar = new TopBar(&db, this);
+
+    connect (topbar->getFinderObject(), SIGNAL(sendData(const QStringList*, const QString*)),
+             this, SLOT(init_viewer(const QStringList*, const QString*)));
+    connect (topbar->getBtnSetupObject(), SIGNAL(released()), this, SLOT(init_setup()));
+
+    ui->layout_main->addWidget(topbar);
+}
+
+void PIG::init_viewer(const QStringList *data, const QString *filter)
 {
     if (view == 0 && data != 0) {
         view = new View(&PIG_PATH, this);
@@ -80,10 +86,7 @@ void PIG::viewer(const QStringList *data, const QString *filter)
             topbar->getFinderObject()->setFilterOnCovers();
         });
         QObject::connect (view, &View::setTopbarState, [&] (bool hide) {
-            if (hide)
-                topbar->hide();
-            else
-                topbar->show();
+            topbar->setHidden(hide);
         });
 
         ui->layout_main->addWidget(view);
@@ -96,7 +99,7 @@ void PIG::viewer(const QStringList *data, const QString *filter)
         view->set_filter(filter);
 }
 
-void PIG::setSetup()
+void PIG::init_setup()
 {
     if (setup == 0) {
         setup = new Setup(this);
@@ -109,23 +112,6 @@ void PIG::setSetup()
         setup = NULL;
     }
 }
-
-void PIG::widgetsHandler(QWidget *w, bool add)
-{
-    if (add) {
-        ui->layout_main->addWidget(w);
-        //topbar->getGroup()->setDisabled(true);
-    } else {
-        if (w != 0) {
-            ui->layout_main->removeWidget(w);
-            w->deleteLater();
-            //topbar->getGroup()->setDisabled(false);
-        }
-    }
-}
-
-
-
 
 
 
@@ -174,11 +160,11 @@ LAMBDA
     QObject::connect(topbar, &TopBar::sendData, [&] (const QStringList &data) { showData(data); });
     QObject::connect(topbar, &TopBar::addGroup, [&] (QGroupBox *filterGroup) { groupsHandler(&filterGroup); });//{ layout_main->addWidget(filterGroup); });
 
-    QObject::connect(auth, &Auth::ready, [=] { //TODO: PASAR EL GRUPO EN LA SEÑAL.
+    QObject::connect(auth, &Authorization::ready, [=] { //TODO: PASAR EL GRUPO EN LA SEÑAL.
         layout_main->addWidget(auth->getGroup());
         topbar->getGroup()->setDisabled(true);
     });
-    QObject::connect(auth, &Auth::finished, [=] {
+    QObject::connect(auth, &Authorization::finished, [=] {
         if (auth->getGroup() != NULL) {
             auth->getGroup()->hide();
             layout_main->removeWidget(auth->getGroup());
@@ -206,7 +192,7 @@ void PIG::authorization(const bool require, const QString plain
            //update_handler();
            qDebug() << "x";
     } else if (check) {
-        Auth mPassword;
+        Authorization mPassword;
         if (mPassword.check(&plain))
             //update_handler();
             qDebug() << "x";
@@ -214,7 +200,7 @@ void PIG::authorization(const bool require, const QString plain
             //emit sig_ret_password();
             qDebug() << "x";
     } else if (write) {
-        Auth mPassword;
+        Authorization mPassword;
         if (mPassword.write(&plain))
             //emit sig_ret_password(false, true);
             qDebug() << "x";

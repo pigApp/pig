@@ -21,7 +21,6 @@ public:
     ~Update();
 
 signals:
-    void setWidget(QWidget *w = NULL, bool add = false);
     void sig_error();
 
 private:
@@ -48,7 +47,7 @@ private slots:
     void update();
     void status(int exitCode);
     void error();
-    void initUi();
+    void init_ui();
 };
 
 #endif

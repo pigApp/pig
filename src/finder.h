@@ -28,6 +28,7 @@ private:
 
     QStringList data;
     QStringList filter;
+    QStringList movies;
 
     QString quality;
     QString fullMovie;
@@ -39,7 +40,8 @@ private:
 
 private slots:
     QStringList *query(const QString &str = NULL, const QString &category = NULL,
-                       const bool &getData = false, const bool &getFilter = false);
+                       const bool &getList = false, const bool &getData = false,
+                       const bool &getFilter = false);
     void filters_handler();
 
     void test();
