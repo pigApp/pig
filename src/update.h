@@ -21,7 +21,8 @@ public:
     ~Update();
 
 signals:
-    void sig_error();
+    void showWidget(QWidget *w);
+    void dbError(QString error);
 
 private:
     const QString *_PIG_PATH;
@@ -32,6 +33,8 @@ private:
     QString target;
     QString backup;
     QString host;
+    QString hostSite;
+    QString urlSiteNews;
     QStringList urls, sums, pkgs;
 
     Ui::Update *ui;
@@ -44,9 +47,9 @@ private slots:
     void get();
     void check(QString data);
     void unpack(int ID, QString path);
-    void update();
-    void status(int exitCode);
-    void error();
+    void install();
+    void status(const int &exitCode);
+    void error(const QString &error = NULL);
     void init_ui();
 };
 

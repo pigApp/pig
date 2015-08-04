@@ -21,14 +21,14 @@ Su::~Su()
     delete p;
 }
 
-void Su::update(const QString arg)
+void Su::install(const QString arg)
 {
     if (manager.isEmpty())
         emit finished(-1);
     else
         if (manager == "gksu")
             p->start("/bin/bash", QStringList()
-                     << "-c" << manager+" -m 'root password' "+arg);
+                     << "-c" << manager+" -m 'Root password to install PIG update' "+arg);
         else
             p->start("/bin/bash", QStringList()
                      << "-c" << manager+" -c "+arg);
@@ -36,7 +36,7 @@ void Su::update(const QString arg)
     connect (p, SIGNAL(finished(int)), this, SIGNAL(finished(int)));
 }
 
-void Su::auth(const QString arg)
+void Su::authorization(const QString arg)
 {
     Q_UNUSED(arg);
     //TODO: SET PERMISSIONS TO PASSWORD FILE.

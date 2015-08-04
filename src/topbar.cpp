@@ -6,7 +6,7 @@ TopBar::TopBar(QSqlDatabase *db, QWidget *parent) :
 {
     ui->setupUi(this);
 
-    m_btn_setup = ui->btn_setup;
+    m_button_setup = ui->button_setup;
 
     m_finder = new Finder(db, ui->layout, this);
 }

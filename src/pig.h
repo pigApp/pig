@@ -36,6 +36,7 @@ private slots:
     void init_topbar();
     void init_viewer(const QStringList *data, const QString *filter);
     void init_setup();
+    void error(QString error);
 };
 
 #endif

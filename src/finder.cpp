@@ -17,7 +17,7 @@ Finder::Finder(QSqlDatabase *db, QGridLayout *layout_topbar, QWidget *parent) :
         emit sendData(query((ui->input->selectAll(), ui->input->selectedText()), NULL, false, true));
         ui->input->deselect();
     });
-    connect (ui->btn_filters, SIGNAL(pressed()), this, SLOT(filters_handler()));
+    connect (ui->button_filters, SIGNAL(pressed()), this, SLOT(filters_handler()));
 
     //if (init)
         QTimer::singleShot(500, this, SLOT(test()));
@@ -116,7 +116,7 @@ QStringList *Finder::query(const QString &str, const QString &category, const bo
 
 void Finder::filters_handler()
 {
-    if (ui->btn_categories_vector.isEmpty()) {
+    if (ui->buttons_categories_vector.isEmpty()) {
         const QStringList *categories = query("categories", NULL, false, false, true);
 
         ui->setupFilterUi(this);
@@ -147,17 +147,17 @@ void Finder::filters_handler()
                 emit sendData(NULL, &fullMovie);
         });
 
-        QFont f(":/font-global");
-        f.setPointSize(12); //TODO: PORCENTAJE
-        f.setCapitalization(QFont::AllUppercase);
-        f.setBold(true);
+        QFont font(":/font-global");
+        font.setPointSize(12); //TODO: PORCENTAJE
+        font.setCapitalization(QFont::AllUppercase);
+        font.setBold(true);
 
         for (int i = 0; i < (*categories).size(); i++) {
-            ui->btn_categories_vector.push_back(new QPushButton((*categories)[i], this));
-            ui->btn_categories_vector.last()->setFont(f);
-            ui->btn_categories_vector.last()->setFlat(true);
+            ui->buttons_categories_vector.push_back(new QPushButton((*categories)[i], this));
+            ui->buttons_categories_vector.last()->setFont(font);
+            ui->buttons_categories_vector.last()->setFlat(true);
 
-            QObject::connect (ui->btn_categories_vector.last(), &QPushButton::pressed, [=] {
+            QObject::connect (ui->buttons_categories_vector.last(), &QPushButton::pressed, [=] {
                 if (!m_filterOnCovers) {
                     data.clear();
                     emit sendData(query(NULL, (*categories)[i], false, true, false));
@@ -167,7 +167,7 @@ void Finder::filters_handler()
                 }
             });
 
-            ui->layout_filters->addWidget(ui->btn_categories_vector.last());
+            ui->layout_filters->addWidget(ui->buttons_categories_vector.last());
         }
     } else {
         if (isFiltersHidden)
@@ -249,14 +249,14 @@ QGroupBox *Finder::resultGroup(const QStringList &titles, const QStringList &cat
     for (int i = 0; i < categories.count(); i++) //FIX: BORRAR CATEGORIAS DUPLICADAS.
         categoryLayout[i] = new QBoxLayout(QBoxLayout::TopToBottom);
 
-    QPushButton *btn[titles.count()];
+    QPushButton *button[titles.count()];
 
     for (int i = 0; i < titles.count(); i++) {
-        btn[i] = new QPushButton(titles[i], resultGroup);
-        btn[i]->setFont(f);
-        btn[i]->setPalette(p);
-        btn[i]->setFlat(true);
-        categoryLayout[i]->addWidget(btn[i]); //TODO: INCLUIR EN EL LAYOUT DE LA CATEGORIA QUE CORRESPONDE.
+        button[i] = new QPushButton(titles[i], resultGroup);
+        button[i]->setFont(f);
+        button[i]->setPalette(p);
+        button[i]->setFlat(true);
+        categoryLayout[i]->addWidget(button[i]); //TODO: INCLUIR EN EL LAYOUT DE LA CATEGORIA QUE CORRESPONDE.
     }
 
     QGridLayout *resultLayout = new QGridLayout(resultGroup);
@@ -304,7 +304,7 @@ QGroupBox *Finder::filterGroup(const QString &filter, const QStringList &filterD
     p1.setBrush(QPalette::Disabled, QPalette::Window, b);
     p1.setBrush(QPalette::Disabled, QPalette::Highlight, b);
 
-    QPushButton *btn[filterData.count()];
+    QPushButton *button[filterData.count()];
     QGridLayout *filterLayout = new QGridLayout(filterGroup);
 
     //QScrollArea *area = new QScrollArea();
@@ -313,13 +313,13 @@ QGroupBox *Finder::filterGroup(const QString &filter, const QStringList &filterD
     int i = 0;
     for(int row = 0; row < 7; row++) {
         for(int column = 0; column < 4; column++) { //TODO: COMPROBAR QUE NO LEA UN ELEMENTO DEL ARRAY QUE NO EXISTE.
-            btn[i] = new QPushButton(filterGroup);
-            btn[i]->setFont(f);
-            btn[i]->setPalette(p1);
-            btn[i]->setFlat(true);
-            btn[i]->setIcon(QIcon(icon_path+filterData[i]));
-            btn[i]->setIconSize(QSize((desk.width()/5), (desk.height()/5)));
-            filterLayout->addWidget(btn[i], row, column);
+            button[i] = new QPushButton(filterGroup);
+            button[i]->setFont(f);
+            button[i]->setPalette(p1);
+            button[i]->setFlat(true);
+            button[i]->setIcon(QIcon(icon_path+filterData[i]));
+            button[i]->setIconSize(QSize((desk.width()/5), (desk.height()/5)));
+            filterLayout->addWidget(button[i], row, column);
             i++;
         }
     }

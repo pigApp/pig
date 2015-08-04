@@ -2,7 +2,6 @@
 
 #include <QTextStream>
 #include <QCryptographicHash>
-#include <QDebug>//
 
 Authorization::Authorization(const QString *PIG_PATH, bool _set, QWidget *parent) :
     QWidget(parent),
@@ -60,7 +59,7 @@ void Authorization::match(const QString &str)
     if (calculate(&str) == digest)
         this->deleteLater();
     else
-        ui->input->setPalette(ui->p1);
+        ui->input->setPalette(ui->palette_error);
 }
 
 const QString Authorization::calculate(const QString *plain)
@@ -74,10 +73,10 @@ void Authorization::init_ui()
     ui = new Ui::Authorization;
     ui->setupUi(this);
 
-    if (__set) ui->btn_reset->setHidden(false);
+    if (__set) ui->button_reset->setHidden(false);
 
     QObject::connect (ui->input, &QLineEdit::textChanged, [&] {
-        ui->input->setPalette(ui->p);
+        ui->input->setPalette(ui->palette);
     });
     QObject::connect (ui->input, &QLineEdit::returnPressed, [&] {
         if (__set)
@@ -86,7 +85,7 @@ void Authorization::init_ui()
             match((ui->input->selectAll(), ui->input->selectedText()));
         ui->input->deselect();
     });
-    connect (ui->btn_reset, SIGNAL(clicked()), this, SLOT(reset()));
+    connect (ui->button_reset, SIGNAL(clicked()), this, SLOT(reset()));
 
     emit showWidget(this);
 }

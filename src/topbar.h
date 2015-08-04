@@ -21,13 +21,13 @@ public:
     ~TopBar();
 
     Finder *getFinderObject() { return m_finder; }
-    QPushButton *getBtnSetupObject() { return m_btn_setup;}
+    QPushButton *getBtnSetupObject() { return m_button_setup;}
 
 private:
     Finder *m_finder;
 
     Ui::TopBar *ui;
-    QPushButton *m_btn_setup;
+    QPushButton *m_button_setup;
 };
 
 #endif

@@ -16,8 +16,8 @@ signals:
     void finished(int exitCode);
 
 public slots:
-    void update(const QString arg);
-    void auth(const QString arg);
+    void install(const QString arg);
+    void authorization(const QString arg);
 
 private:
     QString manager;

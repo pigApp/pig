@@ -4,112 +4,112 @@
 #include "player.h"
 
 #include <QWidget>
-#include <QDesktopWidget>//
-#include <QPixmap>
 #include <QLabel>
 #include <QLineEdit>
 #include <QPushButton>
 #include <QRadioButton>
+#include <QPixmap>
+#include <QMessageBox>
+#include <QAbstractItemView>
 #include <QScrollArea>
 #include <QScrollBar>
-#include <QMessageBox>
-#include <QCompleter>
 #include <QGroupBox>
 #include <QHBoxLayout>
 #include <QVBoxLayout>
 #include <QGridLayout>
+#include <QDesktopWidget>//
+#include <QDesktopServices>
+#include <QCompleter>
 
 #include <QFont>
 
 #include <QDebug>
-
-#include <QAbstractItemView>
 
 QT_BEGIN_NAMESPACE
 
 class Ui_PIG
 {
 public:
-    QVBoxLayout *layout_main;
+    QVBoxLayout *main_layout;
 
     void setupUi(QWidget *PIG)
     {
-        QFont f(":/font-global");
-        f.setPointSize(24); // TODO: PORCENTAJE
-        f.setCapitalization(QFont::AllUppercase);
-        f.setBold(true);
+        QFont font(":/font-global");
+        font.setPointSize(24); // TODO: PORCENTAJE
+        font.setCapitalization(QFont::AllUppercase);
+        font.setBold(true);
 
-        QBrush b(QColor(10, 10, 10, 255));
-        QBrush b1(QColor(255, 255, 255, 255));
-        QBrush b2(QColor(0, 0, 0, 255));
+        QBrush brush_base(QColor(10, 10, 10, 255));
+        QBrush brush_white(QColor(255, 255, 255, 255));
+        QBrush brush_black(QColor(0, 0, 0, 255));
 
-        QPalette p;
-        p.setBrush(QPalette::Active, QPalette::Base, b);
-        p.setBrush(QPalette::Active, QPalette::Window, b);
-        p.setBrush(QPalette::Active, QPalette::WindowText, b1);
-        p.setBrush(QPalette::Active, QPalette::Text, b1);
-        p.setBrush(QPalette::Active, QPalette::Highlight, b2);
-        p.setBrush(QPalette::Active, QPalette::Button, b);
-        p.setBrush(QPalette::Active, QPalette::ButtonText, b1);
-        p.setBrush(QPalette::Disabled, QPalette::Base, b);
-        p.setBrush(QPalette::Disabled, QPalette::Window, b);
-        p.setBrush(QPalette::Disabled, QPalette::WindowText, b2);
-        p.setBrush(QPalette::Disabled, QPalette::Text, b2);
-        p.setBrush(QPalette::Disabled, QPalette::Highlight, b);
-        p.setBrush(QPalette::Disabled, QPalette::Button, b);
-        p.setBrush(QPalette::Disabled, QPalette::ButtonText, b2);
+        QPalette palette;
+        palette.setBrush(QPalette::Active, QPalette::Base, brush_base);
+        palette.setBrush(QPalette::Active, QPalette::Window, brush_base);
+        palette.setBrush(QPalette::Active, QPalette::WindowText, brush_white);
+        palette.setBrush(QPalette::Active, QPalette::Text, brush_white);
+        palette.setBrush(QPalette::Active, QPalette::Highlight, brush_black);
+        palette.setBrush(QPalette::Active, QPalette::Button, brush_base);
+        palette.setBrush(QPalette::Active, QPalette::ButtonText, brush_white);
+        palette.setBrush(QPalette::Disabled, QPalette::Base, brush_base);
+        palette.setBrush(QPalette::Disabled, QPalette::Window, brush_base);
+        palette.setBrush(QPalette::Disabled, QPalette::WindowText, brush_black);
+        palette.setBrush(QPalette::Disabled, QPalette::Text, brush_black);
+        palette.setBrush(QPalette::Disabled, QPalette::Highlight, brush_base);
+        palette.setBrush(QPalette::Disabled, QPalette::Button, brush_base);
+        palette.setBrush(QPalette::Disabled, QPalette::ButtonText, brush_black);
 
-        layout_main = new QVBoxLayout(PIG);
+        main_layout = new QVBoxLayout(PIG);
 
-        PIG->setFont(f);
-        PIG->setPalette(p);
-        PIG->setLayout(layout_main);
+        PIG->setFont(font);
+        PIG->setPalette(palette);
+        PIG->setLayout(main_layout);
     }
 };
 
 class Ui_Authotization
 {
 public:
-    QPalette p;
-    QPalette p1;
+    QPalette palette;
+    QPalette palette_error;
     QLabel *label;
     QLineEdit *input;
-    QPushButton *btn_reset;
+    QPushButton *button_reset;
     QHBoxLayout *layout_input;
     QVBoxLayout *layout;
 
     void setupUi(QWidget *Authorization)
     {
-        QBrush b(QColor(15, 15, 15, 255));
-        QBrush b1(QColor(255, 255, 255, 255));
-        QBrush b2(QColor(0, 0, 0, 255));
-        QBrush b3(QColor(115, 10, 10, 255));
+        QBrush brush(QColor(15, 15, 15, 255));
+        QBrush brush_white(QColor(255, 255, 255, 255));
+        QBrush brush_black(QColor(0, 0, 0, 255));
+        QBrush brush_red(QColor(115, 10, 10, 255));
 
-        p.setBrush(QPalette::Active, QPalette::Base, b);
-        p.setBrush(QPalette::Active, QPalette::Window, b);
-        p.setBrush(QPalette::Active, QPalette::Text, b1);
-        p.setBrush(QPalette::Active, QPalette::Highlight, b2);
+        palette.setBrush(QPalette::Active, QPalette::Base, brush);
+        palette.setBrush(QPalette::Active, QPalette::Window, brush);
+        palette.setBrush(QPalette::Active, QPalette::Text, brush_white);
+        palette.setBrush(QPalette::Active, QPalette::Highlight, brush_black);
 
-        p1.setBrush(QPalette::Active, QPalette::Base, b);
-        p1.setBrush(QPalette::Active, QPalette::Window, b);
-        p1.setBrush(QPalette::Active, QPalette::Text, b1);
-        p1.setBrush(QPalette::Active, QPalette::Highlight, b3);
+        palette_error.setBrush(QPalette::Active, QPalette::Base, brush);
+        palette_error.setBrush(QPalette::Active, QPalette::Window, brush);
+        palette_error.setBrush(QPalette::Active, QPalette::Text, brush_white);
+        palette_error.setBrush(QPalette::Active, QPalette::Highlight, brush_red);
 
         label = new QLabel("ENTER PASSWORD", Authorization);
         label->setAlignment(Qt::AlignHCenter);
 
         input = new QLineEdit(Authorization);
-        input->setPalette(p);
+        input->setPalette(palette);
         input->setEchoMode(QLineEdit::Password);
         input->setAlignment(Qt::AlignCenter);
 
-        btn_reset = new QPushButton("RESET", Authorization);
-        btn_reset->setFlat(true);
-        btn_reset->setHidden(true);
+        button_reset = new QPushButton("RESET", Authorization);
+        button_reset->setFlat(true);
+        button_reset->setHidden(true);
 
         layout_input = new QHBoxLayout;
         layout_input->addWidget(input);
-        layout_input->addWidget(btn_reset);
+        layout_input->addWidget(button_reset);
 
         layout = new QVBoxLayout(Authorization);
         layout->addWidget(label);
@@ -123,61 +123,73 @@ public:
 class Ui_Update
 {
 public:
-    QMessageBox *msgBox;
-    int ret;
+    QPalette palette;
+    QPalette palette_error;
+    QLabel *label;
+    QPushButton *button_a;
+    QPushButton *button_b;
+    QHBoxLayout *layout;
 
     void setupUi(QWidget *Update)
     {
-        QFont f(":/font-global");
-        f.setPointSize(12); // TODO: PORCENTAJE
-        f.setCapitalization(QFont::AllUppercase);
+        QFont font(":/font-global");
+        font.setPointSize(16); // TODO: PORCENTAJE
+        font.setCapitalization(QFont::AllUppercase);
+        font.setBold(true);
 
-        QBrush b(QColor(10, 10, 10, 255));
-        QBrush b1(QColor(255, 255, 255, 255));
-        QBrush b2(QColor(0, 0, 0, 255));
+        QBrush brush_white(QColor(255, 255, 255, 255));
+        QBrush brush_black(QColor(0, 0, 0, 255));
+        QBrush brush_red(QColor(115, 10, 10, 255));
 
-        QPalette p;
-        p.setBrush(QPalette::Active, QPalette::Base, b);
-        p.setBrush(QPalette::Active, QPalette::Window, b);
-        p.setBrush(QPalette::Active, QPalette::WindowText, b1);
-        p.setBrush(QPalette::Active, QPalette::Text, b1);
-        p.setBrush(QPalette::Active, QPalette::Highlight, b2);
-        p.setBrush(QPalette::Active, QPalette::Button, b);
-        p.setBrush(QPalette::Active, QPalette::ButtonText, b1);
-        p.setBrush(QPalette::Disabled, QPalette::Base, b);
-        p.setBrush(QPalette::Disabled, QPalette::Window, b);
-        p.setBrush(QPalette::Disabled, QPalette::WindowText, b2);
-        p.setBrush(QPalette::Disabled, QPalette::Text, b2);
-        p.setBrush(QPalette::Disabled, QPalette::Highlight, b);
-        p.setBrush(QPalette::Disabled, QPalette::Button, b);
-        p.setBrush(QPalette::Disabled, QPalette::ButtonText, b2);
+        palette.setBrush(QPalette::Active, QPalette::Button, brush_white);
+        palette.setBrush(QPalette::Active, QPalette::ButtonText, brush_black);
 
-        msgBox = new QMessageBox(Update);
-        msgBox->setFont(f);
-        msgBox->setPalette(p);
-        msgBox->setText("UPDATE AVAILABLE");
-        msgBox->setStandardButtons(QMessageBox::Ok | QMessageBox::Ignore);
-        msgBox->setDefaultButton(QMessageBox::Ok);
-        //msgBox->setWindowFlags(Qt::FramelessWindowHint);
-        ret = msgBox->exec();
+        palette_error.setBrush(QPalette::Active, QPalette::Button, brush_red);
+        palette_error.setBrush(QPalette::Active, QPalette::ButtonText, brush_white);
+
+        label = new QLabel(Update);
+        label->setFont(font);
+        label->setText("UPDATE AVAILABLE");
+
+        button_a = new QPushButton(" ACCEPT ", Update);
+        button_a->setFont(font);
+        button_a->setPalette(palette);
+        button_a->setFlat(true);
+        button_a->setDefault(true);
+        button_a->setAutoFillBackground(true);
+
+        button_b = new QPushButton(" CANCEL ", Update);
+        button_b->setFont(font);
+        button_b->setPalette(palette);
+        button_b->setFlat(true);
+        button_b->setAutoFillBackground(true);
+
+        layout = new QHBoxLayout(Update);
+        layout->setSpacing(22); // TODO: PORCENTAJE
+        layout->setAlignment(Qt::AlignHCenter);
+        layout->addWidget(label);
+        layout->addWidget(button_a);
+        layout->addWidget(button_b);
+
+        Update->setLayout(layout);
     }
 };
 
 class Ui_Topbar
 {
 public:
-    QPushButton *btn_setup;
+    QPushButton *button_setup;
     QGridLayout *layout;
 
     void setupUi(QWidget *Topbar)
     {
-        btn_setup = new QPushButton("≡", Topbar);
-        btn_setup->setFlat(true);
+        button_setup = new QPushButton("≡", Topbar);
+        button_setup->setFlat(true);
 
         layout = new QGridLayout(Topbar);
         layout->setMargin(0);
         layout->setAlignment(Qt::AlignTop);
-        layout->addWidget(btn_setup, 0, 1);
+        layout->addWidget(button_setup, 0, 1);
 
         Topbar->setLayout(layout);
     }
@@ -188,9 +200,9 @@ class Ui_Finder
 public:
     QGridLayout *__layout_topbar;
 
-    QPalette p;
+    QPalette palette;
     QLineEdit *input;
-    QPushButton *btn_filters;
+    QPushButton *button_filters;
     QRadioButton *radio_allp;
     QRadioButton *radio_720p;
     QRadioButton *radio_1080p;
@@ -199,68 +211,67 @@ public:
     QHBoxLayout *layout_filters;
     QGridLayout *layout;
 
-    QVector<QPushButton*> btn_categories_vector;
+    QVector<QPushButton*> buttons_categories_vector;
 
     void setupUi(QStringList *movies, QGridLayout *_layout_topbar, QWidget *Finder)
     {
         __layout_topbar = _layout_topbar;
 
-        QFont f(":/font-global");
-        f.setPointSize(24); // TODO: PORCENTAJE
-        f.setCapitalization(QFont::AllUppercase);
-        f.setBold(true);
+        QFont font(":/font-global");
+        font.setPointSize(24); // TODO: PORCENTAJE
+        font.setCapitalization(QFont::AllUppercase);
+        font.setBold(true);
 
-        QBrush b(QColor(15, 15, 15, 255));
-        QBrush b1(QColor(255, 255, 255, 255));
-        QBrush b2(QColor(0, 0, 0, 255));
-        QBrush b3(QColor(10, 10, 10, 255));
-        QBrush b4(QColor(115, 10, 10, 255));
+        QBrush brush(QColor(15, 15, 15, 255));
+        QBrush brush_white(QColor(255, 255, 255, 255));
+        QBrush brush_black(QColor(0, 0, 0, 255));
+        QBrush brush_base(QColor(10, 10, 10, 255));
+        QBrush brush_red(QColor(115, 10, 10, 255));
 
+        palette.setBrush(QPalette::Active, QPalette::Base, brush);
+        palette.setBrush(QPalette::Active, QPalette::Window, brush);
+        palette.setBrush(QPalette::Active, QPalette::WindowText, brush_white);
+        palette.setBrush(QPalette::Active, QPalette::Text, brush_white);
+        palette.setBrush(QPalette::Active, QPalette::Highlight, brush_black);
+        palette.setBrush(QPalette::Active, QPalette::Button, brush);
+        palette.setBrush(QPalette::Active, QPalette::ButtonText, brush_white);
+        palette.setBrush(QPalette::Disabled, QPalette::Base, brush);
+        palette.setBrush(QPalette::Disabled, QPalette::Window, brush);
+        palette.setBrush(QPalette::Disabled, QPalette::WindowText, brush_black);
+        palette.setBrush(QPalette::Disabled, QPalette::Text, brush_black);
+        palette.setBrush(QPalette::Disabled, QPalette::Highlight, brush);
+        palette.setBrush(QPalette::Disabled, QPalette::Button, brush);
+        palette.setBrush(QPalette::Disabled, QPalette::ButtonText, brush_black);
 
-        p.setBrush(QPalette::Active, QPalette::Base, b);
-        p.setBrush(QPalette::Active, QPalette::Window, b);
-        p.setBrush(QPalette::Active, QPalette::WindowText, b1);
-        p.setBrush(QPalette::Active, QPalette::Text, b1);
-        p.setBrush(QPalette::Active, QPalette::Highlight, b2);
-        p.setBrush(QPalette::Active, QPalette::Button, b);
-        p.setBrush(QPalette::Active, QPalette::ButtonText, b1);
-        p.setBrush(QPalette::Disabled, QPalette::Base, b);
-        p.setBrush(QPalette::Disabled, QPalette::Window, b);
-        p.setBrush(QPalette::Disabled, QPalette::WindowText, b2);
-        p.setBrush(QPalette::Disabled, QPalette::Text, b2);
-        p.setBrush(QPalette::Disabled, QPalette::Highlight, b);
-        p.setBrush(QPalette::Disabled, QPalette::Button, b);
-        p.setBrush(QPalette::Disabled, QPalette::ButtonText, b2);
-
-        QPalette p1;
-        p1.setBrush(QPalette::Active, QPalette::Base, b3);
-        p1.setBrush(QPalette::Active, QPalette::Window, b3);
-        p1.setBrush(QPalette::Active, QPalette::Text, b1);
-        p1.setBrush(QPalette::Active, QPalette::Highlight, b4);
+        QPalette palette_completer;
+        palette_completer.setBrush(QPalette::Active, QPalette::Base, brush_base);
+        palette_completer.setBrush(QPalette::Active, QPalette::Window, brush_base);
+        palette_completer.setBrush(QPalette::Active, QPalette::Text, brush_white);
+        palette_completer.setBrush(QPalette::Active, QPalette::Highlight, brush_red);
 
         QCompleter *completer = new QCompleter(*movies, Finder);
-        completer->popup()->setFont(f);
-        completer->popup()->setPalette(p1);
+        completer->popup()->setFont(font);
+        completer->popup()->setPalette(palette_completer);
         completer->setMaxVisibleItems(10);
         completer->setFilterMode(Qt::MatchContains);
         completer->setCaseSensitivity(Qt::CaseInsensitive);
         completer->setCompletionMode(QCompleter::PopupCompletion);
 
         input = new QLineEdit(Finder);
-        input->setPalette(p);
+        input->setPalette(palette);
         input->setCompleter(completer);
         input->setAlignment(Qt::AlignCenter);
 
-        btn_filters = new QPushButton("≡", Finder);
-        btn_filters->setPalette(p);
-        btn_filters->setFlat(true);
-        btn_filters->setParent(input);
+        button_filters = new QPushButton("≡", Finder);
+        button_filters->setPalette(palette);
+        button_filters->setFlat(true);
+        button_filters->setParent(input);
 
         layout = new QGridLayout;
         layout->setContentsMargins(82, 0, 2, 0);// TODO: PORCENTAJE
         layout->setSpacing(0); // TODO: PORCENTAJE
         layout->addWidget(input, 0, 0);
-        layout->addWidget(btn_filters, 0, 0, 0, 0, Qt::AlignLeft);
+        layout->addWidget(button_filters, 0, 0, 0, 0, Qt::AlignLeft);
 
         __layout_topbar->addLayout(layout, 0, 0);
 
@@ -269,33 +280,33 @@ public:
 
     void setupFilterUi(QWidget *Finder)
     {
-        QFont f(":/font-global");
-        f.setPointSize(12); // TODO: PORCENTAJE
-        f.setCapitalization(QFont::AllUppercase);
-        f.setBold(true);
+        QFont font(":/font-global");
+        font.setPointSize(12); // TODO: PORCENTAJE
+        font.setCapitalization(QFont::AllUppercase);
+        font.setBold(true);
 
-        QBrush b(QColor(50, 50, 50, 255));
-        QBrush b1(QColor(255, 255, 255, 255));
+        QBrush brush(QColor(50, 50, 50, 255));
+        QBrush brush_white(QColor(255, 255, 255, 255));
 
-        p.setBrush(QPalette::Active, QPalette::Base, b);
-        p.setBrush(QPalette::Active, QPalette::WindowText, b1);
+        palette.setBrush(QPalette::Active, QPalette::Base, brush);
+        palette.setBrush(QPalette::Active, QPalette::WindowText, brush_white);
 
         radio_allp = new QRadioButton("ALL", Finder);
-        radio_allp->setFont(f);
-        radio_allp->setPalette(p);
+        radio_allp->setFont(font);
+        radio_allp->setPalette(palette);
         radio_allp->setChecked(true);
 
         radio_720p = new QRadioButton("720p", Finder);
-        radio_720p->setFont(f);
-        radio_720p->setPalette(p);
+        radio_720p->setFont(font);
+        radio_720p->setPalette(palette);
 
         radio_1080p = new QRadioButton("1080p", Finder);
-        radio_1080p->setFont(f);
-        radio_1080p->setPalette(p);
+        radio_1080p->setFont(font);
+        radio_1080p->setPalette(palette);
 
         radio_fullMovie = new QRadioButton("FULLMOVIE", Finder);
-        radio_fullMovie->setFont(f);
-        radio_fullMovie->setPalette(p);
+        radio_fullMovie->setFont(font);
+        radio_fullMovie->setPalette(palette);
         radio_fullMovie->setAutoExclusive(false);
 
         layout_radios = new QHBoxLayout;;
@@ -337,12 +348,12 @@ class Ui_View
 public:
     Player *player;
 
-    QPalette p;
-    QLabel *label_meta[5];
+    QPalette palette;
+    QLabel *labels_meta[5];
     QLabel *cover;
     QLabel *backCover;
-    QPushButton *btn_clear;
-    QPushButton *btn_hideInfo;
+    QPushButton *button_clear;
+    QPushButton *button_hideInfo;
     QScrollArea *scrollArea_covers;
     QGroupBox *group_covers;
     QGroupBox *group_info;
@@ -352,19 +363,19 @@ public:
     QVBoxLayout *layout_info;
     QVBoxLayout *layout;
 
-    QVector<QPushButton*> btn_vector_covers;
+    QVector<QPushButton*> button_vector_covers;
 
     void setupUi(QWidget *View)
     {
-        QBrush b(QColor(10, 10, 10, 255));
-        QBrush b1(QColor(255, 255, 255, 255));
+        QBrush brush_base(QColor(10, 10, 10, 255));
+        QBrush brush_white(QColor(255, 255, 255, 255));
 
-        p.setBrush(QPalette::Active, QPalette::Base, b);
-        p.setBrush(QPalette::Active, QPalette::Window, b);
-        p.setBrush(QPalette::Active, QPalette::WindowText, b1);
-        p.setBrush(QPalette::Active, QPalette::Text, b1);
-        p.setBrush(QPalette::Active, QPalette::Button, b);
-        p.setBrush(QPalette::Active, QPalette::ButtonText, b1);
+        palette.setBrush(QPalette::Active, QPalette::Base, brush_base);
+        palette.setBrush(QPalette::Active, QPalette::Window, brush_base);
+        palette.setBrush(QPalette::Active, QPalette::WindowText, brush_white);
+        palette.setBrush(QPalette::Active, QPalette::Text, brush_white);
+        palette.setBrush(QPalette::Active, QPalette::Button, brush_base);
+        palette.setBrush(QPalette::Active, QPalette::ButtonText, brush_white);
 
         scrollArea_covers = new QScrollArea(View);
         scrollArea_covers->setFrameStyle(QFrame::NoFrame);
@@ -393,20 +404,20 @@ public:
 
         View->setLayout(layout);
 
-        //        btn_clear = new QPushButton("x", group_covers);
-        //        btn_clear->setFont(f);
-        //        btn_clear->setPalette(p);
-        //        btn_clear->setFlat(true);
-        //layout_covers->addWidget(btn_clear);
+        //        button_clear = new QPushButton("x", group_covers);
+        //        button_clear->setFont(font);
+        //        button_clear->setPalette(palette);
+        //        button_clear->setFlat(true);
+        //layout_covers->addWidget(button_clear);
     }
 
     void setupInfoUi(const int &index, const QString &path, const QStringList **data, QWidget *View)
     {
         const QStringList **_data = data;
 
-        QFont f(":/font-global");
-        f.setPointSize(24); //TODO: PORCENTAJE
-        f.setCapitalization(QFont::AllUppercase);
+        QFont font(":/font-global");
+        font.setPointSize(24); //TODO: PORCENTAJE
+        font.setCapitalization(QFont::AllUppercase);
 
         group_info = new QGroupBox(View);
         group_info->setStyleSheet("QGroupBox{ background-color: rgba(10, 10, 10, 255);"
@@ -419,13 +430,13 @@ public:
         layout_meta->setSizeConstraint(QLayout::SetMaximumSize);
 
         for (int i = 0; i < 5; i++) {
-            label_meta[i] = new QLabel(group_info);
-            label_meta[i]->setStyleSheet("QLabel{ background-color: rgba(10, 10, 10, 255);"
+            labels_meta[i] = new QLabel(group_info);
+            labels_meta[i]->setStyleSheet("QLabel{ background-color: rgba(10, 10, 10, 255);"
                                          "border: 0; margin: 0; }");
-            label_meta[i]->setFont(f);
-            label_meta[i]->setPalette(p);
-            label_meta[i]->setText(" "+(**_data)[((index * 17) + i)]);
-            layout_meta->addWidget(label_meta[i]);
+            labels_meta[i]->setFont(font);
+            labels_meta[i]->setPalette(palette);
+            labels_meta[i]->setText(" "+(**_data)[((index * 17) + i)]);
+            layout_meta->addWidget(labels_meta[i]);
         }
 
         QPixmap pixmap_cover(path);
@@ -449,15 +460,15 @@ public:
         layout_multi->insertSpacing(3, 20); // TODO: PORCENTAJE
         layout_multi->addWidget(player);
 
-        btn_hideInfo = new QPushButton("", group_info);
-        btn_hideInfo->setFont(f);
-        btn_hideInfo->setPalette(p);
-        btn_hideInfo->setFlat(true);
+        button_hideInfo = new QPushButton("", group_info);
+        button_hideInfo->setFont(font);
+        button_hideInfo->setPalette(palette);
+        button_hideInfo->setFlat(true);
 
         layout_info = new QVBoxLayout(group_info);
         layout_info->setSpacing(110); // TODO: PORCENTAJE
         layout_info->setAlignment(Qt::AlignVCenter);
-        layout_info->addWidget(btn_hideInfo);
+        layout_info->addWidget(button_hideInfo);
         layout_info->addLayout(layout_meta);
         layout_info->addLayout(layout_multi);
 

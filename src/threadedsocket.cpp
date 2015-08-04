@@ -67,11 +67,14 @@ void ThreadedSocket::processData()
             file.setFileName(*__PIG_PATH+"/tmp/covers/"+*_pkg);
         else if (_pkg->endsWith("_back.jpg"))
             file.setFileName(*__PIG_PATH+"/tmp/covers/back/"+*_pkg);
+        else if (_pkg->endsWith(".zip"))
+            file.setFileName(*__PIG_PATH+"/tmp/update/"+*_pkg);
         else
             file.setFileName(*__PIG_PATH+"/tmp/"+*_pkg);
         file.open(QIODevice::WriteOnly);
         file.write(data);
         file.close();
+
         emit sendFile(_ID, file.fileName());
     }
 }

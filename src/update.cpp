@@ -5,7 +5,7 @@
 
 #include <QProcess>
 #include <QTextStream>
-#include <QDebug>//
+#include <QTimer>
 
 Update::Update(const QString *PIG_PATH, QSqlDatabase *db_, QWidget *parent) :
     QWidget(parent),
@@ -22,11 +22,12 @@ Update::Update(const QString *PIG_PATH, QSqlDatabase *db_, QWidget *parent) :
 
     if (_db->open()) {
         QSqlQuery query;
-        query.prepare("SELECT binary, release, database, library, host, url FROM data");
+        query.prepare("SELECT binary, release, database, library, hostUpdate \
+                      , urlUpdate, hostSite, urlSiteNews FROM data");
 
         if (!query.exec()) {
             _db->close();
-            emit sig_error();
+            QTimer::singleShot(100, this, SLOT(error()));
         } else {
             query.next();
 
@@ -36,6 +37,8 @@ Update::Update(const QString *PIG_PATH, QSqlDatabase *db_, QWidget *parent) :
             lib = query.value(3).toInt();
             host = query.value(4).toString();
             urls << query.value(5).toString();
+            hostSite = query.value(6).toString();
+            urlSiteNews = query.value(7).toString();
             pkgs << NULL;
 
             _db->close();
@@ -43,7 +46,7 @@ Update::Update(const QString *PIG_PATH, QSqlDatabase *db_, QWidget *parent) :
             get();
         }
     } else {
-        emit sig_error();
+        QTimer::singleShot(100, this, SLOT(error()));
     }
 }
 
@@ -120,6 +123,8 @@ void Update::check(QString data)
 
 void Update::unpack(int ID, QString path)
 {
+    ui->label->setText("UNPACKING");
+
     Unpack *unpack = new Unpack(this);
 
     QObject::connect (unpack, &Unpack::finished, [&] (int exitCode) {
@@ -127,76 +132,76 @@ void Update::unpack(int ID, QString path)
         if (exitCode == 0) {
             ++nUnpacked;
             if (pkgs.count() == nUnpacked)
-                update();
+                install();
+            else
+                ui->label->setText("DOWNLOADING");
         } else {
-            qDebug() << "ERROR UNPACK";//
-            //error();
+            error("UNPACK FAILED");
         }
     });
 
     unpack->unzip(_PIG_PATH, &path, &sums[ID]);
 }
 
-void Update::update()
+void Update::install()
 {
-//NEWS
-    origin = *_PIG_PATH+"/tmp/news";
-    target = *_PIG_PATH+"/news";
+    ui->label->setText("INSTALLING");
 
-    file.rename(origin, target);
-
-//DB
     if (hasDb) {
-        origin = *_PIG_PATH+"/tmp/db.sqlite";
+        origin = *_PIG_PATH+"/tmp/update/db.sqlite";
         target = *_PIG_PATH+"/db.sqlite";
-        backup = *_PIG_PATH+"/tmp/db.sqlite.bk";
+        backup = *_PIG_PATH+"/tmp/update/db.sqlite.bk";
 
         if (file.exists(target))
             file.rename(target, backup);
         if (file.rename(origin, target)) {
             if (!hasBin) {
-                qDebug() << "DB UPDATED";
-                //MSG "DB UPDATED"
-                //BOTON "OK" -> delete this;
+                ui->label->setText("DATABASE UPDATED");
+                ui->button_a->setText("OK");
+                ui->button_b->setText("INFO");
+                ui->button_a->show();
+                ui->button_b->show();
+                QObject::connect (ui->button_a, &QPushButton::pressed, [&] { delete this; });
+                QObject::connect (ui->button_b, &QPushButton::pressed, [&] {
+                    QDesktopServices::openUrl(QUrl("http://"+hostSite+urlSiteNews));
+                });
             }
         } else {
-            qDebug() << "ERROR UPDATE-DB";//
-            //error();
+            error("UPDATE DATABASE FAILED");
         }
     }
 
-//BIN-LIB
     if (hasBin) {
 #ifdef __linux__
     Su *su = new Su(this);
 
-    QObject::connect (su, &Su::finished, [&] (int exitCode) {
+    QObject::connect (su, &Su::finished, [=] (int exitCode) {
         status(exitCode);
         su->deleteLater();
     });
 
-    if (hasLib) {
-        su->update("'mv "+*_PIG_PATH+"/tmp/pig /usr/bin/ \
-                   ; mv "+*_PIG_PATH+"/tmp/*.so* /usr/lib/pig/ \
-                   ; chown root.root /usr/bin/pig \
-                   ; chown root.root /usr/lib/pig/* \
-                   ; chmod +x /usr/bin/pig \
-                   ; chmod +x /usr/lib/pig/*'");
+    if (!hasLib) {
+        su->install("'mv "+*_PIG_PATH+"/tmp/update/pig /usr/bin/ \
+                    ; chown root.root /usr/bin/pig \
+                    ; chmod +x /usr/bin/pig'");
     } else {
-        su->update("'mv "+*_PIG_PATH+"/tmp/pig /usr/bin/ \
-                   ; chown root.root /usr/bin/pig \
-                   ; chmod +x /usr/bin/pig'");
+        su->install("'mv "+*_PIG_PATH+"/tmp/update/pig /usr/bin/ \
+                    ; mv "+*_PIG_PATH+"/tmp/update/*.so* /usr/lib/pig/ \
+                    ; chown root.root /usr/bin/pig \
+                    ; chown root.root /usr/lib/pig/* \
+                    ; chmod +x /usr/bin/pig \
+                    ; chmod +x /usr/lib/pig/*'");
     }
 #else
     QProcess proc; //FIX: USAR SEÑALES.
 
-    if (hasLib) {
-        if (proc.startDetached("C:\\PIG\\.pig\\update.bat lib"))
+    if (!hasLib) {
+        if (proc.startDetached("C:\\PIG\\.pig\\update.bat"))
             status(0);
         else
             status(1);
     } else {
-        if (proc.startDetached("C:\\PIG\\.pig\\update.bat"))
+        if (proc.startDetached("C:\\PIG\\.pig\\update.bat lib"))
             status(0);
         else
             status(1);
@@ -205,10 +210,8 @@ void Update::update()
     }
 }
 
-void Update::status(int exitCode)
+void Update::status(const int &exitCode)
 {
-    qDebug() << "EXIT CODE " << exitCode;//
-
 #ifdef __linux__
     if (exitCode == 0) {
         if (!hasDb) {
@@ -227,15 +230,19 @@ void Update::status(int exitCode)
                 _db->close();
             }
         }
-        qDebug() << "UPDATED RESTART PIG";
-        //MSG "UPDATED RESTART PIG"
-        //BOTON EXIT -> delete this;
+        ui->label->setText("UPDATED. RESTART PIG");
+        ui->button_a->setText("EXIT");
+        ui->button_b->setText("INFO");
+        ui->button_a->show();
+        ui->button_b->show();
+        QObject::connect (ui->button_a, &QPushButton::pressed, [=] { exit(0); });
+        QObject::connect (ui->button_b, &QPushButton::pressed, [&] {
+            QDesktopServices::openUrl(QUrl("http://"+hostSite+urlSiteNews));
+        });
     } else if (exitCode == -1) {
-        qDebug() << "ERROR SU";//
-        //error();
+        error("UPDATE FAILED. REQUIRED GKSU/KDESU");
     } else {
-        qDebug() << "ERROR UPDATE-BIN/LIB";//
-        //error();
+        error("UPDATE FAILED");
     }
 #else
     if (exitCode == 0) {
@@ -257,35 +264,36 @@ void Update::status(int exitCode)
         }
         exit(0);
     } else {
-        qDebug() << "UPDATE FAIL";//
-        //error();
+        error("UPDATE FAILED");
     }
 #endif
 }
 
-void Update::error()
+void Update::error(const QString &error)
 {
-//CLEAN UP NEWS
-    origin = *_PIG_PATH+"/news";
-    target = *_PIG_PATH+"/tmp/news.trash";
-
-    if (file.exists(origin))
-        file.rename(origin, target);
-
-//CLEAN UP DB
     origin = *_PIG_PATH+"/db.sqlite";
-    target = *_PIG_PATH+"/tmp/db.sqlite.trash";
-    backup = *_PIG_PATH+"/tmp/db.sqlite.bk";
+    target = *_PIG_PATH+"/tmp/update/db.sqlite.trash";
+    backup = *_PIG_PATH+"/tmp/update/db.sqlite.bk";
 
-    if (hasDb) {
-        if (file.exists(origin) && file.exists(backup)) {
+    if (hasDb && file.exists(backup)) {
+        if (file.exists(origin)) {
             file.rename(origin, target);
+            file.rename(backup, origin);
+        } else {
             file.rename(backup, origin);
         }
     }
 
-    //MSG "ERROR"
-    //BOTON "OK" -> delete this;
+    if (ui != 0) {
+        ui->label->setText(error);
+        ui->button_a->setPalette(ui->palette_error);
+        ui->button_a->setText("OK");
+        ui->button_a->show();
+        QObject::connect (ui->button_a, &QPushButton::pressed, [&] { delete this; });
+    } else {
+        emit dbError("DATABASE CORRUPTED");
+        delete this;
+    }
 }
 
 void Update::init_ui()
@@ -293,17 +301,15 @@ void Update::init_ui()
     ui = new Ui::Update;
     ui->setupUi(this);
 
-    switch (ui->ret) {
-        case QMessageBox::Ok:
-            ui->msgBox->setText("DOWNLOADING...");
-            //get();
-            qDebug() << "OK";
-            break;
-        case QMessageBox::Ignore:
-            delete this;
-            qDebug() << "IGNORE";
-            break;
-        default:
-            break;
-    }
+    QObject::connect (ui->button_a, &QPushButton::pressed, [&] {
+        ui->label->setText("DOWNLOADING");
+        ui->button_a->hide();
+        ui->button_b->hide();
+        ui->button_a->disconnect();
+        ui->button_b->disconnect();
+        get();
+    });
+    QObject::connect (ui->button_b, &QPushButton::pressed, [&] { delete this; });
+
+    emit showWidget(this);
 }
