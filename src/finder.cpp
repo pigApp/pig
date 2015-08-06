@@ -121,7 +121,7 @@ void Finder::filters_handler()
 
         ui->setupFilterUi(this);
 
-        QObject::connect (ui->radio_allp, &QRadioButton::released, [=] {
+        QObject::connect (ui->radio_all_quality, &QRadioButton::released, [=] {
             quality = "ALL";
             if (m_filterOnCovers)
                 emit sendData(NULL, &quality);
@@ -171,9 +171,9 @@ void Finder::filters_handler()
         }
     } else {
         if (isFiltersHidden)
-            ui->__layout_topbar->addItem(ui->layout_filters, 1, 0);
+            ui->_layout_topbar->addItem(ui->layout_filters, 1, 0);
         else
-            ui->__layout_topbar->removeItem(ui->layout_filters);
+            ui->_layout_topbar->removeItem(ui->layout_filters);
 
         isFiltersHidden = !isFiltersHidden;
     }

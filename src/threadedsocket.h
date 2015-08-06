@@ -10,7 +10,7 @@ class ThreadedSocket : public QThread
     Q_OBJECT
 
 public:
-    explicit ThreadedSocket(const QString *_PIG_PATH, const QString *host, const QString *url,
+    explicit ThreadedSocket(const QString *PIG_PATH, const QString *host, const QString *url,
                             const QString *pkg = NULL, int ID = 0, QObject *parent = 0);
     ~ThreadedSocket();
 
@@ -22,7 +22,7 @@ signals:
     //void error(QTcpSocket::SocketError socketerror); //TODO: SOCKET ERROR.
 
 private:
-    const QString *__PIG_PATH;
+    const QString *_PIG_PATH;
     const QString *_host;
     const QString *_url;
     const QString *_pkg;

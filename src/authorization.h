@@ -16,7 +16,7 @@ class Authorization : public QWidget
     Q_OBJECT
 
 public:
-    explicit Authorization(const QString *PIG_PATH, bool _set, QWidget *parent = 0);
+    explicit Authorization(const QString *PIG_PATH, bool set_, QWidget *parent = 0);
     ~Authorization();
 
 signals:
@@ -26,7 +26,7 @@ public slots:
     void check();
 
 private:
-    bool __set;
+    bool _set;
 
     QFile file;
     QString digest;

@@ -15,7 +15,7 @@ signals:
     void finished(int exitCode);
 
 public slots:
-    void unzip(const QString *_PIG_PATH, const QString *path, const QString *sum);
+    void unzip(const QString *PIG_PATH, const QString *path, const QString *sum);
 };
 
 #endif

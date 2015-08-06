@@ -2,10 +2,10 @@
 
 #include <QDataStream>
 
-ThreadedSocket::ThreadedSocket(const QString *_PIG_PATH, const QString *host, const QString *url,
+ThreadedSocket::ThreadedSocket(const QString *PIG_PATH, const QString *host, const QString *url,
                                const QString *pkg, int ID, QObject *parent) :
     QThread(parent),
-    __PIG_PATH(_PIG_PATH),
+    _PIG_PATH(PIG_PATH),
     _host(host),
     _url(url),
     _pkg(pkg),
@@ -64,13 +64,13 @@ void ThreadedSocket::processData()
     } else {
         QFile file;
         if (_pkg->endsWith("_front.jpg"))
-            file.setFileName(*__PIG_PATH+"/tmp/covers/"+*_pkg);
+            file.setFileName(*_PIG_PATH+"/tmp/covers/"+*_pkg);
         else if (_pkg->endsWith("_back.jpg"))
-            file.setFileName(*__PIG_PATH+"/tmp/covers/back/"+*_pkg);
+            file.setFileName(*_PIG_PATH+"/tmp/covers/back/"+*_pkg);
         else if (_pkg->endsWith(".zip"))
-            file.setFileName(*__PIG_PATH+"/tmp/update/"+*_pkg);
+            file.setFileName(*_PIG_PATH+"/tmp/update/"+*_pkg);
         else
-            file.setFileName(*__PIG_PATH+"/tmp/"+*_pkg);
+            file.setFileName(*_PIG_PATH+"/tmp/"+*_pkg);
         file.open(QIODevice::WriteOnly);
         file.write(data);
         file.close();

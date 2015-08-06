@@ -14,7 +14,7 @@ Unpack::~Unpack()
 {
 }
 
-void Unpack::unzip(const QString *_PIG_PATH, const QString *path, const QString *sum)
+void Unpack::unzip(const QString *PIG_PATH, const QString *path, const QString *sum)
 {
     QFile origin(*path);
 
@@ -26,7 +26,7 @@ void Unpack::unzip(const QString *_PIG_PATH, const QString *path, const QString 
             QuaZipFile zipFile(&zip);
             for (bool f = zip.goToFirstFile(); f; f = zip.goToNextFile()) {
                 zipFile.open(QIODevice::ReadOnly);
-                QFile target(*_PIG_PATH+"/tmp/update/"+zipFile.getActualFileName());
+                QFile target(*PIG_PATH+"/tmp/update/"+zipFile.getActualFileName());
                 target.open(QIODevice::WriteOnly);
                 if (target.write(zipFile.readAll()) == -1) {
                     zipFile.close();

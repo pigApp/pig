@@ -11,13 +11,12 @@ Update::Update(const QString *PIG_PATH, QSqlDatabase *db_, QWidget *parent) :
     QWidget(parent),
     _PIG_PATH(PIG_PATH),
     _db(db_),
+    hasNewBin(false),
+    hasNewDb(false),
+    hasNewLib(false),
+    nUnpacked(0),
     ui(NULL)
 {
-    hasBin = false;
-    hasDb = false;
-    hasLib = false;
-    nUnpacked = 0;
-
     this->hide();
 
     if (_db->open()) {
@@ -97,24 +96,24 @@ void Update::check(QString data)
         urls << last[5];
         sums << last[8];
         pkgs << "update_bin.zip";
-        hasBin = true;
+        hasNewBin = true;
     }
     if (last[2].toInt() > db) {
         db = last[2].toInt();
         urls << last[6];
         sums << last[9];
         pkgs << "update_db.zip";
-        hasDb = true;
+        hasNewDb = true;
     }
     if (last[3].toInt() > lib) {
         lib = last[3].toInt();
         urls << last[7];
         sums << last[10];
         pkgs << "update_lib.zip";
-        hasLib = true;
+        hasNewLib = true;
     }
 
-    if (hasBin || hasDb || hasLib) {
+    if (hasNewBin || hasNewDb || hasNewLib) {
         init_ui();
     } else {
         delete this;
@@ -147,7 +146,7 @@ void Update::install()
 {
     ui->label->setText("INSTALLING");
 
-    if (hasDb) {
+    if (hasNewDb) {
         origin = *_PIG_PATH+"/tmp/update/db.sqlite";
         target = *_PIG_PATH+"/db.sqlite";
         backup = *_PIG_PATH+"/tmp/update/db.sqlite.bk";
@@ -155,7 +154,7 @@ void Update::install()
         if (file.exists(target))
             file.rename(target, backup);
         if (file.rename(origin, target)) {
-            if (!hasBin) {
+            if (!hasNewBin) {
                 ui->label->setText("DATABASE UPDATED");
                 ui->button_a->setText("OK");
                 ui->button_b->setText("INFO");
@@ -171,7 +170,7 @@ void Update::install()
         }
     }
 
-    if (hasBin) {
+    if (hasNewBin) {
 #ifdef __linux__
     Su *su = new Su(this);
 
@@ -180,7 +179,7 @@ void Update::install()
         su->deleteLater();
     });
 
-    if (!hasLib) {
+    if (!hasNewLib) {
         su->install("'mv "+*_PIG_PATH+"/tmp/update/pig /usr/bin/ \
                     ; chown root.root /usr/bin/pig \
                     ; chmod +x /usr/bin/pig'");
@@ -195,7 +194,7 @@ void Update::install()
 #else
     QProcess proc; //FIX: USAR SEÑALES.
 
-    if (!hasLib) {
+    if (!hasNewLib) {
         if (proc.startDetached("C:\\PIG\\.pig\\update.bat"))
             status(0);
         else
@@ -214,7 +213,7 @@ void Update::status(const int &exitCode)
 {
 #ifdef __linux__
     if (exitCode == 0) {
-        if (!hasDb) {
+        if (!hasNewDb) {
             if (_db->open()) {
                 QSqlQuery query;
 
@@ -222,7 +221,7 @@ void Update::status(const int &exitCode)
                 query.exec();
                 query.prepare("UPDATE data SET release='"+QString::number(rel)+"'");
                 query.exec();
-                if (hasLib) {
+                if (hasNewLib) {
                     query.prepare("UPDATE data SET library='"+QString::number(lib)+"'");
                     query.exec();
                 }
@@ -246,7 +245,7 @@ void Update::status(const int &exitCode)
     }
 #else
     if (exitCode == 0) {
-        if (!hasDb) {
+        if (!hasNewDb) {
             if (_db->open()) {
                 QSqlQuery query;
 
@@ -254,7 +253,7 @@ void Update::status(const int &exitCode)
                 query.exec();
                 query.prepare("UPDATE data SET release='"+QString::number(rel)+"'");
                 query.exec();
-                if (hasLib) {
+                if (hasNewLib) {
                     query.prepare("UPDATE data SET library='"+QString::number(lib)+"'");
                     query.exec();
                 }
@@ -275,7 +274,7 @@ void Update::error(const QString &error)
     target = *_PIG_PATH+"/tmp/update/db.sqlite.trash";
     backup = *_PIG_PATH+"/tmp/update/db.sqlite.bk";
 
-    if (hasDb && file.exists(backup)) {
+    if (hasNewDb && file.exists(backup)) {
         if (file.exists(origin)) {
             file.rename(origin, target);
             file.rename(backup, origin);

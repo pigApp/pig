@@ -3,12 +3,15 @@
 #include <QTextStream>
 #include <QCryptographicHash>
 
-Authorization::Authorization(const QString *PIG_PATH, bool _set, QWidget *parent) :
+Authorization::Authorization(const QString *PIG_PATH, bool set_, QWidget *parent) :
     QWidget(parent),
-    __set(_set),
+    _set(set_),
     ui(NULL)
 {
     file.setFileName(*PIG_PATH+"/.pd");
+
+    if (_set)
+        init_ui();
 }
 
 Authorization::~Authorization()
@@ -19,17 +22,13 @@ Authorization::~Authorization()
 
 void Authorization::check()
 {
-    if (__set) {
+    if (file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        while (!file.atEnd())
+            digest = QString(file.readLine()).toUtf8().simplified();
+        file.close();
         init_ui();
     } else {
-        if (file.open(QIODevice::ReadOnly | QIODevice::Text)) {
-            while (!file.atEnd())
-                digest = QString(file.readLine()).toUtf8().simplified();
-            file.close();
-            init_ui();
-        } else {
-            delete this;
-        }
+        delete this;
     }
 }
 
@@ -39,7 +38,10 @@ void Authorization::set(const QString &str)
         QTextStream stream(&file);
         stream << calculate(&str).simplified();
         file.close();
-        qDebug() << "SET";
+        ui->input->clear();
+        ui->input->setEchoMode(QLineEdit::Normal);
+        ui->input->setText("DONE");
+        ui->input->setDisabled(true);
     } else {
         qDebug() << "NO-SET";
     }
@@ -71,15 +73,15 @@ const QString Authorization::calculate(const QString *plain)
 void Authorization::init_ui()
 {
     ui = new Ui::Authorization;
-    ui->setupUi(this);
+    ui->setupUi(_set, this);
 
-    if (__set) ui->button_reset->setHidden(false);
+    if (_set) ui->button_reset->setHidden(false);
 
     QObject::connect (ui->input, &QLineEdit::textChanged, [&] {
         ui->input->setPalette(ui->palette);
     });
     QObject::connect (ui->input, &QLineEdit::returnPressed, [&] {
-        if (__set)
+        if (_set)
             set((ui->input->selectAll(), ui->input->selectedText()));
         else
             match((ui->input->selectAll(), ui->input->selectedText()));
@@ -87,5 +89,6 @@ void Authorization::init_ui()
     });
     connect (ui->button_reset, SIGNAL(clicked()), this, SLOT(reset()));
 
-    emit showWidget(this);
+    if (!_set)
+        emit showWidget(this);
 }

@@ -2,8 +2,8 @@
 #define PIG_H
 
 #include "topbar.h"
-#include "view.h"
 #include "setup.h"
+#include "view.h"
 #include "ui.h"
 
 #include <QWidget>
@@ -25,13 +25,13 @@ private:
     QSqlDatabase db;
 
     TopBar *topbar;
-    View *view;
     Setup *setup;
+    View *view;
 
     Ui::PIG *ui;
 
 private slots:
-    void init_authorization(bool set);
+    void init_authorization();
     void init_update();
     void init_topbar();
     void init_viewer(const QStringList *data, const QString *filter);

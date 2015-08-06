@@ -6,7 +6,6 @@
 #include <QWidget>
 
 #include <QtSql>
-#include <QLabel>
 
 namespace Ui {
 class Update;
@@ -37,11 +36,12 @@ private:
     QString urlSiteNews;
     QStringList urls, sums, pkgs;
 
+    bool hasNewBin, hasNewDb, hasNewLib;
+    int nUnpacked;
+
     Ui::Update *ui;
 
-    bool hasBin, hasDb, hasLib;
     int bin, rel, db, lib;
-    int nUnpacked;
 
 private slots:
     void get();

@@ -5,13 +5,13 @@
 #include <QDir>
 
 #include <QDebug>//
-#include <QTimer>
+#include <QTimer>//
 
 PIG::PIG(QWidget *parent) :
     QWidget(parent),
     topbar(NULL),
-    view(NULL),
     setup(NULL),
+    view(NULL),
     ui(new Ui::PIG)
 {
 #ifdef __linux__
@@ -43,7 +43,7 @@ PIG::PIG(QWidget *parent) :
 
     ui->setupUi(this);
 
-    init_authorization(false);
+    init_authorization();
 }
 
 PIG::~PIG()
@@ -51,9 +51,9 @@ PIG::~PIG()
     delete ui;
 }
 
-void PIG::init_authorization(bool set)
+void PIG::init_authorization()
 {
-    Authorization *authorization = new Authorization(&PIG_PATH, set, this);
+    Authorization *authorization = new Authorization(&PIG_PATH, false, this);
 
     QObject::connect (authorization, &Authorization::showWidget, [&] (QWidget *w) {
         ui->main_layout->addWidget(w);
@@ -118,11 +118,14 @@ void PIG::init_viewer(const QStringList *data, const QString *filter)
 void PIG::init_setup()
 {
     if (setup == 0) {
-        setup = new Setup(this);
-        ui->main_layout->replaceWidget(view, setup);
+        setup = new Setup(&PIG_PATH, &db, this);
+        ui->main_layout->addWidget(setup);
+        topbar->setHidden(true);
         view->hide();
+        //QTimer::singleShot(2000, this, SLOT(init_setup()));
     } else {
-        ui->main_layout->replaceWidget(setup, view);
+        ui->main_layout->removeWidget(setup);
+        topbar->setHidden(false);
         view->show();
         setup->deleteLater();
         setup = NULL;
