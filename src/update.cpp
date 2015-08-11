@@ -7,7 +7,7 @@
 #include <QTextStream>
 #include <QTimer>
 
-Update::Update(const QString *PIG_PATH, QSqlDatabase *db_, QWidget *parent) :
+Update::Update(const QString* const PIG_PATH, QSqlDatabase *db_, QWidget *parent) :
     QWidget(parent),
     _PIG_PATH(PIG_PATH),
     _db(db_),

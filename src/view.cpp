@@ -3,7 +3,7 @@
 
 #include <QDir>
 
-View::View(const QString *PIG_PATH, QWidget *parent) :
+View::View(const QString* const PIG_PATH, QWidget *parent) :
     QWidget(parent),
     _PIG_PATH(PIG_PATH),
     page(1),
@@ -12,10 +12,10 @@ View::View(const QString *PIG_PATH, QWidget *parent) :
 {
     ui->setupUi(this);
 
-    QDir dir(*_PIG_PATH+"/tmp/covers");
-    onLocalCovers = dir.entryList(QDir::Files | QDir::NoDotAndDotDot);
-    dir.setPath(*_PIG_PATH+"/tmp/covers/back");
-    onLocalBackCovers = dir.entryList(QDir::Files | QDir::NoDotAndDotDot);
+    QDir target(*_PIG_PATH+"/tmp/covers");
+    onLocalCovers = target.entryList(QDir::Files | QDir::NoDotAndDotDot);
+    target.setPath(*_PIG_PATH+"/tmp/covers/back");
+    onLocalBackCovers = target.entryList(QDir::Files | QDir::NoDotAndDotDot);
 
     pageHeight = 970; //TODO: PORCENTAJE
 

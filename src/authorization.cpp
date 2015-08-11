@@ -3,15 +3,14 @@
 #include <QTextStream>
 #include <QCryptographicHash>
 
-Authorization::Authorization(const QString *PIG_PATH, bool set_, QWidget *parent) :
+Authorization::Authorization(const QString* const PIG_PATH, bool set_, QWidget *parent) :
     QWidget(parent),
+    _PIG_PATH(PIG_PATH),
     _set(set_),
+    setted(false),
     ui(NULL)
 {
-    file.setFileName(*PIG_PATH+"/.pd");
-
-    if (_set)
-        init_ui();
+    file.setFileName(*_PIG_PATH+"/.pd");
 }
 
 Authorization::~Authorization()
@@ -26,6 +25,9 @@ void Authorization::check()
         while (!file.atEnd())
             digest = QString(file.readLine()).toUtf8().simplified();
         file.close();
+        setted = true;
+        init_ui();
+    } else if (_set) {
         init_ui();
     } else {
         delete this;
@@ -34,25 +36,38 @@ void Authorization::check()
 
 void Authorization::set(const QString &str)
 {
-    if (file.open(QIODevice::WriteOnly)) {
-        QTextStream stream(&file);
-        stream << calculate(&str).simplified();
-        file.close();
-        ui->input->clear();
-        ui->input->setEchoMode(QLineEdit::Normal);
-        ui->input->setText("DONE");
-        ui->input->setDisabled(true);
-    } else {
-        qDebug() << "NO-SET";
+    if (!str.isEmpty()) {
+        if (file.open(QIODevice::WriteOnly)) {
+            QTextStream stream(&file);
+            stream << calculate(&str).simplified();
+            file.close();
+            ui->input->clear();
+            ui->input->setEchoMode(QLineEdit::Normal);
+            ui->input->setText("SETTED");
+            ui->input->setDisabled(true);
+            ui->button_reset->setEnabled(true);
+            setted = true;
+        } else {
+            ui->input->clear();
+            ui->input->setEchoMode(QLineEdit::Normal);
+            ui->input->setText("ERROR: CHECK PERMISSIONS ON "+*_PIG_PATH);
+            ui->input->setDisabled(true);
+        }
     }
 }
 
 void Authorization::reset()
 {
     if (file.remove()) {
-        qDebug() << "REMOVED";
+        ui->input->clear();
+        ui->input->setEchoMode(QLineEdit::Password);
+        ui->input->setEnabled(true);
+        ui->button_reset->setDisabled(true);
+        setted = false;
     } else {
-        qDebug() << "NO-REMOVED";
+        ui->input->clear();
+        ui->input->setEchoMode(QLineEdit::Normal);
+        ui->input->setText("ERROR: CHECK PERMISSIONS ON "+*_PIG_PATH);
     }
 }
 
@@ -73,9 +88,7 @@ const QString Authorization::calculate(const QString *plain)
 void Authorization::init_ui()
 {
     ui = new Ui::Authorization;
-    ui->setupUi(_set, this);
-
-    if (_set) ui->button_reset->setHidden(false);
+    ui->setupUi(_set, setted, this);
 
     QObject::connect (ui->input, &QLineEdit::textChanged, [&] {
         ui->input->setPalette(ui->palette);

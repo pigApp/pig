@@ -2,8 +2,6 @@
 #include "authorization.h"
 #include "update.h"
 
-#include <QDir>
-
 #include <QDebug>//
 #include <QTimer>//
 
@@ -12,13 +10,27 @@ PIG::PIG(QWidget *parent) :
     topbar(NULL),
     setup(NULL),
     view(NULL),
+    keep_covers(true),
+    keep_torrents(true),
+    keep_movies(true),
+    torrent_port_1(6900),
+    torrent_port_2(6999),
     ui(new Ui::PIG)
 {
-#ifdef __linux__
-    PIG_PATH = QDir::homePath()+"/.pig";
-#else
-    PIG_PATH = "C:/PIG/.pig";
-#endif
+    init();
+
+    ui->setupUi(this);
+
+    init_authorization();
+}
+
+PIG::~PIG()
+{
+    delete ui;
+}
+
+void PIG::init()
+{
     QDir dir;
     if (!dir.exists(PIG_PATH+"/tmp"))
         if (!dir.mkdir(PIG_PATH+"/tmp"))
@@ -32,6 +44,12 @@ PIG::PIG(QWidget *parent) :
     if (!dir.exists(PIG_PATH+"/tmp/covers/back"))
         if (!dir.mkdir(PIG_PATH+"/tmp/covers/back"))
             error("CHECK PERMISSIONS ON "+PIG_PATH);
+    if (!dir.exists(PIG_PATH+"/tmp/torrents"))
+        if (!dir.mkdir(PIG_PATH+"/tmp/torrents"))
+            error("CHECK PERMISSIONS ON "+PIG_PATH);
+    if (!dir.exists(PIG_PATH+"/tmp/torrents/movies"))
+        if (!dir.mkdir(PIG_PATH+"/tmp/torrents/movies"))
+            error("CHECK PERMISSIONS ON "+PIG_PATH);
 
     QFile file;
     if (file.exists(PIG_PATH+"/db.sqlite")) {
@@ -41,14 +59,15 @@ PIG::PIG(QWidget *parent) :
         error("DATABASE DO NOT EXISTS");
     }
 
-    ui->setupUi(this);
+    QHash<QString, QVariant> rc = get_rc();
 
-    init_authorization();
-}
-
-PIG::~PIG()
-{
-    delete ui;
+    if (!rc.isEmpty()) {
+        keep_covers = rc.value("KEEP_LOCAL_COPY_OF_COVERS").toBool();
+        keep_torrents = rc.value("KEEP_LOCAL_COPY_OF_TORRENTS").toBool();
+        keep_movies = rc.value("KEEP_LOCAL_COPY_OF_MOVIES").toBool();
+        torrent_port_1 = rc.value("TORRENT_PORT_1").toInt();
+        torrent_port_2 = rc.value("TORRENT_PORT_2").toInt();
+    }
 }
 
 void PIG::init_authorization()
@@ -106,6 +125,9 @@ void PIG::init_viewer(const QStringList *data, const QString *filter)
         });
 
         ui->main_layout->addWidget(view);
+
+        if (!topbar->getBtnSetupObject()->isEnabled())
+            topbar->getBtnSetupObject()->setEnabled(true);
     }
 
     if (data != 0)
@@ -118,11 +140,12 @@ void PIG::init_viewer(const QStringList *data, const QString *filter)
 void PIG::init_setup()
 {
     if (setup == 0) {
-        setup = new Setup(&PIG_PATH, &db, this);
+        setup = new Setup(&PIG_PATH, &keep_covers, &keep_torrents, &keep_movies,
+                          &torrent_port_1, &torrent_port_2, &db, this);
         ui->main_layout->addWidget(setup);
         topbar->setHidden(true);
         view->hide();
-        //QTimer::singleShot(2000, this, SLOT(init_setup()));
+        //QTimer::singleShot(5000, this, SLOT(init_setup()));
     } else {
         ui->main_layout->removeWidget(setup);
         topbar->setHidden(false);
@@ -132,104 +155,24 @@ void PIG::init_setup()
     }
 }
 
+QHash<QString, QVariant> PIG::get_rc()
+{
+    QHash<QString, QVariant> rc;
+
+    QFile file(PIG_PATH+"/.pigrc");
+    if (file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        while (!file.atEnd()) {
+            QString line = QString(file.readLine()).toUtf8();
+            if (line.contains("="))
+                rc.insert(line.section("=", 0, 0), line.section("=", 1, 1).simplified());
+        }
+        file.close();
+    }
+
+    return rc;
+}
+
 void PIG::error(QString error)
 {
     qDebug() << "ERROR: " << error; //TODO: HACER ESTO.
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/*
-TODO
-*/
-
-
-/*
-IMAGEN
-    QLabel *logo;
-    logo = new QLabel;
-    logo->setPixmap(QPixmap(":/img-background"));
-
-
-FIND
-void TopBar::find(const QString userInput, const QString category, const QString pornstar
-    , const QString quality, const QString full)
-
-
-LAMBDA
-    QObject::connect(topbar->category, &QPushButton::clicked, [=]() { qDebug() << "CLICKED"; });
-    QObject::connect(topbar, &TopBar::sendData, [&] (const QStringList &data) { showData(data); });
-    QObject::connect(topbar, &TopBar::addGroup, [&] (QGroupBox *filterGroup) { groupsHandler(&filterGroup); });//{ main_layout->addWidget(filterGroup); });
-
-    QObject::connect(auth, &Authorization::ready, [=] { //TODO: PASAR EL GRUPO EN LA SEÑAL.
-        main_layout->addWidget(auth->getGroup());
-        topbar->getGroup()->setDisabled(true);
-    });
-    QObject::connect(auth, &Authorization::finished, [=] {
-        if (auth->getGroup() != NULL) {
-            auth->getGroup()->hide();
-            main_layout->removeWidget(auth->getGroup());
-            topbar->getGroup()->setDisabled(false);
-        }
-        auth->deleteLater();
-    });
-
-
-AUTHORIZATION
-void PIG::authorization(const bool require, const QString plain
-    , const bool check, const bool write)
-{
-    if (require) {
-#ifdef __linux__
-    const QString target = QDir::homePath()+"/.pig/.pd";
-#else
-    const QString target = "C:/PIG/.pig/.pd";
-#endif
-       QFile file;
-       if (file.exists(target))
-           //emit sig_ret_password(true);
-           qDebug() << "x";
-       else
-           //update_handler();
-           qDebug() << "x";
-    } else if (check) {
-        Authorization mPassword;
-        if (mPassword.check(&plain))
-            //update_handler();
-            qDebug() << "x";
-        else
-            //emit sig_ret_password();
-            qDebug() << "x";
-    } else if (write) {
-        Authorization mPassword;
-        if (mPassword.write(&plain))
-            //emit sig_ret_password(false, true);
-            qDebug() << "x";
-        else
-            //emit sig_ret_password();
-            qDebug() << "x";
-    }
-}
-*/

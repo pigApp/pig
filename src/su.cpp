@@ -1,6 +1,7 @@
 #include "su.h"
 
-Su::Su(QObject *parent) : QObject(parent)
+Su::Su(QObject *parent) :
+    QObject(parent)
 {
     p = new QProcess(this);
     p->start("/bin/bash", QStringList() << "-c" << "ls /usr/bin/gksu");

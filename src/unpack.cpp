@@ -6,7 +6,8 @@
 #include <QFile>
 #include <QCryptographicHash>
 
-Unpack::Unpack(QObject *parent) : QObject(parent)
+Unpack::Unpack(QObject *parent) :
+    QObject(parent)
 {
 }
 
@@ -14,7 +15,7 @@ Unpack::~Unpack()
 {
 }
 
-void Unpack::unzip(const QString *PIG_PATH, const QString *path, const QString *sum)
+void Unpack::unzip(const QString* const PIG_PATH, const QString *path, const QString *sum)
 {
     QFile origin(*path);
 

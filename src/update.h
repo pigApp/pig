@@ -16,7 +16,7 @@ class Update : public QWidget
     Q_OBJECT
 
 public:
-    explicit Update(const QString *PIG_PATH, QSqlDatabase *db_, QWidget *parent = 0);
+    explicit Update(const QString* const PIG_PATH, QSqlDatabase *db_, QWidget *parent = 0);
     ~Update();
 
 signals:
@@ -24,7 +24,7 @@ signals:
     void dbError(QString error);
 
 private:
-    const QString *_PIG_PATH;
+    const QString* const _PIG_PATH;
     QSqlDatabase *_db;
 
     QFile file;

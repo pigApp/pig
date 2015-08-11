@@ -2,8 +2,8 @@
 
 #include <QDataStream>
 
-ThreadedSocket::ThreadedSocket(const QString *PIG_PATH, const QString *host, const QString *url,
-                               const QString *pkg, int ID, QObject *parent) :
+ThreadedSocket::ThreadedSocket(const QString* const PIG_PATH, const QString *host,
+                               const QString *url, const QString *pkg, int ID, QObject *parent) :
     QThread(parent),
     _PIG_PATH(PIG_PATH),
     _host(host),
