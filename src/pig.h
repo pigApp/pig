@@ -22,6 +22,9 @@ public:
     PIG(QWidget *parent = 0);
     ~PIG();
 
+protected:
+    bool eventFilter(QObject *obj, QEvent *e);
+
 private:
 #ifdef __linux__
     const QString PIG_PATH = QDir::homePath()+"/.pig";
@@ -46,8 +49,8 @@ private slots:
     void init_topbar();
     void init_viewer(const QStringList *data, const QString *filter);
     void init_setup();
-    QHash<QString, QVariant> get_rc();
     void error(QString error);
+    QHash<QString, QVariant> get_rc();
 };
 
 #endif

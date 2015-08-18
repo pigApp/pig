@@ -2,6 +2,7 @@
 
 #include <QTextStream>
 #include <QCryptographicHash>
+#include <QTimer>
 
 Authorization::Authorization(const QString* const PIG_PATH, bool set_, QWidget *parent) :
     QWidget(parent),
@@ -42,16 +43,16 @@ void Authorization::set(const QString &str)
             stream << calculate(&str).simplified();
             file.close();
             ui->input->clear();
-            ui->input->setEchoMode(QLineEdit::Normal);
-            ui->input->setText("SETTED");
             ui->input->setDisabled(true);
-            ui->button_reset->setEnabled(true);
+            set_icon(false);
             setted = true;
         } else {
             ui->input->clear();
             ui->input->setEchoMode(QLineEdit::Normal);
             ui->input->setText("ERROR: CHECK PERMISSIONS ON "+*_PIG_PATH);
+            ui->input->setPalette(ui->p_error);
             ui->input->setDisabled(true);
+            set_icon(false, true);
         }
     }
 }
@@ -62,12 +63,15 @@ void Authorization::reset()
         ui->input->clear();
         ui->input->setEchoMode(QLineEdit::Password);
         ui->input->setEnabled(true);
-        ui->button_reset->setDisabled(true);
+        set_icon(true);
         setted = false;
     } else {
         ui->input->clear();
         ui->input->setEchoMode(QLineEdit::Normal);
         ui->input->setText("ERROR: CHECK PERMISSIONS ON "+*_PIG_PATH);
+        ui->input->setPalette(ui->p_error);
+        ui->input->setDisabled(true);
+        set_icon(true, true);
     }
 }
 
@@ -76,7 +80,7 @@ void Authorization::match(const QString &str)
     if (calculate(&str) == digest)
         this->deleteLater();
     else
-        ui->input->setPalette(ui->palette_error);
+        ui->input->setPalette(ui->p_error);
 }
 
 const QString Authorization::calculate(const QString *plain)
@@ -85,13 +89,44 @@ const QString Authorization::calculate(const QString *plain)
                                             QCryptographicHash::Md5).toHex());
 }
 
+void Authorization::set_icon(const bool &isReset, const bool &failed)
+{
+    if (failed)
+        ui->b_reset->setIcon(QIcon(":/icon-cancel"));
+    else
+        ui->b_reset->setIcon(QIcon(":/icon-ok"));
+
+    ui->b_reset->setEnabled(true);
+
+    QTimer *timer = new QTimer(this);
+    timer->setSingleShot(true);
+    timer->start(1000);
+
+    if (failed)
+        if (isReset)
+            QObject::connect(timer, &QTimer::timeout, [=] { ui->b_reset->setIcon(QIcon(":/icon-reset")); });
+        else
+            QObject::connect(timer, &QTimer::timeout, [=] {
+                ui->b_reset->setIcon(QIcon(":/icon-reset-dark"));
+                ui->b_reset->setDisabled(true);
+            });
+    else
+        if (isReset)
+            QObject::connect(timer, &QTimer::timeout, [=] {
+                ui->b_reset->setIcon(QIcon(":/icon-reset-dark"));
+                ui->b_reset->setDisabled(true);
+            });
+        else
+            QObject::connect(timer, &QTimer::timeout, [=] { ui->b_reset->setIcon(QIcon(":/icon-reset")); });
+}
+
 void Authorization::init_ui()
 {
     ui = new Ui::Authorization;
     ui->setupUi(_set, setted, this);
 
     QObject::connect (ui->input, &QLineEdit::textChanged, [&] {
-        ui->input->setPalette(ui->palette);
+        ui->input->setPalette(ui->p);
     });
     QObject::connect (ui->input, &QLineEdit::returnPressed, [&] {
         if (_set)
@@ -100,7 +135,7 @@ void Authorization::init_ui()
             match((ui->input->selectAll(), ui->input->selectedText()));
         ui->input->deselect();
     });
-    connect (ui->button_reset, SIGNAL(clicked()), this, SLOT(reset()));
+    connect (ui->b_reset, SIGNAL(clicked()), this, SLOT(reset()));
 
     if (!_set)
         emit showWidget(this);

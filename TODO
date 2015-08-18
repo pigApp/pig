@@ -1,5 +1,12 @@
-- Boton back en info y setup.
+- FIX: Tamaño boton minimize y close
+- FIX: Boton back.
+- Reducir el ancho de setup y view_info al ancho de los covers.
+- FIX: Al mostrar 'update available' en la pantalla setup.
+- Shortcuts y tab order.
+- Pasar valores a porcentajes.
+
 - Socket y setup error.
+- PIG error.
 - Revisar y terminar filtros y view.
 - Player en info.
 - Filtrado de filas en Torrent.

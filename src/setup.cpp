@@ -2,6 +2,7 @@
 #include "authorization.h"
 
 #include <QTextStream>
+#include <QTimer>
 
 Setup::Setup(const QString* const PIG_PATH, bool *keep_covers, bool *keep_torrents,
              bool *keep_movies, int *torrent_port_1, int *torrent_port_2,
@@ -46,88 +47,132 @@ Setup::Setup(const QString* const PIG_PATH, bool *keep_covers, bool *keep_torren
     ui->setupUi(&data, &keep_covers, &keep_torrents, &keep_movies,
                 &torrent_port_1, &torrent_port_2, authorization, this);
 
-    QObject::connect (ui->radio_folder_covers, &QPushButton::pressed, [=] {
+    m_b_back = ui->b_back;
+
+    QObject::connect (ui->r_folder_covers, &QPushButton::pressed, [=] {
         *keep_covers = !*keep_covers;
         set_rc("KEEP_LOCAL_COPY_OF_COVERS", *keep_covers);
     });
-    QObject::connect (ui->radio_folder_torrents, &QPushButton::pressed, [=] {
+    QObject::connect (ui->r_folder_torrents, &QPushButton::pressed, [=] {
         *keep_torrents = !*keep_torrents;
         set_rc("KEEP_LOCAL_COPY_OF_TORRENTS", *keep_torrents);
     });
-    QObject::connect (ui->radio_folder_movies, &QPushButton::pressed, [=] {
+    QObject::connect (ui->r_folder_movies, &QPushButton::pressed, [=] {
         *keep_movies = !*keep_movies;
         set_rc("KEEP_LOCAL_COPY_OF_MOVIES", *keep_movies);
     });
 
-    QObject::connect (ui->button_folder_covers_clean, &QPushButton::pressed, [&] {
-        clean_folder("covers");
-        clean_folder("covers/back");
+    QObject::connect (ui->b_folder_covers_reset, &QPushButton::pressed, [&] {
+        if (clean_folder("covers") && clean_folder("covers/back"))
+            set_icon(&ui->b_folder_covers_reset);
+        else
+            set_icon(&ui->b_folder_covers_reset, false, true);
     });
-    QObject::connect (ui->button_folder_torrents_clean, &QPushButton::pressed, [&] {
-        clean_folder("torrent");
+    QObject::connect (ui->b_folder_torrents_reset, &QPushButton::pressed, [&] {
+        if (clean_folder("torrents"))
+            set_icon(&ui->b_folder_torrents_reset);
+        else
+            set_icon(&ui->b_folder_torrents_reset, false, true);
     });
-    QObject::connect (ui->button_folder_movies_clean, &QPushButton::pressed, [&] {
-        clean_folder("torrents/movies");
+    QObject::connect (ui->b_folder_movies_reset, &QPushButton::pressed, [&] {
+        if (clean_folder("torrents/movies"))
+            set_icon(&ui->b_folder_movies_reset);
+        else
+            set_icon(&ui->b_folder_movies_reset, false, true);
     });
 
     QObject::connect (ui->input_torrent_port_1, &QLineEdit::cursorPositionChanged, [&] {
-        ui->input_torrent_port_1->setPalette(ui->palette_torrent_edit);
+        ui->input_torrent_port_1->setPalette(ui->p_torrent_edit);
+
         if ((ui->input_torrent_port_1->text().toInt() == 6900)
-            && (ui->input_torrent_port_2->text().toInt() == 6999))
-            ui->button_torrent_ports_reset->setDisabled(true);
-        else
-            ui->button_torrent_ports_reset->setEnabled(true);
+            && (ui->input_torrent_port_2->text().toInt() == 6999)) {
+            ui->b_torrent_ports_reset->setIcon(QIcon(":/icon-reset-dark"));
+            ui->b_torrent_ports_reset->setDisabled(true);
+        } else {
+            ui->b_torrent_ports_reset->setIcon(QIcon(":/icon-reset"));
+            ui->b_torrent_ports_reset->setEnabled(true);
+        }
     });
     QObject::connect (ui->input_torrent_port_1, &QLineEdit::editingFinished, [=] {
-        *torrent_port_1 = ui->input_torrent_port_1->text().toInt();
-        set_rc("TORRENT_PORT_1", *torrent_port_1);
-        ui->input_torrent_port_1->setPalette(ui->palette_torrent);
+        if (set_rc("TORRENT_PORT_1", *torrent_port_1)) {
+            *torrent_port_1 = ui->input_torrent_port_1->text().toInt();
+
+            if ((ui->input_torrent_port_1->text().toInt() == 6900)
+                && (ui->input_torrent_port_2->text().toInt() == 6999))
+                set_icon(&ui->b_torrent_ports_reset);
+            else
+                set_icon(&ui->b_torrent_ports_reset, false);
+        } else {
+            ui->input_torrent_port_1->setText(QString::number(*torrent_port_1));
+            set_icon(&ui->b_torrent_ports_reset, false, true);
+        }
+
+        ui->input_torrent_port_1->setPalette(ui->p_torrent);
     });
 
     QObject::connect (ui->input_torrent_port_2, &QLineEdit::cursorPositionChanged, [&] {
-        ui->input_torrent_port_2->setPalette(ui->palette_torrent_edit);
+        ui->input_torrent_port_2->setPalette(ui->p_torrent_edit);
+
         if ((ui->input_torrent_port_1->text().toInt() == 6900)
-            && (ui->input_torrent_port_2->text().toInt() == 6999))
-            ui->button_torrent_ports_reset->setDisabled(true);
-        else
-            ui->button_torrent_ports_reset->setEnabled(true);
+            && (ui->input_torrent_port_2->text().toInt() == 6999)) {
+            ui->b_torrent_ports_reset->setIcon(QIcon(":/icon-reset-dark"));
+            ui->b_torrent_ports_reset->setDisabled(true);
+        } else {
+            ui->b_torrent_ports_reset->setIcon(QIcon(":/icon-reset"));
+            ui->b_torrent_ports_reset->setEnabled(true);
+        }
     });
     QObject::connect (ui->input_torrent_port_2, &QLineEdit::editingFinished, [=] {
-        *torrent_port_2 = ui->input_torrent_port_2->text().toInt();
-        set_rc("TORRENT_PORT_2", *torrent_port_2);
-        ui->input_torrent_port_2->setPalette(ui->palette_torrent);
+        if (set_rc("TORRENT_PORT_2", *torrent_port_2)) {
+            *torrent_port_2 = ui->input_torrent_port_2->text().toInt();
+
+            if ((ui->input_torrent_port_1->text().toInt() == 6900)
+                && (ui->input_torrent_port_2->text().toInt() == 6999))
+                set_icon(&ui->b_torrent_ports_reset);
+            else
+                set_icon(&ui->b_torrent_ports_reset, false);
+        } else {
+            ui->input_torrent_port_2->setText(QString::number(*torrent_port_2));
+            set_icon(&ui->b_torrent_ports_reset, false, true);
+        }
+
+        ui->input_torrent_port_2->setPalette(ui->p_torrent);
     });
 
-    QObject::connect (ui->button_torrent_ports_reset, &QPushButton::pressed, [=] {
-        *torrent_port_1 = 6900;
-        *torrent_port_2 = 6999;
-        set_rc("TORRENT_PORT_1", *torrent_port_1);
-        set_rc("TORRENT_PORT_2", *torrent_port_2);
-        ui->input_torrent_port_1->setText("6900");
-        ui->input_torrent_port_2->setText("6999");
-        ui->input_torrent_port_1->setPalette(ui->palette_torrent);
-        ui->input_torrent_port_2->setPalette(ui->palette_torrent);
-        ui->button_torrent_ports_reset->setDisabled(true);
+    QObject::connect (ui->b_torrent_ports_reset, &QPushButton::pressed, [=] {
+        if (set_rc("TORRENT_PORT_1", 6900)
+            && set_rc("TORRENT_PORT_2", 6999)) {
+            *torrent_port_1 = 6900;
+            *torrent_port_2 = 6999;
+            ui->input_torrent_port_1->setText("6900");
+            ui->input_torrent_port_2->setText("6999");
+            ui->input_torrent_port_1->setPalette(ui->p_torrent);
+            ui->input_torrent_port_2->setPalette(ui->p_torrent);
+            set_icon(&ui->b_torrent_ports_reset);
+        } else {
+            set_icon(&ui->b_torrent_ports_reset, false, true);
+        }
     });
 
-    QObject::connect (ui->button_contribute_torrents, &QPushButton::pressed, [=] {
+    QObject::connect (ui->b_contribute_torrents, &QPushButton::pressed, [=] {
         QDesktopServices::openUrl(QUrl("http://"+data[3]+data[4]));
     });
-    QObject::connect (ui->button_contribute_code, &QPushButton::pressed, [=] {
+    QObject::connect (ui->b_contribute_code, &QPushButton::pressed, [=] {
         QDesktopServices::openUrl(QUrl("http://"+data[3]+data[5]));
     });
-    QObject::connect (ui->button_contribute_bugs, &QPushButton::pressed, [=] {
+    QObject::connect (ui->b_contribute_bugs, &QPushButton::pressed, [=] {
         QDesktopServices::openUrl(QUrl("http://"+data[3]+data[6]));
     });
-    QObject::connect (ui->button_contribute_bitcoins, &QPushButton::pressed, [&] {
-        if (ui->label_contribute_bitcoins->text() == "BITCOINS")
-            ui->label_contribute_bitcoins->setText("WALLET");
-        else
-            ui->label_contribute_bitcoins->setText("BITCOINS");
-        ui->label_contribute_bitcoins_wallet->setVisible(ui->label_contribute_bitcoins_wallet->isHidden());
-    });
-    QObject::connect (ui->button_contribute_help, &QPushButton::pressed, [=] {
-        QDesktopServices::openUrl(QUrl("http://"+data[3]+data[7]));
+    QObject::connect (ui->b_contribute_bitcoins, &QPushButton::pressed, [&] {
+        if (ui->lb_contribute_bitcoins->text() == "BITCOINS") {
+            ui->lb_contribute_bitcoins->setText("WALLET");
+            ui->b_contribute_bitcoins->setIcon(QIcon(":/icon-less"));
+        } else {
+            ui->lb_contribute_bitcoins->setText("BITCOINS");
+            ui->b_contribute_bitcoins->setIcon(QIcon(":/icon-more"));
+        }
+
+        ui->lb_contribute_bitcoins_wallet->setVisible(ui->lb_contribute_bitcoins_wallet->isHidden());
     });
 }
 
@@ -136,7 +181,7 @@ Setup::~Setup()
     delete ui;
 }
 
-void Setup::set_rc(const QString &option, const QVariant &value)
+bool Setup::set_rc(const QString &option, const QVariant &value)
 {
     QFile file(*_PIG_PATH+"/.pigrc");
     if (file.open(QIODevice::ReadWrite | QIODevice::Text)) {
@@ -151,17 +196,54 @@ void Setup::set_rc(const QString &option, const QVariant &value)
         file.resize(0);
         stream << out;
         file.close();
+        return true;
     }
+
+    return false;
 }
 
-void Setup::clean_folder(const QString &folder)
+bool Setup::clean_folder(const QString &folder)
 {
     QDir dir(*_PIG_PATH+"/tmp/"+folder);
     dir.setNameFilters(QStringList() << "*.*");
     dir.setFilter(QDir::NoDotAndDotDot | QDir::Files);
 
-    if (dir.exists())
+    if (dir.exists()) {
         foreach (QString file, dir.entryList())
             dir.remove(file);
+        return true;
+    }
+
+    return false;
 }
+
+void Setup::set_icon(QPushButton **button, const bool &setDisabled, const bool &failed)
+{
+    if (failed)
+        (**button).setIcon(QIcon(":/icon-cancel"));
+    else
+        (**button).setIcon(QIcon(":/icon-ok"));
+
+    (**button).setEnabled(true);
+
+    QTimer *timer = new QTimer(this);
+    timer->setSingleShot(true);
+    timer->start(1000);
+
+    if (failed) {
+        QObject::connect(timer, &QTimer::timeout, [=] { (**button).setIcon(QIcon(":/icon-reset")); });
+    } else {
+        QObject::connect(timer, &QTimer::timeout, [=] {
+            if (setDisabled) {
+                (**button).setIcon(QIcon(":/icon-reset-dark"));
+                (**button).setDisabled(true);
+            } else {
+                (**button).setIcon(QIcon(":/icon-reset"));
+            }
+        });
+    }
+    this->setFocus();
+}
+
+
 

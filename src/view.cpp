@@ -19,9 +19,9 @@ View::View(const QString* const PIG_PATH, QWidget *parent) :
 
     pageHeight = 970; //TODO: PORCENTAJE
 
-    QObject::connect (ui->scrollArea_covers->verticalScrollBar(), &QScrollBar::valueChanged, [&] { pages_handler(); });
+    QObject::connect (ui->sa_covers->verticalScrollBar(), &QScrollBar::valueChanged, [&] { pages_handler(); });
 
-    //    QObject::connect (ui->button_clear, &QPushButton::pressed, [&] {
+    //    QObject::connect (ui->b_clear, &QPushButton::pressed, [&] {
     //        del_covers();
     //        emit setFilterOnCovers();
     //    });//
@@ -32,14 +32,14 @@ View::~View()
     delete ui;
 }
 
-void View::get(const QStringList *data, const int &index)
+void View::get_covers(const QStringList *data, const int &index)
 {
     if (index != -1) {
         int _index = ((index + 1) * 17);
         if (isOnLocal((*m_data)[(_index - 7)], &onLocalBackCovers)) {
-            if (ui->group_info != 0) {
-                QPixmap pixmap_backCover(*_PIG_PATH+"/tmp/covers/back/"+(*m_data)[(_index - 7)]);
-                ui->backCover->setPixmap(pixmap_backCover.scaled(335, 480, Qt::KeepAspectRatio));
+            if (ui->g_info != 0) {
+                QPixmap px_backCover(*_PIG_PATH+"/tmp/covers/back/"+(*m_data)[(_index - 7)]);
+                ui->backCover->setPixmap(px_backCover.scaled(335, 480, Qt::KeepAspectRatio));
             }
         } else {
             ThreadedSocket *thread;
@@ -48,9 +48,9 @@ void View::get(const QStringList *data, const int &index)
                                         &(*m_data)[(_index - 7)], 0, this);
             QObject::connect (thread, &ThreadedSocket::sendFile, [=] (int ID, QString path) {
                 Q_UNUSED(ID);
-                if (ui->group_info != 0) {
-                    QPixmap pixmap_backCover(path);
-                    ui->backCover->setPixmap(pixmap_backCover.scaled(335, 480, Qt::KeepAspectRatio));
+                if (ui->g_info != 0) {
+                    QPixmap px_backCover(path);
+                    ui->backCover->setPixmap(px_backCover.scaled(335, 480, Qt::KeepAspectRatio));
                 }
                 onLocalBackCovers << (*m_data)[(_index - 7)];
             });
@@ -70,7 +70,7 @@ void View::get(const QStringList *data, const int &index)
             filteredCovers.clear();
             hasMoreCovers = true;
 
-            if (ui->button_vector_covers.size() != 0)
+            if (ui->b_vector_covers.size() != 0)
                 del_covers();
         }
 
@@ -111,7 +111,7 @@ void View::get(const QStringList *data, const int &index)
 
 void View::add_cover(int ID, QString path)
 {
-    int index = ui->button_vector_covers.size();
+    int index = ui->b_vector_covers.size();
 
     if (col == 5) {
         col = 0;
@@ -120,22 +120,21 @@ void View::add_cover(int ID, QString path)
 
     //TODO: REVISAR EL ORDEN DE LAS TAPAS/CONTRATAPAS/NOMBRES
 
-    ui->button_vector_covers.push_back(new QPushButton(ui->group_covers));
-    ui->button_vector_covers.last()->setIconSize(QSize(335, 480)); //TODO: PORCENTAJE
-    ui->button_vector_covers.last()->setIcon(QIcon(path));
-    ui->button_vector_covers.last()->setFlat(true);
-    QObject::connect (ui->button_vector_covers.last(), &QPushButton::pressed, [=] { show_info(index, path); });
-    //QObject::connect (ui->button_vector_covers.last(), &QPushButton::pressed, [=] { get(); });
+    ui->b_vector_covers.push_back(new QPushButton(QIcon(path), NULL, ui->g_covers));
+    ui->b_vector_covers.last()->setIconSize(QSize(335, 480)); //TODO: PORCENTAJE
+    ui->b_vector_covers.last()->setFlat(true);
+    QObject::connect (ui->b_vector_covers.last(), &QPushButton::pressed, [=] { show_info(index, path); });
+    //QObject::connect (ui->b_vector_covers.last(), &QPushButton::pressed, [=] { get_covers(); });
 
-    ui->layout_covers->addWidget(ui->button_vector_covers.last(), row, col);
+    ui->l_covers->addWidget(ui->b_vector_covers.last(), row, col);
 
     ++col;
 
     if (ID != -1 && !isOnLocal(path.remove(0, path.lastIndexOf("/")), &onLocalCovers))
         onLocalCovers << (*m_data)[((index+1) * 17) - 9];
 
-    if ((ui->button_vector_covers.size() - offsetCovers) == requiredCovers) { //FIX: AL BAJAR LA PAGINA NO AGREGA LOS COVERS DESCARGADOS ALA LISTA
-        offsetCovers += 10;                                                //FIX: SOLO BAJA EN EL PEDIDO INICIAL
+    if ((ui->b_vector_covers.size() - offsetCovers) == requiredCovers) { //FIX: AL BAJAR LA PAGINA NO AGREGA LOS COVERS DESCARGADOS ALA LISTA
+        offsetCovers += 10;                                                   //FIX: SOLO BAJA EN EL PEDIDO INICIAL
         ++n_pages;
         if ((n_covers - offsetCovers) <= 0)
             hasMoreCovers = false;
@@ -144,51 +143,51 @@ void View::add_cover(int ID, QString path)
 
 void View::del_covers()
 {
-    for (int i = 0; i < ui->button_vector_covers.size(); i++) {
-        ui->layout_covers->removeWidget(ui->button_vector_covers.at(i));
-        delete ui->button_vector_covers.at(i);
+    for (int i = 0; i < ui->b_vector_covers.size(); i++) {
+        ui->l_covers->removeWidget(ui->b_vector_covers.at(i));
+        delete ui->b_vector_covers.at(i);
     }
 
-    ui->button_vector_covers.clear();
-    ui->layout_covers->update();
+    ui->b_vector_covers.clear();
+    ui->l_covers->update();
 }
 
 void View::show_info(const int &index, const QString &path)
 {
     ui->setupInfoUi(index, path, &m_data, this);
 
-    QObject::connect (ui->button_hideInfo, &QPushButton::pressed, [=] { del_info(); });
+//    QObject::connect (ui->b_hideInfo, &QPushButton::pressed, [=] { del_info(); });
 
-    get(NULL, index);
+    get_covers(NULL, index);
 
     emit setTopbarState(true);
 }
 
 void View::del_info()
 {
-    delete ui->group_info;
-    ui->group_info = NULL;
+    delete ui->g_info;
+    ui->g_info = NULL;
 
-    ui->scrollArea_covers->setEnabled(true);
-    ui->scrollArea_covers->show();
+    ui->sa_covers->setEnabled(true);
+    ui->sa_covers->show();
 
     emit setTopbarState(false);
 }
 
 void View::pages_handler()
 {
-    if ((((ui->scrollArea_covers->height()+10) * page) > ui->group_covers->height()) &&
+    if ((((ui->sa_covers->height()+10) * page) > ui->g_covers->height()) &&
         (page == n_pages) && hasMoreCovers) {
         ++page;
 
-        get();
+        get_covers();
 
         if (requiredRemoteCovers.size() > 4)
-            ui->group_covers->setMinimumHeight((ui->group_covers->height() + pageHeight));
+            ui->g_covers->setMinimumHeight((ui->g_covers->height() + pageHeight));
         else
-            ui->group_covers->setMinimumHeight((ui->group_covers->height() + (pageHeight / 2)));
+            ui->g_covers->setMinimumHeight((ui->g_covers->height() + (pageHeight / 2)));
         
-        ui->scrollArea_covers->ensureVisible(0, ui->group_covers->height());
+        ui->sa_covers->ensureVisible(0, ui->g_covers->height());
     }
 }
 
@@ -215,32 +214,35 @@ void View::set_filter(const QString *filter)
             filterBase = "category";
     }
 
-    for (int i = 0; i < ui->button_vector_covers.size(); i++) {
+    for (int i = 0; i < ui->b_vector_covers.size(); i++) {
         if (filterBase == "quality") {
             
             if ((*filter == (*m_data)[(offsetFilter + 3)])) {
-                ui->button_vector_covers.at(i)->setDisabled(true);
+                ui->b_vector_covers.at(i)->setDisabled(true);
             } else {
                 filteredCovers.append(i);
-                ui->button_vector_covers.at(i)->setEnabled(true);
+                ui->b_vector_covers.at(i)->setEnabled(true);
             }
         }
 
         if (filterBase == "fullMovie") {
             if ((*filter == (*m_data)[(offsetFilter + 5)])) {
-                ui->button_vector_covers.at(i)->setDisabled(true);
+                ui->b_vector_covers.at(i)->setDisabled(true);
             } else {
                 filteredCovers.append(i);
-                ui->button_vector_covers.at(i)->setEnabled(true);
+                ui->b_vector_covers.at(i)->setEnabled(true);
             }
         }
 
         if (filterBase == "category") {
-            if (*filter != (*m_data)[(offsetFilter + 2)]) {
-                ui->button_vector_covers.at(i)->setDisabled(true);
+            if (*filter == "ALL") {
+                filteredCovers.append(i);
+                ui->b_vector_covers.at(i)->setEnabled(true);
+            } else if (*filter != (*m_data)[(offsetFilter + 2)]) {
+                ui->b_vector_covers.at(i)->setDisabled(true);
             } else {
                 filteredCovers.append(i);
-                ui->button_vector_covers.at(i)->setEnabled(true);
+                ui->b_vector_covers.at(i)->setEnabled(true);
             }
         }
         offsetFilter += 17;
@@ -297,7 +299,7 @@ void View::set_filter(const QString *filter)
        if (filterBase == "category") {
            filterBase = "";
            activeCovers = _activeCovers;
-           n_activeCovers = ui->button_vector_covers.size();
+           n_activeCovers = ui->b_vector_covers.size();
        }
     }
 
@@ -306,10 +308,10 @@ void View::set_filter(const QString *filter)
 
         filterBase = "";
         activeCovers = _activeCovers;
-        n_activeCovers = ui->button_vector_covers.size();
+        n_activeCovers = ui->b_vector_covers.size();
 
-        for (int i = 0; i < ui->button_vector_covers.size(); i++)
-            ui->button_vector_covers.at(i)->setEnabled(true);
+        for (int i = 0; i < ui->b_vector_covers.size(); i++)
+            ui->b_vector_covers.at(i)->setEnabled(true);
 
     } else {
 
@@ -325,9 +327,9 @@ void View::set_filter(const QString *filter)
                     if (filterBase == "fullMovie")
                         activeCovers.append(i);
 
-                    ui->button_vector_covers.at(i)->setEnabled(true);
+                    ui->b_vector_covers.at(i)->setEnabled(true);
                 } else {
-                    ui->button_vector_covers.at(i)->setDisabled(true);
+                    ui->b_vector_covers.at(i)->setDisabled(true);
                 }
             } else if (*filter == "720p" || *filter == "1080p") {
 
@@ -340,9 +342,9 @@ void View::set_filter(const QString *filter)
                     if (filterBase == "quality")
                         activeCovers.append(i);
 
-                    ui->button_vector_covers.at(i)->setEnabled(true);
+                    ui->b_vector_covers.at(i)->setEnabled(true);
                 } else {
-                    ui->button_vector_covers.at(i)->setDisabled(true);
+                    ui->b_vector_covers.at(i)->setDisabled(true);
                 }
             } else {
 
@@ -354,11 +356,11 @@ void View::set_filter(const QString *filter)
                     if (filterBase == "category")
                         activeCovers.append(i);
 
-                    ui->button_vector_covers.at(i)->setEnabled(true);
+                    ui->b_vector_covers.at(i)->setEnabled(true);
                 } else {
                     for (int n = 0; n < activeCovers.size(); n++) {
                         if (n == activeCovers[n])
-                            ui->button_vector_covers.at(n)->setDisabled(true);
+                            ui->b_vector_covers.at(n)->setDisabled(true);
                     }
                 }
 
@@ -378,26 +380,26 @@ void View::set_filter(const QString *filter)
 
 
 //    if (*filter == "ALL") {
-//        for (int i = 0; i < ui->button_vector_covers.size(); i++)
-//            ui->button_vector_covers.at(i)->setEnabled(true);
+//        for (int i = 0; i < ui->b_vector_covers.size(); i++)
+//            ui->b_vector_covers.at(i)->setEnabled(true);
 //    } else {
-//        for (int i = 0; i < ui->button_vector_covers.size(); i++) {
+//        for (int i = 0; i < ui->b_vector_covers.size(); i++) {
 //            if (*filter == "FULL") {
 //                if ((*filter != (*m_data)[offsetFilter + 6]))
-//                    ui->button_vector_covers.at(i)->setDisabled(true);
+//                    ui->b_vector_covers.at(i)->setDisabled(true);
 //                else
-//                    ui->button_vector_covers.at(i)->setEnabled(true);
+//                    ui->b_vector_covers.at(i)->setEnabled(true);
 //            } else if (*filter == "720p" || *filter == "1080p") {
 //                if ((*filter != (*m_data)[offsetFilter + 4]))
-//                    ui->button_vector_covers.at(i)->setDisabled(true);
+//                    ui->b_vector_covers.at(i)->setDisabled(true);
 //                else
-//                    ui->button_vector_covers.at(i)->setEnabled(true);
+//                    ui->b_vector_covers.at(i)->setEnabled(true);
 //            } else {
 //                if (*filter != (*m_data)[offsetFilter + 3]) {
-//                    ui->button_vector_covers.at(i)->setDisabled(true);
+//                    ui->b_vector_covers.at(i)->setDisabled(true);
 //                } else {
-//                    activeCovers.append(button_vector_covers.at(i));
-//                    ui->button_vector_covers.at(i)->setEnabled(true);
+//                    activeCovers.append(b_vector_covers.at(i));
+//                    ui->b_vector_covers.at(i)->setEnabled(true);
 //                }
 //            }
 //            offsetFilter += 15;
@@ -406,6 +408,6 @@ void View::set_filter(const QString *filter)
 
     // TODO: INTERELACIONAR LOS FILTROS
 
-    ui->layout_covers->update();
+    ui->l_covers->update();
 }
 */

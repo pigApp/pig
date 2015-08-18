@@ -23,7 +23,7 @@ signals:
     void setTopbarState(const bool &hide);
 
 public slots:
-    void get(const QStringList *data = NULL, const int &index = -1);
+    void get_covers(const QStringList *data = NULL, const int &index = -1);
     void set_filter(const QString *filter = NULL);
 
 private:

@@ -122,7 +122,7 @@ void Update::check(QString data)
 
 void Update::unpack(int ID, QString path)
 {
-    ui->label->setText("UNPACKING");
+    ui->lb->setText("UNPACKING");
 
     Unpack *unpack = new Unpack(this);
 
@@ -133,7 +133,7 @@ void Update::unpack(int ID, QString path)
             if (pkgs.count() == nUnpacked)
                 install();
             else
-                ui->label->setText("DOWNLOADING");
+                ui->lb->setText("DOWNLOADING");
         } else {
             error("UNPACK FAILED");
         }
@@ -144,7 +144,7 @@ void Update::unpack(int ID, QString path)
 
 void Update::install()
 {
-    ui->label->setText("INSTALLING");
+    ui->lb->setText("INSTALLING");
 
     if (hasNewDb) {
         origin = *_PIG_PATH+"/tmp/update/db.sqlite";
@@ -155,13 +155,15 @@ void Update::install()
             file.rename(target, backup);
         if (file.rename(origin, target)) {
             if (!hasNewBin) {
-                ui->label->setText("DATABASE UPDATED");
-                ui->button_a->setText("OK");
-                ui->button_b->setText("INFO");
-                ui->button_a->show();
-                ui->button_b->show();
-                QObject::connect (ui->button_a, &QPushButton::pressed, [&] { delete this; });
-                QObject::connect (ui->button_b, &QPushButton::pressed, [&] {
+                ui->lb->setText("DATABASE UPDATED");
+                ui->b_1->setIcon(QIcon(":/icon-ok"));
+                ui->b_1->setToolTip("DONE");
+                ui->b_2->setIcon(QIcon(":/icon-more"));
+                ui->b_2->setToolTip("SHOW MORE INFO");
+                ui->b_1->show();
+                ui->b_2->show();
+                QObject::connect (ui->b_1, &QPushButton::pressed, [&] { delete this; });
+                QObject::connect (ui->b_2, &QPushButton::pressed, [&] {
                     QDesktopServices::openUrl(QUrl("http://"+hostSite+urlSiteNews));
                 });
             }
@@ -229,17 +231,19 @@ void Update::status(const int &exitCode)
                 _db->close();
             }
         }
-        ui->label->setText("UPDATED. RESTART PIG");
-        ui->button_a->setText("EXIT");
-        ui->button_b->setText("INFO");
-        ui->button_a->show();
-        ui->button_b->show();
-        QObject::connect (ui->button_a, &QPushButton::pressed, [=] { exit(0); });
-        QObject::connect (ui->button_b, &QPushButton::pressed, [&] {
+        ui->lb->setText("RESTART PIG");
+        ui->b_1->setIcon(QIcon(":/icon-off"));
+        ui->b_1->setToolTip("CLOSE PIG");
+        ui->b_2->setIcon(QIcon(":/icon-more"));
+        ui->b_2->setToolTip("SHOW MORE INFO");
+        ui->b_1->show();
+        ui->b_2->show();
+        QObject::connect (ui->b_1, &QPushButton::pressed, [=] { exit(0); });
+        QObject::connect (ui->b_2, &QPushButton::pressed, [&] {
             QDesktopServices::openUrl(QUrl("http://"+hostSite+urlSiteNews));
         });
     } else if (exitCode == -1) {
-        error("UPDATE FAILED. REQUIRED GKSU/KDESU");
+        error("UPDATE FAILED - REQUIRED GKSU/KDESU");
     } else {
         error("UPDATE FAILED");
     }
@@ -284,11 +288,11 @@ void Update::error(const QString &error)
     }
 
     if (ui != 0) {
-        ui->label->setText(error);
-        ui->button_a->setPalette(ui->palette_error);
-        ui->button_a->setText("OK");
-        ui->button_a->show();
-        QObject::connect (ui->button_a, &QPushButton::pressed, [&] { delete this; });
+        ui->lb->setText(error);
+        ui->b_1->setIcon(QIcon(":/icon-cancel"));
+        ui->b_1->setToolTip("CLOSE");
+        ui->b_1->show();
+        QObject::connect (ui->b_1, &QPushButton::pressed, [&] { delete this; });
     } else {
         emit dbError("DATABASE CORRUPTED");
         delete this;
@@ -300,15 +304,15 @@ void Update::init_ui()
     ui = new Ui::Update;
     ui->setupUi(this);
 
-    QObject::connect (ui->button_a, &QPushButton::pressed, [&] {
-        ui->label->setText("DOWNLOADING");
-        ui->button_a->hide();
-        ui->button_b->hide();
-        ui->button_a->disconnect();
-        ui->button_b->disconnect();
+    QObject::connect (ui->b_1, &QPushButton::pressed, [&] {
+        ui->lb->setText("DOWNLOADING");
+        ui->b_1->hide();
+        ui->b_2->hide();
+        ui->b_1->disconnect();
+        ui->b_2->disconnect();
         get();
     });
-    QObject::connect (ui->button_b, &QPushButton::pressed, [&] { delete this; });
+    QObject::connect (ui->b_2, &QPushButton::pressed, [&] { delete this; });
 
     emit showWidget(this);
 }

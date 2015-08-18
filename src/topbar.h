@@ -20,14 +20,15 @@ public:
     explicit TopBar(QSqlDatabase *db, QWidget *parent = 0);
     ~TopBar();
 
-    Finder *getFinderObject() { return m_finder; }
-    QPushButton *getBtnSetupObject() { return m_button_setup;}
+    Finder *getFinderObj() { return m_finder; }
+    QPushButton *getButtonSetupObj() { return m_b_setup; }
 
 private:
     Finder *m_finder;
 
     Ui::TopBar *ui;
-    QPushButton *m_button_setup;
+
+    QPushButton *m_b_setup;
 };
 
 #endif

@@ -1,23 +1,33 @@
 <RCC>
     <qresource prefix="/">
-        <file alias="img-scene">resources/images/viewer/scene.svg</file>
-        <file alias="img-scene-off">resources/images/viewer/scene-off.svg</file>
-        <file alias="img-play">resources/images/player/play.svg</file>
-        <file alias="img-replay">resources/images/player/replay.svg</file>
-        <file alias="img-playing">resources/images/player/playing.svg</file>
-        <file alias="img-paused">resources/images/player/paused.svg</file>
-        <file alias="img-standby">resources/images/player/standby.svg</file>
-        <file alias="img-volume">resources/images/player/volume.svg</file>
-        <file alias="img-volume-off">resources/images/player/volume-off.svg</file>
-        <file alias="img-network">resources/images/global/network/network.svg</file>
-        <file alias="img-network_err">resources/images/global/network/network_err.svg</file>
-        <file alias="img-download">resources/images/global/network/download.svg</file>
-        <file alias="img-download-dark">resources/images/global/network/download-dark.svg</file>
-        <file alias="img-peers">resources/images/global/network/peers.svg</file>
-        <file alias="img-peers-dark">resources/images/global/network/peers-dark.svg</file>
-        <file alias="img_err">resources/images/global/err.svg</file>
-        <file alias="img-cover-back">resources/images/viewer/cover-back.jpg</file>
-        <file alias="img-cover_err">resources/images/viewer/cover_err.jpg</file>
+        <file alias="icon-install">resources/images/update/install.svg</file>
+        <file alias="icon-off">resources/images/update/off.svg</file>
+        <file alias="icon-filters">resources/images/finder/filters.svg</file>
+        <file alias="icon-filters-dark">resources/images/finder/filters-dark.svg</file>
+        <file alias="icon-setup">resources/images/setup/setup.svg</file>
+        <file alias="icon-reset">resources/images/setup/reset.svg</file>
+        <file alias="icon-reset-dark">resources/images/setup/reset-dark.svg</file>
+        <file alias="icon-upload">resources/images/setup/upload.svg</file>
+        <file alias="img-back_cover">resources/images/viewer/back_cover.jpg</file>
+        <file alias="icon-watch">resources/images/viewer/watch.svg</file>
+        <file alias="icon-watched">resources/images/viewer/watched.svg</file>
+        <file alias="icon-play">resources/images/player/play.svg</file>
+        <file alias="icon-replay">resources/images/player/replay.svg</file>
+        <file alias="icon-playing">resources/images/player/playing.svg</file>
+        <file alias="icon-paused">resources/images/player/paused.svg</file>
+        <file alias="icon-standby">resources/images/player/standby.svg</file>
+        <file alias="icon-volume">resources/images/player/volume.svg</file>
+        <file alias="icon-volume-off">resources/images/player/volume-off.svg</file>
+        <file alias="icon-minimize">resources/images/global/minimize.svg</file>
+        <file alias="icon-minimize-dark">resources/images/global/minimize-dark.svg</file>
+        <file alias="icon-close">resources/images/global/close.svg</file>
+        <file alias="icon-close-dark">resources/images/global/close-dark.svg</file>
+        <file alias="icon-back">resources/images/global/back.svg</file>
+        <file alias="icon-ok">resources/images/global/ok.svg</file>
+        <file alias="icon-cancel">resources/images/global/cancel.svg</file>
+        <file alias="icon-more">resources/images/global/more.svg</file>
+        <file alias="icon-less">resources/images/global/less.svg</file>
+        <file alias="icon-downloading">resources/images/global/downloading.svg</file>
         <file>resources/images/global/icon.ico</file>
         <file>resources/images/global/icon.jpg</file>
         <file>resources/images/global/icon.rc</file>

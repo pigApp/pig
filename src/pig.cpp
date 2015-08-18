@@ -3,7 +3,6 @@
 #include "update.h"
 
 #include <QDebug>//
-#include <QTimer>//
 
 PIG::PIG(QWidget *parent) :
     QWidget(parent),
@@ -20,6 +19,12 @@ PIG::PIG(QWidget *parent) :
     init();
 
     ui->setupUi(this);
+
+    ui->b_minimize->installEventFilter(this);
+    ui->b_close->installEventFilter(this);
+
+    QObject::connect (ui->b_minimize, &QPushButton::released, [&] { showMinimized(); });
+    QObject::connect (ui->b_close, &QPushButton::released, [&] { exit(0); });
 
     init_authorization();
 }
@@ -105,9 +110,9 @@ void PIG::init_topbar()
 {
     topbar = new TopBar(&db, this);
 
-    connect (topbar->getFinderObject(), SIGNAL(sendData(const QStringList*, const QString*)),
+    connect (topbar->getFinderObj(), SIGNAL(sendData(const QStringList*, const QString*)),
              this, SLOT(init_viewer(const QStringList*, const QString*)));
-    connect (topbar->getBtnSetupObject(), SIGNAL(released()), this, SLOT(init_setup()));
+    connect (topbar->getButtonSetupObj(), SIGNAL(pressed()), this, SLOT(init_setup()));
 
     ui->main_layout->addWidget(topbar);
 }
@@ -118,7 +123,7 @@ void PIG::init_viewer(const QStringList *data, const QString *filter)
         view = new View(&PIG_PATH, this);
 
         QObject::connect (view, &View::setFilterOnCovers, [&] {
-            topbar->getFinderObject()->setFilterOnCovers();
+            topbar->getFinderObj()->setFilterOnCovers();
         });
         QObject::connect (view, &View::setTopbarState, [&] (bool hide) {
             topbar->setHidden(hide);
@@ -126,12 +131,12 @@ void PIG::init_viewer(const QStringList *data, const QString *filter)
 
         ui->main_layout->addWidget(view);
 
-        if (!topbar->getBtnSetupObject()->isEnabled())
-            topbar->getBtnSetupObject()->setEnabled(true);
+        if (!topbar->getButtonSetupObj()->isEnabled())
+            topbar->getButtonSetupObj()->setEnabled(true);
     }
 
     if (data != 0)
-        view->get(data);
+        view->get_covers(data);
 
     if (filter != 0)
         view->set_filter(filter);
@@ -142,10 +147,10 @@ void PIG::init_setup()
     if (setup == 0) {
         setup = new Setup(&PIG_PATH, &keep_covers, &keep_torrents, &keep_movies,
                           &torrent_port_1, &torrent_port_2, &db, this);
+        connect (setup->getButtonBackObj(), SIGNAL(pressed()), this, SLOT(init_setup()));
         ui->main_layout->addWidget(setup);
         topbar->setHidden(true);
         view->hide();
-        //QTimer::singleShot(5000, this, SLOT(init_setup()));
     } else {
         ui->main_layout->removeWidget(setup);
         topbar->setHidden(false);
@@ -153,6 +158,11 @@ void PIG::init_setup()
         setup->deleteLater();
         setup = NULL;
     }
+}
+
+void PIG::error(QString error)
+{
+    qDebug() << "ERROR: " << error; //TODO: HACER ESTO.
 }
 
 QHash<QString, QVariant> PIG::get_rc()
@@ -172,7 +182,29 @@ QHash<QString, QVariant> PIG::get_rc()
     return rc;
 }
 
-void PIG::error(QString error)
+bool PIG::eventFilter(QObject *obj, QEvent *e)
 {
-    qDebug() << "ERROR: " << error; //TODO: HACER ESTO.
+    if (obj == (QObject*)ui->b_minimize) {
+        if (e->type() == QEvent::Enter) {
+            ui->b_minimize->setIcon(QIcon(":/icon-minimize-dark"));
+            return true;
+        } else if (e->type() == QEvent::Leave) {
+            ui->b_minimize->setIcon(QIcon(":/icon-minimize"));
+            return true;
+        } else {
+            return false;
+        }
+    } else if (obj == (QObject*)ui->b_close) {
+        if (e->type() == QEvent::Enter) {
+            ui->b_close->setIcon(QIcon(":/icon-close-dark"));
+            return true;
+        } else if (e->type() == QEvent::Leave) {
+            ui->b_close->setIcon(QIcon(":/icon-close"));
+            return true;
+        } else {
+            return false;
+        }
+    } else {
+        return QWidget::eventFilter(obj, e);
+    }
 }

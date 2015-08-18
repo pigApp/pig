@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xml:space="preserve"
+   enable-background="new 0 0 512 512"
+   viewBox="0 0 16 16"
+   height="16"
+   width="16"
+   y="0px"
+   x="0px"
+   id="Layer_1"
+   version="1.1"><metadata
+     id="metadata5643"><rdf:RDF><cc:Work
+         rdf:about=""><dc:format>image/svg+xml</dc:format><dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" /><dc:title></dc:title></cc:Work></rdf:RDF></metadata><defs
+     id="defs5641" /><g
+     style="fill:#008000"
+     transform="matrix(0.66666667,0,0,0.66666667,-162.66667,-162.66667)"
+     id="g6185"><path
+       d="m 268,256 c 0,-6.6277 -5.3723,-12 -12,-12 -6.6277,0 -12,5.3723 -12,12 0,6.6277 5.3723,12 12,12 6.6277,0 12,-5.3723 12,-12 z m -22.125,0 c 0,-5.59205 4.53295,-10.125 10.125,-10.125 5.59205,0 10.125,4.53295 10.125,10.125 0,5.59205 -4.53295,10.125 -10.125,10.125 -5.59205,0 -10.125,-4.53295 -10.125,-10.125 z"
+       id="path5635"
+       style="clip-rule:evenodd;fill:#008000;fill-rule:evenodd" /><polygon
+       points="239.969,384 271.969,384 271.969,185.594 313.141,224 336,202.656 256,128 176,202.656 198.859,224 239.969,185.594 "
+       id="polygon5637"
+       transform="matrix(0.046875,0,0,0.046875,244,244)"
+       style="clip-rule:evenodd;fill:#008000;fill-rule:evenodd" /></g></svg>

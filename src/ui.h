@@ -13,6 +13,7 @@
 #include <QAbstractItemView>
 #include <QScrollArea>
 #include <QScrollBar>
+#include <QButtonGroup>
 #include <QGroupBox>
 #include <QHBoxLayout>
 #include <QVBoxLayout>
@@ -20,49 +21,74 @@
 #include <QDesktopWidget>//
 #include <QDesktopServices>
 #include <QCompleter>
+#include <QToolTip>
 
 #include <QFont>
-
-#include <QDebug>
 
 QT_BEGIN_NAMESPACE
 
 class Ui_PIG
 {
 public:
+    QPushButton *b_minimize;
+    QPushButton *b_close;
     QVBoxLayout *main_layout;
 
     void setupUi(QWidget *PIG)
     {
-        QFont font(":/font-global");
-        font.setPointSize(16); // TODO: PORCENTAJE
-        font.setCapitalization(QFont::AllUppercase);
-        font.setBold(true);
+        QFont f(":/font-global");
+        f.setPointSize(16);//TODO: PORCENTAJE.
+        f.setCapitalization(QFont::AllUppercase);
+        f.setBold(true);
 
-        QBrush brush_base(QColor(10, 10, 10, 255));
-        QBrush brush_white(QColor(255, 255, 255, 255));
-        QBrush brush_black(QColor(0, 0, 0, 255));
+        QFont f_toolTip(":/font-global");
+        f_toolTip.setPointSize(12);//TODO: PORCENTAJE.
+        f_toolTip.setCapitalization(QFont::AllUppercase);
+        f_toolTip.setBold(true);
 
-        QPalette palette;
-        palette.setBrush(QPalette::Active, QPalette::Base, brush_base);
-        palette.setBrush(QPalette::Active, QPalette::Window, brush_base);
-        palette.setBrush(QPalette::Active, QPalette::WindowText, brush_white);
-        palette.setBrush(QPalette::Active, QPalette::Text, brush_white);
-        palette.setBrush(QPalette::Active, QPalette::Highlight, brush_black);
-        palette.setBrush(QPalette::Active, QPalette::Button, brush_base);
-        palette.setBrush(QPalette::Active, QPalette::ButtonText, brush_white);
-        palette.setBrush(QPalette::Disabled, QPalette::Base, brush_base);
-        palette.setBrush(QPalette::Disabled, QPalette::Window, brush_base);
-        palette.setBrush(QPalette::Disabled, QPalette::WindowText, brush_black);
-        palette.setBrush(QPalette::Disabled, QPalette::Text, brush_black);
-        palette.setBrush(QPalette::Disabled, QPalette::Highlight, brush_base);
-        palette.setBrush(QPalette::Disabled, QPalette::Button, brush_base);
-        palette.setBrush(QPalette::Disabled, QPalette::ButtonText, brush_black);
+        QBrush br_base(QColor(10, 10, 10, 255));
+        QBrush br_white(QColor(255, 255, 255, 255));
+        QBrush br_black(QColor(0, 0, 0, 255));
+
+        QPalette p;
+        p.setBrush(QPalette::Active, QPalette::Base, br_base);
+        p.setBrush(QPalette::Active, QPalette::Window, br_base);
+        p.setBrush(QPalette::Active, QPalette::WindowText, br_white);
+        p.setBrush(QPalette::Active, QPalette::Text, br_white);
+        p.setBrush(QPalette::Active, QPalette::Highlight, br_black);
+        p.setBrush(QPalette::Active, QPalette::Button, br_base);
+        p.setBrush(QPalette::Active, QPalette::ButtonText, br_white);
+        p.setBrush(QPalette::Disabled, QPalette::Base, br_base);
+        p.setBrush(QPalette::Disabled, QPalette::Window, br_base);
+        p.setBrush(QPalette::Disabled, QPalette::WindowText, br_black);
+        p.setBrush(QPalette::Disabled, QPalette::Text, br_black);
+        p.setBrush(QPalette::Disabled, QPalette::Highlight, br_base);
+        p.setBrush(QPalette::Disabled, QPalette::Button, br_base);
+        p.setBrush(QPalette::Disabled, QPalette::ButtonText, br_black);
+
+        QPalette p_toolTip = QToolTip::palette();
+        p_toolTip.setBrush(QPalette::All, QPalette::ToolTipBase, br_white);
+        p_toolTip.setBrush(QPalette::All, QPalette::ToolTipText, br_black);
+
+        QToolTip::setFont(f_toolTip);
+        QToolTip::setPalette(p_toolTip);
+
+        b_minimize = new QPushButton(QIcon(":/icon-minimize"), NULL, PIG);
+        b_minimize->setGeometry(1880, 5, 16, 16);//TODO: PORCENTAJE.
+        b_minimize->setMouseTracking(true);
+        b_minimize->setFlat(true);
+        b_minimize->setParent(PIG);
+
+        b_close = new QPushButton(QIcon(":/icon-close"), NULL, PIG);
+        b_close->setGeometry(1900, 5, 16, 16);//TODO: PORCENTAJE.
+        b_close->setMouseTracking(true);
+        b_close->setFlat(true);
+        b_close->setParent(PIG);
 
         main_layout = new QVBoxLayout(PIG);
 
-        PIG->setFont(font);
-        PIG->setPalette(palette);
+        PIG->setFont(f);
+        PIG->setPalette(p);
         PIG->setLayout(main_layout);
     }
 };
@@ -70,36 +96,41 @@ public:
 class Ui_Authotization
 {
 public:
-    QPalette palette;
-    QPalette palette_error;
-    QLabel *label;
+    QPalette p;
+    QPalette p_error;
+    QLabel *lb;
     QLineEdit *input;
-    QPushButton *button_reset;
-    QHBoxLayout *layout_input;
-    QVBoxLayout *layout;
+    QPushButton *b_reset;
+    QHBoxLayout *l_input;
+    QVBoxLayout *l;
 
     void setupUi(bool set, bool setted, QWidget *Authorization)
     {
-        QBrush brush_alternate_base(QColor(15, 15, 15, 255));
-        QBrush brush_white(QColor(255, 255, 255, 255));
-        QBrush brush_black(QColor(0, 0, 0, 255));
-        QBrush brush_dark(QColor(40, 40, 40, 255));
-        QBrush brush_red(QColor(115, 10, 10, 255));
+        QBrush br_base(QColor(10, 10, 10, 255));
+        QBrush br_alternate_base(QColor(15, 15, 15, 255));
+        QBrush br_white(QColor(255, 255, 255, 255));
+        QBrush br_black(QColor(0, 0, 0, 255));
+        QBrush br_dark(QColor(40, 40, 40, 255));
+        QBrush br_red(QColor(115, 10, 10, 255));
 
-        palette.setBrush(QPalette::Active, QPalette::Base, brush_alternate_base);
-        palette.setBrush(QPalette::Active, QPalette::Window, brush_alternate_base);
-        palette.setBrush(QPalette::Active, QPalette::WindowText, brush_white);
-        palette.setBrush(QPalette::Active, QPalette::Button, brush_white);
-        palette.setBrush(QPalette::Active, QPalette::ButtonText, brush_black);
-        palette.setBrush(QPalette::Disabled, QPalette::Base, brush_dark);
-        palette.setBrush(QPalette::Disabled, QPalette::Window, brush_dark);
-        palette.setBrush(QPalette::Disabled, QPalette::WindowText, brush_black);
-        palette.setBrush(QPalette::Disabled, QPalette::Button, brush_dark);
-        palette.setBrush(QPalette::Disabled, QPalette::ButtonText, brush_black);
+        p.setBrush(QPalette::Active, QPalette::Base, br_alternate_base);
+        p.setBrush(QPalette::Active, QPalette::Window, br_alternate_base);
+        p.setBrush(QPalette::Active, QPalette::WindowText, br_white);
+        p.setBrush(QPalette::Active, QPalette::Button, br_base);
+        p.setBrush(QPalette::Active, QPalette::ButtonText, br_white);
+        p.setBrush(QPalette::Disabled, QPalette::Base, br_dark);
+        p.setBrush(QPalette::Disabled, QPalette::Window, br_dark);
+        p.setBrush(QPalette::Disabled, QPalette::WindowText, br_black);
+        p.setBrush(QPalette::Disabled, QPalette::Button, br_base);
+        p.setBrush(QPalette::Disabled, QPalette::ButtonText, br_dark);
 
-        palette_error.setBrush(QPalette::Active, QPalette::Base, brush_red);
-        palette_error.setBrush(QPalette::Active, QPalette::Window, brush_red);
-        palette_error.setBrush(QPalette::Active, QPalette::Highlight, brush_red);
+        p_error.setBrush(QPalette::Active, QPalette::Base, br_red);
+        p_error.setBrush(QPalette::Active, QPalette::Window, br_red);
+        p_error.setBrush(QPalette::Active, QPalette::Text, br_white);
+        p_error.setBrush(QPalette::Active, QPalette::Highlight, br_red);
+        p_error.setBrush(QPalette::Disabled, QPalette::Base, br_red);
+        p_error.setBrush(QPalette::Disabled, QPalette::Window, br_red);
+        p_error.setBrush(QPalette::Disabled, QPalette::Highlight, br_red);
 
         QString str;
         if (set)
@@ -107,546 +138,550 @@ public:
         else
             str = "ENTER PASSWORD";
 
-        label = new QLabel(str, Authorization);
-        label->setPalette(palette);
-        if (!set) label->setAlignment(Qt::AlignHCenter);
+        lb = new QLabel(str, Authorization);
+        lb->setPalette(p);
+        if (!set)
+            lb->setAlignment(Qt::AlignHCenter);
 
         input = new QLineEdit(Authorization);
-        input->setPalette(palette);
-        if (set && setted) input->setText("SETTED");
+        input->setPalette(p);
+        input->setEchoMode(QLineEdit::Password);
+        if (!set)
+            input->setFocus();
         input->setDisabled(set && setted);
-        if (set && setted)
-            input->setEchoMode(QLineEdit::Normal);
-        else
-            input->setEchoMode(QLineEdit::Password);
         input->setAlignment(Qt::AlignCenter);
 
-        button_reset = new QPushButton("RESET", Authorization);
-        button_reset->setPalette(palette);
-        button_reset->setFlat(true);
-        button_reset->setDisabled(!setted);
-        button_reset->setAutoFillBackground(true);
-        button_reset->setHidden(!set);
+        b_reset = new QPushButton(Authorization);
+        if  (setted)
+            b_reset->setIcon(QIcon(":/icon-reset"));
+        else
+            b_reset->setIcon(QIcon(":/icon-reset-dark"));
+        b_reset->setToolTip("RESET PASSWORD");
+        b_reset->setFlat(true);
+        b_reset->setDisabled(!setted);
+        b_reset->setHidden(!set);
 
-        layout_input = new QHBoxLayout;
-        layout_input->setSpacing(20); // TODO: PORCENTAJE
-        if (set) layout_input->addWidget(label);
-        layout_input->addWidget(input);
-        layout_input->addWidget(button_reset);
+        l_input = new QHBoxLayout;
+        l_input->setSpacing(20);//TODO: PORCENTAJE.
+        if (set)
+            l_input->addWidget(lb);
+        l_input->addWidget(input);
+        l_input->addWidget(b_reset);
 
-        layout = new QVBoxLayout(Authorization);
-        if (!set) layout->addWidget(label);
-        layout->addLayout(layout_input);
-        layout->setAlignment(Qt::AlignCenter);
+        l = new QVBoxLayout(Authorization);
+        if (!set)
+            l->addWidget(lb);
+        l->addLayout(l_input);
+        l->setAlignment(Qt::AlignCenter);
 
-        Authorization->setLayout(layout);
+        Authorization->setLayout(l);
     }
 };
 
 class Ui_Update
 {
 public:
-    QPalette palette;
-    QPalette palette_error;
-    QLabel *label;
-    QPushButton *button_a;
-    QPushButton *button_b;
-    QHBoxLayout *layout;
+    QLabel *lb;
+    QPushButton *b_1;
+    QPushButton *b_2;
+    QHBoxLayout *l;
 
     void setupUi(QWidget *Update)
     {
-        QBrush brush_white(QColor(255, 255, 255, 255));
-        QBrush brush_black(QColor(0, 0, 0, 255));
-        QBrush brush_red(QColor(115, 10, 10, 255));
+        lb = new QLabel("UPDATE AVAILABLE", Update);
 
-        palette.setBrush(QPalette::Active, QPalette::Button, brush_white);
-        palette.setBrush(QPalette::Active, QPalette::ButtonText, brush_black);
+        b_1 = new QPushButton(QIcon(":/icon-install"), NULL, Update);
+        b_1->setToolTip("ACCEPT UPDATE");
+        b_1->setFlat(true);
 
-        palette_error.setBrush(QPalette::Active, QPalette::Button, brush_red);
-        palette_error.setBrush(QPalette::Active, QPalette::ButtonText, brush_white);
+        b_2 = new QPushButton(QIcon(":/icon-cancel"), NULL, Update);
+        b_2->setToolTip("CANCEL UPDATE");
+        b_2->setFlat(true);
 
-        label = new QLabel("UPDATE AVAILABLE", Update);
+        l = new QHBoxLayout(Update);
+        l->setAlignment(Qt::AlignHCenter);
+        l->addWidget(lb);
+        l->addSpacing(10);//TODO: PORCENTAJE
+        l->addWidget(b_1);
+        l->addWidget(b_2);
 
-        button_a = new QPushButton(" ACCEPT ", Update);
-        button_a->setPalette(palette);
-        button_a->setFlat(true);
-        button_a->setDefault(true);
-        button_a->setAutoFillBackground(true);
-
-        button_b = new QPushButton(" CANCEL ", Update);
-        button_b->setPalette(palette);
-        button_b->setFlat(true);
-        button_b->setAutoFillBackground(true);
-
-        layout = new QHBoxLayout(Update);
-        layout->setSpacing(22); // TODO: PORCENTAJE
-        layout->setAlignment(Qt::AlignHCenter);
-        layout->addWidget(label);
-        layout->addWidget(button_a);
-        layout->addWidget(button_b);
-
-        Update->setLayout(layout);
+        Update->setLayout(l);
     }
 };
 
 class Ui_Topbar
 {
 public:
-    QPushButton *button_setup;
-    QGridLayout *layout;
+    QPushButton *b_setup;
+    QGridLayout *l;
 
     void setupUi(QWidget *Topbar)
     {
-        QFont font(":/font-global");
-        font.setPointSize(24); // TODO: PORCENTAJE
-        font.setCapitalization(QFont::AllUppercase);
-        font.setBold(true);
+        b_setup = new QPushButton(QIcon(":/icon-setup"), NULL, Topbar);
+        b_setup->setToolTip("SETUP");
+        b_setup->setFlat(true);
+        b_setup->setDisabled(true);
 
-        button_setup = new QPushButton("≡", Topbar);
-        button_setup->setFont(font);
-        button_setup->setFlat(true);
-        button_setup->setDisabled(true);
+        l = new QGridLayout(Topbar);
+        l->setContentsMargins(0, 0, 51, 0);//TODO: PORCENTAJE.
+        l->setSpacing(0);
+        l->setAlignment(Qt::AlignLeft | Qt::AlignTop);
+        l->addWidget(b_setup, 0, 1);
 
-        layout = new QGridLayout(Topbar);
-        layout->setMargin(0);
-        layout->setAlignment(Qt::AlignTop);
-        layout->addWidget(button_setup, 0, 1);
-
-        Topbar->setLayout(layout);
+        Topbar->setLayout(l);
     }
 };
 
 class Ui_Finder
 {
 public:
-    QGridLayout *_layout_topbar;
+    QGridLayout *_l_topbar;
 
-    QPalette palette;
+    QPalette p_filter;
+    QPalette p_filter_active;
     QLineEdit *input;
-    QPushButton *button_filters;
-    QRadioButton *radio_all_quality;
-    QRadioButton *radio_720p;
-    QRadioButton *radio_1080p;
-    QRadioButton *radio_fullMovie;
-    QHBoxLayout *layout_radios;
-    QHBoxLayout *layout_filters;
-    QGridLayout *layout;
+    QButtonGroup *bg_quality;
+    QButtonGroup *bg_categories;
+    QPushButton *b_filters;
+    QPushButton *b_quality_all;
+    QPushButton *b_quality_720p;
+    QPushButton *b_quality_1080p;
+    QPushButton *b_fullMovie;
+    QHBoxLayout *l_quality_fullmovie;
+    QHBoxLayout *l_filters;
+    QGridLayout *l;
 
-    QVector<QPushButton*> buttons_categories_vector;
+    QVector<QPushButton*> b_vector_categories;
 
-    void setupUi(QStringList *movies, QGridLayout *layout_topbar, QWidget *Finder)
+    void setupUi(QStringList *movies, QGridLayout *l_topbar, QWidget *Finder)
     {
-        _layout_topbar = layout_topbar;
+        _l_topbar = l_topbar;
 
-        QFont font(":/font-global");
-        font.setPointSize(24); // TODO: PORCENTAJE
-        font.setCapitalization(QFont::AllUppercase);
-        font.setBold(true);
+        QFont f(":/font-global");
+        f.setPointSize(24);//TODO: PORCENTAJE.
+        f.setCapitalization(QFont::AllUppercase);
+        f.setBold(true);
 
-        QFont font_completer(":/font-global");
-        font_completer.setPointSize(16); // TODO: PORCENTAJE
-        font_completer.setCapitalization(QFont::AllUppercase);
-        font_completer.setBold(true);
+        QFont f_completer(":/font-global");
+        f_completer.setPointSize(16);//TODO: PORCENTAJE.
+        f_completer.setCapitalization(QFont::AllUppercase);
+        f_completer.setBold(true);
 
-        QBrush brush_base(QColor(10, 10, 10, 255));
-        QBrush brush_alternate_base(QColor(15, 15, 15, 255));
-        QBrush brush_white(QColor(255, 255, 255, 255));
-        QBrush brush_black(QColor(0, 0, 0, 255));
-        QBrush brush_dark(QColor(40, 40, 40, 255));
+        QBrush br_base(QColor(10, 10, 10, 255));
+        QBrush br_alternate_base(QColor(15, 15, 15, 255));
+        QBrush br_white(QColor(255, 255, 255, 255));
+        QBrush br_black(QColor(0, 0, 0, 255));
+        QBrush br_dark(QColor(40, 40, 40, 255));
+        QBrush br_filter(QColor(30, 30, 30, 255));
 
-        palette.setBrush(QPalette::Active, QPalette::Base, brush_alternate_base);
-        palette.setBrush(QPalette::Active, QPalette::Window, brush_alternate_base);
-        palette.setBrush(QPalette::Active, QPalette::WindowText, brush_white);
-        palette.setBrush(QPalette::Active, QPalette::Text, brush_white);
-        palette.setBrush(QPalette::Active, QPalette::Highlight, brush_black);
-        palette.setBrush(QPalette::Active, QPalette::Button, brush_base);
-        palette.setBrush(QPalette::Active, QPalette::ButtonText, brush_white);
-        palette.setBrush(QPalette::Disabled, QPalette::Base, brush_alternate_base);
-        palette.setBrush(QPalette::Disabled, QPalette::Window, brush_alternate_base);
-        palette.setBrush(QPalette::Disabled, QPalette::WindowText, brush_black);
-        palette.setBrush(QPalette::Disabled, QPalette::Text, brush_black);
-        palette.setBrush(QPalette::Disabled, QPalette::Highlight, brush_alternate_base);
-        palette.setBrush(QPalette::Disabled, QPalette::Button, brush_alternate_base);
-        palette.setBrush(QPalette::Disabled, QPalette::ButtonText, brush_black);
+        QPalette p;
+        p.setBrush(QPalette::Active, QPalette::Base, br_alternate_base);
+        p.setBrush(QPalette::Active, QPalette::Window, br_alternate_base);
+        p.setBrush(QPalette::Active, QPalette::WindowText, br_white);
+        p.setBrush(QPalette::Active, QPalette::Text, br_white);
+        p.setBrush(QPalette::Active, QPalette::Highlight, br_black);
+        p.setBrush(QPalette::Active, QPalette::Button, br_base);
+        p.setBrush(QPalette::Active, QPalette::ButtonText, br_white);
+        p.setBrush(QPalette::Disabled, QPalette::Base, br_alternate_base);
+        p.setBrush(QPalette::Disabled, QPalette::Window, br_alternate_base);
+        p.setBrush(QPalette::Disabled, QPalette::WindowText, br_black);
+        p.setBrush(QPalette::Disabled, QPalette::Text, br_black);
+        p.setBrush(QPalette::Disabled, QPalette::Highlight, br_alternate_base);
+        p.setBrush(QPalette::Disabled, QPalette::Button, br_base);
+        p.setBrush(QPalette::Disabled, QPalette::ButtonText, br_black);
 
-        QPalette palette_completer;
-        palette_completer.setBrush(QPalette::Active, QPalette::Base, brush_base);
-        palette_completer.setBrush(QPalette::Active, QPalette::Window, brush_base);
-        palette_completer.setBrush(QPalette::Active, QPalette::Text, brush_white);
-        palette_completer.setBrush(QPalette::Active, QPalette::Highlight, brush_dark);
+        QPalette p_completer;
+        p_completer.setBrush(QPalette::Active, QPalette::Base, br_base);
+        p_completer.setBrush(QPalette::Active, QPalette::Window, br_base);
+        p_completer.setBrush(QPalette::Active, QPalette::Text, br_white);
+        p_completer.setBrush(QPalette::Active, QPalette::Highlight, br_alternate_base);
+
+        p_filter.setBrush(QPalette::Active, QPalette::Button, br_filter);
+        p_filter.setBrush(QPalette::Active, QPalette::ButtonText, br_white);
+        p_filter.setBrush(QPalette::Disabled, QPalette::Button, br_base);
+        p_filter.setBrush(QPalette::Disabled, QPalette::ButtonText, br_black);
+
+        p_filter_active.setBrush(QPalette::Active, QPalette::Button, br_dark);
+        p_filter_active.setBrush(QPalette::Active, QPalette::ButtonText, br_white);
+        p_filter_active.setBrush(QPalette::Disabled, QPalette::Button, br_base);
+        p_filter_active.setBrush(QPalette::Disabled, QPalette::ButtonText, br_black);
 
         QCompleter *completer = new QCompleter(*movies, Finder);
-        completer->popup()->setFont(font_completer);
-        completer->popup()->setPalette(palette_completer);
+        completer->popup()->setFont(f_completer);
+        completer->popup()->setPalette(p_completer);
         completer->setMaxVisibleItems(10);
         completer->setFilterMode(Qt::MatchContains);
         completer->setCaseSensitivity(Qt::CaseInsensitive);
         completer->setCompletionMode(QCompleter::PopupCompletion);
 
         input = new QLineEdit(Finder);
-        input->setFont(font);
-        input->setPalette(palette);
+        input->setFont(f);
+        input->setPalette(p);
         input->setMaxLength(45);
         input->setCompleter(completer);
         input->setAlignment(Qt::AlignCenter);
 
-        button_filters = new QPushButton("≡", Finder);
-        button_filters->setFont(font);
-        button_filters->setPalette(palette);
-        button_filters->setFlat(true);
-        button_filters->setParent(input);
+        b_filters = new QPushButton(QIcon(":/icon-filters"), NULL, Finder);
+        b_filters->setGeometry(15, 11, 24, 24);//TODO: PORCENTAJE.
+        b_filters->setCursor(Qt::ArrowCursor);
+        b_filters->setFlat(true);
+        b_filters->setParent(input);
 
-        layout = new QGridLayout;
-        layout->setContentsMargins(82, 0, 2, 0);// TODO: PORCENTAJE
-        layout->setSpacing(0); // TODO: PORCENTAJE
-        layout->addWidget(input, 0, 0);
-        layout->addWidget(button_filters, 0, 0, 0, 0, Qt::AlignLeft);
+        l = new QGridLayout;
+        l->setContentsMargins(82, 0, 8, 0);//TODO: PORCENTAJE.
+        l->setSpacing(0);
+        l->addWidget(input, 0, 0);
 
-        _layout_topbar->addLayout(layout, 0, 0);
+        _l_topbar->addLayout(l, 0, 0);
 
         input->setFocus();
     }
 
     void setupFilterUi(QWidget *Finder)
     {
-        QFont font(":/font-global");
-        font.setPointSize(12); // TODO: PORCENTAJE
-        font.setCapitalization(QFont::AllUppercase);
-        font.setBold(true);
+        QFont f(":/font-global");
+        f.setPointSize(12);//TODO: PORCENTAJE.
+        f.setCapitalization(QFont::AllUppercase);
+        f.setBold(true);
 
-        QBrush brush_white(QColor(255, 255, 255, 255));
-        QBrush brush_dark(QColor(40, 40, 40, 255));
+        bg_quality = new QButtonGroup(Finder);
 
-        palette.setBrush(QPalette::Active, QPalette::Base, brush_dark);
-        palette.setBrush(QPalette::Active, QPalette::WindowText, brush_white);
+        b_quality_all = new QPushButton("ALL", Finder);
+        b_quality_all->setFont(f);
+        b_quality_all->setPalette(p_filter_active);
+        b_quality_all->setFlat(true);
+        b_quality_all->setCheckable(true);
+        b_quality_all->setChecked(true);
+        b_quality_all->setAutoFillBackground(true);
 
-        radio_all_quality = new QRadioButton("ALL", Finder);
-        radio_all_quality->setFont(font);
-        radio_all_quality->setPalette(palette);
-        radio_all_quality->setChecked(true);
+        b_quality_720p = new QPushButton("720p", Finder);
+        b_quality_720p->setFont(f);
+        b_quality_720p->setPalette(p_filter);
+        b_quality_720p->setFlat(true);
+        b_quality_720p->setCheckable(true);
+        b_quality_720p->setChecked(false);
+        b_quality_720p->setAutoFillBackground(true);
 
-        radio_720p = new QRadioButton("720p", Finder);
-        radio_720p->setFont(font);
-        radio_720p->setPalette(palette);
+        b_quality_1080p = new QPushButton("1080p", Finder);
+        b_quality_1080p->setFont(f);
+        b_quality_1080p->setPalette(p_filter);
+        b_quality_1080p->setFlat(true);
+        b_quality_1080p->setCheckable(true);
+        b_quality_1080p->setChecked(false);
+        b_quality_1080p->setAutoFillBackground(true);
 
-        radio_1080p = new QRadioButton("1080p", Finder);
-        radio_1080p->setFont(font);
-        radio_1080p->setPalette(palette);
+        bg_quality->addButton(b_quality_all);
+        bg_quality->addButton(b_quality_720p);
+        bg_quality->addButton(b_quality_1080p);
 
-        radio_fullMovie = new QRadioButton("FULLMOVIE", Finder);
-        radio_fullMovie->setFont(font);
-        radio_fullMovie->setPalette(palette);
-        radio_fullMovie->setAutoExclusive(false);
+        b_fullMovie = new QPushButton(" FULLMOVIE ", Finder);
+        b_fullMovie->setFont(f);
+        b_fullMovie->setPalette(p_filter);
+        b_fullMovie->setFlat(true);
+        b_fullMovie->setCheckable(true);
+        b_fullMovie->setChecked(false);
+        b_fullMovie->setAutoFillBackground(true);
 
-        layout_radios = new QHBoxLayout;;
-        layout_radios->addWidget(radio_all_quality);
-        layout_radios->addWidget(radio_720p);
-        layout_radios->addWidget(radio_1080p);
-        layout_radios->addSpacing(25); // TODO: PORCENTAJE
-        layout_radios->addWidget(radio_fullMovie);
+        bg_categories = new QButtonGroup(Finder);
 
-        layout_filters = new QHBoxLayout;
-        layout_filters->setContentsMargins(115, 0, 10, 0); // TODO: PORCENTAJE
-        layout_filters->addLayout(layout_radios);
+        l_quality_fullmovie = new QHBoxLayout;;
+        l_quality_fullmovie->addWidget(b_quality_all);
+        l_quality_fullmovie->addWidget(b_quality_720p);
+        l_quality_fullmovie->addWidget(b_quality_1080p);
+        l_quality_fullmovie->addSpacing(10);//TODO: PORCENTAJE.
+        l_quality_fullmovie->addWidget(b_fullMovie);
+        l_quality_fullmovie->addSpacing(10);//TODO: PORCENTAJE.
 
-        _layout_topbar->addLayout(layout_filters, 1, 0);
+        l_filters = new QHBoxLayout;
+        l_filters->setContentsMargins(85, 15, 10, 0);//TODO: PORCENTAJE.
+        l_filters->addLayout(l_quality_fullmovie);
+
+        _l_topbar->addLayout(l_filters, 1, 0);
     }
 };
 
 class Ui_Setup
 {
 public:
-    QPalette palette_torrent;
-    QPalette palette_torrent_edit;
-    QLabel *label_data_binary;
-    QLabel *label_data_database;
-    QLabel *label_data_license;
-    QLabel *label_torrent_ports;
-    QLabel *label_contribute_torrents;
-    QLabel *label_contribute_code;
-    QLabel *label_contribute_bugs;
-    QLabel *label_contribute_bitcoins;
-    QLabel *label_contribute_bitcoins_wallet;
-    QLabel *label_contribute_help;
+    QPalette p_torrent;
+    QPalette p_torrent_edit;
+    QLabel *lb_data_binary;
+    QLabel *lb_data_database;
+    QLabel *lb_data_license;
+    QLabel *lb_torrent_ports;
+    QLabel *lb_contribute_torrents;
+    QLabel *lb_contribute_code;
+    QLabel *lb_contribute_bugs;
+    QLabel *lb_contribute_bitcoins;
+    QLabel *lb_contribute_bitcoins_wallet;
     QLineEdit *input_torrent_port_1;
     QLineEdit *input_torrent_port_2;
-    QRadioButton *radio_folder_covers;
-    QRadioButton *radio_folder_torrents;
-    QRadioButton *radio_folder_movies;
-    QPushButton *button_folder_covers_clean;
-    QPushButton *button_folder_torrents_clean;
-    QPushButton *button_folder_movies_clean;
-    QPushButton *button_torrent_ports_reset;
-    QPushButton *button_contribute_torrents;
-    QPushButton *button_contribute_code;
-    QPushButton *button_contribute_bugs;
-    QPushButton *button_contribute_bitcoins;
-    QPushButton *button_contribute_help;
-    QGroupBox *group_data;
-    QGroupBox *group_authorization;
-    QGroupBox *group_folder;
-    QGroupBox *group_torrent;
-    QGroupBox *group_contribute;
-    QHBoxLayout *layout_data;
-    QHBoxLayout *layout_authorization;
-    QHBoxLayout *layout_folder_covers;
-    QHBoxLayout *layout_folder_torrents;
-    QHBoxLayout *layout_folder_movies;
-    QVBoxLayout *layout_folder;
-    QHBoxLayout *layout_torrent;
-    QHBoxLayout *layout_contribute_torrents;
-    QHBoxLayout *layout_contribute_code;
-    QHBoxLayout *layout_contribute_bugs;
-    QHBoxLayout *layout_contribute_bitcoins;
-    QHBoxLayout *layout_contribute_help;
-    QVBoxLayout *layout_contribute;
-    QGridLayout *layout;
+    QRadioButton *r_folder_covers;
+    QRadioButton *r_folder_torrents;
+    QRadioButton *r_folder_movies;
+    QPushButton *b_folder_covers_reset;
+    QPushButton *b_folder_torrents_reset;
+    QPushButton *b_folder_movies_reset;
+    QPushButton *b_torrent_ports_reset;
+    QPushButton *b_contribute_torrents;
+    QPushButton *b_contribute_code;
+    QPushButton *b_contribute_bugs;
+    QPushButton *b_contribute_bitcoins;
+    QPushButton *b_back;
+    QGroupBox *g_data;
+    QGroupBox *g_authorization;
+    QGroupBox *g_folder;
+    QGroupBox *g_torrent;
+    QGroupBox *g_contribute;
+    QHBoxLayout *l_data;
+    QHBoxLayout *l_authorization;
+    QHBoxLayout *l_folder_covers;
+    QHBoxLayout *l_folder_torrents;
+    QHBoxLayout *l_folder_movies;
+    QVBoxLayout *l_folder;
+    QHBoxLayout *l_torrent;
+    QHBoxLayout *l_contribute_torrents;
+    QHBoxLayout *l_contribute_code;
+    QHBoxLayout *l_contribute_bugs;
+    QHBoxLayout *l_contribute_bitcoins;
+    QVBoxLayout *l_contribute;
+    QGridLayout *l;
 
     void setupUi(QStringList *data, bool **keep_covers, bool **keep_torrents,
                  bool **keep_movies, int **torrent_port_1, int **torrent_port_2,
                  QWidget *authorization, QWidget *Setup)
     {
-        QBrush brush_base(QColor(10, 10, 10, 255));
-        QBrush brush_alternate_base(QColor(15, 15, 15, 255));
-        QBrush brush_white(QColor(255, 255, 255, 255));
-        QBrush brush_black(QColor(0, 0, 0, 255));
-        QBrush brush_dark(QColor(40, 40, 40, 255));
+        QBrush br_base(QColor(10, 10, 10, 255));
+        QBrush br_alternate_base(QColor(15, 15, 15, 255));
+        QBrush br_white(QColor(255, 255, 255, 255));
+        QBrush br_black(QColor(0, 0, 0, 255));
+        QBrush br_dark(QColor(40, 40, 40, 255));
 
-        QPalette palette;
-        palette.setBrush(QPalette::Active, QPalette::Base, brush_base);
-        palette.setBrush(QPalette::Active, QPalette::Window, brush_base);
-        palette.setBrush(QPalette::Active, QPalette::WindowText, brush_white);
-        palette.setBrush(QPalette::Active, QPalette::Text, brush_white);
-        palette.setBrush(QPalette::Active, QPalette::Highlight, brush_black);
-        palette.setBrush(QPalette::Active, QPalette::Button, brush_white);
-        palette.setBrush(QPalette::Active, QPalette::ButtonText, brush_black);
-        palette.setBrush(QPalette::Disabled, QPalette::Base, brush_base);
-        palette.setBrush(QPalette::Disabled, QPalette::Window, brush_base);
-        palette.setBrush(QPalette::Disabled, QPalette::WindowText, brush_black);
-        palette.setBrush(QPalette::Disabled, QPalette::Text, brush_black);
-        palette.setBrush(QPalette::Disabled, QPalette::Highlight, brush_base);
-        palette.setBrush(QPalette::Disabled, QPalette::Button, brush_base);
-        palette.setBrush(QPalette::Disabled, QPalette::ButtonText, brush_black);
+        QPalette p;
+        p.setBrush(QPalette::Active, QPalette::Base, br_base);
+        p.setBrush(QPalette::Active, QPalette::Window, br_base);
+        p.setBrush(QPalette::Active, QPalette::WindowText, br_white);
+        p.setBrush(QPalette::Active, QPalette::Text, br_white);
+        p.setBrush(QPalette::Active, QPalette::Highlight, br_black);
+        p.setBrush(QPalette::Active, QPalette::Button, br_base);
+        p.setBrush(QPalette::Active, QPalette::ButtonText, br_white);
+        p.setBrush(QPalette::Disabled, QPalette::Base, br_base);
+        p.setBrush(QPalette::Disabled, QPalette::Window, br_base);
+        p.setBrush(QPalette::Disabled, QPalette::WindowText, br_black);
+        p.setBrush(QPalette::Disabled, QPalette::Text, br_black);
+        p.setBrush(QPalette::Disabled, QPalette::Highlight, br_base);
+        p.setBrush(QPalette::Disabled, QPalette::Button, br_base);
+        p.setBrush(QPalette::Disabled, QPalette::ButtonText, br_dark);
 
-        QPalette palette_dark;
-        palette_dark.setBrush(QPalette::Active, QPalette::WindowText, brush_dark);
+        QPalette p_dark;
+        p_dark.setBrush(QPalette::Active, QPalette::WindowText, br_dark);
 
-        palette_torrent.setBrush(QPalette::Active, QPalette::Base, brush_alternate_base);
-        palette_torrent.setBrush(QPalette::Active, QPalette::Text, brush_black);
-        palette_torrent.setBrush(QPalette::Active, QPalette::Button, brush_white);
-        palette_torrent.setBrush(QPalette::Active, QPalette::ButtonText, brush_black);
-        palette_torrent.setBrush(QPalette::Disabled, QPalette::Button, brush_dark);
-        palette_torrent.setBrush(QPalette::Disabled, QPalette::ButtonText, brush_black);
+        p_torrent.setBrush(QPalette::Active, QPalette::Base, br_dark);
+        p_torrent.setBrush(QPalette::Active, QPalette::Window, br_dark);
+        p_torrent.setBrush(QPalette::Active, QPalette::Text, br_black);
+        p_torrent.setBrush(QPalette::Active, QPalette::Button, br_base);
+        p_torrent.setBrush(QPalette::Active, QPalette::ButtonText, br_white);
+        p_torrent.setBrush(QPalette::Disabled, QPalette::Button, br_base);
+        p_torrent.setBrush(QPalette::Disabled, QPalette::Window, br_base);
+        p_torrent.setBrush(QPalette::Disabled, QPalette::ButtonText, br_dark);
 
-        palette_torrent_edit.setBrush(QPalette::Active, QPalette::Base, brush_alternate_base);
-        palette_torrent_edit.setBrush(QPalette::Active, QPalette::Text, brush_white);
+        p_torrent_edit.setBrush(QPalette::Active, QPalette::Base, br_alternate_base);
+        p_torrent_edit.setBrush(QPalette::Active, QPalette::Text, br_white);
 
-        group_data = new QGroupBox("ABOUT", Setup);
-        group_data->setPalette(palette_dark);
-        group_data->setFlat(true);
+        g_data = new QGroupBox("ABOUT", Setup);
+        g_data->setPalette(p_dark);
+        g_data->setFlat(true);
 
-        label_data_binary = new QLabel("PIG "+(*data)[0]+"."+(*data)[1], group_data);
-        label_data_binary->setPalette(palette);
+        lb_data_binary = new QLabel("PIG "+(*data)[0]+"."+(*data)[1], g_data);
+        lb_data_binary->setPalette(p);
 
-        label_data_database = new QLabel("DATABASE "+(*data)[2], group_data);
-        label_data_database->setPalette(palette);
+        lb_data_database = new QLabel("DATABASE "+(*data)[2], g_data);
+        lb_data_database->setPalette(p);
 
-        label_data_license = new QLabel("GPL 2.0", group_data);
-        label_data_license->setPalette(palette);
+        lb_data_license = new QLabel("GPL 2.0", g_data);
+        lb_data_license->setPalette(p);
 
-        layout_data = new QHBoxLayout(group_data);
-        layout_data->setSpacing(20); // TODO: PORCENTAJE
-        layout_data->addWidget(label_data_binary);
-        layout_data->addWidget(label_data_database);
-        layout_data->addWidget(label_data_license);
-        layout_data->addStretch();
+        l_data = new QHBoxLayout(g_data);
+        l_data->setSpacing(20);//TODO: PORCENTAJE.
+        l_data->addWidget(lb_data_binary);
+        l_data->addWidget(lb_data_database);
+        l_data->addWidget(lb_data_license);
+        l_data->addStretch();
 
-        group_authorization = new QGroupBox("AUTHORIZATION", Setup);
-        group_authorization->setPalette(palette_dark);
-        group_authorization->setFlat(true);
+        g_authorization = new QGroupBox("AUTHORIZATION", Setup);
+        g_authorization->setPalette(p_dark);
+        g_authorization->setFlat(true);
 
-        layout_authorization = new QHBoxLayout(group_authorization);
-        layout_authorization->setContentsMargins(0, 0, 0, 0);
-        layout_authorization->addWidget(authorization);
+        l_authorization = new QHBoxLayout(g_authorization);
+        l_authorization->setContentsMargins(0, 0, 0, 0);
+        l_authorization->addWidget(authorization);
 
-        group_folder = new QGroupBox("FOLDERS", Setup);
-        group_folder->setPalette(palette_dark);
-        group_folder->setFlat(true);
+        g_folder = new QGroupBox("FOLDERS", Setup);
+        g_folder->setPalette(p_dark);
+        g_folder->setFlat(true);
 
-        radio_folder_covers = new QRadioButton("KEEP LOCAL COPY OF COVERS", group_folder);
-        radio_folder_covers->setPalette(palette);
-        radio_folder_covers->setChecked(**keep_covers);
-        radio_folder_covers->setAutoExclusive(false);
+        r_folder_covers = new QRadioButton("KEEP LOCAL COPY OF COVERS", g_folder);
+        r_folder_covers->setPalette(p);
+        r_folder_covers->setChecked(**keep_covers);
+        r_folder_covers->setAutoExclusive(false);
 
-        button_folder_covers_clean = new QPushButton("CLEAN", group_folder);
-        button_folder_covers_clean->setPalette(palette);
-        button_folder_covers_clean->setFlat(true);
-        button_folder_covers_clean->setAutoFillBackground(true);
+        b_folder_covers_reset = new QPushButton(QIcon(":/icon-reset"), NULL, g_folder);
+        b_folder_covers_reset->setToolTip("RESET FOLDER");
+        b_folder_covers_reset->setFlat(true);
 
-        radio_folder_torrents = new QRadioButton("KEEP LOCAL COPY OF TORRENTS", group_folder);
-        radio_folder_torrents->setPalette(palette);
-        radio_folder_torrents->setChecked(**keep_torrents);
-        radio_folder_torrents->setAutoExclusive(false);
+        r_folder_torrents = new QRadioButton("KEEP LOCAL COPY OF TORRENTS", g_folder);
+        r_folder_torrents->setPalette(p);
+        r_folder_torrents->setChecked(**keep_torrents);
+        r_folder_torrents->setAutoExclusive(false);
 
-        button_folder_torrents_clean = new QPushButton("CLEAN", group_folder);
-        button_folder_torrents_clean->setPalette(palette);
-        button_folder_torrents_clean->setFlat(true);
-        button_folder_torrents_clean->setAutoFillBackground(true);
+        b_folder_torrents_reset = new QPushButton(QIcon(":/icon-reset"), NULL, g_folder);
+        b_folder_torrents_reset->setToolTip("RESET FOLDER");
+        b_folder_torrents_reset->setFlat(true);
 
-        radio_folder_movies = new QRadioButton("KEEP LOCAL COPY OF MOVIES", group_folder);
-        radio_folder_movies->setPalette(palette);
-        radio_folder_movies->setChecked(**keep_movies);
-        radio_folder_movies->setAutoExclusive(false);
+        r_folder_movies = new QRadioButton("KEEP LOCAL COPY OF MOVIES", g_folder);
+        r_folder_movies->setPalette(p);
+        r_folder_movies->setChecked(**keep_movies);
+        r_folder_movies->setAutoExclusive(false);
 
-        button_folder_movies_clean = new QPushButton("CLEAN", group_folder);
-        button_folder_movies_clean->setPalette(palette);
-        button_folder_movies_clean->setFlat(true);
-        button_folder_movies_clean->setAutoFillBackground(true);
+        b_folder_movies_reset = new QPushButton(QIcon(":/icon-reset"), NULL, g_folder);
+        b_folder_movies_reset->setToolTip("RESET FOLDER");
+        b_folder_movies_reset->setFlat(true);
 
-        layout_folder_covers = new QHBoxLayout;
-        layout_folder_covers->addWidget(radio_folder_covers);
-        layout_folder_covers->insertStretch(1);
-        layout_folder_covers->addWidget(button_folder_covers_clean);
+        l_folder_covers = new QHBoxLayout;
+        l_folder_covers->addWidget(r_folder_covers);
+        l_folder_covers->insertStretch(1);
+        l_folder_covers->addWidget(b_folder_covers_reset);
 
-        layout_folder_torrents = new QHBoxLayout;
-        layout_folder_torrents->addWidget(radio_folder_torrents);
-        layout_folder_torrents->insertStretch(1);
-        layout_folder_torrents->addWidget(button_folder_torrents_clean);
+        l_folder_torrents = new QHBoxLayout;
+        l_folder_torrents->addWidget(r_folder_torrents);
+        l_folder_torrents->insertStretch(1);
+        l_folder_torrents->addWidget(b_folder_torrents_reset);
 
-        layout_folder_movies = new QHBoxLayout;
-        layout_folder_movies->addWidget(radio_folder_movies);
-        layout_folder_movies->insertStretch(1);
-        layout_folder_movies->addWidget(button_folder_movies_clean);
+        l_folder_movies = new QHBoxLayout;
+        l_folder_movies->addWidget(r_folder_movies);
+        l_folder_movies->insertStretch(1);
+        l_folder_movies->addWidget(b_folder_movies_reset);
 
-        layout_folder = new QVBoxLayout(group_folder);
-        layout_folder->addLayout(layout_folder_covers);
-        layout_folder->addLayout(layout_folder_torrents);
-        layout_folder->addLayout(layout_folder_movies);
+        l_folder = new QVBoxLayout(g_folder);
+        l_folder->addLayout(l_folder_covers);
+        l_folder->addLayout(l_folder_torrents);
+        l_folder->addLayout(l_folder_movies);
 
-        group_torrent = new QGroupBox("TORRENT", Setup);
-        group_torrent->setPalette(palette_dark);
-        group_torrent->setFlat(true);
+        g_torrent = new QGroupBox("TORRENT", Setup);
+        g_torrent->setPalette(p_dark);
+        g_torrent->setFlat(true);
 
-        label_torrent_ports = new QLabel("PORTS", group_torrent);
-        label_torrent_ports->setPalette(palette);
+        lb_torrent_ports = new QLabel("PORTS", g_torrent);
+        lb_torrent_ports->setPalette(p);
 
         QValidator *validPort = new QIntValidator(0, 65000, Setup);
 
-        input_torrent_port_1 = new QLineEdit(QString::number(**torrent_port_1), group_torrent);
-        input_torrent_port_1->setPalette(palette_torrent);
+        input_torrent_port_1 = new QLineEdit(QString::number(**torrent_port_1), g_torrent);
+        input_torrent_port_1->setPalette(p_torrent);
         input_torrent_port_1->setValidator(validPort);
         input_torrent_port_1->setAlignment(Qt::AlignCenter);
 
-        input_torrent_port_2 = new QLineEdit(QString::number(**torrent_port_2), group_torrent);
-        input_torrent_port_2->setPalette(palette_torrent);
+        input_torrent_port_2 = new QLineEdit(QString::number(**torrent_port_2), g_torrent);
+        input_torrent_port_2->setPalette(p_torrent);
         input_torrent_port_2->setValidator(validPort);
         input_torrent_port_2->setAlignment(Qt::AlignCenter);
 
-        button_torrent_ports_reset = new QPushButton("RESET", group_torrent);
-        button_torrent_ports_reset->setPalette(palette_torrent);
+        b_torrent_ports_reset = new QPushButton(g_torrent);
         if ((**torrent_port_1 == 6900) && (**torrent_port_2 == 6999))
-            button_torrent_ports_reset->setDisabled(true);
-        button_torrent_ports_reset->setFlat(true);
-        button_torrent_ports_reset->setAutoFillBackground(true);
+            b_torrent_ports_reset->setIcon(QIcon(":/icon-reset-dark"));
+        else
+            b_torrent_ports_reset->setIcon(QIcon(":/icon-reset"));
+        b_torrent_ports_reset->setToolTip("RESET PORTS");
+        b_torrent_ports_reset->setFlat(true);
+        if ((**torrent_port_1 == 6900) && (**torrent_port_2 == 6999))
+            b_torrent_ports_reset->setDisabled(true);
 
-        layout_torrent = new QHBoxLayout(group_torrent);
-        layout_torrent->setSpacing(20); // TODO: PORCENTAJE
-        layout_torrent->addWidget(label_torrent_ports);
-        layout_torrent->addWidget(input_torrent_port_1);
-        layout_torrent->addWidget(input_torrent_port_2);
-        layout_torrent->addWidget(button_torrent_ports_reset);
+        l_torrent = new QHBoxLayout(g_torrent);
+        l_torrent->setSpacing(20);//TODO: PORCENTAJE.
+        l_torrent->addWidget(lb_torrent_ports);
+        l_torrent->addWidget(input_torrent_port_1);
+        l_torrent->addWidget(input_torrent_port_2);
+        l_torrent->addWidget(b_torrent_ports_reset);
 
-        group_contribute = new QGroupBox("CONTRIBUTE", Setup);
-        group_contribute->setPalette(palette_dark);
-        group_contribute->setFlat(true);
+        g_contribute = new QGroupBox("CONTRIBUTE", Setup);
+        g_contribute->setPalette(p_dark);
+        g_contribute->setFlat(true);
 
-        label_contribute_torrents = new QLabel("TORRENTS", group_contribute);
-        label_contribute_torrents->setPalette(palette);
+        lb_contribute_torrents = new QLabel("TORRENTS", g_contribute);
+        lb_contribute_torrents->setPalette(p);
 
-        button_contribute_torrents = new QPushButton("→", group_contribute);
-        button_contribute_torrents->setPalette(palette);
-        button_contribute_torrents->setFlat(true);
-        button_contribute_torrents->setAutoFillBackground(true);
+        b_contribute_torrents = new QPushButton(QIcon(":/icon-upload"), NULL, g_contribute);
+        b_contribute_torrents->setToolTip("UPLOAD TORRENTS");
+        b_contribute_torrents->setFlat(true);
 
-        layout_contribute_torrents = new QHBoxLayout;
-        layout_contribute_torrents->addWidget(label_contribute_torrents);
-        layout_contribute_torrents->insertStretch(1);
-        layout_contribute_torrents->addWidget(button_contribute_torrents);
+        l_contribute_torrents = new QHBoxLayout;
+        l_contribute_torrents->addWidget(lb_contribute_torrents);
+        l_contribute_torrents->insertStretch(1);
+        l_contribute_torrents->addWidget(b_contribute_torrents);
 
-        label_contribute_code = new QLabel("CODE", group_contribute);
-        label_contribute_code->setPalette(palette);
+        lb_contribute_code = new QLabel("CODE", g_contribute);
+        lb_contribute_code->setPalette(p);
 
-        button_contribute_code = new QPushButton("→", group_contribute);
-        button_contribute_code->setPalette(palette);
-        button_contribute_code->setFlat(true);
-        button_contribute_code->setAutoFillBackground(true);
+        b_contribute_code = new QPushButton(QIcon(":/icon-upload"), NULL, g_contribute);
+        b_contribute_code->setToolTip("UPLOAD CODE");
+        b_contribute_code->setFlat(true);
 
-        layout_contribute_code = new QHBoxLayout;
-        layout_contribute_code->addWidget(label_contribute_code);
-        layout_contribute_code->insertStretch(1);
-        layout_contribute_code->addWidget(button_contribute_code);
+        l_contribute_code = new QHBoxLayout;
+        l_contribute_code->addWidget(lb_contribute_code);
+        l_contribute_code->insertStretch(1);
+        l_contribute_code->addWidget(b_contribute_code);
 
-        label_contribute_bugs = new QLabel("BUGS", group_contribute);
-        label_contribute_bugs->setPalette(palette);
+        lb_contribute_bugs = new QLabel("BUGS", g_contribute);
+        lb_contribute_bugs->setPalette(p);
 
-        button_contribute_bugs = new QPushButton("→", group_contribute);
-        button_contribute_bugs->setPalette(palette);
-        button_contribute_bugs->setFlat(true);
-        button_contribute_bugs->setAutoFillBackground(true);
+        b_contribute_bugs = new QPushButton(QIcon(":/icon-upload"), NULL, g_contribute);
+        b_contribute_bugs->setToolTip("REPORT BUGS");
+        b_contribute_bugs->setFlat(true);;
 
-        layout_contribute_bugs = new QHBoxLayout;
-        layout_contribute_bugs->addWidget(label_contribute_bugs);
-        layout_contribute_bugs->insertStretch(1);
-        layout_contribute_bugs->addWidget(button_contribute_bugs);
+        l_contribute_bugs = new QHBoxLayout;
+        l_contribute_bugs->addWidget(lb_contribute_bugs);
+        l_contribute_bugs->insertStretch(1);
+        l_contribute_bugs->addWidget(b_contribute_bugs);
 
-        label_contribute_bitcoins = new QLabel("BITCOINS", group_contribute);
-        label_contribute_bitcoins->setPalette(palette);
+        lb_contribute_bitcoins = new QLabel("BITCOINS", g_contribute);
+        lb_contribute_bitcoins->setPalette(p);
 
-        label_contribute_bitcoins_wallet = new QLabel(" ACDF723JKD8239OEWMBN7692BH23489BHJK", group_contribute);
-        label_contribute_bitcoins_wallet->setPalette(palette_dark);
-        label_contribute_bitcoins_wallet->setVisible(false);
+        lb_contribute_bitcoins_wallet = new QLabel(" ACDF723JKD8239OEWMBN7692BH23489BHJK", g_contribute);
+        lb_contribute_bitcoins_wallet->setPalette(p_dark);
+        lb_contribute_bitcoins_wallet->setVisible(false);
 
-        button_contribute_bitcoins = new QPushButton("+", group_contribute);
-        button_contribute_bitcoins->setPalette(palette);
-        button_contribute_bitcoins->setFlat(true);
-        button_contribute_bitcoins->setAutoFillBackground(true);
+        b_contribute_bitcoins = new QPushButton(QIcon(":/icon-more"), NULL, g_contribute);
+        b_contribute_bitcoins->setToolTip("WALLET");
+        b_contribute_bitcoins->setFlat(true);
 
-        layout_contribute_bitcoins = new QHBoxLayout;
-        layout_contribute_bitcoins->addWidget(label_contribute_bitcoins);
-        layout_contribute_bitcoins->addWidget(label_contribute_bitcoins_wallet);
-        layout_contribute_bitcoins->insertStretch(2);
-        layout_contribute_bitcoins->addWidget(button_contribute_bitcoins);
+        l_contribute_bitcoins = new QHBoxLayout;
+        l_contribute_bitcoins->addWidget(lb_contribute_bitcoins);
+        l_contribute_bitcoins->addWidget(lb_contribute_bitcoins_wallet);
+        l_contribute_bitcoins->insertStretch(2);
+        l_contribute_bitcoins->addWidget(b_contribute_bitcoins);
 
-        label_contribute_help = new QLabel("HELP", group_contribute);
-        label_contribute_help->setPalette(palette);
+        l_contribute = new QVBoxLayout(g_contribute);
+        l_contribute->addLayout(l_contribute_torrents);
+        l_contribute->addLayout(l_contribute_code);
+        l_contribute->addLayout(l_contribute_bugs);
+        l_contribute->addLayout(l_contribute_bitcoins);
 
-        button_contribute_help = new QPushButton("→", group_contribute);
-        button_contribute_help->setPalette(palette);
-        button_contribute_help->setFlat(true);
-        button_contribute_help->setAutoFillBackground(true);
+        b_back = new QPushButton(QIcon(":/icon-back"), NULL, Setup);
+        b_back->setGeometry(1869, 15, 16, 16);//TODO: PORCENTAJE.
+        b_back->setToolTip("BACK");
+        b_back->setFlat(true);
+        b_back->setParent(Setup);
 
-        layout_contribute_help = new QHBoxLayout;
-        layout_contribute_help->addWidget(label_contribute_help);
-        layout_contribute_help->insertStretch(1);
-        layout_contribute_help->addWidget(button_contribute_help);
+        l = new QGridLayout(Setup);
+        l->setSpacing(20);//TODO: PORCENTAJE.
+        l->setAlignment(Qt::AlignLeft | Qt::AlignTop);
+        l->addWidget(g_data, 0, 0);
+        l->addWidget(g_authorization, 1, 0);
+        l->addWidget(g_folder, 2, 0);
+        l->addWidget(g_torrent, 3, 0);
+        l->addWidget(g_contribute, 4, 0);
 
-        layout_contribute = new QVBoxLayout(group_contribute);
-        layout_contribute->addLayout(layout_contribute_torrents);
-        layout_contribute->addLayout(layout_contribute_code);
-        layout_contribute->addLayout(layout_contribute_bugs);
-        layout_contribute->addLayout(layout_contribute_bitcoins);
-        layout_contribute->addLayout(layout_contribute_help);
-
-        layout = new QGridLayout(Setup);
-        layout->setSpacing(20); //TODO: PORCENTAJE
-        layout->setAlignment(Qt::AlignLeft | Qt::AlignTop);
-        layout->addWidget(group_data, 0, 0);
-        layout->addWidget(group_authorization, 1, 0);
-        layout->addWidget(group_folder, 2, 0);
-        layout->addWidget(group_torrent, 3, 0);
-        layout->addWidget(group_contribute, 4, 0);
-
-        Setup->setLayout(layout);
+        Setup->setLayout(l);
     }
 };
 
@@ -655,144 +690,185 @@ class Ui_View
 public:
     Player *player;
 
-    QPalette palette;
-    QLabel *labels_meta[5];
+    QLabel *lb_metadata[5];
     QLabel *cover;
     QLabel *backCover;
-    QPushButton *button_clear;
-    QPushButton *button_hideInfo;
-    QScrollArea *scrollArea_covers;
-    QGroupBox *group_covers;
-    QGroupBox *group_info;
-    QGridLayout *layout_covers;
-    QVBoxLayout *layout_meta;
-    QHBoxLayout *layout_multi;
-    QVBoxLayout *layout_info;
-    QVBoxLayout *layout;
+    QPushButton *b_clear;
+    QPushButton *b_hideInfo;
+    QScrollArea *sa_covers;
+    QGroupBox *g_covers;
+    QGroupBox *g_info;
+    QGridLayout *l_covers;
+    QVBoxLayout *l_metadata;
+    QGridLayout *l_scenes;
+    QHBoxLayout *l_multimedia;
+    QVBoxLayout *l_info;
+    QVBoxLayout *l;
 
-    QVector<QPushButton*> button_vector_covers;
+    QVector<QPushButton*> b_vector_covers;
+    QVector<QPushButton*> b_vector_scenes;
+    QVector<QLabel*> lb_vector_scenes;
 
     void setupUi(QWidget *View)
     {
-        QBrush brush_base(QColor(10, 10, 10, 255));
-        QBrush brush_white(QColor(255, 255, 255, 255));
-        QBrush brush_black(QColor(0, 0, 0, 255));
+        sa_covers = new QScrollArea(View);
+        sa_covers->setFrameStyle(QFrame::NoFrame);
+        sa_covers->setWidgetResizable(true);
+        sa_covers->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+        sa_covers->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
-        palette.setBrush(QPalette::Active, QPalette::Base, brush_base);
-        palette.setBrush(QPalette::Active, QPalette::Window, brush_base);
-        palette.setBrush(QPalette::Active, QPalette::WindowText, brush_white);
-        palette.setBrush(QPalette::Active, QPalette::Text, brush_white);
-        palette.setBrush(QPalette::Active, QPalette::Button, brush_base);
-        palette.setBrush(QPalette::Active, QPalette::ButtonText, brush_white);
-        palette.setBrush(QPalette::Disabled, QPalette::Base, brush_base);
-        palette.setBrush(QPalette::Disabled, QPalette::Window, brush_base);
-        palette.setBrush(QPalette::Disabled, QPalette::WindowText, brush_black);
-        palette.setBrush(QPalette::Disabled, QPalette::Text, brush_black);
-        palette.setBrush(QPalette::Disabled, QPalette::Button, brush_base);
-        palette.setBrush(QPalette::Disabled, QPalette::ButtonText, brush_black);
-
-        scrollArea_covers = new QScrollArea(View);
-        scrollArea_covers->setFrameStyle(QFrame::NoFrame);
-        scrollArea_covers->setWidgetResizable(true);
-        scrollArea_covers->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-        scrollArea_covers->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-
-        group_covers = new QGroupBox(scrollArea_covers);
-        group_covers->setStyleSheet("QGroupBox{ background-color: rgba(10, 10, 10, 255);"
+        g_covers = new QGroupBox(sa_covers);
+        g_covers->setStyleSheet("QGroupBox{ background-color: rgba(10, 10, 10, 255);"
                                     "border: 0; margin: 0; }"
                                     "QGroupBox::title { border: 0; margin: 0; }");
-        group_covers->setFlat(true);
+        g_covers->setFlat(true);
 
-        layout_covers = new QGridLayout(group_covers);
-        layout_covers->setContentsMargins(70, 0, 0, 20); // TODO: PORCENTAJE
-        layout_covers->setHorizontalSpacing(0);
-        layout_covers->setVerticalSpacing(5); // TODO: PORCENTAJE
-        layout_covers->setAlignment(Qt::AlignLeft | Qt::AlignTop);
+        l_covers = new QGridLayout(g_covers);
+        l_covers->setContentsMargins(70, 0, 0, 20);//TODO: PORCENTAJE.
+        l_covers->setHorizontalSpacing(0);
+        l_covers->setVerticalSpacing(5);//TODO: PORCENTAJE.
+        l_covers->setAlignment(Qt::AlignLeft | Qt::AlignTop);
 
-        group_covers->setLayout(layout_covers);
+        g_covers->setLayout(l_covers);
 
-        scrollArea_covers->setWidget(group_covers);
+        sa_covers->setWidget(g_covers);
 
-        layout = new QVBoxLayout(View);
-        layout->addWidget(scrollArea_covers);
+        l = new QVBoxLayout(View);
+        l->addWidget(sa_covers);
 
-        View->setLayout(layout);
+        View->setLayout(l);
 
-        //        button_clear = new QPushButton("x", group_covers);
-        //        button_clear->setFont(font);
-        //        button_clear->setPalette(palette);
-        //        button_clear->setFlat(true);
-        //layout_covers->addWidget(button_clear);
+        //        b_clear = new QPushButton("x", g_covers);
+        //        b_clear->setFont(f);
+        //        b_clear->setPalette(p);
+        //        b_clear->setFlat(true);
+        //l_covers->addWidget(b_clear);
     }
 
     void setupInfoUi(const int &index, const QString &path, const QStringList **data, QWidget *View)
     {
         const QStringList **_data = data;
 
-        QFont font(":/font-global");
-        font.setPointSize(24); //TODO: PORCENTAJE
-        font.setCapitalization(QFont::AllUppercase);
-        font.setBold(true);
+        QFont f(":/font-global");
+        f.setPointSize(24);//TODO: PORCENTAJE.
+        f.setCapitalization(QFont::AllUppercase);
+        f.setBold(true);
 
-        group_info = new QGroupBox(View);
-        group_info->setStyleSheet("QGroupBox{ background-color: rgba(10, 10, 10, 255);"
+        QFont f_scenes(":/font-global");
+        f_scenes.setPointSize(16);//TODO: PORCENTAJE.
+        f_scenes.setCapitalization(QFont::AllUppercase);
+        f_scenes.setBold(true);
+
+        QBrush br_base(QColor(10, 10, 10, 255));
+        QBrush br_white(QColor(255, 255, 255, 255));
+        QBrush br_black(QColor(0, 0, 0, 255));
+        QBrush br_dark(QColor(40, 40, 40, 255));
+
+        QPalette p;
+        p.setBrush(QPalette::Active, QPalette::Base, br_base);
+        p.setBrush(QPalette::Active, QPalette::Window, br_base);
+        p.setBrush(QPalette::Active, QPalette::WindowText, br_white);
+        p.setBrush(QPalette::Active, QPalette::Text, br_white);
+        p.setBrush(QPalette::Active, QPalette::Button, br_base);
+        p.setBrush(QPalette::Active, QPalette::ButtonText, br_white);
+        p.setBrush(QPalette::Disabled, QPalette::Base, br_base);
+        p.setBrush(QPalette::Disabled, QPalette::Window, br_base);
+        p.setBrush(QPalette::Disabled, QPalette::WindowText, br_black);
+        p.setBrush(QPalette::Disabled, QPalette::Text, br_black);
+        p.setBrush(QPalette::Disabled, QPalette::Button, br_base);
+        p.setBrush(QPalette::Disabled, QPalette::ButtonText, br_black);
+
+        QPalette p_scenes;
+        p_scenes.setBrush(QPalette::Active, QPalette::Base, br_base);
+        p_scenes.setBrush(QPalette::Active, QPalette::Window, br_base);
+        p_scenes.setBrush(QPalette::Active, QPalette::WindowText, br_dark);
+        p_scenes.setBrush(QPalette::Active, QPalette::Highlight, br_black);
+        p_scenes.setBrush(QPalette::Active, QPalette::Button, br_base);
+        p_scenes.setBrush(QPalette::Active, QPalette::ButtonText, br_white);
+        p_scenes.setBrush(QPalette::Disabled, QPalette::Base, br_base);
+        p_scenes.setBrush(QPalette::Disabled, QPalette::Window, br_base);
+        p_scenes.setBrush(QPalette::Disabled, QPalette::WindowText, br_black);
+        p_scenes.setBrush(QPalette::Disabled, QPalette::Highlight, br_base);
+        p_scenes.setBrush(QPalette::Disabled, QPalette::Button, br_base);
+        p_scenes.setBrush(QPalette::Disabled, QPalette::ButtonText, br_black);
+
+        g_info = new QGroupBox(View);
+        g_info->setStyleSheet("QGroupBox{ background-color: rgba(10, 10, 10, 255);"
                                   "border: 0; margin: 0; }"
                                   "QGroupBox::title { border: 0;margin: 0; }");
-        group_info->setFlat(true);
+        g_info->setFlat(true);
 
-        layout_meta = new QVBoxLayout;
-        layout_meta->setSpacing(10); // TODO: PORCENTAJE
-        layout_meta->setSizeConstraint(QLayout::SetMaximumSize);
+        l_metadata = new QVBoxLayout;
+        l_metadata->setSpacing(10);//TODO: PORCENTAJE.
 
+//      QStringList metadata_titles;
+//      metadata_titles << "NAME:" << "CASTING:" << "CATEGORIES:" << "QUALITY:" << "TIME:";
         for (int i = 0; i < 5; i++) {
-            labels_meta[i] = new QLabel(group_info);
-            labels_meta[i]->setStyleSheet("QLabel{ background-color: rgba(10, 10, 10, 255);"
-                                          "border: 0; margin: 0; }");
-            labels_meta[i]->setFont(font);
-            labels_meta[i]->setPalette(palette);
-            labels_meta[i]->setText(" "+(**_data)[((index * 17) + i)]);
-            layout_meta->addWidget(labels_meta[i]);
+            lb_metadata[i] = new QLabel(g_info);
+            lb_metadata[i]->setFont(f);
+            lb_metadata[i]->setPalette(p);
+            //lb_metadata[i]->setText("<font color='#282828'> "+metadata_titles[i]+" </font>"+(**_data)[((index * 17) + i)]);
+            lb_metadata[i]->setText((**_data)[((index * 17) + i)]);
+            l_metadata->addWidget(lb_metadata[i]);
         }
 
-        QPixmap pixmap_cover(path);
-        cover = new QLabel(group_info);
-        cover->setPixmap(pixmap_cover.scaled(335, 480, Qt::KeepAspectRatio));//
+        QPixmap px_cover(path);
+        cover = new QLabel(g_info);
+        cover->setPixmap(px_cover.scaled(335, 480, Qt::KeepAspectRatio));//
 
-        QPixmap pixmap_backCover(":/img-cover-back");
-        backCover = new QLabel(group_info);
-        backCover->setPixmap(pixmap_backCover);//
+        QPixmap px_backCover(":/img-back_cover");
+        backCover = new QLabel(g_info);
+        backCover->setPixmap(px_backCover);//
 
         QString preview = "http://"+((**_data)[((index * 17) + 11)])+((**_data)[((index * 17) + 12)]);
-        player = new Player(&preview, group_info);
-        player->setFixedSize(QSize(640, 480)); // TODO: PORCENTAJE
+        player = new Player(&preview, g_info);
+        player->setFixedSize(QSize(700, 540));//TODO: PORCENTAJE.
 
-        layout_multi = new QHBoxLayout;
-        layout_multi->setSpacing(0);
-        layout_multi->setAlignment(Qt::AlignLeft);
-        layout_multi->addWidget(cover);
-        layout_multi->insertSpacing(1, 20); // TODO: PORCENTAJE
-        layout_multi->addWidget(backCover);
-        layout_multi->insertSpacing(3, 20); // TODO: PORCENTAJE
-        layout_multi->addWidget(player);
+        l_scenes = new QGridLayout;
+        l_scenes->setMargin(0);
 
-        button_hideInfo = new QPushButton("", group_info);
-        button_hideInfo->setFont(font);
-        button_hideInfo->setPalette(palette);
-        button_hideInfo->setFlat(true);
+        QString scenes = (**_data)[((index * 17) + 16)];
+        for (int i = 0; i < scenes.toInt(); i++) {
+            lb_vector_scenes.push_back(new QLabel("WATCH SCENE ", g_info));
+            lb_vector_scenes.last()->setFont(f_scenes);
+            lb_vector_scenes.last()->setPalette(p_scenes);
+            b_vector_scenes.push_back(new QPushButton(QIcon(":/icon-watch"), NULL, g_info));
+            b_vector_scenes.last()->setToolTip("VIEW SCENE");
+            b_vector_scenes.last()->setFlat(true);
+            l_scenes->addWidget(lb_vector_scenes.last(), i, 0);
+            l_scenes->addWidget(b_vector_scenes.last(), i, 1);
+        }
 
-        layout_info = new QVBoxLayout(group_info);
-        layout_info->setSpacing(110); // TODO: PORCENTAJE
-        layout_info->setAlignment(Qt::AlignVCenter);
-        layout_info->addWidget(button_hideInfo);
-        layout_info->addLayout(layout_meta);
-        layout_info->addLayout(layout_multi);
+        l_multimedia = new QHBoxLayout;
+        l_multimedia->setSpacing(0);
+        l_multimedia->setAlignment(Qt::AlignLeft);
+        l_multimedia->addWidget(cover);
+        l_multimedia->insertSpacing(1, 20);//TODO: PORCENTAJE.
+        l_multimedia->addWidget(backCover);
+        l_multimedia->insertSpacing(3, 40);//TODO: PORCENTAJE.
+        l_multimedia->addWidget(player);
+        l_multimedia->insertSpacing(5, 40);//TODO: PORCENTAJE.
+        l_multimedia->addLayout(l_scenes);
 
-        group_info->setLayout(layout_info);
+//        b_hideInfo = new QPushButton("", g_info);
+//        b_hideInfo->setFont(f);
+//        b_hideInfo->setPalette(p);
+//        b_hideInfo->setFlat(true);
 
-        scrollArea_covers->setDisabled(true);
-        scrollArea_covers->hide();
+        l_info = new QVBoxLayout(g_info);
+        l_info->setSpacing(250);//TODO: PORCENTAJE.
+        l_info->setAlignment(Qt::AlignVCenter);
+//        l_info->addWidget(b_hideInfo);
+        l_info->addSpacing(10);//TODO: PORCENTAJE.
+        l_info->addLayout(l_metadata);
+        l_info->addLayout(l_multimedia);
 
-        layout->addWidget(group_info);
+        g_info->setLayout(l_info);
+
+        sa_covers->setDisabled(true);
+        sa_covers->hide();
+
+        l->addWidget(g_info);
     }
 };
 
