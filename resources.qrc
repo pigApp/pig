@@ -8,6 +8,8 @@
         <file alias="icon-reset">resources/images/setup/reset.svg</file>
         <file alias="icon-reset-dark">resources/images/setup/reset-dark.svg</file>
         <file alias="icon-upload">resources/images/setup/upload.svg</file>
+        <file alias="icon-copy">resources/images/setup/copy.svg</file>
+        <file alias="icon-copied">resources/images/setup/copied.svg</file>
         <file alias="img-back_cover">resources/images/viewer/back_cover.jpg</file>
         <file alias="icon-watch">resources/images/viewer/watch.svg</file>
         <file alias="icon-watched">resources/images/viewer/watched.svg</file>
@@ -18,11 +20,12 @@
         <file alias="icon-standby">resources/images/player/standby.svg</file>
         <file alias="icon-volume">resources/images/player/volume.svg</file>
         <file alias="icon-volume-off">resources/images/player/volume-off.svg</file>
+        <file alias="icon-back">resources/images/global/back.svg</file>
+        <file alias="icon-back-dark">resources/images/global/back-dark.svg</file>
         <file alias="icon-minimize">resources/images/global/minimize.svg</file>
         <file alias="icon-minimize-dark">resources/images/global/minimize-dark.svg</file>
         <file alias="icon-close">resources/images/global/close.svg</file>
         <file alias="icon-close-dark">resources/images/global/close-dark.svg</file>
-        <file alias="icon-back">resources/images/global/back.svg</file>
         <file alias="icon-ok">resources/images/global/ok.svg</file>
         <file alias="icon-cancel">resources/images/global/cancel.svg</file>
         <file alias="icon-more">resources/images/global/more.svg</file>

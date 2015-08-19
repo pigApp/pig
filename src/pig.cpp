@@ -20,6 +20,7 @@ PIG::PIG(QWidget *parent) :
 
     ui->setupUi(this);
 
+    ui->b_back->installEventFilter(this);
     ui->b_minimize->installEventFilter(this);
     ui->b_close->installEventFilter(this);
 
@@ -112,7 +113,7 @@ void PIG::init_topbar()
 
     connect (topbar->getFinderObj(), SIGNAL(sendData(const QStringList*, const QString*)),
              this, SLOT(init_viewer(const QStringList*, const QString*)));
-    connect (topbar->getButtonSetupObj(), SIGNAL(pressed()), this, SLOT(init_setup()));
+    connect (topbar->getButtonSetupObj(), SIGNAL(released()), this, SLOT(init_setup()));
 
     ui->main_layout->addWidget(topbar);
 }
@@ -120,7 +121,7 @@ void PIG::init_topbar()
 void PIG::init_viewer(const QStringList *data, const QString *filter)
 {
     if (view == 0 && data != 0) {
-        view = new View(&PIG_PATH, this);
+        view = new View(&PIG_PATH, &ui->b_back, this);
 
         QObject::connect (view, &View::setFilterOnCovers, [&] {
             topbar->getFinderObj()->setFilterOnCovers();
@@ -147,14 +148,17 @@ void PIG::init_setup()
     if (setup == 0) {
         setup = new Setup(&PIG_PATH, &keep_covers, &keep_torrents, &keep_movies,
                           &torrent_port_1, &torrent_port_2, &db, this);
-        connect (setup->getButtonBackObj(), SIGNAL(pressed()), this, SLOT(init_setup()));
         ui->main_layout->addWidget(setup);
         topbar->setHidden(true);
         view->hide();
+        connect (ui->b_back, SIGNAL(pressed()), this, SLOT(init_setup()));
+        ui->b_back->show();
     } else {
         ui->main_layout->removeWidget(setup);
         topbar->setHidden(false);
         view->show();
+        ui->b_back->disconnect();
+        ui->b_back->hide();
         setup->deleteLater();
         setup = NULL;
     }
@@ -184,7 +188,17 @@ QHash<QString, QVariant> PIG::get_rc()
 
 bool PIG::eventFilter(QObject *obj, QEvent *e)
 {
-    if (obj == (QObject*)ui->b_minimize) {
+    if (obj == (QObject*)ui->b_back) {
+        if (e->type() == QEvent::Enter) {
+            ui->b_back->setIcon(QIcon(":/icon-back-dark"));
+            return true;
+        } else if (e->type() == QEvent::Leave) {
+            ui->b_back->setIcon(QIcon(":/icon-back"));
+            return true;
+        } else {
+            return false;
+        }
+    } else if (obj == (QObject*)ui->b_minimize) {
         if (e->type() == QEvent::Enter) {
             ui->b_minimize->setIcon(QIcon(":/icon-minimize-dark"));
             return true;

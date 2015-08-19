@@ -21,15 +21,11 @@ public:
                    int *torrent_port_2, QSqlDatabase *db, QWidget *parent = 0);
     ~Setup();
 
-    QPushButton *getButtonBackObj() { return m_b_back; }
-
 private:
     const QString* const _PIG_PATH;
     QSqlDatabase *_db;
 
     Ui::Setup *ui;
-
-    QPushButton *m_b_back;
 
 private slots:
     bool set_rc(const QString &option, const QVariant &value);

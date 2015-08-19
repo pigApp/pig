@@ -20,6 +20,7 @@
 #include <QGridLayout>
 #include <QDesktopWidget>//
 #include <QDesktopServices>
+#include <QClipboard>
 #include <QCompleter>
 #include <QToolTip>
 
@@ -30,6 +31,7 @@ QT_BEGIN_NAMESPACE
 class Ui_PIG
 {
 public:
+    QPushButton *b_back;
     QPushButton *b_minimize;
     QPushButton *b_close;
     QVBoxLayout *main_layout;
@@ -72,6 +74,13 @@ public:
 
         QToolTip::setFont(f_toolTip);
         QToolTip::setPalette(p_toolTip);
+
+        b_back = new QPushButton(QIcon(":/icon-back"), NULL, PIG);
+        b_back->setGeometry(1865, 5, 8, 16);//TODO: PORCENTAJE.
+        b_back->setToolTip("BACK");
+        b_back->setFlat(true);
+        b_back->setParent(PIG);
+        b_back->setHidden(true);
 
         b_minimize = new QPushButton(QIcon(":/icon-minimize"), NULL, PIG);
         b_minimize->setGeometry(1880, 5, 16, 16);//TODO: PORCENTAJE.
@@ -223,7 +232,7 @@ public:
         b_setup->setDisabled(true);
 
         l = new QGridLayout(Topbar);
-        l->setContentsMargins(0, 0, 51, 0);//TODO: PORCENTAJE.
+        l->setContentsMargins(0, 0, 46, 0);//TODO: PORCENTAJE.
         l->setSpacing(0);
         l->setAlignment(Qt::AlignLeft | Qt::AlignTop);
         l->addWidget(b_setup, 0, 1);
@@ -328,7 +337,7 @@ public:
         b_filters->setParent(input);
 
         l = new QGridLayout;
-        l->setContentsMargins(82, 0, 8, 0);//TODO: PORCENTAJE.
+        l->setContentsMargins(87, 0, 8, 0);//TODO: PORCENTAJE.
         l->setSpacing(0);
         l->addWidget(input, 0, 0);
 
@@ -393,7 +402,7 @@ public:
         l_quality_fullmovie->addSpacing(10);//TODO: PORCENTAJE.
 
         l_filters = new QHBoxLayout;
-        l_filters->setContentsMargins(85, 15, 10, 0);//TODO: PORCENTAJE.
+        l_filters->setContentsMargins(88, 15, 10, 0);//TODO: PORCENTAJE.
         l_filters->addLayout(l_quality_fullmovie);
 
         _l_topbar->addLayout(l_filters, 1, 0);
@@ -409,11 +418,11 @@ public:
     QLabel *lb_data_database;
     QLabel *lb_data_license;
     QLabel *lb_torrent_ports;
-    QLabel *lb_contribute_torrents;
-    QLabel *lb_contribute_code;
-    QLabel *lb_contribute_bugs;
-    QLabel *lb_contribute_bitcoins;
-    QLabel *lb_contribute_bitcoins_wallet;
+    QLabel *lb_provide_torrent;
+    QLabel *lb_provide_code;
+    QLabel *lb_provide_bug;
+    QLabel *lb_provide_donate;
+    QLabel *lb_provide_wallet;
     QLineEdit *input_torrent_port_1;
     QLineEdit *input_torrent_port_2;
     QRadioButton *r_folder_covers;
@@ -423,16 +432,16 @@ public:
     QPushButton *b_folder_torrents_reset;
     QPushButton *b_folder_movies_reset;
     QPushButton *b_torrent_ports_reset;
-    QPushButton *b_contribute_torrents;
-    QPushButton *b_contribute_code;
-    QPushButton *b_contribute_bugs;
-    QPushButton *b_contribute_bitcoins;
-    QPushButton *b_back;
+    QPushButton *b_provide_torrent;
+    QPushButton *b_provide_code;
+    QPushButton *b_provide_bug;
+    QPushButton *b_provide_donate;
+    QPushButton *b_provide_copy_wallet;
     QGroupBox *g_data;
     QGroupBox *g_authorization;
     QGroupBox *g_folder;
     QGroupBox *g_torrent;
-    QGroupBox *g_contribute;
+    QGroupBox *g_provide;
     QHBoxLayout *l_data;
     QHBoxLayout *l_authorization;
     QHBoxLayout *l_folder_covers;
@@ -440,12 +449,14 @@ public:
     QHBoxLayout *l_folder_movies;
     QVBoxLayout *l_folder;
     QHBoxLayout *l_torrent;
-    QHBoxLayout *l_contribute_torrents;
-    QHBoxLayout *l_contribute_code;
-    QHBoxLayout *l_contribute_bugs;
-    QHBoxLayout *l_contribute_bitcoins;
-    QVBoxLayout *l_contribute;
+    QHBoxLayout *l_provide_torrent;
+    QHBoxLayout *l_provide_code;
+    QHBoxLayout *l_provide_bug;
+    QHBoxLayout *l_provide_donate;
+    QVBoxLayout *l_provide;
     QGridLayout *l;
+
+    QClipboard *clipboard;
 
     void setupUi(QStringList *data, bool **keep_covers, bool **keep_torrents,
                  bool **keep_movies, int **torrent_port_1, int **torrent_port_2,
@@ -488,8 +499,7 @@ public:
         p_torrent_edit.setBrush(QPalette::Active, QPalette::Base, br_alternate_base);
         p_torrent_edit.setBrush(QPalette::Active, QPalette::Text, br_white);
 
-        g_data = new QGroupBox("ABOUT", Setup);
-        g_data->setPalette(p_dark);
+        g_data = new QGroupBox(Setup);
         g_data->setFlat(true);
 
         lb_data_binary = new QLabel("PIG "+(*data)[0]+"."+(*data)[1], g_data);
@@ -508,16 +518,14 @@ public:
         l_data->addWidget(lb_data_license);
         l_data->addStretch();
 
-        g_authorization = new QGroupBox("AUTHORIZATION", Setup);
-        g_authorization->setPalette(p_dark);
+        g_authorization = new QGroupBox(Setup);
         g_authorization->setFlat(true);
 
         l_authorization = new QHBoxLayout(g_authorization);
         l_authorization->setContentsMargins(0, 0, 0, 0);
         l_authorization->addWidget(authorization);
 
-        g_folder = new QGroupBox("FOLDERS", Setup);
-        g_folder->setPalette(p_dark);
+        g_folder = new QGroupBox(Setup);
         g_folder->setFlat(true);
 
         r_folder_covers = new QRadioButton("KEEP LOCAL COPY OF COVERS", g_folder);
@@ -567,11 +575,10 @@ public:
         l_folder->addLayout(l_folder_torrents);
         l_folder->addLayout(l_folder_movies);
 
-        g_torrent = new QGroupBox("TORRENT", Setup);
-        g_torrent->setPalette(p_dark);
+        g_torrent = new QGroupBox(Setup);
         g_torrent->setFlat(true);
 
-        lb_torrent_ports = new QLabel("PORTS", g_torrent);
+        lb_torrent_ports = new QLabel("TORRENT PORTS", g_torrent);
         lb_torrent_ports->setPalette(p);
 
         QValidator *validPort = new QIntValidator(0, 65000, Setup);
@@ -603,83 +610,86 @@ public:
         l_torrent->addWidget(input_torrent_port_2);
         l_torrent->addWidget(b_torrent_ports_reset);
 
-        g_contribute = new QGroupBox("CONTRIBUTE", Setup);
-        g_contribute->setPalette(p_dark);
-        g_contribute->setFlat(true);
+        g_provide = new QGroupBox(Setup);
+        g_provide->setFlat(true);
 
-        lb_contribute_torrents = new QLabel("TORRENTS", g_contribute);
-        lb_contribute_torrents->setPalette(p);
+        lb_provide_torrent = new QLabel("PROVIDE TORRENT", g_provide);
+        lb_provide_torrent->setPalette(p);
 
-        b_contribute_torrents = new QPushButton(QIcon(":/icon-upload"), NULL, g_contribute);
-        b_contribute_torrents->setToolTip("UPLOAD TORRENTS");
-        b_contribute_torrents->setFlat(true);
+        b_provide_torrent = new QPushButton(QIcon(":/icon-upload"), NULL, g_provide);
+        b_provide_torrent->setToolTip("UPLOAD");
+        b_provide_torrent->setFlat(true);
 
-        l_contribute_torrents = new QHBoxLayout;
-        l_contribute_torrents->addWidget(lb_contribute_torrents);
-        l_contribute_torrents->insertStretch(1);
-        l_contribute_torrents->addWidget(b_contribute_torrents);
+        l_provide_torrent = new QHBoxLayout;
+        l_provide_torrent->addWidget(lb_provide_torrent);
+        l_provide_torrent->insertStretch(1);
+        l_provide_torrent->addWidget(b_provide_torrent);
 
-        lb_contribute_code = new QLabel("CODE", g_contribute);
-        lb_contribute_code->setPalette(p);
+        lb_provide_code = new QLabel("PROVIDE CODE", g_provide);
+        lb_provide_code->setPalette(p);
 
-        b_contribute_code = new QPushButton(QIcon(":/icon-upload"), NULL, g_contribute);
-        b_contribute_code->setToolTip("UPLOAD CODE");
-        b_contribute_code->setFlat(true);
+        b_provide_code = new QPushButton(QIcon(":/icon-upload"), NULL, g_provide);
+        b_provide_code->setToolTip("UPLOAD");
+        b_provide_code->setFlat(true);
 
-        l_contribute_code = new QHBoxLayout;
-        l_contribute_code->addWidget(lb_contribute_code);
-        l_contribute_code->insertStretch(1);
-        l_contribute_code->addWidget(b_contribute_code);
+        l_provide_code = new QHBoxLayout;
+        l_provide_code->addWidget(lb_provide_code);
+        l_provide_code->insertStretch(1);
+        l_provide_code->addWidget(b_provide_code);
 
-        lb_contribute_bugs = new QLabel("BUGS", g_contribute);
-        lb_contribute_bugs->setPalette(p);
+        lb_provide_bug = new QLabel("REPORT BUG", g_provide);
+        lb_provide_bug->setPalette(p);
 
-        b_contribute_bugs = new QPushButton(QIcon(":/icon-upload"), NULL, g_contribute);
-        b_contribute_bugs->setToolTip("REPORT BUGS");
-        b_contribute_bugs->setFlat(true);;
+        b_provide_bug = new QPushButton(QIcon(":/icon-upload"), NULL, g_provide);
+        b_provide_bug->setToolTip("REPORT");
+        b_provide_bug->setFlat(true);;
 
-        l_contribute_bugs = new QHBoxLayout;
-        l_contribute_bugs->addWidget(lb_contribute_bugs);
-        l_contribute_bugs->insertStretch(1);
-        l_contribute_bugs->addWidget(b_contribute_bugs);
+        l_provide_bug = new QHBoxLayout;
+        l_provide_bug->addWidget(lb_provide_bug);
+        l_provide_bug->insertStretch(1);
+        l_provide_bug->addWidget(b_provide_bug);
 
-        lb_contribute_bitcoins = new QLabel("BITCOINS", g_contribute);
-        lb_contribute_bitcoins->setPalette(p);
+        lb_provide_donate = new QLabel("DONATE", g_provide);
+        lb_provide_donate->setPalette(p);
 
-        lb_contribute_bitcoins_wallet = new QLabel(" ACDF723JKD8239OEWMBN7692BH23489BHJK", g_contribute);
-        lb_contribute_bitcoins_wallet->setPalette(p_dark);
-        lb_contribute_bitcoins_wallet->setVisible(false);
+        lb_provide_wallet = new QLabel("ACDF723JKD8239OEWMBN7692BH23489BHJK", g_provide);
+        lb_provide_wallet->setPalette(p_dark);
+        lb_provide_wallet->setTextInteractionFlags(Qt::TextSelectableByMouse);
+        lb_provide_wallet->setHidden(true);
 
-        b_contribute_bitcoins = new QPushButton(QIcon(":/icon-more"), NULL, g_contribute);
-        b_contribute_bitcoins->setToolTip("WALLET");
-        b_contribute_bitcoins->setFlat(true);
+        b_provide_donate = new QPushButton(QIcon(":/icon-more"), NULL, g_provide);
+        b_provide_donate->setToolTip("BITCOIN");
+        b_provide_donate->setFlat(true);
 
-        l_contribute_bitcoins = new QHBoxLayout;
-        l_contribute_bitcoins->addWidget(lb_contribute_bitcoins);
-        l_contribute_bitcoins->addWidget(lb_contribute_bitcoins_wallet);
-        l_contribute_bitcoins->insertStretch(2);
-        l_contribute_bitcoins->addWidget(b_contribute_bitcoins);
+        b_provide_copy_wallet= new QPushButton(QIcon(":/icon-copy"), NULL, g_provide);
+        b_provide_copy_wallet->setToolTip("COPY WALLET");
+        b_provide_copy_wallet->setFlat(true);
+        b_provide_copy_wallet->setHidden(true);
 
-        l_contribute = new QVBoxLayout(g_contribute);
-        l_contribute->addLayout(l_contribute_torrents);
-        l_contribute->addLayout(l_contribute_code);
-        l_contribute->addLayout(l_contribute_bugs);
-        l_contribute->addLayout(l_contribute_bitcoins);
+        l_provide_donate = new QHBoxLayout;
+        l_provide_donate->addWidget(lb_provide_donate);
+        l_provide_donate->addSpacing(10);
+        l_provide_donate->addWidget(lb_provide_wallet);
+        l_provide_donate->addSpacing(10);
+        l_provide_donate->addWidget(b_provide_copy_wallet);
+        l_provide_donate->insertStretch(5);
+        l_provide_donate->addWidget(b_provide_donate);
 
-        b_back = new QPushButton(QIcon(":/icon-back"), NULL, Setup);
-        b_back->setGeometry(1869, 15, 16, 16);//TODO: PORCENTAJE.
-        b_back->setToolTip("BACK");
-        b_back->setFlat(true);
-        b_back->setParent(Setup);
+        l_provide = new QVBoxLayout(g_provide);
+        l_provide->addLayout(l_provide_torrent);
+        l_provide->addLayout(l_provide_code);
+        l_provide->addLayout(l_provide_bug);
+        l_provide->addLayout(l_provide_donate);
 
         l = new QGridLayout(Setup);
-        l->setSpacing(20);//TODO: PORCENTAJE.
+        l->setContentsMargins(80, 11, 80, 12);//TODO: PORCENTAJE.
+        l->setSpacing(0);
         l->setAlignment(Qt::AlignLeft | Qt::AlignTop);
         l->addWidget(g_data, 0, 0);
         l->addWidget(g_authorization, 1, 0);
         l->addWidget(g_folder, 2, 0);
         l->addWidget(g_torrent, 3, 0);
-        l->addWidget(g_contribute, 4, 0);
+        l->addWidget(g_provide, 4, 0);
 
         Setup->setLayout(l);
     }
@@ -694,7 +704,6 @@ public:
     QLabel *cover;
     QLabel *backCover;
     QPushButton *b_clear;
-    QPushButton *b_hideInfo;
     QScrollArea *sa_covers;
     QGroupBox *g_covers;
     QGroupBox *g_info;
@@ -724,7 +733,7 @@ public:
         g_covers->setFlat(true);
 
         l_covers = new QGridLayout(g_covers);
-        l_covers->setContentsMargins(70, 0, 0, 20);//TODO: PORCENTAJE.
+        l_covers->setContentsMargins(75, 0, 0, 20);//TODO: PORCENTAJE.
         l_covers->setHorizontalSpacing(0);
         l_covers->setVerticalSpacing(5);//TODO: PORCENTAJE.
         l_covers->setAlignment(Qt::AlignLeft | Qt::AlignTop);
@@ -850,15 +859,10 @@ public:
         l_multimedia->insertSpacing(5, 40);//TODO: PORCENTAJE.
         l_multimedia->addLayout(l_scenes);
 
-//        b_hideInfo = new QPushButton("", g_info);
-//        b_hideInfo->setFont(f);
-//        b_hideInfo->setPalette(p);
-//        b_hideInfo->setFlat(true);
-
         l_info = new QVBoxLayout(g_info);
+        l_info->setContentsMargins(80, 12, 80, 12);//TODO: PORCENTAJE.
         l_info->setSpacing(250);//TODO: PORCENTAJE.
         l_info->setAlignment(Qt::AlignVCenter);
-//        l_info->addWidget(b_hideInfo);
         l_info->addSpacing(10);//TODO: PORCENTAJE.
         l_info->addLayout(l_metadata);
         l_info->addLayout(l_multimedia);

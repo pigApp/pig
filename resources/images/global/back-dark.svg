@@ -18,9 +18,9 @@
          rdf:about=""><dc:format>image/svg+xml</dc:format><dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" /><dc:title></dc:title></cc:Work></rdf:RDF></metadata><defs
      id="defs5621" /><g
-     style="fill:#ffff00;fill-opacity:1"
+     style="fill:#505050;fill-opacity:1"
      id="g6165"><polygon
        points="256,128 176,202.656 198.859,224 239.969,185.594 239.969,384 271.969,384 271.969,185.594 313.141,224 336,202.656 "
        id="polygon5617"
        transform="matrix(0.0625,0,0,0.0625,-11,-8)"
-       style="clip-rule:evenodd;fill-rule:evenodd;fill:#ffff00;fill-opacity:1" /></g></svg>
+       style="clip-rule:evenodd;fill-rule:evenodd;fill:#505050;fill-opacity:1" /></g></svg>

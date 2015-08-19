@@ -14,7 +14,7 @@ class View : public QWidget
     Q_OBJECT
 
 public:
-    explicit View(const QString *PIG_PATH, QWidget *parent = 0);
+    explicit View(const QString *PIG_PATH, QPushButton **b_back, QWidget *parent = 0);
     ~View();
 
 signals:
@@ -28,6 +28,7 @@ public slots:
 
 private:
     const QString *_PIG_PATH;
+    QPushButton **_b_back;
     const QStringList *m_data = NULL;
 
     QStringList onLocalCovers;

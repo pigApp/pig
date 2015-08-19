@@ -3,9 +3,10 @@
 
 #include <QDir>
 
-View::View(const QString* const PIG_PATH, QWidget *parent) :
+View::View(const QString* const PIG_PATH, QPushButton **b_back, QWidget *parent) :
     QWidget(parent),
     _PIG_PATH(PIG_PATH),
+    _b_back(b_back),
     page(1),
     n_pages(0),
     ui(new Ui::View)
@@ -156,11 +157,12 @@ void View::show_info(const int &index, const QString &path)
 {
     ui->setupInfoUi(index, path, &m_data, this);
 
-//    QObject::connect (ui->b_hideInfo, &QPushButton::pressed, [=] { del_info(); });
-
     get_covers(NULL, index);
 
     emit setTopbarState(true);
+
+    connect ((*_b_back), SIGNAL(pressed()), this, SLOT(del_info()));
+    (*_b_back)->show();
 }
 
 void View::del_info()
@@ -172,6 +174,9 @@ void View::del_info()
     ui->sa_covers->show();
 
     emit setTopbarState(false);
+
+    (*_b_back)->disconnect();
+    (*_b_back)->hide();
 }
 
 void View::pages_handler()

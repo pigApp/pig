@@ -47,8 +47,6 @@ Setup::Setup(const QString* const PIG_PATH, bool *keep_covers, bool *keep_torren
     ui->setupUi(&data, &keep_covers, &keep_torrents, &keep_movies,
                 &torrent_port_1, &torrent_port_2, authorization, this);
 
-    m_b_back = ui->b_back;
-
     QObject::connect (ui->r_folder_covers, &QPushButton::pressed, [=] {
         *keep_covers = !*keep_covers;
         set_rc("KEEP_LOCAL_COPY_OF_COVERS", *keep_covers);
@@ -154,25 +152,31 @@ Setup::Setup(const QString* const PIG_PATH, bool *keep_covers, bool *keep_torren
         }
     });
 
-    QObject::connect (ui->b_contribute_torrents, &QPushButton::pressed, [=] {
+    QObject::connect (ui->b_provide_torrent, &QPushButton::pressed, [=] {
         QDesktopServices::openUrl(QUrl("http://"+data[3]+data[4]));
     });
-    QObject::connect (ui->b_contribute_code, &QPushButton::pressed, [=] {
+    QObject::connect (ui->b_provide_code, &QPushButton::pressed, [=] {
         QDesktopServices::openUrl(QUrl("http://"+data[3]+data[5]));
     });
-    QObject::connect (ui->b_contribute_bugs, &QPushButton::pressed, [=] {
+    QObject::connect (ui->b_provide_bug, &QPushButton::pressed, [=] {
         QDesktopServices::openUrl(QUrl("http://"+data[3]+data[6]));
     });
-    QObject::connect (ui->b_contribute_bitcoins, &QPushButton::pressed, [&] {
-        if (ui->lb_contribute_bitcoins->text() == "BITCOINS") {
-            ui->lb_contribute_bitcoins->setText("WALLET");
-            ui->b_contribute_bitcoins->setIcon(QIcon(":/icon-less"));
+    QObject::connect (ui->b_provide_donate, &QPushButton::pressed, [&] {
+        if (ui->lb_provide_donate->text() == "DONATE") {
+            ui->lb_provide_donate->setText("BITCOIN");
+            ui->b_provide_donate->setIcon(QIcon(":/icon-less"));
         } else {
-            ui->lb_contribute_bitcoins->setText("BITCOINS");
-            ui->b_contribute_bitcoins->setIcon(QIcon(":/icon-more"));
+            ui->lb_provide_donate->setText("DONATE");
+            ui->b_provide_donate->setIcon(QIcon(":/icon-more"));
         }
 
-        ui->lb_contribute_bitcoins_wallet->setVisible(ui->lb_contribute_bitcoins_wallet->isHidden());
+        ui->lb_provide_wallet->setHidden(!ui->lb_provide_wallet->isHidden());
+        ui->b_provide_copy_wallet->setHidden(!ui->b_provide_copy_wallet->isHidden());
+    });
+    QObject::connect (ui->b_provide_copy_wallet, &QPushButton::pressed, [&] {
+        ui->clipboard->clear();
+        ui->clipboard->setText(ui->lb_provide_wallet->text());
+        ui->b_provide_copy_wallet->setIcon(QIcon(":/icon-copied"));
     });
 }
 
