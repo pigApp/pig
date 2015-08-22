@@ -9,6 +9,7 @@
 #include <QWidget>
 
 #include <QDir>
+#include <QShortcut>
 
 namespace Ui {
 class PIG;
@@ -36,6 +37,9 @@ private:
     TopBar *topbar;
     Setup *setup;
     View *view;
+
+    QShortcut *sc_quit;
+    QShortcut *sc_back;
 
     bool keep_covers, keep_torrents, keep_movies;
     int torrent_port_1, torrent_port_2;

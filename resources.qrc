@@ -24,8 +24,8 @@
         <file alias="icon-back-dark">resources/images/global/back-dark.svg</file>
         <file alias="icon-minimize">resources/images/global/minimize.svg</file>
         <file alias="icon-minimize-dark">resources/images/global/minimize-dark.svg</file>
-        <file alias="icon-close">resources/images/global/close.svg</file>
-        <file alias="icon-close-dark">resources/images/global/close-dark.svg</file>
+        <file alias="icon-quit">resources/images/global/quit.svg</file>
+        <file alias="icon-quit-dark">resources/images/global/quit-dark.svg</file>
         <file alias="icon-ok">resources/images/global/ok.svg</file>
         <file alias="icon-cancel">resources/images/global/cancel.svg</file>
         <file alias="icon-more">resources/images/global/more.svg</file>

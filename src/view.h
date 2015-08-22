@@ -5,6 +5,8 @@
 
 #include <QWidget>
 
+#include <QShortcut>
+
 namespace Ui {
 class View;
 }
@@ -37,6 +39,8 @@ private:
     QString filterBase;
     QList<int> requiredRemoteCovers;
     QList<int> filteredCovers;
+
+    QShortcut *sc_back;
     
     int page, n_pages, pageHeight;
 
@@ -50,11 +54,11 @@ private:
 
 private slots:
     void add_cover(int ID, QString path);
-    void del_covers();
-    void show_info(const int &index, const QString &path);
-    void del_info();
+    void delete_covers();
+    void init_info(const int &index, const QString &path);
+    void delete_info();
     void pages_handler();
-    bool isOnLocal(const QString &cover, const QStringList *localList);
+    bool hasOnLocal(const QString &cover, const QStringList *localList);
 };
 
 #endif

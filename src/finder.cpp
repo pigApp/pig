@@ -190,10 +190,10 @@ void Finder::filters_handler()
             ui->b_vector_categories.push_back(new QPushButton((*categories)[i], this));
             ui->b_vector_categories.last()->setFont(f);
             ui->b_vector_categories.last()->setPalette(ui->p_filter);
-            ui->b_vector_categories.last()->setFlat(true);
             ui->b_vector_categories.last()->setCheckable(true);
             ui->b_vector_categories.last()->setChecked(false);
             ui->b_vector_categories.last()->setAutoFillBackground(true);
+            ui->b_vector_categories.last()->setFlat(true);
 
             QObject::connect (ui->b_vector_categories.last(), &QPushButton::pressed, [=] {
                 for (int n = 0; n < ui->b_vector_categories.size(); n++) {

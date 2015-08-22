@@ -152,31 +152,31 @@ Setup::Setup(const QString* const PIG_PATH, bool *keep_covers, bool *keep_torren
         }
     });
 
-    QObject::connect (ui->b_provide_torrent, &QPushButton::pressed, [=] {
+    QObject::connect (ui->b_contribute_torrent, &QPushButton::pressed, [=] {
         QDesktopServices::openUrl(QUrl("http://"+data[3]+data[4]));
     });
-    QObject::connect (ui->b_provide_code, &QPushButton::pressed, [=] {
+    QObject::connect (ui->b_contribute_code, &QPushButton::pressed, [=] {
         QDesktopServices::openUrl(QUrl("http://"+data[3]+data[5]));
     });
-    QObject::connect (ui->b_provide_bug, &QPushButton::pressed, [=] {
+    QObject::connect (ui->b_contribute_bug, &QPushButton::pressed, [=] {
         QDesktopServices::openUrl(QUrl("http://"+data[3]+data[6]));
     });
-    QObject::connect (ui->b_provide_donate, &QPushButton::pressed, [&] {
-        if (ui->lb_provide_donate->text() == "DONATE") {
-            ui->lb_provide_donate->setText("BITCOIN");
-            ui->b_provide_donate->setIcon(QIcon(":/icon-less"));
+    QObject::connect (ui->b_contribute_donate, &QPushButton::pressed, [&] {
+        if (ui->lb_contribute_donate->text() == "DONATE") {
+            ui->lb_contribute_donate->setText("BITCOIN");
+            ui->b_contribute_donate->setIcon(QIcon(":/icon-less"));
         } else {
-            ui->lb_provide_donate->setText("DONATE");
-            ui->b_provide_donate->setIcon(QIcon(":/icon-more"));
+            ui->lb_contribute_donate->setText("DONATE");
+            ui->b_contribute_donate->setIcon(QIcon(":/icon-more"));
         }
 
-        ui->lb_provide_wallet->setHidden(!ui->lb_provide_wallet->isHidden());
-        ui->b_provide_copy_wallet->setHidden(!ui->b_provide_copy_wallet->isHidden());
+        ui->lb_contribute_wallet->setHidden(!ui->lb_contribute_wallet->isHidden());
+        ui->b_contribute_copy_wallet->setHidden(!ui->b_contribute_copy_wallet->isHidden());
     });
-    QObject::connect (ui->b_provide_copy_wallet, &QPushButton::pressed, [&] {
+    QObject::connect (ui->b_contribute_copy_wallet, &QPushButton::pressed, [&] {
         ui->clipboard->clear();
-        ui->clipboard->setText(ui->lb_provide_wallet->text());
-        ui->b_provide_copy_wallet->setIcon(QIcon(":/icon-copied"));
+        ui->clipboard->setText(ui->lb_contribute_wallet->text());
+        ui->b_contribute_copy_wallet->setIcon(QIcon(":/icon-copied"));
     });
 }
 
@@ -246,6 +246,7 @@ void Setup::set_icon(QPushButton **button, const bool &setDisabled, const bool &
             }
         });
     }
+
     this->setFocus();
 }
 

@@ -22,8 +22,11 @@ View::View(const QString* const PIG_PATH, QPushButton **b_back, QWidget *parent)
 
     QObject::connect (ui->sa_covers->verticalScrollBar(), &QScrollBar::valueChanged, [&] { pages_handler(); });
 
+    sc_back = new QShortcut(QKeySequence(Qt::Key_Escape), this, SLOT(delete_info()));
+    sc_back->setEnabled(false);
+
     //    QObject::connect (ui->b_clear, &QPushButton::pressed, [&] {
-    //        del_covers();
+    //        delete_covers();
     //        emit setFilterOnCovers();
     //    });//
 }
@@ -37,10 +40,10 @@ void View::get_covers(const QStringList *data, const int &index)
 {
     if (index != -1) {
         int _index = ((index + 1) * 17);
-        if (isOnLocal((*m_data)[(_index - 7)], &onLocalBackCovers)) {
-            if (ui->g_info != 0) {
+        if (hasOnLocal((*m_data)[(_index - 7)], &onLocalBackCovers)) {
+            if (ui->w_info != 0) {
                 QPixmap px_backCover(*_PIG_PATH+"/tmp/covers/back/"+(*m_data)[(_index - 7)]);
-                ui->backCover->setPixmap(px_backCover.scaled(335, 480, Qt::KeepAspectRatio));
+                ui->lb_info_backCover->setPixmap(px_backCover.scaled(335, 480, Qt::KeepAspectRatio));
             }
         } else {
             ThreadedSocket *thread;
@@ -49,9 +52,9 @@ void View::get_covers(const QStringList *data, const int &index)
                                         &(*m_data)[(_index - 7)], 0, this);
             QObject::connect (thread, &ThreadedSocket::sendFile, [=] (int ID, QString path) {
                 Q_UNUSED(ID);
-                if (ui->g_info != 0) {
+                if (ui->w_info != 0) {
                     QPixmap px_backCover(path);
-                    ui->backCover->setPixmap(px_backCover.scaled(335, 480, Qt::KeepAspectRatio));
+                    ui->lb_info_backCover->setPixmap(px_backCover.scaled(335, 480, Qt::KeepAspectRatio));
                 }
                 onLocalBackCovers << (*m_data)[(_index - 7)];
             });
@@ -72,7 +75,7 @@ void View::get_covers(const QStringList *data, const int &index)
             hasMoreCovers = true;
 
             if (ui->b_vector_covers.size() != 0)
-                del_covers();
+                delete_covers();
         }
 
         if (n_covers <= 10) {
@@ -88,7 +91,7 @@ void View::get_covers(const QStringList *data, const int &index)
 
         int _offsetData = offsetData;
         for (int i = 0; i < requiredCovers; i++) {
-            if (isOnLocal((*m_data)[(_offsetData + 8)], &onLocalCovers))
+            if (hasOnLocal((*m_data)[(_offsetData + 8)], &onLocalCovers))
                 add_cover(-1, *_PIG_PATH+"/tmp/covers/"+(*m_data)[(_offsetData + 8)]);
             else
                 requiredRemoteCovers << _offsetData;
@@ -121,17 +124,17 @@ void View::add_cover(int ID, QString path)
 
     //TODO: REVISAR EL ORDEN DE LAS TAPAS/CONTRATAPAS/NOMBRES
 
-    ui->b_vector_covers.push_back(new QPushButton(QIcon(path), NULL, ui->g_covers));
-    ui->b_vector_covers.last()->setIconSize(QSize(335, 480)); //TODO: PORCENTAJE
+    ui->b_vector_covers.push_back(new QPushButton(QIcon(path), NULL, ui->w_covers));
+    ui->b_vector_covers.last()->setIconSize(QSize(335, 480));//TODO: PORCENTAJE
     ui->b_vector_covers.last()->setFlat(true);
-    QObject::connect (ui->b_vector_covers.last(), &QPushButton::pressed, [=] { show_info(index, path); });
+    QObject::connect (ui->b_vector_covers.last(), &QPushButton::pressed, [=] { init_info(index, path); });
     //QObject::connect (ui->b_vector_covers.last(), &QPushButton::pressed, [=] { get_covers(); });
 
     ui->l_covers->addWidget(ui->b_vector_covers.last(), row, col);
 
     ++col;
 
-    if (ID != -1 && !isOnLocal(path.remove(0, path.lastIndexOf("/")), &onLocalCovers))
+    if (ID != -1 && !hasOnLocal(path.remove(0, path.lastIndexOf("/")), &onLocalCovers))
         onLocalCovers << (*m_data)[((index+1) * 17) - 9];
 
     if ((ui->b_vector_covers.size() - offsetCovers) == requiredCovers) { //FIX: AL BAJAR LA PAGINA NO AGREGA LOS COVERS DESCARGADOS ALA LISTA
@@ -142,7 +145,7 @@ void View::add_cover(int ID, QString path)
     }
 }
 
-void View::del_covers()
+void View::delete_covers()
 {
     for (int i = 0; i < ui->b_vector_covers.size(); i++) {
         ui->l_covers->removeWidget(ui->b_vector_covers.at(i));
@@ -153,7 +156,7 @@ void View::del_covers()
     ui->l_covers->update();
 }
 
-void View::show_info(const int &index, const QString &path)
+void View::init_info(const int &index, const QString &path)
 {
     ui->setupInfoUi(index, path, &m_data, this);
 
@@ -161,14 +164,16 @@ void View::show_info(const int &index, const QString &path)
 
     emit setTopbarState(true);
 
-    connect ((*_b_back), SIGNAL(pressed()), this, SLOT(del_info()));
+    connect ((*_b_back), SIGNAL(pressed()), this, SLOT(delete_info()));
     (*_b_back)->show();
+
+    sc_back->setEnabled(true);
 }
 
-void View::del_info()
+void View::delete_info()
 {
-    delete ui->g_info;
-    ui->g_info = NULL;
+    delete ui->w_info;
+    ui->w_info = NULL;
 
     ui->sa_covers->setEnabled(true);
     ui->sa_covers->show();
@@ -177,26 +182,28 @@ void View::del_info()
 
     (*_b_back)->disconnect();
     (*_b_back)->hide();
+
+    sc_back->setEnabled(false);
 }
 
 void View::pages_handler()
 {
-    if ((((ui->sa_covers->height()+10) * page) > ui->g_covers->height()) &&
+    if ((((ui->sa_covers->height()+10) * page) > ui->w_covers->height()) &&
         (page == n_pages) && hasMoreCovers) {
         ++page;
 
         get_covers();
 
         if (requiredRemoteCovers.size() > 4)
-            ui->g_covers->setMinimumHeight((ui->g_covers->height() + pageHeight));
+            ui->w_covers->setMinimumHeight((ui->w_covers->height() + pageHeight));
         else
-            ui->g_covers->setMinimumHeight((ui->g_covers->height() + (pageHeight / 2)));
+            ui->w_covers->setMinimumHeight((ui->w_covers->height() + (pageHeight / 2)));
         
-        ui->sa_covers->ensureVisible(0, ui->g_covers->height());
+        ui->sa_covers->ensureVisible(0, ui->w_covers->height());
     }
 }
 
-bool View::isOnLocal(const QString &cover, const QStringList *localList)
+bool View::hasOnLocal(const QString &cover, const QStringList *localList)
 {
     for (int i = 0; i < localList->size(); i++)
         if (cover == (*localList)[i])

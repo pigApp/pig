@@ -22,10 +22,14 @@ PIG::PIG(QWidget *parent) :
 
     ui->b_back->installEventFilter(this);
     ui->b_minimize->installEventFilter(this);
-    ui->b_close->installEventFilter(this);
+    ui->b_quit->installEventFilter(this);
 
     QObject::connect (ui->b_minimize, &QPushButton::released, [&] { showMinimized(); });
-    QObject::connect (ui->b_close, &QPushButton::released, [&] { exit(0); });
+    QObject::connect (ui->b_quit, &QPushButton::released, [&] { close(); });
+
+    sc_quit = new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_Q), this, SLOT(close()));
+    sc_back = new QShortcut(QKeySequence(Qt::Key_Escape), this, SLOT(init_setup()));
+    sc_back->setEnabled(false);
 
     init_authorization();
 }
@@ -99,8 +103,9 @@ void PIG::init_update()
         w->show();
     });
     QObject::connect (update, &Update::destroyed, [&] {
-        for (int i = 0; i < ui->main_layout->count(); i++)
-            ui->main_layout->itemAt(i)->widget()->setEnabled(true);
+        qDebug() << "EXIT";
+        //for (int i = 0; i < ui->main_layout->count(); i++)
+            //ui->main_layout->itemAt(i)->widget()->setEnabled(true);
     });
     connect(update, SIGNAL(dbError(QString)), this, SLOT(error(QString)));
 
@@ -153,12 +158,14 @@ void PIG::init_setup()
         view->hide();
         connect (ui->b_back, SIGNAL(pressed()), this, SLOT(init_setup()));
         ui->b_back->show();
+        sc_back->setEnabled(true);
     } else {
         ui->main_layout->removeWidget(setup);
         topbar->setHidden(false);
         view->show();
         ui->b_back->disconnect();
         ui->b_back->hide();
+        sc_back->setEnabled(false);
         setup->deleteLater();
         setup = NULL;
     }
@@ -208,12 +215,12 @@ bool PIG::eventFilter(QObject *obj, QEvent *e)
         } else {
             return false;
         }
-    } else if (obj == (QObject*)ui->b_close) {
+    } else if (obj == (QObject*)ui->b_quit) {
         if (e->type() == QEvent::Enter) {
-            ui->b_close->setIcon(QIcon(":/icon-close-dark"));
+            ui->b_quit->setIcon(QIcon(":/icon-quit-dark"));
             return true;
         } else if (e->type() == QEvent::Leave) {
-            ui->b_close->setIcon(QIcon(":/icon-close"));
+            ui->b_quit->setIcon(QIcon(":/icon-quit"));
             return true;
         } else {
             return false;
