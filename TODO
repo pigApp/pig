@@ -1,11 +1,11 @@
-- Cambiar color input en update-authorization
-- FIX: Tamaño boton minimize y close
+- FIX: Tamaño boton minimize y close.
 - Terminar info.
 - tab order.
 - Pasar valores a porcentajes.
+- Completer.
 
 - FIX: Comprobar update al cerrar
-- FIX: Al mostrar 'update available' en la pantalla setup.
+- Filters.
 - Socket y setup error.
 - PIG error.
 - Revisar y terminar filtros y view.

@@ -122,48 +122,38 @@ void Finder::filters_handler()
     else
         ui->b_filters->setIcon(QIcon(":/icon-filters"));
 
-    if (ui->b_vector_categories.isEmpty()) {
-        const QStringList *categories = query("categories", NULL, false, false, true);
+    if (ui->cb_categories == 0) {
+        ui->setupFilterUi(query("categories", NULL, false, false, true), this);
 
-        ui->setupFilterUi(this);
-
-        QObject::connect (ui->b_quality_all, &QPushButton::pressed, [=] {
-            if (!ui->b_quality_all->isChecked()) {
-                ui->b_quality_all->setPalette(ui->p_filter_active);
-                ui->b_quality_720p->setPalette(ui->p_filter);
-                ui->b_quality_1080p->setPalette(ui->p_filter);
-
+        QObject::connect (ui->cb_categories, static_cast<void (QComboBox::*)(const QString &)>
+                          (&QComboBox::currentIndexChanged), [=] {
+            if (!m_filterOnCovers) {
+                data.clear();
+                emit sendData(query(NULL, ui->cb_categories->currentText(), false, true, false));
+                ui->input->deselect();
             } else {
-                ui->b_quality_all->setPalette(ui->p_filter);
+                qDebug() << "test";
+                //FIX: DIRECCION DE CURRENT INDEX ES TEMPORAL.
+                //emit sendData(NULL, &ui->cb_quality->currentText());
             }
-
-            quality = "ALL";
-            if (m_filterOnCovers)
-                emit sendData(NULL, &quality);
         });
-        QObject::connect (ui->b_quality_720p, &QPushButton::pressed, [=] {
-            if (!ui->b_quality_720p->isChecked()) {
-                ui->b_quality_all->setPalette(ui->p_filter);
-                ui->b_quality_720p->setPalette(ui->p_filter_active);
-                ui->b_quality_1080p->setPalette(ui->p_filter);
-            } else {
-                ui->b_quality_720p->setPalette(ui->p_filter);
-            }
 
-            quality = "720p";
-            if (m_filterOnCovers)
-                emit sendData(NULL, &quality);
+        QObject::connect (ui->cb_pornstars, static_cast<void (QComboBox::*)(const QString &)>
+                          (&QComboBox::currentIndexChanged), [=] {
+            if (!m_filterOnCovers) {
+                data.clear();
+                emit sendData(query(NULL, ui->cb_pornstars->currentText(), false, true, false));
+                ui->input->deselect();
+            } else {
+                qDebug() << "test";
+                //FIX: DIRECCION DE CURRENT INDEX ES TEMPORAL.
+                //emit sendData(NULL, &ui->cb_quality->currentText());
+            }
         });
-        QObject::connect (ui->b_quality_1080p, &QPushButton::pressed, [=] {
-            if (!ui->b_quality_1080p->isChecked()) {
-                ui->b_quality_all->setPalette(ui->p_filter);
-                ui->b_quality_720p->setPalette(ui->p_filter);
-                ui->b_quality_1080p->setPalette(ui->p_filter_active);
-            } else {
-                ui->b_quality_1080p->setPalette(ui->p_filter);
-            }
 
-            quality = "1080p";
+        QObject::connect (ui->cb_quality, static_cast<void (QComboBox::*)(const QString &)>
+                          (&QComboBox::currentIndexChanged), [=] {
+            quality = ui->cb_quality->currentText();
             if (m_filterOnCovers)
                 emit sendData(NULL, &quality);
         });
@@ -171,57 +161,15 @@ void Finder::filters_handler()
         QObject::connect (ui->b_fullMovie, &QPushButton::pressed, [=] {
             if (!ui->b_fullMovie->isChecked()) {
                 fullMovie = "FULL";
-                ui->b_fullMovie->setPalette(ui->p_filter_active);
+                ui->b_fullMovie->setPalette(ui->p_filters_active);
             } else {
                 fullMovie = "ALL";
-                ui->b_fullMovie->setPalette(ui->p_filter);
+                ui->b_fullMovie->setPalette(ui->p_filters);
             }
 
             if (m_filterOnCovers)
                 emit sendData(NULL, &fullMovie);
         });
-
-        QFont f(":/font-global");
-        f.setPointSize(12); //TODO: PORCENTAJE
-        f.setCapitalization(QFont::AllUppercase);
-        f.setBold(true);
-
-        for (int i = 0; i < (*categories).size(); i++) {
-            ui->b_vector_categories.push_back(new QPushButton((*categories)[i], this));
-            ui->b_vector_categories.last()->setFont(f);
-            ui->b_vector_categories.last()->setPalette(ui->p_filter);
-            ui->b_vector_categories.last()->setCheckable(true);
-            ui->b_vector_categories.last()->setChecked(false);
-            ui->b_vector_categories.last()->setAutoFillBackground(true);
-            ui->b_vector_categories.last()->setFlat(true);
-
-            QObject::connect (ui->b_vector_categories.last(), &QPushButton::pressed, [=] {
-                for (int n = 0; n < ui->b_vector_categories.size(); n++) {
-                    if (n == i) {
-                        if (!ui->b_vector_categories.at(i)->isChecked()) { //TODO: COMPROBAR OTRA COSA PARA PODER REAPRETAR EL BOTON. NO 'isChecked'.
-                            qDebug() << i << "CHECKED" << ui->b_vector_categories.at(i)->isChecked();
-                            if (!m_filterOnCovers) {
-                                data.clear();
-                                emit sendData(query(NULL, (*categories)[i], false, true, false));
-                                ui->input->deselect();
-                            } else {
-                                emit sendData(NULL, &(*categories)[i]);
-                            }
-                            ui->b_vector_categories.at(i)->setPalette(ui->p_filter_active);
-                        } else {
-                            qDebug() << i << "CHECKEDX" << ui->b_vector_categories.at(i)->isChecked();
-                            QString categoryAll = "ALL";
-                            emit sendData(NULL, &categoryAll);
-                            ui->b_vector_categories.at(i)->setPalette(ui->p_filter);
-                        }
-                    } else {
-                        ui->b_vector_categories.at(n)->setPalette(ui->p_filter);
-                    }
-                }
-            });
-            ui->bg_categories->addButton(ui->b_vector_categories.last());
-            ui->l_filters->addWidget(ui->b_vector_categories.last());
-        }
 
         isFiltersHidden = false;
     } else {

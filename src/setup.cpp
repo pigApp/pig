@@ -165,6 +165,7 @@ Setup::Setup(const QString* const PIG_PATH, bool *keep_covers, bool *keep_torren
         if (ui->lb_contribute_donate->text() == "DONATE") {
             ui->lb_contribute_donate->setText("BITCOIN");
             ui->b_contribute_donate->setIcon(QIcon(":/icon-less"));
+            ui->lb_contribute_wallet->setPalette(ui->p_wallet);
         } else {
             ui->lb_contribute_donate->setText("DONATE");
             ui->b_contribute_donate->setIcon(QIcon(":/icon-more"));
@@ -176,7 +177,7 @@ Setup::Setup(const QString* const PIG_PATH, bool *keep_covers, bool *keep_torren
     QObject::connect (ui->b_contribute_copy_wallet, &QPushButton::pressed, [&] {
         ui->clipboard->clear();
         ui->clipboard->setText(ui->lb_contribute_wallet->text());
-        ui->b_contribute_copy_wallet->setIcon(QIcon(":/icon-copied"));
+        ui->lb_contribute_wallet->setPalette(ui->p_wallet_copied);
     });
 }
 
