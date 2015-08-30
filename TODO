@@ -4,7 +4,7 @@
 - Pasar valores a porcentajes.
 - Completer.
 
-- FIX: Comprobar update al cerrar
+- Socket orden que descarga los covers.
 - Filters.
 - Socket y setup error.
 - PIG error.

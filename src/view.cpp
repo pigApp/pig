@@ -39,7 +39,8 @@ View::~View()
 void View::get_covers(const QStringList *data, const int &index)
 {
     if (index != -1) {
-        int _index = ((index + 1) * 17);
+        int _index = ((index + 1) * 19);
+
         if (hasOnLocal((*m_data)[(_index - 7)], &onLocalBackCovers)) {
             if (ui->w_info != 0) {
                 QPixmap px_backCover(*_PIG_PATH+"/tmp/covers/back/"+(*m_data)[(_index - 7)]);
@@ -47,6 +48,7 @@ void View::get_covers(const QStringList *data, const int &index)
             }
         } else {
             ThreadedSocket *thread;
+
             thread = new ThreadedSocket(_PIG_PATH, &(*m_data)[(_index - 11)],
                                         &(*m_data)[(_index - 8)],
                                         &(*m_data)[(_index - 7)], 0, this);
@@ -59,6 +61,7 @@ void View::get_covers(const QStringList *data, const int &index)
                 onLocalBackCovers << (*m_data)[(_index - 7)];
             });
             connect (thread, SIGNAL(finished()), thread, SLOT(deleteLater()));
+
             thread->start();
         }
     } else {
@@ -69,7 +72,7 @@ void View::get_covers(const QStringList *data, const int &index)
             offsetData = 0;
             offsetCovers = 0;
             requiredCovers = 0;
-            n_covers = ((*m_data).count() / 17);
+            n_covers = ((*m_data).count() / 19);
             filterBase = "";
             filteredCovers.clear();
             hasMoreCovers = true;
@@ -91,23 +94,26 @@ void View::get_covers(const QStringList *data, const int &index)
 
         int _offsetData = offsetData;
         for (int i = 0; i < requiredCovers; i++) {
-            if (hasOnLocal((*m_data)[(_offsetData + 8)], &onLocalCovers))
-                add_cover(-1, *_PIG_PATH+"/tmp/covers/"+(*m_data)[(_offsetData + 8)]);
+            if (hasOnLocal((*m_data)[(_offsetData + 10)], &onLocalCovers))
+                add_cover(-1, *_PIG_PATH+"/tmp/covers/"+(*m_data)[(_offsetData + 10)]);
             else
                 requiredRemoteCovers << _offsetData;
-            _offsetData += 17;
+            _offsetData += 19;
         }
 
         if (hasMoreCovers) {
             ThreadedSocket *thread[requiredRemoteCovers.size()];
+
             for(int i = 0; i < requiredRemoteCovers.size(); i++) {
-                thread[i] = new ThreadedSocket(_PIG_PATH, &(*m_data)[(requiredRemoteCovers[i] + 6)],
-                                               &(*m_data)[(requiredRemoteCovers[i] + 7)],
-                                               &(*m_data)[(requiredRemoteCovers[i] + 8)], 0, this);
+                thread[i] = new ThreadedSocket(_PIG_PATH, &(*m_data)[(requiredRemoteCovers[i] + 8)],
+                                               &(*m_data)[(requiredRemoteCovers[i] + 9)],
+                                               &(*m_data)[(requiredRemoteCovers[i] + 10)], 0, this);
                 connect (thread[i], SIGNAL(sendFile(int, QString)), this, SLOT(add_cover(int, QString)));
                 connect (thread[i], SIGNAL(finished()), thread[i], SLOT(deleteLater()));
+
                 thread[i]->start();
-                offsetData += 17;
+
+                offsetData += 19;
             }
         }
     }
@@ -135,7 +141,7 @@ void View::add_cover(int ID, QString path)
     ++col;
 
     if (ID != -1 && !hasOnLocal(path.remove(0, path.lastIndexOf("/")), &onLocalCovers))
-        onLocalCovers << (*m_data)[((index+1) * 17) - 9];
+        onLocalCovers << (*m_data)[((index+1) * 19) - 9];
 
     if ((ui->v_b_covers.size() - offsetCovers) == requiredCovers) { //FIX: AL BAJAR LA PAGINA NO AGREGA LOS COVERS DESCARGADOS ALA LISTA
         offsetCovers += 10;                                                   //FIX: SOLO BAJA EN EL PEDIDO INICIAL
@@ -165,7 +171,6 @@ void View::init_info(const int &index, const QString &path)
     emit setTopbarState(true);
 
     connect ((*_b_back), SIGNAL(pressed()), this, SLOT(delete_info()));
-    (*_b_back)->show();
 
     sc_back->setEnabled(true);
 }
@@ -228,8 +233,7 @@ void View::set_filter(const QString *filter)
 
     for (int i = 0; i < ui->v_b_covers.size(); i++) {
         if (filterBase == "quality") {
-            
-            if ((*filter == (*m_data)[(offsetFilter + 3)])) {
+            if ((*filter == (*m_data)[(offsetFilter + 5)])) {
                 ui->v_b_covers.at(i)->setDisabled(true);
             } else {
                 filteredCovers.append(i);
@@ -238,7 +242,7 @@ void View::set_filter(const QString *filter)
         }
 
         if (filterBase == "fullMovie") {
-            if ((*filter == (*m_data)[(offsetFilter + 5)])) {
+            if ((*filter == (*m_data)[(offsetFilter + 7)])) {
                 ui->v_b_covers.at(i)->setDisabled(true);
             } else {
                 filteredCovers.append(i);
@@ -250,176 +254,16 @@ void View::set_filter(const QString *filter)
             if (*filter == "ALL") {
                 filteredCovers.append(i);
                 ui->v_b_covers.at(i)->setEnabled(true);
-            } else if (*filter != (*m_data)[(offsetFilter + 2)]) {
+            } else if (*filter != (*m_data)[(offsetFilter + 4)]) {
                 ui->v_b_covers.at(i)->setDisabled(true);
             } else {
                 filteredCovers.append(i);
                 ui->v_b_covers.at(i)->setEnabled(true);
             }
         }
-        offsetFilter += 17;
+
+        offsetFilter += 19;
     }
+
     qDebug() << filteredCovers;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/*
-void View::set_filter(const QString *filter)
-{
-    int offsetFilter = 0;
-
-    if ((*filter != "ALL") && (*filter != "FULL") && (*filter != "720p") && (*filter != "1080p")) {
-       if (filterBase == "category") {
-           filterBase = "";
-           activeCovers = _activeCovers;
-           n_activeCovers = ui->v_b_covers.size();
-       }
-    }
-
-
-    if (*filter == "ALL") {
-
-        filterBase = "";
-        activeCovers = _activeCovers;
-        n_activeCovers = ui->v_b_covers.size();
-
-        for (int i = 0; i < ui->v_b_covers.size(); i++)
-            ui->v_b_covers.at(i)->setEnabled(true);
-
-    } else {
-
-        for (int i = 0; i < n_activeCovers; i++) {
-
-            if (*filter == "FULL") {
-
-                if ((*filter == (*m_data)[offsetFilter + 6])) {
-                    if (filterBase == "") {
-                        activeCovers.clear();
-                        filterBase = "fullMovie";
-                    }
-                    if (filterBase == "fullMovie")
-                        activeCovers.append(i);
-
-                    ui->v_b_covers.at(i)->setEnabled(true);
-                } else {
-                    ui->v_b_covers.at(i)->setDisabled(true);
-                }
-            } else if (*filter == "720p" || *filter == "1080p") {
-
-                if ((*filter == (*m_data)[offsetFilter + 4])) {
-                    if (filterBase == "") {
-                        activeCovers.clear();
-                        filterBase = "quality";
-                    }
-
-                    if (filterBase == "quality")
-                        activeCovers.append(i);
-
-                    ui->v_b_covers.at(i)->setEnabled(true);
-                } else {
-                    ui->v_b_covers.at(i)->setDisabled(true);
-                }
-            } else {
-
-                if (*filter == (*m_data)[offsetFilter + 3]) {
-                    if (filterBase == "") {
-                        activeCovers.clear();
-                        filterBase = "category";
-                    }
-                    if (filterBase == "category")
-                        activeCovers.append(i);
-
-                    ui->v_b_covers.at(i)->setEnabled(true);
-                } else {
-                    for (int n = 0; n < activeCovers.size(); n++) {
-                        if (n == activeCovers[n])
-                            ui->v_b_covers.at(n)->setDisabled(true);
-                    }
-                }
-
-            }
-
-            offsetFilter += 15;
-        }
-    }
-
-    if (!activeCovers.isEmpty())
-        n_activeCovers = activeCovers.size();
-
-    qDebug() << "N_ACTIVES" << n_activeCovers;
-    qDebug() << "BASE" << filterBase;
-    qDebug() << "";
-
-
-
-//    if (*filter == "ALL") {
-//        for (int i = 0; i < ui->v_b_covers.size(); i++)
-//            ui->v_b_covers.at(i)->setEnabled(true);
-//    } else {
-//        for (int i = 0; i < ui->v_b_covers.size(); i++) {
-//            if (*filter == "FULL") {
-//                if ((*filter != (*m_data)[offsetFilter + 6]))
-//                    ui->v_b_covers.at(i)->setDisabled(true);
-//                else
-//                    ui->v_b_covers.at(i)->setEnabled(true);
-//            } else if (*filter == "720p" || *filter == "1080p") {
-//                if ((*filter != (*m_data)[offsetFilter + 4]))
-//                    ui->v_b_covers.at(i)->setDisabled(true);
-//                else
-//                    ui->v_b_covers.at(i)->setEnabled(true);
-//            } else {
-//                if (*filter != (*m_data)[offsetFilter + 3]) {
-//                    ui->v_b_covers.at(i)->setDisabled(true);
-//                } else {
-//                    activeCovers.append(v_b_covers.at(i));
-//                    ui->v_b_covers.at(i)->setEnabled(true);
-//                }
-//            }
-//            offsetFilter += 15;
-//        }
-//    }
-
-    // TODO: INTERELACIONAR LOS FILTROS
-
-    ui->l_covers->update();
-}
-*/

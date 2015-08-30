@@ -21,6 +21,7 @@ Update::Update(const QString* const PIG_PATH, QSqlDatabase *db_, QWidget *parent
 
     if (_db->open()) {
         QSqlQuery query;
+
         query.prepare("SELECT binary, release, database, library, hostUpdate \
                       , urlUpdate, hostSite, urlSiteNews FROM data");
 
@@ -29,7 +30,6 @@ Update::Update(const QString* const PIG_PATH, QSqlDatabase *db_, QWidget *parent
             QTimer::singleShot(100, this, SLOT(error()));
         } else {
             query.next();
-
             bin = query.value(0).toInt();
             rel = query.value(1).toInt();
             db = query.value(2).toInt();
@@ -39,7 +39,6 @@ Update::Update(const QString* const PIG_PATH, QSqlDatabase *db_, QWidget *parent
             hostSite = query.value(6).toString();
             urlSiteNews = query.value(7).toString();
             pkgs << NULL;
-
             _db->close();
 
             get();
@@ -128,6 +127,7 @@ void Update::unpack(int ID, QString path)
 
     QObject::connect (unpack, &Unpack::finished, [&] (int exitCode) {
         unpack->deleteLater();
+
         if (exitCode == 0) {
             ++nUnpacked;
             if (pkgs.count() == nUnpacked)
@@ -162,6 +162,7 @@ void Update::install()
                 ui->b_2->setToolTip("SHOW MORE INFO");
                 ui->b_1->show();
                 ui->b_2->show();
+
                 QObject::connect (ui->b_1, &QPushButton::pressed, [&] { delete this; });
                 QObject::connect (ui->b_2, &QPushButton::pressed, [&] {
                     QDesktopServices::openUrl(QUrl("http://"+hostSite+urlSiteNews));
@@ -223,14 +224,15 @@ void Update::status(const int &exitCode)
                 query.exec();
                 query.prepare("UPDATE data SET release='"+QString::number(rel)+"'");
                 query.exec();
+
                 if (hasNewLib) {
                     query.prepare("UPDATE data SET library='"+QString::number(lib)+"'");
                     query.exec();
                 }
-
                 _db->close();
             }
         }
+
         ui->lb->setText("RESTART PIG");
         ui->b_1->setIcon(QIcon(":/icon-off"));
         ui->b_1->setToolTip("CLOSE PIG");
@@ -238,6 +240,7 @@ void Update::status(const int &exitCode)
         ui->b_2->setToolTip("SHOW MORE INFO");
         ui->b_1->show();
         ui->b_2->show();
+
         QObject::connect (ui->b_1, &QPushButton::pressed, [=] { exit(0); });
         QObject::connect (ui->b_2, &QPushButton::pressed, [&] {
             QDesktopServices::openUrl(QUrl("http://"+hostSite+urlSiteNews));
@@ -257,11 +260,11 @@ void Update::status(const int &exitCode)
                 query.exec();
                 query.prepare("UPDATE data SET release='"+QString::number(rel)+"'");
                 query.exec();
+
                 if (hasNewLib) {
                     query.prepare("UPDATE data SET library='"+QString::number(lib)+"'");
                     query.exec();
                 }
-
                 _db->close();
             }
         }
@@ -292,6 +295,7 @@ void Update::error(const QString &error)
         ui->b_1->setIcon(QIcon(":/icon-cancel"));
         ui->b_1->setToolTip("CLOSE");
         ui->b_1->show();
+
         QObject::connect (ui->b_1, &QPushButton::pressed, [&] { delete this; });
     } else {
         emit dbError("DATABASE CORRUPTED");
@@ -310,6 +314,7 @@ void Update::init_ui()
         ui->b_2->hide();
         ui->b_1->disconnect();
         ui->b_2->disconnect();
+
         get();
     });
     QObject::connect (ui->b_2, &QPushButton::pressed, [&] { delete this; });

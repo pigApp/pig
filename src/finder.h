@@ -40,12 +40,10 @@ private:
     bool m_filterOnCovers = false;
 
 private slots:
-    QStringList *query(const QString &str = NULL, const QString &category = NULL,
+    QStringList *query(const QString &name = NULL, const QString &category = NULL,
                        const bool &getList = false, const bool &getData = false,
-                       const bool &getFilter = false);
+                       const bool &getFilter = false, const QString &order = "name ASC LIMIT 1000");
     void filters_handler();
-
-    void test();
 };
 
 #endif

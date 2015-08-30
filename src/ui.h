@@ -799,11 +799,11 @@ public:
         l_info_metadata->setSpacing(10);//TODO: PORCENTAJE.
 
         QStringList metadata_titles;
-        metadata_titles << "NAME " << "CASTING " << "CATEGORIES " << "QUALITY " << "TIME ";
-        for (int i = 0; i < 5; i++) {
+        metadata_titles << "NAME " << "DATE " << "CASTING " << "QUALITY " << "TIME " << "FULL "  << "CATEGORIES ";
+        for (int i = 0; i < metadata_titles.size(); i++) {
             lb_info_metadata[i] = new QLabel(w_info);
             lb_info_metadata[i]->setPalette(p);
-            lb_info_metadata[i]->setText("<font color = '#8a8a8a'>"+metadata_titles[i]+"</font> "+(**_data)[((index * 17) + i)]);
+            lb_info_metadata[i]->setText("<font color = '#8a8a8a'>"+metadata_titles[i]+"</font> "+(**_data)[((index * 19) + i)]);
             lb_info_metadata[i]->setAutoFillBackground(true);
             lb_info_metadata[i]->setContentsMargins(10, 5, 10, 5);
             l_info_metadata->addWidget(lb_info_metadata[i]);
@@ -831,7 +831,7 @@ public:
                                        border-radius: 0px; }");
         cb_info_scenes->addItem(QIcon(":/icon-watch"), " WATCH");
 
-        QString scenes = (**_data)[((index * 17) + 16)];
+        QString scenes = (**_data)[((index * 19) + 18)];
         for (int i = 0; i < scenes.toInt(); i++) {
             cb_info_scenes->addItem(QIcon(":/icon-watch"), " WATCH SCENE "+QString::number(i+1));
         }
@@ -842,7 +842,7 @@ public:
         lb_info_player = new QLabel(w_info);
         lb_info_player->setPixmap(px_player.scaled(700, 480));
 
-        //QString preview = "http://" + ((**_data)[((index * 17) + 11)]) + ((**_data)[((index * 17) + 12)]);
+        //QString preview = "http://" + ((**_data)[((index * 19) + 13)]) + ((**_data)[((index * 19) + 14)]);
         //player_info = new Player(&preview, w_info);
         //player_info->setFixedSize(QSize(700, 540));//TODO: PORCENTAJE.
 

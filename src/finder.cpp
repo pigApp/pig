@@ -20,8 +20,10 @@ Finder::Finder(QSqlDatabase *db, QGridLayout *l_topbar, QWidget *parent) :
     });
     connect (ui->b_filters, SIGNAL(pressed()), this, SLOT(filters_handler()));
 
-    //if (init)
-        QTimer::singleShot(500, this, SLOT(test()));
+    QTimer *t = new QTimer(this);
+    QObject::connect (t, &QTimer::timeout, [&] { emit sendData(query("", NULL, false, true, false, "date(timestamp) DESC LIMIT 1000")); });
+    t->setSingleShot(true);
+    t->start(500);
 }
 
 Finder::~Finder()
@@ -29,18 +31,19 @@ Finder::~Finder()
     delete ui;
 }
 
-QStringList *Finder::query(const QString &str, const QString &category, const bool &getList,
-                           const bool &getData, const bool &getFilter)
+QStringList *Finder::query(const QString &name, const QString &category, const bool &getList,
+                           const bool &getData, const bool &getFilter, const QString &order)
 {
     const QString pornstar = "";
 
     QString _quality;
+    QString _fullMovie;
+
     if (quality == "ALL")
         _quality = "";
     else
         _quality = quality;
 
-    QString _fullMovie;
     if (fullMovie == "ALL")
         _fullMovie = "";
     else
@@ -50,26 +53,25 @@ QStringList *Finder::query(const QString &str, const QString &category, const bo
         QSqlQuery query;
 
         if (getData) {
-            query.prepare("SELECT title, cas, category, quality, time, full \
+            query.prepare("SELECT name, date, cas, quality, time, full, category, timestamp \
                           , hostCovers, urlCover, urlBackCover, hostPreview, urlPreview \
-                          , hostTorrent, urlTorrent, scenes FROM Movies WHERE title LIKE \
-                          '"+str+"%' AND cas LIKE '%"+pornstar+"%' AND category LIKE \
-                          '%"+category+"%' AND quality LIKE '%"+_quality+"%' AND full LIKE \
-                          '%"+_fullMovie+"%' ORDER BY title ASC LIMIT 1000");
+                          , hostTorrent, urlTorrent, scenes FROM Movies WHERE name LIKE \
+                          '"+name+"%' AND cas LIKE '%"+pornstar+"%' AND quality LIKE \
+                          '%"+_quality+"%' AND full LIKE '%"+_fullMovie+"%' AND category LIKE \
+                          '%"+category+"%' ORDER BY "+order+"");
         } else if (getFilter) {
-            query.prepare("SELECT "+str+" FROM filters");
-        } else if (getList){
-            query.prepare("SELECT title FROM Movies WHERE title LIKE \
-                          '"+str+"%' AND cas LIKE '%"+pornstar+"%' AND category LIKE \
-                          '%"+category+"%' AND quality LIKE '%"+_quality+"%' AND full LIKE \
-                          '%"+_fullMovie+"%' ORDER BY title ASC LIMIT 1000");
+            query.prepare("SELECT "+name+" FROM filters");
+        } else if (getList) {
+            query.prepare("SELECT name FROM Movies WHERE name LIKE '"+name+"%' \
+                          AND cas LIKE '%"+pornstar+"%' AND quality LIKE '%"+_quality+"%' \
+                          AND full LIKE '%"+_fullMovie+"%' AND category LIKE '%"+category+"%' \
+                          ORDER BY name ASC LIMIT 1000");
         }
 
         if (!query.exec()) {
             (_db)->close();
             //db_error();
         } else {
-
             for (int i = 0; query.next(); i++) {
                 if (getData) {
                     data.append(query.value(0).toString());
@@ -80,22 +82,23 @@ QStringList *Finder::query(const QString &str, const QString &category, const bo
                     data.append(query.value(5).toString());
                     data.append(query.value(6).toString());
                     data.append(query.value(7).toString());
-                    data.append(query.value(0).toString()+"_front.jpg");
                     data.append(query.value(8).toString());
-                    data.append(query.value(0).toString()+"_back.jpg");
                     data.append(query.value(9).toString());
+                    data.append(query.value(0).toString()+"_front.jpg");
                     data.append(query.value(10).toString());
-                    data.append(query.value(0).toString()+".mp4");
+                    data.append(query.value(0).toString()+"_back.jpg");
                     data.append(query.value(11).toString());
                     data.append(query.value(12).toString());
+                    data.append(query.value(0).toString()+".mp4");
                     data.append(query.value(13).toString());
+                    data.append(query.value(14).toString());
+                    data.append(query.value(15).toString());
                 } else if (getFilter) {
                     filter << query.value(0).toString().split(",");
-                } else if (getList) {
+                } else if (getList) { 
                     movies << query.value(0).toString().split(",");
                 }
             }
-
             (_db)->close();
 
             if (getData && !data.isEmpty()) {
@@ -110,7 +113,6 @@ QStringList *Finder::query(const QString &str, const QString &category, const bo
     } else {
         //db_error();
     }
-
     return 0;
 }
 
@@ -137,7 +139,6 @@ void Finder::filters_handler()
                 //emit sendData(NULL, &ui->cb_quality->currentText());
             }
         });
-
         QObject::connect (ui->cb_pornstars, static_cast<void (QComboBox::*)(const QString &)>
                           (&QComboBox::currentIndexChanged), [=] {
             if (!m_filterOnCovers) {
@@ -150,14 +151,12 @@ void Finder::filters_handler()
                 //emit sendData(NULL, &ui->cb_quality->currentText());
             }
         });
-
         QObject::connect (ui->cb_quality, static_cast<void (QComboBox::*)(const QString &)>
                           (&QComboBox::currentIndexChanged), [=] {
             quality = ui->cb_quality->currentText();
             if (m_filterOnCovers)
                 emit sendData(NULL, &quality);
         });
-
         QObject::connect (ui->b_fullMovie, &QPushButton::pressed, [=] {
             if (!ui->b_fullMovie->isChecked()) {
                 fullMovie = "FULL";
@@ -180,9 +179,4 @@ void Finder::filters_handler()
 
         isFiltersHidden = !isFiltersHidden;
     }
-}
-
-void Finder::test()
-{
-    emit sendData(query("", NULL, false, true));
 }

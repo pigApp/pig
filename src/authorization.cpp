@@ -44,8 +44,8 @@ void Authorization::set(const QString &str)
             file.close();
             ui->input->clear();
             ui->input->setDisabled(true);
-            set_icon(false);
             setted = true;
+            set_icon(false);            
         } else {
             ui->input->clear();
             ui->input->setEchoMode(QLineEdit::Normal);
@@ -63,8 +63,8 @@ void Authorization::reset()
         ui->input->clear();
         ui->input->setEchoMode(QLineEdit::Password);
         ui->input->setEnabled(true);
-        set_icon(true);
         setted = false;
+        set_icon(true);
     } else {
         ui->input->clear();
         ui->input->setEchoMode(QLineEdit::Normal);
@@ -133,6 +133,7 @@ void Authorization::init_ui()
             set((ui->input->selectAll(), ui->input->selectedText()));
         else
             match((ui->input->selectAll(), ui->input->selectedText()));
+
         ui->input->deselect();
     });
     connect (ui->b_reset, SIGNAL(clicked()), this, SLOT(reset()));

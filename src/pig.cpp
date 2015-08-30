@@ -19,7 +19,6 @@ PIG::PIG(QWidget *parent) :
     init();
 
     ui->setupUi(this);
-
     ui->b_back->installEventFilter(this);
     ui->b_minimize->installEventFilter(this);
     ui->b_quit->installEventFilter(this);
@@ -37,6 +36,7 @@ PIG::PIG(QWidget *parent) :
 PIG::~PIG()
 {
     delete ui;
+    ui = NULL;
 }
 
 void PIG::init()
@@ -70,7 +70,6 @@ void PIG::init()
     }
 
     QHash<QString, QVariant> rc = get_rc();
-
     if (!rc.isEmpty()) {
         keep_covers = rc.value("KEEP_LOCAL_COPY_OF_COVERS").toBool();
         keep_torrents = rc.value("KEEP_LOCAL_COPY_OF_TORRENTS").toBool();
@@ -103,9 +102,9 @@ void PIG::init_update()
         w->show();
     });
     QObject::connect (update, &Update::destroyed, [&] {
-        qDebug() << "EXIT";
-        //for (int i = 0; i < ui->main_layout->count(); i++)
-            //ui->main_layout->itemAt(i)->widget()->setEnabled(true);
+        if (ui != 0)
+            for (int i = 0; i < ui->main_layout->count(); i++)
+                ui->main_layout->itemAt(i)->widget()->setEnabled(true);
     });
     connect(update, SIGNAL(dbError(QString)), this, SLOT(error(QString)));
 
@@ -154,18 +153,25 @@ void PIG::init_setup()
         setup = new Setup(&PIG_PATH, &keep_covers, &keep_torrents, &keep_movies,
                           &torrent_port_1, &torrent_port_2, &db, this);
         ui->main_layout->addWidget(setup);
+
         topbar->setHidden(true);
         view->hide();
+
         connect (ui->b_back, SIGNAL(pressed()), this, SLOT(init_setup()));
         ui->b_back->show();
+
         sc_back->setEnabled(true);
     } else {
         ui->main_layout->removeWidget(setup);
+
         topbar->setHidden(false);
         view->show();
+
         ui->b_back->disconnect();
         ui->b_back->hide();
+
         sc_back->setEnabled(false);
+
         setup->deleteLater();
         setup = NULL;
     }

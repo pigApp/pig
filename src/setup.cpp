@@ -16,6 +16,7 @@ Setup::Setup(const QString* const PIG_PATH, bool *keep_covers, bool *keep_torren
 
     if (_db->open()) {
         QSqlQuery query;
+
         query.prepare("SELECT binary, release, database, hostSite, urlSiteTorrents \
                       , urlSiteCode, urlSiteBugs, urlSiteHelp FROM data");
 
@@ -24,7 +25,6 @@ Setup::Setup(const QString* const PIG_PATH, bool *keep_covers, bool *keep_torren
             //QTimer::singleShot(100, this, SLOT(error()));
         } else {
             query.next();
-
             data.append(query.value(0).toString());
             data.append(query.value(1).toString());
             data.append(query.value(2).toString());
@@ -34,7 +34,6 @@ Setup::Setup(const QString* const PIG_PATH, bool *keep_covers, bool *keep_torren
             data.append(query.value(6).toString());
             data.append(query.value(7).toString());
             data.append(query.value(8).toString());
-
             _db->close();
         }
     } else {
@@ -104,7 +103,6 @@ Setup::Setup(const QString* const PIG_PATH, bool *keep_covers, bool *keep_torren
             ui->input_torrent_port_1->setText(QString::number(*torrent_port_1));
             set_icon(&ui->b_torrent_ports_reset, false, true);
         }
-
         ui->input_torrent_port_1->setPalette(ui->p_torrent);
     });
 
@@ -131,9 +129,9 @@ Setup::Setup(const QString* const PIG_PATH, bool *keep_covers, bool *keep_torren
                 set_icon(&ui->b_torrent_ports_reset, false);
         } else {
             ui->input_torrent_port_2->setText(QString::number(*torrent_port_2));
+
             set_icon(&ui->b_torrent_ports_reset, false, true);
         }
-
         ui->input_torrent_port_2->setPalette(ui->p_torrent);
     });
 
@@ -170,7 +168,6 @@ Setup::Setup(const QString* const PIG_PATH, bool *keep_covers, bool *keep_torren
             ui->lb_contribute_donate->setText("DONATE");
             ui->b_contribute_donate->setIcon(QIcon(":/icon-more"));
         }
-
         ui->lb_contribute_wallet->setHidden(!ui->lb_contribute_wallet->isHidden());
         ui->b_contribute_copy_wallet->setHidden(!ui->b_contribute_copy_wallet->isHidden());
     });
@@ -201,6 +198,7 @@ bool Setup::set_rc(const QString &option, const QVariant &value)
         file.resize(0);
         stream << out;
         file.close();
+
         return true;
     }
 
