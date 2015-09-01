@@ -23,7 +23,7 @@ Finder::Finder(QSqlDatabase *db, QGridLayout *l_topbar, QWidget *parent) :
     QTimer *t = new QTimer(this);
     QObject::connect (t, &QTimer::timeout, [&] { emit sendData(query("", NULL, false, true, false, "date(timestamp) DESC LIMIT 1000")); });
     t->setSingleShot(true);
-    t->start(500);
+    t->start(100);
 }
 
 Finder::~Finder()

@@ -7,7 +7,7 @@ View::View(const QString* const PIG_PATH, QPushButton **b_back, QWidget *parent)
     QWidget(parent),
     _PIG_PATH(PIG_PATH),
     _b_back(b_back),
-    page(1),
+    page(0),
     n_pages(0),
     ui(new Ui::View)
 {
@@ -18,7 +18,7 @@ View::View(const QString* const PIG_PATH, QPushButton **b_back, QWidget *parent)
     target.setPath(*_PIG_PATH+"/tmp/covers/back");
     onLocalBackCovers = target.entryList(QDir::Files | QDir::NoDotAndDotDot);
 
-    pageHeight = 970; //TODO: PORCENTAJE
+    pageHeight = 970; //TODO: PORCENTAJE ESTO!
 
     QObject::connect (ui->sa_covers->verticalScrollBar(), &QScrollBar::valueChanged, [&] { pages_handler(); });
 
@@ -36,39 +36,11 @@ View::~View()
     delete ui;
 }
 
-void View::get_covers(const QStringList *data, const int &index)
+void View::get_covers(const QStringList *data, const int &ID)
 {
-    if (index != -1) {
-        int _index = ((index + 1) * 19);
-
-        if (hasOnLocal((*m_data)[(_index - 7)], &onLocalBackCovers)) {
-            if (ui->w_info != 0) {
-                QPixmap px_backCover(*_PIG_PATH+"/tmp/covers/back/"+(*m_data)[(_index - 7)]);
-                ui->lb_info_backCover->setPixmap(px_backCover.scaled(335, 480, Qt::KeepAspectRatio));
-            }
-        } else {
-            ThreadedSocket *thread;
-
-            thread = new ThreadedSocket(_PIG_PATH, &(*m_data)[(_index - 11)],
-                                        &(*m_data)[(_index - 8)],
-                                        &(*m_data)[(_index - 7)], 0, this);
-            QObject::connect (thread, &ThreadedSocket::sendFile, [=] (int ID, QString path) {
-                Q_UNUSED(ID);
-                if (ui->w_info != 0) {
-                    QPixmap px_backCover(path);
-                    ui->lb_info_backCover->setPixmap(px_backCover.scaled(335, 480, Qt::KeepAspectRatio));
-                }
-                onLocalBackCovers << (*m_data)[(_index - 7)];
-            });
-            connect (thread, SIGNAL(finished()), thread, SLOT(deleteLater()));
-
-            thread->start();
-        }
-    } else {
+    if (ID == -1) {
         if (data != 0) {
             m_data = data;
-            row = 0;
-            col = 0;
             offsetData = 0;
             offsetCovers = 0;
             requiredCovers = 0;
@@ -85,63 +57,94 @@ void View::get_covers(const QStringList *data, const int &index)
             requiredCovers = n_covers;
         } else {
             if ((n_covers - offsetCovers) > 10)
-                requiredCovers = 10;
+                requiredCovers = 10; 
             else
                 requiredCovers = (n_covers - offsetCovers);
         }
 
         requiredRemoteCovers.clear();
+        requiredRemoteCoversID.clear();
 
-        int _offsetData = offsetData;
         for (int i = 0; i < requiredCovers; i++) {
-            if (hasOnLocal((*m_data)[(_offsetData + 10)], &onLocalCovers))
-                add_cover(-1, *_PIG_PATH+"/tmp/covers/"+(*m_data)[(_offsetData + 10)]);
-            else
-                requiredRemoteCovers << _offsetData;
-            _offsetData += 19;
+            if (hasOnLocal((*m_data)[(offsetData + 10)], &onLocalCovers)) {
+                add_cover(-i, *_PIG_PATH+"/tmp/covers/"+(*m_data)[(offsetData + 10)]); 
+            } else {
+                requiredRemoteCovers << offsetData;
+                requiredRemoteCoversID << i;
+            }
+            offsetData += 19;
         }
 
         if (hasMoreCovers) {
             ThreadedSocket *thread[requiredRemoteCovers.size()];
-
             for(int i = 0; i < requiredRemoteCovers.size(); i++) {
                 thread[i] = new ThreadedSocket(_PIG_PATH, &(*m_data)[(requiredRemoteCovers[i] + 8)],
                                                &(*m_data)[(requiredRemoteCovers[i] + 9)],
-                                               &(*m_data)[(requiredRemoteCovers[i] + 10)], 0, this);
+                                               &(*m_data)[(requiredRemoteCovers[i] + 10)], requiredRemoteCoversID[i], this);
                 connect (thread[i], SIGNAL(sendFile(int, QString)), this, SLOT(add_cover(int, QString)));
                 connect (thread[i], SIGNAL(finished()), thread[i], SLOT(deleteLater()));
 
                 thread[i]->start();
-
-                offsetData += 19;
             }
+        }
+    } else {
+        int _ID = ((ID + 1) * 19);
+
+        if (hasOnLocal((*m_data)[(_ID - 7)], &onLocalBackCovers)) {
+            if (ui->w_info != 0) {
+                QPixmap px_backCover(*_PIG_PATH+"/tmp/covers/back/"+(*m_data)[(_ID - 7)]);
+                ui->lb_info_backCover->setPixmap(px_backCover.scaled(335, 480, Qt::KeepAspectRatio));
+            }
+        } else {
+            ThreadedSocket *thread;
+
+            thread = new ThreadedSocket(_PIG_PATH, &(*m_data)[(_ID - 11)],
+                                        &(*m_data)[(_ID - 8)],
+                                        &(*m_data)[(_ID - 7)], 0, this);
+            QObject::connect (thread, &ThreadedSocket::sendFile, [=] (int ID, QString path) {
+                Q_UNUSED(ID);
+                if (ui->w_info != 0) {
+                    QPixmap px_backCover(path);
+                    ui->lb_info_backCover->setPixmap(px_backCover.scaled(335, 480, Qt::KeepAspectRatio));
+                }
+                onLocalBackCovers << (*m_data)[(_ID - 7)];
+            });
+            connect (thread, SIGNAL(finished()), thread, SLOT(deleteLater()));
+
+            thread->start();
         }
     }
 }
 
 void View::add_cover(int ID, QString path)
 {
-    int index = ui->v_b_covers.size();
+    int _ID = ID;
+    int row, col;
 
-    if (col == 5) {
-        col = 0;
-        ++row;
+    if (_ID >= 0) {
+        onLocalCovers << (*m_data)[((((n_pages * 10) + _ID) + 1) * 19) - 9];
+    } else {
+      _ID = -_ID; 
     }
 
-    //TODO: REVISAR EL ORDEN DE LAS TAPAS/CONTRATAPAS/NOMBRES
+    if (_ID < 5) {
+        row = (n_pages * 2);
+        col = _ID;
+    } else {
+        row = ((n_pages * 2) + 1);
+        col = (_ID - 5);
+    }
 
+    int __ID = ((n_pages * 10) + _ID);
+    
     ui->v_b_covers.push_back(new QPushButton(QIcon(path), NULL, ui->w_covers));
     ui->v_b_covers.last()->setIconSize(QSize(335, 480));//TODO: PORCENTAJE
     ui->v_b_covers.last()->setFlat(true);
-    QObject::connect (ui->v_b_covers.last(), &QPushButton::pressed, [=] { init_info(index, path); });
-    //QObject::connect (ui->v_b_covers.last(), &QPushButton::pressed, [=] { get_covers(); });
+    
+    QObject::connect (ui->v_b_covers.last(), &QPushButton::pressed, [=] { init_info(__ID, path); });
 
     ui->l_covers->addWidget(ui->v_b_covers.last(), row, col);
-
-    ++col;
-
-    if (ID != -1 && !hasOnLocal(path.remove(0, path.lastIndexOf("/")), &onLocalCovers))
-        onLocalCovers << (*m_data)[((index+1) * 19) - 9];
+    ui->l_covers->update();
 
     if ((ui->v_b_covers.size() - offsetCovers) == requiredCovers) { //FIX: AL BAJAR LA PAGINA NO AGREGA LOS COVERS DESCARGADOS ALA LISTA
         offsetCovers += 10;                                                   //FIX: SOLO BAJA EN EL PEDIDO INICIAL
@@ -162,11 +165,11 @@ void View::delete_covers()
     ui->l_covers->update();
 }
 
-void View::init_info(const int &index, const QString &path)
+void View::init_info(const int &ID, const QString &path)
 {
-    ui->setupInfoUi(index, path, &m_data, this);
+    ui->setupInfoUi(ID, path, &m_data, this);
 
-    get_covers(NULL, index);
+    get_covers(NULL, ID);
 
     emit setTopbarState(true);
 
@@ -193,8 +196,8 @@ void View::delete_info()
 
 void View::pages_handler()
 {
-    if ((((ui->sa_covers->height()+10) * page) > ui->w_covers->height()) &&
-        (page == n_pages) && hasMoreCovers) {
+    if ((((ui->sa_covers->height() + 11) * (page + 1)) > ui->w_covers->height()) && //TODO: PORCENTAJE. 11
+        ((page + 1) == n_pages) && hasMoreCovers) {
         ++page;
 
         get_covers();
@@ -264,6 +267,4 @@ void View::set_filter(const QString *filter)
 
         offsetFilter += 19;
     }
-
-    qDebug() << filteredCovers;
 }

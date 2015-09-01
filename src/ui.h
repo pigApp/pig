@@ -759,13 +759,13 @@ public:
         sa_covers->setWidget(w_covers);
 
         l = new QVBoxLayout(View);
-        l->setContentsMargins(80, 10, 80, 10);//TODO: PORCENTAJE.
+        l->setContentsMargins(80, 10, 80, 11);//TODO: PORCENTAJE.
         l->addWidget(sa_covers);
 
         View->setLayout(l);
     }
 
-    void setupInfoUi(const int &index, const QString &path, const QStringList **data, QWidget *View)
+    void setupInfoUi(const int &ID, const QString &path, const QStringList **data, QWidget *View)
     {
         const QStringList **_data = data;
 
@@ -803,7 +803,7 @@ public:
         for (int i = 0; i < metadata_titles.size(); i++) {
             lb_info_metadata[i] = new QLabel(w_info);
             lb_info_metadata[i]->setPalette(p);
-            lb_info_metadata[i]->setText("<font color = '#8a8a8a'>"+metadata_titles[i]+"</font> "+(**_data)[((index * 19) + i)]);
+            lb_info_metadata[i]->setText("<font color = '#8a8a8a'>"+metadata_titles[i]+"</font> "+(**_data)[((ID * 19) + i)]);
             lb_info_metadata[i]->setAutoFillBackground(true);
             lb_info_metadata[i]->setContentsMargins(10, 5, 10, 5);
             l_info_metadata->addWidget(lb_info_metadata[i]);
@@ -831,10 +831,9 @@ public:
                                        border-radius: 0px; }");
         cb_info_scenes->addItem(QIcon(":/icon-watch"), " WATCH");
 
-        QString scenes = (**_data)[((index * 19) + 18)];
-        for (int i = 0; i < scenes.toInt(); i++) {
+        QString scenes = (**_data)[((ID * 19) + 18)];
+        for (int i = 0; i < scenes.toInt(); i++) 
             cb_info_scenes->addItem(QIcon(":/icon-watch"), " WATCH SCENE "+QString::number(i+1));
-        }
         l_info_scenes->addWidget(cb_info_scenes);
         l_info_scenes->addStretch();//FIX: CON ESTE STRETCH QUEDA MUCHO MARGEN ABAJO.
 
@@ -842,7 +841,7 @@ public:
         lb_info_player = new QLabel(w_info);
         lb_info_player->setPixmap(px_player.scaled(700, 480));
 
-        //QString preview = "http://" + ((**_data)[((index * 19) + 13)]) + ((**_data)[((index * 19) + 14)]);
+        //QString preview = "http://" + ((**_data)[((ID * 19) + 13)]) + ((**_data)[((ID * 19) + 14)]);
         //player_info = new Player(&preview, w_info);
         //player_info->setFixedSize(QSize(700, 540));//TODO: PORCENTAJE.
 

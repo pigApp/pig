@@ -25,7 +25,7 @@ signals:
     void setTopbarState(const bool &hide);
 
 public slots:
-    void get_covers(const QStringList *data = NULL, const int &index = -1);
+    void get_covers(const QStringList *data = NULL, const int &ID = -1);
     void set_filter(const QString *filter = NULL);
 
 private:
@@ -38,6 +38,7 @@ private:
 
     QString filterBase;
     QList<int> requiredRemoteCovers;
+    QList<int> requiredRemoteCoversID;
     QList<int> filteredCovers;
 
     QShortcut *sc_back;
@@ -46,7 +47,6 @@ private:
 
     Ui::View *ui;
 
-    int row, col;
     int offsetData, offsetCovers;
     int requiredCovers, n_covers;
 
@@ -55,7 +55,7 @@ private:
 private slots:
     void add_cover(int ID, QString path);
     void delete_covers();
-    void init_info(const int &index, const QString &path);
+    void init_info(const int &ID, const QString &path);
     void delete_info();
     void pages_handler();
     bool hasOnLocal(const QString &cover, const QStringList *localList);
