@@ -4,7 +4,7 @@
 - Pasar valores a porcentajes.
 - Completer.
 
-- Socket orden que descarga los covers.
+- Disables filtros quality y fullmovie si m_filterOnCovers es false.
 - Filters.
 - Socket y setup error.
 - PIG error.

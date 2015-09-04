@@ -98,6 +98,7 @@ void PIG::init_update()
     QObject::connect (update, &Update::showWidget, [&] (QWidget *w) {
         for (int i = 0; i < ui->main_layout->count(); i++)
             ui->main_layout->itemAt(i)->widget()->setDisabled(true);
+
         ui->main_layout->insertWidget(0, w);
         w->show();
     });
@@ -115,16 +116,16 @@ void PIG::init_topbar()
 {
     topbar = new TopBar(&db, this);
 
-    connect (topbar->getFinderObj(), SIGNAL(sendData(const QStringList*, const QString*)),
-             this, SLOT(init_viewer(const QStringList*, const QString*)));
+    connect (topbar->getFinderObj(), SIGNAL(sendData(const QStringList*, const QStringList*)),
+             this, SLOT(init_viewer(const QStringList*, const QStringList*)));
     connect (topbar->getButtonSetupObj(), SIGNAL(released()), this, SLOT(init_setup()));
 
     ui->main_layout->addWidget(topbar);
 }
 
-void PIG::init_viewer(const QStringList *data, const QString *filter)
+void PIG::init_viewer(const QStringList *data, const QStringList *filter)
 {
-    if (view == 0 && data != 0) {
+    if ((view == 0) && (data != 0)) {
         view = new View(&PIG_PATH, &ui->b_back, this);
 
         QObject::connect (view, &View::setFilterOnCovers, [&] {

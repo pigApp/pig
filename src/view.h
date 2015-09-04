@@ -26,7 +26,7 @@ signals:
 
 public slots:
     void get_covers(const QStringList *data = NULL, const int &ID = -1);
-    void set_filter(const QString *filter = NULL);
+    void set_filter(const QStringList *filter = NULL);
 
 private:
     const QString *_PIG_PATH;
@@ -36,19 +36,17 @@ private:
     QStringList onLocalCovers;
     QStringList onLocalBackCovers;
 
-    QString filterBase;
     QList<int> requiredRemoteCovers;
     QList<int> requiredRemoteCoversID;
-    QList<int> filteredCovers;
 
     QShortcut *sc_back;
-    
-    int page, n_pages, pageHeight;
 
     Ui::View *ui;
 
+    int pageHeight;
     int offsetData, offsetCovers;
     int requiredCovers, n_covers;
+    int page, n_pages;
 
     bool hasMoreCovers;
 

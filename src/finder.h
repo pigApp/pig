@@ -21,28 +21,28 @@ public:
     void setFilterOnCovers() { m_filterOnCovers = false; }
 
 signals:
-    void sendData(const QStringList *data, const QString *filter = NULL);
+    void sendData(const QStringList *data, const QStringList *filter = NULL);
 
 private:
     QSqlDatabase *_db;
 
+    QStringList movies;
     QStringList data;
     QStringList filter;
-    QStringList movies;
-
+    QStringList categories; 
+    QStringList pornstars; 
+    
     bool isFiltersHidden;
-
-    QString quality;
-    QString fullMovie;
 
     Ui::Finder *ui;
 
     bool m_filterOnCovers = false;
 
 private slots:
-    QStringList *query(const QString &name = NULL, const QString &category = NULL,
-                       const bool &getList = false, const bool &getData = false,
-                       const bool &getFilter = false, const QString &order = "name ASC LIMIT 1000");
+    QStringList *query(const QString &name = NULL, const QString &pornstar = NULL,
+                       const QString &category = NULL, const bool &getMovies = false,
+                       const bool &getData = false, const bool &getFilter = false,
+                       const QString &order = "name ASC LIMIT 1000");
     void filters_handler();
 };
 

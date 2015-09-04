@@ -343,7 +343,7 @@ public:
         input->setFocus();
     }
 
-    void setupFilterUi(const QStringList *categories, QWidget *Finder)
+    void setupFilterUi(const QStringList *categories, const QStringList *pornstars, QWidget *Finder)
     {
         QFont f(":/font-global");
         f.setPointSize(12);//TODO: PORCENTAJE.
@@ -370,8 +370,8 @@ public:
                                      background-color: rgb(42, 42, 46); \
                                      border-radius: 0px; }");
         cb_pornstars->addItem("PORNSTAR");
-        for (int i = 0; i < (*categories).size(); i++)
-            cb_pornstars->addItem((*categories)[i]);
+        for (int i = 0; i < (*pornstars).size(); i++)
+            cb_pornstars->addItem((*pornstars)[i]);
 
         cb_quality = new QComboBox(Finder);
         cb_quality->setFont(f);

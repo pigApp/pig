@@ -7,8 +7,6 @@ View::View(const QString* const PIG_PATH, QPushButton **b_back, QWidget *parent)
     QWidget(parent),
     _PIG_PATH(PIG_PATH),
     _b_back(b_back),
-    page(0),
-    n_pages(0),
     ui(new Ui::View)
 {
     ui->setupUi(this);
@@ -45,8 +43,8 @@ void View::get_covers(const QStringList *data, const int &ID)
             offsetCovers = 0;
             requiredCovers = 0;
             n_covers = ((*m_data).count() / 19);
-            filterBase = "";
-            filteredCovers.clear();
+            page = 0;
+            n_pages = 0;
             hasMoreCovers = true;
 
             if (ui->v_b_covers.size() != 0)
@@ -220,47 +218,33 @@ bool View::hasOnLocal(const QString &cover, const QStringList *localList)
     return false;
 }
 
-void View::set_filter(const QString *filter)
+void View::set_filter(const QStringList *filter)
 {
     int offsetFilter = 0;
-    
-    //SET BASE
-    if (filterBase == "") {
-        if (*filter == "FULL")
-            filterBase = "fullMovie";
-        else if (*filter == "720p" || *filter == "1080p")
-            filterBase = "quality";
-        else
-            filterBase = "category";
-    }
 
     for (int i = 0; i < ui->v_b_covers.size(); i++) {
-        if (filterBase == "quality") {
-            if ((*filter == (*m_data)[(offsetFilter + 5)])) {
+        if ((*filter)[0] == "CATEGORY") {
+            if (!((*m_data)[(offsetFilter + 6)]).contains((*filter)[1]) && ((*filter)[1] != 0)) {
                 ui->v_b_covers.at(i)->setDisabled(true);
             } else {
-                filteredCovers.append(i);
                 ui->v_b_covers.at(i)->setEnabled(true);
             }
-        }
-
-        if (filterBase == "fullMovie") {
-            if ((*filter == (*m_data)[(offsetFilter + 7)])) {
+        } else if ((*filter)[0] == "PORNSTAR") {
+            if (!((*m_data)[(offsetFilter + 2)]).contains((*filter)[1]) && ((*filter)[1] != 0)) {
                 ui->v_b_covers.at(i)->setDisabled(true);
             } else {
-                filteredCovers.append(i);
                 ui->v_b_covers.at(i)->setEnabled(true);
             }
-        }
-
-        if (filterBase == "category") {
-            if (*filter == "ALL") {
-                filteredCovers.append(i);
-                ui->v_b_covers.at(i)->setEnabled(true);
-            } else if (*filter != (*m_data)[(offsetFilter + 4)]) {
+        } else if ((*filter)[0] == "QUALITY") {
+            if (((*filter)[1] == (*m_data)[(offsetFilter + 3)]) && ((*filter)[1] != 0)) {
                 ui->v_b_covers.at(i)->setDisabled(true);
             } else {
-                filteredCovers.append(i);
+                ui->v_b_covers.at(i)->setEnabled(true);
+            }
+        } else if ((*filter)[0] == "FULLMOVIE") {
+            if (((*filter)[1] == (*m_data)[(offsetFilter + 5)]) && ((*filter)[1] != 0)) {
+                ui->v_b_covers.at(i)->setDisabled(true);
+            } else {
                 ui->v_b_covers.at(i)->setEnabled(true);
             }
         }
