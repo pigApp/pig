@@ -247,8 +247,8 @@ class Ui_Finder
 public:
     QGridLayout *_l_topbar;
 
-    QPalette p_filters;//
-    QPalette p_filters_active;//
+    QPalette p_fullMovie;
+    QPalette p_fullMovie_active;
     QLineEdit *input;
     QPushButton *b_filters;
     QComboBox *cb_categories;
@@ -258,9 +258,14 @@ public:
     QHBoxLayout *l_filters;
     QGridLayout *l;
 
+    QString cb_style;
+    QString cb_style_active;
+
     void setupUi(QStringList *movies, QGridLayout *l_topbar, QWidget *Finder)
     {
         _l_topbar = l_topbar;
+        b_filters = NULL;
+        cb_categories = NULL;
 
         QFont f(":/font-global");
         f.setPointSize(12);//TODO: PORCENTAJE.
@@ -272,7 +277,6 @@ public:
         QBrush br_white(QColor(255, 255, 255, 255));
         QBrush br_black(QColor(0, 0, 0, 255));
         QBrush br_gray(QColor(122, 122, 122, 255));
-        QBrush br_dark_gray(QColor(42, 42, 46, 255));
         QBrush br_red(QColor(115, 10, 10, 255));
 
         QPalette p;
@@ -301,15 +305,15 @@ public:
         p_completer.setBrush(QPalette::Disabled, QPalette::Text, br_black);
         p_completer.setBrush(QPalette::Disabled, QPalette::Highlight, br_alternate_base);
 
-        p_filters.setBrush(QPalette::Active, QPalette::Button, br_dark_gray);
-        p_filters.setBrush(QPalette::Active, QPalette::ButtonText, br_white);
-        p_filters.setBrush(QPalette::Disabled, QPalette::Button, br_dark_gray);
-        p_filters.setBrush(QPalette::Disabled, QPalette::ButtonText, br_black);
+        p_fullMovie.setBrush(QPalette::Active, QPalette::Button, br_alternate_base);
+        p_fullMovie.setBrush(QPalette::Active, QPalette::ButtonText, br_white);
+        p_fullMovie.setBrush(QPalette::Disabled, QPalette::Button, br_alternate_base);
+        p_fullMovie.setBrush(QPalette::Disabled, QPalette::ButtonText, br_black);
 
-        p_filters_active.setBrush(QPalette::Active, QPalette::Button, br_alternate_base);
-        p_filters_active.setBrush(QPalette::Active, QPalette::ButtonText, br_white);
-        p_filters_active.setBrush(QPalette::Disabled, QPalette::Button, br_alternate_base);
-        p_filters_active.setBrush(QPalette::Disabled, QPalette::ButtonText, br_black);
+        p_fullMovie_active.setBrush(QPalette::Active, QPalette::Button, br_gray);
+        p_fullMovie_active.setBrush(QPalette::Active, QPalette::ButtonText, br_white);
+        p_fullMovie_active.setBrush(QPalette::Disabled, QPalette::Button, br_gray);
+        p_fullMovie_active.setBrush(QPalette::Disabled, QPalette::ButtonText, br_black);
 
         QCompleter *completer = new QCompleter(*movies, Finder);
         completer->setMaxVisibleItems(10);
@@ -327,7 +331,7 @@ public:
         input->setCompleter(completer);
         input->setAlignment(Qt::AlignCenter);
 
-        b_filters = new QPushButton(QIcon(":/icon-filters"), NULL, Finder);
+        b_filters = new QPushButton(QIcon(":/icon-filters-dark"), NULL, Finder);
         b_filters->setGeometry(14, 11, 24, 24);//TODO: PORCENTAJE.
         b_filters->setCursor(Qt::ArrowCursor);
         b_filters->setFlat(true);
@@ -339,8 +343,6 @@ public:
         l->addWidget(input, 0, 0);
 
         _l_topbar->addLayout(l, 0, 0);
-
-        input->setFocus();
     }
 
     void setupFilterUi(const QStringList *categories, const QStringList *pornstars, QWidget *Finder)
@@ -349,45 +351,44 @@ public:
         f.setPointSize(12);//TODO: PORCENTAJE.
         f.setBold(true);
 
+        cb_style = "QComboBox { color: rgb(255, 255, 255); \
+                    background-color: rgb(15, 15, 15); \
+                    selection-background-color: rgb(122, 122, 122); } \
+                    QComboBox QAbstractItemView { color: rgb(255, 255, 255); \
+                    background-color: rgb(15, 15, 15); \
+                    border-radius: 0px; }";
+
+        cb_style_active = "QComboBox { color: rgb(255, 255, 255); \
+                           background-color: rgb(122, 122, 122); \
+                           selection-background-color: rgb(122, 122, 122); } \
+                           QComboBox QAbstractItemView { color: rgb(255, 255, 255); \
+                           background-color: rgb(15, 15, 15); \
+                           border-radius: 0px; }";
+
         cb_categories = new QComboBox(Finder); //TODO: ESTETICA.
         cb_categories->setFont(f);
-        cb_categories->setStyleSheet("QComboBox { color: rgb(255, 255, 255); \
-                                      background-color: rgb(42, 42, 46); \
-                                      selection-background-color: rgb(15, 15, 15); }"
-                                     "QComboBox QAbstractItemView { color: rgb(255, 255, 255); \
-                                      background-color: rgb(42, 42, 46); \
-                                      border-radius: 0px; }");
+        cb_categories->setStyleSheet(cb_style);
         cb_categories->addItem("CATEGORY");
         for (int i = 0; i < (*categories).size(); i++)
             cb_categories->addItem((*categories)[i]);
 
         cb_pornstars = new QComboBox(Finder);
         cb_pornstars->setFont(f);
-        cb_pornstars->setStyleSheet("QComboBox { color: rgb(255, 255, 255); \
-                                     background-color: rgb(42, 42, 46); \
-                                     selection-background-color: rgb(15, 15, 15); }"
-                                    "QComboBox QAbstractItemView { color: rgb(255, 255, 255); \
-                                     background-color: rgb(42, 42, 46); \
-                                     border-radius: 0px; }");
+        cb_pornstars->setStyleSheet(cb_style);
         cb_pornstars->addItem("PORNSTAR");
         for (int i = 0; i < (*pornstars).size(); i++)
             cb_pornstars->addItem((*pornstars)[i]);
 
         cb_quality = new QComboBox(Finder);
         cb_quality->setFont(f);
-        cb_quality->setStyleSheet("QComboBox { color: rgb(255, 255, 255); \
-                                   background-color: rgb(42, 42, 46); \
-                                   selection-background-color: rgb(15, 15, 15); }"
-                                  "QComboBox QAbstractItemView { color: rgb(255, 255, 255); \
-                                   background-color: rgb(42, 42, 46); \
-                                   border-radius: 0px; }");
+        cb_quality->setStyleSheet(cb_style);
         cb_quality->addItem("QUALITY");
         cb_quality->addItem("720p");
         cb_quality->addItem("1080p");
 
         b_fullMovie = new QPushButton(" FULLMOVIE ", Finder);
         b_fullMovie->setFont(f);
-        b_fullMovie->setPalette(p_filters);
+        b_fullMovie->setPalette(p_fullMovie);
         b_fullMovie->setCheckable(true);
         b_fullMovie->setChecked(false);
         b_fullMovie->setAutoFillBackground(true);
@@ -765,7 +766,8 @@ public:
         View->setLayout(l);
     }
 
-    void setupInfoUi(const int &ID, const QString &path, const QStringList **data, QWidget *View)
+    void setupInfoUi(const int &ID, const QString &path, const QStringList **data,
+                     const int &sizeData, QWidget *View)
     {
         const QStringList **_data = data;
 
@@ -803,7 +805,7 @@ public:
         for (int i = 0; i < metadata_titles.size(); i++) {
             lb_info_metadata[i] = new QLabel(w_info);
             lb_info_metadata[i]->setPalette(p);
-            lb_info_metadata[i]->setText("<font color = '#8a8a8a'>"+metadata_titles[i]+"</font> "+(**_data)[((ID * 19) + i)]);
+            lb_info_metadata[i]->setText("<font color = '#8a8a8a'>"+metadata_titles[i]+"</font> "+(**_data)[((ID * sizeData) + i)]);
             lb_info_metadata[i]->setAutoFillBackground(true);
             lb_info_metadata[i]->setContentsMargins(10, 5, 10, 5);
             l_info_metadata->addWidget(lb_info_metadata[i]);
@@ -824,14 +826,14 @@ public:
         cb_info_scenes = new QComboBox(w_info);
         cb_info_scenes->setFont(f);
         cb_info_scenes->setStyleSheet("QComboBox { color: rgb(255, 255, 255); \
-                                       background-color: rgb(42, 42, 46); \
-                                       selection-background-color: rgb(15, 15, 15); }"
+                                       background-color: rgb(15, 15, 15); \
+                                       selection-background-color: rgb(122, 122, 122); }"
                                       "QComboBox QAbstractItemView { color: rgb(255, 255, 255); \
-                                       background-color: rgb(42, 42, 46); \
+                                       background-color: rgb(15, 15, 15); \
                                        border-radius: 0px; }");
         cb_info_scenes->addItem(QIcon(":/icon-watch"), " WATCH");
 
-        QString scenes = (**_data)[((ID * 19) + 18)];
+        QString scenes = (**_data)[((ID * sizeData) + 18)];
         for (int i = 0; i < scenes.toInt(); i++) 
             cb_info_scenes->addItem(QIcon(":/icon-watch"), " WATCH SCENE "+QString::number(i+1));
         l_info_scenes->addWidget(cb_info_scenes);
@@ -841,7 +843,7 @@ public:
         lb_info_player = new QLabel(w_info);
         lb_info_player->setPixmap(px_player.scaled(700, 480));
 
-        //QString preview = "http://" + ((**_data)[((ID * 19) + 13)]) + ((**_data)[((ID * 19) + 14)]);
+        //QString preview = "http://" + ((**_data)[((ID * sizeData) + 13)]) + ((**_data)[((ID * sizeData) + 14)]);
         //player_info = new Player(&preview, w_info);
         //player_info->setFixedSize(QSize(700, 540));//TODO: PORCENTAJE.
 

@@ -21,7 +21,7 @@ public:
 
 signals:
     void setWidget(QWidget *w = NULL, bool add = false);
-    void setFilterOnCovers();
+    void setFinderState(const bool &block);
     void setTopbarState(const bool &hide);
 
 public slots:
@@ -43,7 +43,6 @@ private:
 
     Ui::View *ui;
 
-    int pageHeight;
     int offsetData, offsetCovers;
     int requiredCovers, n_covers;
     int page, n_pages;

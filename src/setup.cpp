@@ -223,25 +223,27 @@ bool Setup::clean_folder(const QString &folder)
 void Setup::set_icon(QPushButton **button, const bool &setDisabled, const bool &failed)
 {
     if (failed)
-        (**button).setIcon(QIcon(":/icon-cancel"));
+        (*button)->setIcon(QIcon(":/icon-cancel"));
     else
-        (**button).setIcon(QIcon(":/icon-ok"));
+        (*button)->setIcon(QIcon(":/icon-ok"));
 
-    (**button).setEnabled(true);
+    (*button)->setEnabled(true);
 
     QTimer *timer = new QTimer(this);
     timer->setSingleShot(true);
     timer->start(1000);
 
     if (failed) {
-        QObject::connect(timer, &QTimer::timeout, [=] { (**button).setIcon(QIcon(":/icon-reset")); });
+        QObject::connect(timer, &QTimer::timeout, [=] {
+            (*button)->setIcon(QIcon(":/icon-reset"));
+        });
     } else {
         QObject::connect(timer, &QTimer::timeout, [=] {
             if (setDisabled) {
-                (**button).setIcon(QIcon(":/icon-reset-dark"));
-                (**button).setDisabled(true);
+                (*button)->setIcon(QIcon(":/icon-reset-dark"));
+                (*button)->setDisabled(true);
             } else {
-                (**button).setIcon(QIcon(":/icon-reset"));
+                (*button)->setIcon(QIcon(":/icon-reset"));
             }
         });
     }

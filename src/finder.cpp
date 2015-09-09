@@ -7,21 +7,24 @@ Finder::Finder(QSqlDatabase *db, QGridLayout *l_topbar, QWidget *parent) :
     QWidget(parent),
     _db(db),
     isFiltersHidden(true),
+    isFilteringCovers(true),
+    filtersReset(false),
     ui(new Ui::Finder)
 {
-    ui->setupUi(query(NULL, NULL, NULL, true), l_topbar, this);
+    ui->setupUi(query(NULL, NULL, NULL, NULL, NULL, true), l_topbar, this);
 
     QObject::connect (ui->input, &QLineEdit::returnPressed, [&] {
         data.clear();
         emit sendData(query((ui->input->selectAll(), ui->input->selectedText()),
-                      NULL, NULL, false, true));
+                            NULL, NULL, NULL, NULL, false, true));
         ui->input->deselect();
     });
-    connect (ui->b_filters, SIGNAL(pressed()), this, SLOT(filters_handler()));
+    connect (ui->b_filters, SIGNAL(pressed()), this, SLOT(filters()));
 
     QTimer *t = new QTimer(this);
     QObject::connect (t, &QTimer::timeout, [&] {
-        emit sendData(query(NULL, NULL, NULL, false, true, false, "date(timestamp) DESC LIMIT 1000"));
+        emit sendData(query(NULL, NULL, NULL, NULL, NULL, false, true, false,
+                            "date(timestamp) DESC LIMIT 1000"));
     });
     t->setSingleShot(true);
     t->start(100);
@@ -32,9 +35,9 @@ Finder::~Finder()
     delete ui;
 }
 
-QStringList *Finder::query(const QString &name, const QString &pornstar, const QString &category,
-                           const bool &getMovies, const bool &getData, const bool &getFilter,
-                           const QString &order)
+QStringList *Finder::query(const QString &name, const QString &pornstar, const QString &quality,
+                           const QString &full, const QString &category, const bool &getMovies,
+                           const bool &getData, const bool &getFilter, const QString &order)
 {
     if (_db->open()) {
         QSqlQuery query;
@@ -45,7 +48,8 @@ QStringList *Finder::query(const QString &name, const QString &pornstar, const Q
             query.prepare("SELECT name, date, cas, quality, time, full, category, timestamp \
                           , hostCovers, urlCover, urlBackCover, hostPreview, urlPreview \
                           , hostTorrent, urlTorrent, scenes FROM Movies WHERE name LIKE \
-                          '"+name+"%' AND cas LIKE '%"+pornstar+"%' AND category LIKE \
+                          '"+name+"%' AND cas LIKE '%"+pornstar+"%' AND quality LIKE \
+                          '%"+quality+"%' AND full LIKE '%"+full+"%' AND category LIKE \
                           '%"+category+"%' ORDER BY "+order+"");
         } else if (getFilter) {
             query.prepare("SELECT "+name+" FROM filters");
@@ -90,7 +94,6 @@ QStringList *Finder::query(const QString &name, const QString &pornstar, const Q
             if (getMovies) {
                 return &movies;
             } else if (getData && !data.isEmpty()) {
-                m_filterOnCovers = true;
                 return &data;
             } else if (getFilter) {
                 if (name == "categories")
@@ -102,10 +105,11 @@ QStringList *Finder::query(const QString &name, const QString &pornstar, const Q
     } else {
         //db_error();
     }
+
     return 0;
 }
 
-void Finder::filters_handler()
+void Finder::filters()
 {
     if (isFiltersHidden)
         ui->b_filters->setIcon(QIcon(":/icon-filters-dark"));
@@ -113,72 +117,32 @@ void Finder::filters_handler()
         ui->b_filters->setIcon(QIcon(":/icon-filters"));
 
     if (ui->cb_categories == 0) {
-        ui->setupFilterUi(query("categories", NULL, NULL, false, false, true),
-                          query("pornstars", NULL, NULL, false, false, true), this);
+        ui->setupFilterUi(query("categories", NULL, NULL, NULL, NULL, false, false, true),
+                          query("pornstars", NULL, NULL, NULL, NULL, false, false, true), this);
 
         QObject::connect (ui->cb_categories, static_cast<void (QComboBox::*)(const QString &)>
                           (&QComboBox::currentIndexChanged), [=] {
-            if (!m_filterOnCovers) {
-                data.clear();
-                if (ui->cb_categories->currentText() == "CATEGORY")
-                    emit sendData(query(NULL, NULL, NULL, false, true));
-                else
-                    emit sendData(query(NULL, NULL, ui->cb_categories->currentText(), false, true));
-                ui->input->deselect();
-            } else {
-                filter.clear();
-                if (ui->cb_categories->currentText() == "CATEGORY")
-                    filter << "CATEGORY" << NULL;
-                else
-                    filter << "CATEGORY" << ui->cb_categories->currentText();
-                emit sendData(NULL, &filter);
-            }
+            if (filtersReset)
+                ui->cb_categories->setStyleSheet(ui->cb_style);
+            else
+                filter_handler(&ui->cb_categories, "CATEGORY");
         });
         QObject::connect (ui->cb_pornstars, static_cast<void (QComboBox::*)(const QString &)>
                           (&QComboBox::currentIndexChanged), [=] {
-            if (!m_filterOnCovers) {
-                data.clear();
-                if (ui->cb_pornstars->currentText() == "PORNSTAR")
-                    emit sendData(query(NULL, NULL, NULL, false, true));
-                else
-                    emit sendData(query(NULL, ui->cb_pornstars->currentText(), NULL, false, true));
-                ui->input->deselect();
-            } else {
-                filter.clear();
-                if (ui->cb_pornstars->currentText() == "PORNSTAR")
-                    filter << "PORNSTAR" << NULL;
-                else
-                    filter << "PORNSTAR" << ui->cb_pornstars->currentText();
-                emit sendData(NULL, &filter);
-            }
+            if (filtersReset)
+                ui->cb_pornstars->setStyleSheet(ui->cb_style);
+            else
+                filter_handler(&ui->cb_pornstars, "PORNSTAR");
         });
         QObject::connect (ui->cb_quality, static_cast<void (QComboBox::*)(const QString &)>
                           (&QComboBox::currentIndexChanged), [=] {
-            if (m_filterOnCovers) {
-                filter.clear();
-                if (ui->cb_quality->currentText() == "QUALITY")
-                    filter << "QUALITY" << NULL;
-                else
-                    filter << "QUALITY" << ui->cb_quality->currentText();
-                emit sendData(NULL, &filter);
-            }
+            if (filtersReset)
+                ui->cb_quality->setStyleSheet(ui->cb_style);
+            else
+                filter_handler(&ui->cb_quality, "QUALITY");
         });
         QObject::connect (ui->b_fullMovie, &QPushButton::pressed, [=] {
-            if (!ui->b_fullMovie->isChecked()) {
-                ui->b_fullMovie->setPalette(ui->p_filters_active);
-                if (m_filterOnCovers) { // POSIBLEMENTE NO ES NECESARIO
-                    filter.clear();
-                    filter << "FULLMOVIE" << "YES";
-                    emit sendData(NULL, &filter);
-                }
-            } else {
-                ui->b_fullMovie->setPalette(ui->p_filters);
-                if (m_filterOnCovers) { // POSIBLEMENTE NO ES NECESARIO
-                    filter.clear();
-                    filter << "FULLMOVIE" << NULL;
-                    emit sendData(NULL, &filter);
-                }
-            }
+            filter_handler(NULL, "FULLMOVIE");
         });
         
         isFiltersHidden = false;
@@ -189,5 +153,112 @@ void Finder::filters_handler()
             ui->_l_topbar->removeItem(ui->l_filters);
 
         isFiltersHidden = !isFiltersHidden;
+    }
+}
+
+void Finder::filter_handler(QComboBox **cb, const QString &item)
+{
+    //TODO: REVISAR b_fullMovie setChecked.
+    //TODO: INPUT FOCUS.
+    //TODO: BOTON 'fitrar solo resultados'.
+
+    filtersReset = true;
+
+    filter.clear();
+
+    if (cb == 0) {
+        ui->cb_categories->setCurrentIndex(0);
+        ui->cb_pornstars->setCurrentIndex(0);
+        ui->cb_quality->setCurrentIndex(0);
+
+        if (ui->b_fullMovie->isChecked()) {
+            if (isFilteringCovers) {
+                filter << item << NULL;
+                emit sendData(NULL, &filter);
+            } else {
+                data.clear();
+                emit sendData(query(NULL, NULL, NULL, NULL, NULL, false, true));
+            }
+
+            ui->b_fullMovie->setChecked(false);//
+            ui->b_fullMovie->setPalette(ui->p_fullMovie);
+        } else {
+            if (isFilteringCovers) {
+                filter << item << "YES";
+                emit sendData(NULL, &filter);
+            } else {
+                data.clear();
+                emit sendData(query(NULL, NULL, NULL, "YES", NULL, false, true));
+            }
+
+            ui->b_fullMovie->setChecked(true);//
+            ui->b_fullMovie->setPalette(ui->p_fullMovie_active);
+        }
+    } else {
+        if ((*cb) == ui->cb_categories) {
+            ui->cb_pornstars->setCurrentIndex(0);
+            ui->cb_quality->setCurrentIndex(0);
+        } else if ((*cb) == ui->cb_pornstars) {
+            ui->cb_categories->setCurrentIndex(0);
+            ui->cb_quality->setCurrentIndex(0);
+        } else if ((*cb) == ui->cb_quality) {
+            ui->cb_categories->setCurrentIndex(0);
+            ui->cb_pornstars->setCurrentIndex(0);
+        }
+
+        ui->b_fullMovie->setChecked(false);//
+        ui->b_fullMovie->setPalette(ui->p_fullMovie);
+
+        if ((*cb)->currentText() == item) {
+            if (isFilteringCovers) {
+                filter << item << NULL;
+                emit sendData(NULL, &filter);
+            } else {
+                data.clear();
+                emit sendData(query(NULL, NULL, NULL, NULL, NULL, false, true));
+            }
+
+            (*cb)->setStyleSheet(ui->cb_style);
+        } else {
+            if (isFilteringCovers) {
+                filter << item << (*cb)->currentText();
+                emit sendData(NULL, &filter);
+            } else {
+                data.clear();
+                if ((*cb) == ui->cb_categories)
+                    emit sendData(query(NULL, NULL, NULL, NULL, ui->cb_categories->currentText(),
+                                        false, true));
+                else if ((*cb) == ui->cb_pornstars)
+                    emit sendData(query(NULL, ui->cb_pornstars->currentText(), NULL, NULL, NULL,
+                                        false, true));
+                else if ((*cb) == ui->cb_quality)
+                    emit sendData(query(NULL, NULL, ui->cb_quality->currentText(),NULL, NULL,
+                                        false, true));
+            }
+
+            (*cb)->setStyleSheet(ui->cb_style_active);
+        }
+    }
+
+    filtersReset = false;
+}
+
+void Finder::setFinderState(const bool &block)
+{
+    if (block) {
+        if (ui->b_filters != 0)
+            ui->b_filters->setIcon(QIcon(":/icon-filters-dark"));
+    } else {
+        if (ui->b_filters != 0)
+            ui->b_filters->setIcon(QIcon(":/icon-filters"));
+    }
+    
+    ui->input->setDisabled(block);
+
+    if (ui->cb_categories != 0) {
+        ui->cb_categories->setDisabled(block);
+        ui->cb_pornstars->setDisabled(block);
+        ui->cb_quality->setDisabled(block);
+        ui->b_fullMovie->setDisabled(block);
     }
 }

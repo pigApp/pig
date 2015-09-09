@@ -2,6 +2,10 @@
 #include "threadedsocket.h"
 
 #include <QDir>
+#include <QDebug>
+
+const int pageHeight = 970;
+const int sizeData = 19;
 
 View::View(const QString* const PIG_PATH, QPushButton **b_back, QWidget *parent) :
     QWidget(parent),
@@ -10,23 +14,16 @@ View::View(const QString* const PIG_PATH, QPushButton **b_back, QWidget *parent)
     ui(new Ui::View)
 {
     ui->setupUi(this);
-
-    QDir target(*_PIG_PATH+"/tmp/covers");
-    onLocalCovers = target.entryList(QDir::Files | QDir::NoDotAndDotDot);
-    target.setPath(*_PIG_PATH+"/tmp/covers/back");
-    onLocalBackCovers = target.entryList(QDir::Files | QDir::NoDotAndDotDot);
-
-    pageHeight = 970; //TODO: PORCENTAJE ESTO!
-
+    
     QObject::connect (ui->sa_covers->verticalScrollBar(), &QScrollBar::valueChanged, [&] { pages_handler(); });
 
     sc_back = new QShortcut(QKeySequence(Qt::Key_Escape), this, SLOT(delete_info()));
     sc_back->setEnabled(false);
 
-    //    QObject::connect (ui->b_clear, &QPushButton::pressed, [&] {
-    //        delete_covers();
-    //        emit setFilterOnCovers();
-    //    });//
+    QDir target(*_PIG_PATH+"/tmp/covers");
+    onLocalCovers = target.entryList(QDir::Files | QDir::NoDotAndDotDot);
+    target.setPath(*_PIG_PATH+"/tmp/covers/back");
+    onLocalBackCovers = target.entryList(QDir::Files | QDir::NoDotAndDotDot);
 }
 
 View::~View()
@@ -37,12 +34,15 @@ View::~View()
 void View::get_covers(const QStringList *data, const int &ID)
 {
     if (ID == -1) {
+
+        emit setFinderState(true);
+
         if (data != 0) {
             m_data = data;
             offsetData = 0;
             offsetCovers = 0;
             requiredCovers = 0;
-            n_covers = ((*m_data).count() / 19);
+            n_covers = ((*m_data).count() / sizeData);
             page = 0;
             n_pages = 0;
             hasMoreCovers = true;
@@ -70,7 +70,7 @@ void View::get_covers(const QStringList *data, const int &ID)
                 requiredRemoteCovers << offsetData;
                 requiredRemoteCoversID << i;
             }
-            offsetData += 19;
+            offsetData += sizeData;
         }
 
         if (hasMoreCovers) {
@@ -86,7 +86,7 @@ void View::get_covers(const QStringList *data, const int &ID)
             }
         }
     } else {
-        int _ID = ((ID + 1) * 19);
+        int _ID = ((ID + 1) * sizeData);
 
         if (hasOnLocal((*m_data)[(_ID - 7)], &onLocalBackCovers)) {
             if (ui->w_info != 0) {
@@ -120,7 +120,7 @@ void View::add_cover(int ID, QString path)
     int row, col;
 
     if (_ID >= 0) {
-        onLocalCovers << (*m_data)[((((n_pages * 10) + _ID) + 1) * 19) - 9];
+        onLocalCovers << (*m_data)[((((n_pages * 10) + _ID) + 1) * sizeData) - 9];
     } else {
       _ID = -_ID; 
     }
@@ -149,6 +149,8 @@ void View::add_cover(int ID, QString path)
         ++n_pages;
         if ((n_covers - offsetCovers) <= 0)
             hasMoreCovers = false;
+        
+        emit setFinderState(false);
     }
 }
 
@@ -165,7 +167,7 @@ void View::delete_covers()
 
 void View::init_info(const int &ID, const QString &path)
 {
-    ui->setupInfoUi(ID, path, &m_data, this);
+    ui->setupInfoUi(ID, path, &m_data, sizeData, this);
 
     get_covers(NULL, ID);
 
@@ -194,7 +196,7 @@ void View::delete_info()
 
 void View::pages_handler()
 {
-    if ((((ui->sa_covers->height() + 11) * (page + 1)) > ui->w_covers->height()) && //TODO: PORCENTAJE. 11
+    if ((((ui->sa_covers->height() + 11) * (page + 1)) > ui->w_covers->height()) && //TODO: PORCENTAJE.
         ((page + 1) == n_pages) && hasMoreCovers) {
         ++page;
 
@@ -220,35 +222,35 @@ bool View::hasOnLocal(const QString &cover, const QStringList *localList)
 
 void View::set_filter(const QStringList *filter)
 {
-    int offsetFilter = 0;
-
     for (int i = 0; i < ui->v_b_covers.size(); i++) {
         if ((*filter)[0] == "CATEGORY") {
-            if (!((*m_data)[(offsetFilter + 6)]).contains((*filter)[1]) && ((*filter)[1] != 0)) {
+            if (!((*m_data)[((i * sizeData) + 6)]).contains((*filter)[1]) &&
+                ((*filter)[1] != 0)) {
                 ui->v_b_covers.at(i)->setDisabled(true);
             } else {
                 ui->v_b_covers.at(i)->setEnabled(true);
             }
         } else if ((*filter)[0] == "PORNSTAR") {
-            if (!((*m_data)[(offsetFilter + 2)]).contains((*filter)[1]) && ((*filter)[1] != 0)) {
+            if (!((*m_data)[((i * sizeData) + 2)]).contains((*filter)[1]) &&
+                ((*filter)[1] != 0)) {
                 ui->v_b_covers.at(i)->setDisabled(true);
             } else {
                 ui->v_b_covers.at(i)->setEnabled(true);
             }
         } else if ((*filter)[0] == "QUALITY") {
-            if (((*filter)[1] == (*m_data)[(offsetFilter + 3)]) && ((*filter)[1] != 0)) {
+            if (!((*filter)[1] == (*m_data)[((i * sizeData) + 3)]) &&
+                ((*filter)[1] != 0)) {
                 ui->v_b_covers.at(i)->setDisabled(true);
             } else {
                 ui->v_b_covers.at(i)->setEnabled(true);
             }
         } else if ((*filter)[0] == "FULLMOVIE") {
-            if (((*filter)[1] == (*m_data)[(offsetFilter + 5)]) && ((*filter)[1] != 0)) {
+            if (((*filter)[1] == (*m_data)[((i * sizeData) + 5)]) &&
+                ((*filter)[1] != 0)) {
                 ui->v_b_covers.at(i)->setDisabled(true);
             } else {
                 ui->v_b_covers.at(i)->setEnabled(true);
             }
         }
-
-        offsetFilter += 19;
     }
 }
