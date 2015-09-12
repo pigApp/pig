@@ -19,8 +19,6 @@ public:
     explicit Finder(QSqlDatabase *db, QGridLayout *l_topbar, QWidget *parent = 0);
     ~Finder();
 
-    void setFinderState(const bool &block);
-
 signals:
     void sendData(const QStringList *data, const QStringList *filter = NULL);
 
@@ -46,7 +44,7 @@ private slots:
                        const bool &getData = false, const bool &getFilter = false,
                        const QString &order = "name ASC LIMIT 1000");
     void filters();
-    void filter_handler(QComboBox **cb, const QString &item);
+    void filters_handler(QComboBox **cb = NULL, const QString &item = NULL);
 };
 
 #endif

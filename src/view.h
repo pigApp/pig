@@ -1,6 +1,7 @@
 #ifndef VIEW_H
 #define VIEW_H
 
+#include "threadedsocket.h"
 #include "ui.h"
 
 #include <QWidget>
@@ -21,7 +22,6 @@ public:
 
 signals:
     void setWidget(QWidget *w = NULL, bool add = false);
-    void setFinderState(const bool &block);
     void setTopbarState(const bool &hide);
 
 public slots:
@@ -32,6 +32,8 @@ private:
     const QString *_PIG_PATH;
     QPushButton **_b_back;
     const QStringList *m_data = NULL;
+
+    ThreadedSocket *thread[10];
 
     QStringList onLocalCovers;
     QStringList onLocalBackCovers;
@@ -48,7 +50,6 @@ private:
     int page, n_pages;
 
     bool hasMoreCovers;
-
 private slots:
     void add_cover(int ID, QString path);
     void delete_covers();

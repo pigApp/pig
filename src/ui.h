@@ -230,7 +230,6 @@ public:
         b_setup = new QPushButton(QIcon(":/icon-setup"), NULL, Topbar);
         b_setup->setToolTip("SETUP");
         b_setup->setFlat(true);
-        b_setup->setDisabled(true);
 
         l = new QGridLayout(Topbar);
         l->setSpacing(0);
@@ -255,6 +254,7 @@ public:
     QComboBox *cb_pornstars;
     QComboBox *cb_quality;
     QPushButton *b_fullMovie;
+    QRadioButton *r_filter_on_covers;
     QHBoxLayout *l_filters;
     QGridLayout *l;
 
@@ -331,7 +331,7 @@ public:
         input->setCompleter(completer);
         input->setAlignment(Qt::AlignCenter);
 
-        b_filters = new QPushButton(QIcon(":/icon-filters-dark"), NULL, Finder);
+        b_filters = new QPushButton(QIcon(":/icon-filters"), NULL, Finder);
         b_filters->setGeometry(14, 11, 24, 24);//TODO: PORCENTAJE.
         b_filters->setCursor(Qt::ArrowCursor);
         b_filters->setFlat(true);
@@ -343,6 +343,8 @@ public:
         l->addWidget(input, 0, 0);
 
         _l_topbar->addLayout(l, 0, 0);
+
+        input->setFocus();
     }
 
     void setupFilterUi(const QStringList *categories, const QStringList *pornstars, QWidget *Finder)
@@ -386,13 +388,17 @@ public:
         cb_quality->addItem("720p");
         cb_quality->addItem("1080p");
 
-        b_fullMovie = new QPushButton(" FULLMOVIE ", Finder);
+        b_fullMovie = new QPushButton("FULLMOVIE", Finder);
         b_fullMovie->setFont(f);
         b_fullMovie->setPalette(p_fullMovie);
         b_fullMovie->setCheckable(true);
         b_fullMovie->setChecked(false);
         b_fullMovie->setAutoFillBackground(true);
-        b_fullMovie->setFlat(true);
+
+        r_filter_on_covers = new QRadioButton("FILTER ON COVERS", Finder);
+        r_filter_on_covers->setFont(f);
+        r_filter_on_covers->setCheckable(true);
+        r_filter_on_covers->setChecked(true);
 
         l_filters = new QHBoxLayout;
         l_filters->setSpacing(10);//TODO: PORCENTAJE.
@@ -401,7 +407,7 @@ public:
         l_filters->addWidget(cb_pornstars);
         l_filters->addWidget(cb_quality);
         l_filters->addWidget(b_fullMovie);
-        //l_filters->addStretch();
+        l_filters->addWidget(r_filter_on_covers, 0, Qt::AlignHCenter);
 
         _l_topbar->addLayout(l_filters, 1, 0);
     }

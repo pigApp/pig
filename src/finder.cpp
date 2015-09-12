@@ -18,6 +18,9 @@ Finder::Finder(QSqlDatabase *db, QGridLayout *l_topbar, QWidget *parent) :
         emit sendData(query((ui->input->selectAll(), ui->input->selectedText()),
                             NULL, NULL, NULL, NULL, false, true));
         ui->input->deselect();
+       
+        if (ui->cb_categories != 0)
+            filters_handler(); 
     });
     connect (ui->b_filters, SIGNAL(pressed()), this, SLOT(filters()));
 
@@ -125,24 +128,27 @@ void Finder::filters()
             if (filtersReset)
                 ui->cb_categories->setStyleSheet(ui->cb_style);
             else
-                filter_handler(&ui->cb_categories, "CATEGORY");
+                filters_handler(&ui->cb_categories, "CATEGORY");
         });
         QObject::connect (ui->cb_pornstars, static_cast<void (QComboBox::*)(const QString &)>
                           (&QComboBox::currentIndexChanged), [=] {
             if (filtersReset)
                 ui->cb_pornstars->setStyleSheet(ui->cb_style);
             else
-                filter_handler(&ui->cb_pornstars, "PORNSTAR");
+                filters_handler(&ui->cb_pornstars, "PORNSTAR");
         });
         QObject::connect (ui->cb_quality, static_cast<void (QComboBox::*)(const QString &)>
                           (&QComboBox::currentIndexChanged), [=] {
             if (filtersReset)
                 ui->cb_quality->setStyleSheet(ui->cb_style);
             else
-                filter_handler(&ui->cb_quality, "QUALITY");
+                filters_handler(&ui->cb_quality, "QUALITY");
         });
         QObject::connect (ui->b_fullMovie, &QPushButton::pressed, [=] {
-            filter_handler(NULL, "FULLMOVIE");
+            filters_handler(NULL, "FULLMOVIE");
+        });
+        QObject::connect (ui->r_filter_on_covers, &QPushButton::pressed, [=] {
+            isFilteringCovers = !isFilteringCovers;
         });
         
         isFiltersHidden = false;
@@ -156,17 +162,19 @@ void Finder::filters()
     }
 }
 
-void Finder::filter_handler(QComboBox **cb, const QString &item)
+void Finder::filters_handler(QComboBox **cb, const QString &item)
 {
-    //TODO: REVISAR b_fullMovie setChecked.
-    //TODO: INPUT FOCUS.
-    //TODO: BOTON 'fitrar solo resultados'.
-
     filtersReset = true;
 
     filter.clear();
 
-    if (cb == 0) {
+    if (item == 0) {
+        ui->cb_categories->setCurrentIndex(0);
+        ui->cb_pornstars->setCurrentIndex(0);
+        ui->cb_quality->setCurrentIndex(0);
+        ui->b_fullMovie->setChecked(false);
+        ui->b_fullMovie->setPalette(ui->p_fullMovie);
+    } else if (cb == 0) {
         ui->cb_categories->setCurrentIndex(0);
         ui->cb_pornstars->setCurrentIndex(0);
         ui->cb_quality->setCurrentIndex(0);
@@ -176,22 +184,22 @@ void Finder::filter_handler(QComboBox **cb, const QString &item)
                 filter << item << NULL;
                 emit sendData(NULL, &filter);
             } else {
+                ui->b_fullMovie->setChecked(false);
                 data.clear();
                 emit sendData(query(NULL, NULL, NULL, NULL, NULL, false, true));
             }
 
-            ui->b_fullMovie->setChecked(false);//
             ui->b_fullMovie->setPalette(ui->p_fullMovie);
         } else {
             if (isFilteringCovers) {
                 filter << item << "YES";
                 emit sendData(NULL, &filter);
             } else {
+                ui->b_fullMovie->setChecked(true);
                 data.clear();
                 emit sendData(query(NULL, NULL, NULL, "YES", NULL, false, true));
             }
 
-            ui->b_fullMovie->setChecked(true);//
             ui->b_fullMovie->setPalette(ui->p_fullMovie_active);
         }
     } else {
@@ -206,7 +214,7 @@ void Finder::filter_handler(QComboBox **cb, const QString &item)
             ui->cb_pornstars->setCurrentIndex(0);
         }
 
-        ui->b_fullMovie->setChecked(false);//
+        ui->b_fullMovie->setChecked(false);
         ui->b_fullMovie->setPalette(ui->p_fullMovie);
 
         if ((*cb)->currentText() == item) {
@@ -241,24 +249,4 @@ void Finder::filter_handler(QComboBox **cb, const QString &item)
     }
 
     filtersReset = false;
-}
-
-void Finder::setFinderState(const bool &block)
-{
-    if (block) {
-        if (ui->b_filters != 0)
-            ui->b_filters->setIcon(QIcon(":/icon-filters-dark"));
-    } else {
-        if (ui->b_filters != 0)
-            ui->b_filters->setIcon(QIcon(":/icon-filters"));
-    }
-    
-    ui->input->setDisabled(block);
-
-    if (ui->cb_categories != 0) {
-        ui->cb_categories->setDisabled(block);
-        ui->cb_pornstars->setDisabled(block);
-        ui->cb_quality->setDisabled(block);
-        ui->b_fullMovie->setDisabled(block);
-    }
 }

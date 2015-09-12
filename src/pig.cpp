@@ -128,9 +128,6 @@ void PIG::init_viewer(const QStringList *data, const QStringList *filter)
     if ((view == 0) && (data != 0)) {
         view = new View(&PIG_PATH, &ui->b_back, this);
 
-        QObject::connect (view, &View::setFinderState, [&] (bool block) {
-            topbar->getFinderObj()->setFinderState(block);
-        });
         QObject::connect (view, &View::setTopbarState, [&] (bool hide) {
             topbar->setHidden(hide);
         });

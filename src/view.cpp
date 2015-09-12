@@ -1,8 +1,7 @@
 #include "view.h"
-#include "threadedsocket.h"
 
 #include <QDir>
-#include <QDebug>
+#include <QDebug>//
 
 const int pageHeight = 970;
 const int sizeData = 19;
@@ -34,8 +33,6 @@ View::~View()
 void View::get_covers(const QStringList *data, const int &ID)
 {
     if (ID == -1) {
-
-        emit setFinderState(true);
 
         if (data != 0) {
             m_data = data;
@@ -74,13 +71,14 @@ void View::get_covers(const QStringList *data, const int &ID)
         }
 
         if (hasMoreCovers) {
-            ThreadedSocket *thread[requiredRemoteCovers.size()];
             for(int i = 0; i < requiredRemoteCovers.size(); i++) {
                 thread[i] = new ThreadedSocket(_PIG_PATH, &(*m_data)[(requiredRemoteCovers[i] + 8)],
                                                &(*m_data)[(requiredRemoteCovers[i] + 9)],
-                                               &(*m_data)[(requiredRemoteCovers[i] + 10)], requiredRemoteCoversID[i], this);
+                                               &(*m_data)[(requiredRemoteCovers[i] + 10)],
+                                               requiredRemoteCoversID[i], this);
                 connect (thread[i], SIGNAL(sendFile(int, QString)), this, SLOT(add_cover(int, QString)));
                 connect (thread[i], SIGNAL(finished()), thread[i], SLOT(deleteLater()));
+                QObject::connect (thread[i], &ThreadedSocket::destroyed, [=] { thread[i] = NULL; });
 
                 thread[i]->start();
             }
@@ -149,13 +147,15 @@ void View::add_cover(int ID, QString path)
         ++n_pages;
         if ((n_covers - offsetCovers) <= 0)
             hasMoreCovers = false;
-        
-        emit setFinderState(false);
     }
 }
 
 void View::delete_covers()
 {
+    for (int i = 0; i < 10; i++)
+        if (thread[i] != 0)
+            thread[i]->exit(0);
+
     for (int i = 0; i < ui->v_b_covers.size(); i++) {
         ui->l_covers->removeWidget(ui->v_b_covers.at(i));
         delete ui->v_b_covers.at(i);

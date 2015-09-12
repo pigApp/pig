@@ -4,12 +4,12 @@
 - Pasar valores a porcentajes.
 - Completer.
 
-- Disables filtros quality y fullmovie si m_filterOnCovers es false.
-- Filters.
+- Para no bloquear el buscador cuando se descargan los covers, hay que matar todos los hilos de socket que queden vivos si hay un nuevo pedido.
 - Socket y setup error.
 - PIG error.
 - Revisar y terminar filtros y view.
 - Player en info.
+- Random entre 3 hosts para los covers y previews. 
 - Filtrado de filas en Torrent.
 - Array cache para las filas .torrent.
 - Icono main.cpp.
