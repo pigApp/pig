@@ -3,7 +3,7 @@
 #include <QDir>
 #include <QDebug>//
 
-const int pageHeight = 970;
+const int pageHeight = 970; //TODO: PORCENTAJE.
 const int sizeData = 19;
 
 View::View(const QString* const PIG_PATH, QPushButton **b_back, QWidget *parent) :
@@ -33,6 +33,7 @@ View::~View()
 void View::get_covers(const QStringList *data, const int &ID)
 {
     if (ID == -1) {
+        requiredRemoteCovers = 0;
 
         if (data != 0) {
             m_data = data;
@@ -56,32 +57,27 @@ void View::get_covers(const QStringList *data, const int &ID)
             else
                 requiredCovers = (n_covers - offsetCovers);
         }
-
-        requiredRemoteCovers.clear();
-        requiredRemoteCoversID.clear();
-
+        
         for (int i = 0; i < requiredCovers; i++) {
             if (hasOnLocal((*m_data)[(offsetData + 10)], &onLocalCovers)) {
                 add_cover(-i, *_PIG_PATH+"/tmp/covers/"+(*m_data)[(offsetData + 10)]); 
             } else {
-                requiredRemoteCovers << offsetData;
-                requiredRemoteCoversID << i;
+                if (hasMoreCovers) {
+                    thread[i] = new ThreadedSocket(_PIG_PATH, &(*m_data)[(offsetData + 8)],
+                                                   &(*m_data)[(offsetData + 9)],
+                                                   &(*m_data)[(offsetData + 10)],
+                                                   i, this);
+                    connect (thread[i], SIGNAL(sendFile(int, QString)), this, SLOT(add_cover(int, QString)));
+                    connect (thread[i], SIGNAL(finished()), thread[i], SLOT(deleteLater()));
+                    QObject::connect (thread[i], &ThreadedSocket::destroyed, [=] { thread[i] = NULL; });
+
+                    thread[i]->start();
+                    
+                    ++requiredRemoteCovers;
+                }
             }
+
             offsetData += sizeData;
-        }
-
-        if (hasMoreCovers) {
-            for(int i = 0; i < requiredRemoteCovers.size(); i++) {
-                thread[i] = new ThreadedSocket(_PIG_PATH, &(*m_data)[(requiredRemoteCovers[i] + 8)],
-                                               &(*m_data)[(requiredRemoteCovers[i] + 9)],
-                                               &(*m_data)[(requiredRemoteCovers[i] + 10)],
-                                               requiredRemoteCoversID[i], this);
-                connect (thread[i], SIGNAL(sendFile(int, QString)), this, SLOT(add_cover(int, QString)));
-                connect (thread[i], SIGNAL(finished()), thread[i], SLOT(deleteLater()));
-                QObject::connect (thread[i], &ThreadedSocket::destroyed, [=] { thread[i] = NULL; });
-
-                thread[i]->start();
-            }
         }
     } else {
         int _ID = ((ID + 1) * sizeData);
@@ -134,7 +130,7 @@ void View::add_cover(int ID, QString path)
     int __ID = ((n_pages * 10) + _ID);
     
     ui->v_b_covers.push_back(new QPushButton(QIcon(path), NULL, ui->w_covers));
-    ui->v_b_covers.last()->setIconSize(QSize(335, 480));//TODO: PORCENTAJE
+    ui->v_b_covers.last()->setIconSize(QSize(335, 480));//TODO: PORCENTAJE.
     ui->v_b_covers.last()->setFlat(true);
     
     QObject::connect (ui->v_b_covers.last(), &QPushButton::pressed, [=] { init_info(__ID, path); });
@@ -142,8 +138,8 @@ void View::add_cover(int ID, QString path)
     ui->l_covers->addWidget(ui->v_b_covers.last(), row, col);
     ui->l_covers->update();
 
-    if ((ui->v_b_covers.size() - offsetCovers) == requiredCovers) { //FIX: AL BAJAR LA PAGINA NO AGREGA LOS COVERS DESCARGADOS ALA LISTA
-        offsetCovers += 10;                                                   //FIX: SOLO BAJA EN EL PEDIDO INICIAL
+    if ((ui->v_b_covers.size() - offsetCovers) == requiredCovers) {
+        offsetCovers += 10;
         ++n_pages;
         if ((n_covers - offsetCovers) <= 0)
             hasMoreCovers = false;
@@ -202,7 +198,7 @@ void View::pages_handler()
 
         get_covers();
 
-        if (requiredRemoteCovers.size() > 4)
+        if (requiredRemoteCovers > 4)
             ui->w_covers->setMinimumHeight((ui->w_covers->height() + pageHeight));
         else
             ui->w_covers->setMinimumHeight((ui->w_covers->height() + (pageHeight / 2)));

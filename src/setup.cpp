@@ -60,10 +60,12 @@ Setup::Setup(const QString* const PIG_PATH, bool *keep_covers, bool *keep_torren
     });
 
     QObject::connect (ui->b_folder_covers_reset, &QPushButton::pressed, [&] {
-        if (clean_folder("covers") && clean_folder("covers/back"))
+        if (clean_folder("covers") && clean_folder("covers/back")) {
             set_icon(&ui->b_folder_covers_reset);
-        else
+            emit folderCoversReset();
+        } else {
             set_icon(&ui->b_folder_covers_reset, false, true);
+        }
     });
     QObject::connect (ui->b_folder_torrents_reset, &QPushButton::pressed, [&] {
         if (clean_folder("torrents"))

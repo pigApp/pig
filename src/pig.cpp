@@ -117,32 +117,33 @@ void PIG::init_topbar()
     topbar = new TopBar(&db, this);
 
     connect (topbar->getFinderObj(), SIGNAL(sendData(const QStringList*, const QStringList*)),
-             this, SLOT(init_viewer(const QStringList*, const QStringList*)));
+             this, SLOT(init_view(const QStringList*, const QStringList*)));
     connect (topbar->getButtonSetupObj(), SIGNAL(released()), this, SLOT(init_setup()));
 
     ui->main_layout->addWidget(topbar);
 }
 
-void PIG::init_viewer(const QStringList *data, const QStringList *filter)
+void PIG::init_view(const QStringList *data, const QStringList *filter)
 {
-    if ((view == 0) && (data != 0)) {
-        view = new View(&PIG_PATH, &ui->b_back, this);
+    if (view == 0) {
+        if (data != 0) {
+            view = new View(&PIG_PATH, &ui->b_back, this);
 
-        QObject::connect (view, &View::setTopbarState, [&] (bool hide) {
-            topbar->setHidden(hide);
-        });
+            QObject::connect (view, &View::setTopbarState, [&] (bool hide) {
+                topbar->setHidden(hide);
+            });
 
-        ui->main_layout->addWidget(view);
-
-        if (!topbar->getButtonSetupObj()->isEnabled())
-            topbar->getButtonSetupObj()->setEnabled(true);
+            ui->main_layout->addWidget(view);
+        }
     }
 
-    if (data != 0)
-        view->get_covers(data);
+    if (view != 0) {
+        if (data != 0)
+            view->get_covers(data);
 
-    if (filter != 0)
-        view->set_filter(filter);
+        if (filter != 0)
+            view->set_filter(filter);
+    }
 }
 
 void PIG::init_setup()
@@ -150,10 +151,14 @@ void PIG::init_setup()
     if (setup == 0) {
         setup = new Setup(&PIG_PATH, &keep_covers, &keep_torrents, &keep_movies,
                           &torrent_port_1, &torrent_port_2, &db, this);
+        
         ui->main_layout->addWidget(setup);
 
+        if (view != 0) {
+            connect (setup, SIGNAL(folderCoversReset()), view, SLOT(reset_local_covers()));
+            view->hide();
+        }
         topbar->setHidden(true);
-        view->hide();
 
         connect (ui->b_back, SIGNAL(pressed()), this, SLOT(init_setup()));
         ui->b_back->show();
@@ -162,8 +167,9 @@ void PIG::init_setup()
     } else {
         ui->main_layout->removeWidget(setup);
 
+        if (view != 0)
+            view->show();
         topbar->setHidden(false);
-        view->show();
 
         ui->b_back->disconnect();
         ui->b_back->hide();

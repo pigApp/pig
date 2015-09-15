@@ -26,6 +26,10 @@ signals:
 
 public slots:
     void get_covers(const QStringList *data = NULL, const int &ID = -1);
+    void reset_local_covers() {
+        onLocalCovers.clear();
+        onLocalBackCovers.clear();
+    }
     void set_filter(const QStringList *filter = NULL);
 
 private:
@@ -33,23 +37,21 @@ private:
     QPushButton **_b_back;
     const QStringList *m_data = NULL;
 
-    ThreadedSocket *thread[10];
+    ThreadedSocket *thread[10] = {};
 
     QStringList onLocalCovers;
     QStringList onLocalBackCovers;
-
-    QList<int> requiredRemoteCovers;
-    QList<int> requiredRemoteCoversID;
 
     QShortcut *sc_back;
 
     Ui::View *ui;
 
     int offsetData, offsetCovers;
-    int requiredCovers, n_covers;
+    int requiredCovers, requiredRemoteCovers, n_covers;
     int page, n_pages;
 
     bool hasMoreCovers;
+
 private slots:
     void add_cover(int ID, QString path);
     void delete_covers();

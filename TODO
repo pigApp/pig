@@ -4,10 +4,13 @@
 - Pasar valores a porcentajes.
 - Completer.
 
-- Para no bloquear el buscador cuando se descargan los covers, hay que matar todos los hilos de socket que queden vivos si hay un nuevo pedido.
-- Socket y setup error.
+- FIX: SI HAY SOCKET ERROR:
+  THREADEDSOCKET: VER POR QUE SIEMPRE DA ERROR "The remote host closed the connection".
+  UPDATE: SI HAY SOCKETS ABIERTOS LOS DEBE CERRAR.
+  VIEW: SI EL COVER NO FUE DESCARGADO RESTAR 1 A requiredCovers.
+- Hacer dbError.
+
 - PIG error.
-- Revisar y terminar filtros y view.
 - Player en info.
 - Random entre 3 hosts para los covers y previews. 
 - Filtrado de filas en Torrent.

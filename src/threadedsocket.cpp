@@ -1,6 +1,7 @@
 #include "threadedsocket.h"
 
 #include <QDataStream>
+#include <QDebug>//
 
 ThreadedSocket::ThreadedSocket(const QString* const PIG_PATH, const QString *host,
                                const QString *url, const QString *pkg, int ID, QObject *parent) :
@@ -25,6 +26,9 @@ void ThreadedSocket::run()
     connect (socket, SIGNAL(connected()), this, SLOT(connected()), Qt::DirectConnection);
     connect (socket, SIGNAL(readyRead()), this, SLOT(readyRead()), Qt::DirectConnection);
     connect (socket, SIGNAL(disconnected()), this, SLOT(disconnected()), Qt::DirectConnection);
+    connect (socket, SIGNAL(error(QAbstractSocket::SocketError)), this,
+             SLOT(error(QAbstractSocket::SocketError)), Qt::DirectConnection);
+
     connect (this, SIGNAL(destroyed()), socket, SLOT(deleteLater()), Qt::DirectConnection);
 
     socket->connectToHost(*_host, 80);
@@ -82,9 +86,18 @@ void ThreadedSocket::processData()
 void ThreadedSocket::disconnected()
 {
     socket->deleteLater();
+    
+    if (socket->errorString().isEmpty() ||
+        socket->errorString() == "The remote host closed the connection") {
+        processData();
+        exit(0);
+    } else {
+        exit(0);
+    }
+}
 
-    //if (!socket->error)
-    processData();
-
-    exit(0);
+void ThreadedSocket::error(QAbstractSocket::SocketError error)
+{
+    if (error != 1)
+        emit socketError("NETWORK ERROR");
 }

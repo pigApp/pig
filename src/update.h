@@ -49,7 +49,7 @@ private slots:
     void unpack(int ID, QString path);
     void install();
     void status(const int &exitCode);
-    void error(const QString &error = NULL);
+    void error(QString error);
     void init_ui();
 };
 

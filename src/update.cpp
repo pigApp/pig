@@ -27,7 +27,7 @@ Update::Update(const QString* const PIG_PATH, QSqlDatabase *db_, QWidget *parent
 
         if (!query.exec()) {
             _db->close();
-            QTimer::singleShot(100, this, SLOT(error()));
+            QTimer::singleShot(100, this, SLOT(error("DATABASE CORRUPTED")));
         } else {
             query.next();
             bin = query.value(0).toInt();
@@ -44,7 +44,7 @@ Update::Update(const QString* const PIG_PATH, QSqlDatabase *db_, QWidget *parent
             get();
         }
     } else {
-        QTimer::singleShot(100, this, SLOT(error()));
+        QTimer::singleShot(100, this, SLOT(error("DATABASE CORRUPTED")));
     }
 }
 
@@ -62,6 +62,7 @@ void Update::get()
         thread[i] = new ThreadedSocket(_PIG_PATH, &host, &urls[i], &pkgs[i], i, this);
         connect (thread[i], SIGNAL(sendData(QString)), this, SLOT(check(QString)));
         connect (thread[i], SIGNAL(sendFile(int, QString)), this, SLOT(unpack(int, QString)));
+        connect (thread[i], SIGNAL(socketError(QString)), this, SLOT(error(QString)));
         connect (thread[i], SIGNAL(finished()), thread[i], SLOT(deleteLater()));
         thread[i]->start();
     }
@@ -275,7 +276,7 @@ void Update::status(const int &exitCode)
 #endif
 }
 
-void Update::error(const QString &error)
+void Update::error(QString error)
 {
     origin = *_PIG_PATH+"/db.sqlite";
     target = *_PIG_PATH+"/tmp/update/db.sqlite.trash";
@@ -290,6 +291,7 @@ void Update::error(const QString &error)
         }
     }
 
+    
     if (ui != 0) {
         ui->lb->setText(error);
         ui->b_1->setIcon(QIcon(":/icon-cancel"));
@@ -297,8 +299,9 @@ void Update::error(const QString &error)
         ui->b_1->show();
 
         QObject::connect (ui->b_1, &QPushButton::pressed, [&] { delete this; });
-    } else {
-        emit dbError("DATABASE CORRUPTED");
+    } else { 
+        if (error == "DATABASE CORRUPTED")
+            emit dbError(error);
         delete this;
     }
 }

@@ -20,6 +20,8 @@ public:
                    bool *keep_torrents, bool *keep_movies, int *torrent_port_1,
                    int *torrent_port_2, QSqlDatabase *db, QWidget *parent = 0);
     ~Setup();
+signals:
+    void folderCoversReset();
 
 private:
     const QString* const _PIG_PATH;

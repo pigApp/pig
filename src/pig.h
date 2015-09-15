@@ -51,7 +51,7 @@ private slots:
     void init_authorization();
     void init_update();
     void init_topbar();
-    void init_viewer(const QStringList *data, const QStringList *filter);
+    void init_view(const QStringList *data, const QStringList *filter);
     void init_setup();
     void error(QString error);
     QHash<QString, QVariant> get_rc();

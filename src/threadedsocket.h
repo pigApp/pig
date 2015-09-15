@@ -14,12 +14,13 @@ public:
                             const QString *pkg = NULL, int ID = 0, QObject *parent = 0);
     ~ThreadedSocket();
 
-    void run();
-
 signals:
     void sendData(QString data);
     void sendFile(int ID, QString path);
-    //void error(QTcpSocket::SocketError socketerror); //TODO: SOCKET ERROR.
+    void socketError(QString error);
+
+public slots:
+    void run();
 
 private:
     const QString* const _PIG_PATH;
@@ -36,6 +37,7 @@ private slots:
     void readyRead();
     void processData();
     void disconnected();
+    void error(QAbstractSocket::SocketError error);
 };
 
 #endif
