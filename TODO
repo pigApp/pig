@@ -8,7 +8,6 @@
   THREADEDSOCKET: VER POR QUE SIEMPRE DA ERROR "The remote host closed the connection".
   UPDATE: SI HAY SOCKETS ABIERTOS LOS DEBE CERRAR.
   VIEW: SI EL COVER NO FUE DESCARGADO RESTAR 1 A requiredCovers.
-- Hacer dbError.
 
 - PIG error.
 - Player en info.

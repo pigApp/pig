@@ -12,10 +12,11 @@ public:
     ~Unpack();
 
 signals:
-    void finished(int exitCode);
+    void sendExitCode(int exitCode);
 
 public slots:
-    void unzip(const QString* const PIG_PATH, const QString *path, const QString *sum);
+    void unzip(const QString* const PIG_PATH, const QString *path,
+               const QString *sum);
 };
 
 #endif

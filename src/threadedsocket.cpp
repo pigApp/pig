@@ -86,7 +86,7 @@ void ThreadedSocket::processData()
 void ThreadedSocket::disconnected()
 {
     socket->deleteLater();
-    
+
     if (socket->errorString().isEmpty() ||
         socket->errorString() == "The remote host closed the connection") {
         processData();
@@ -96,8 +96,13 @@ void ThreadedSocket::disconnected()
     }
 }
 
-void ThreadedSocket::error(QAbstractSocket::SocketError error)
+void ThreadedSocket::error(QAbstractSocket::SocketError errorMsg)
 {
-    if (error != 1)
-        emit socketError("NETWORK ERROR");
+    if (errorMsg != 1) {
+        emit sendError("NETWORK ERROR");
+        //if (NO CONECTADO) {
+        //    socket->deleteLater();
+        //    exit(0);
+        //}
+    }
 }

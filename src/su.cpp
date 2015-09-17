@@ -25,7 +25,7 @@ Su::~Su()
 void Su::install(const QString arg)
 {
     if (manager.isEmpty())
-        emit finished(-1);
+        emit sendExitCode(-1);
     else
         if (manager == "gksu")
             p->start("/bin/bash", QStringList()
@@ -34,7 +34,7 @@ void Su::install(const QString arg)
             p->start("/bin/bash", QStringList()
                      << "-c" << manager+" -c "+arg);
 
-    connect (p, SIGNAL(finished(int)), this, SIGNAL(finished(int)));
+    connect (p, SIGNAL(finished(int)), this, SIGNAL(sendExitCode(int)));
 }
 
 void Su::authorization(const QString arg)

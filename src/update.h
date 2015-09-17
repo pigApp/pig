@@ -20,8 +20,7 @@ public:
     ~Update();
 
 signals:
-    void showWidget(QWidget *w);
-    void dbError(QString error);
+    void sendWidget(QWidget *w);
 
 private:
     const QString* const _PIG_PATH;
@@ -49,7 +48,7 @@ private slots:
     void unpack(int ID, QString path);
     void install();
     void status(const int &exitCode);
-    void error(QString error);
+    void error(const QString &errorMsg);
     void init_ui();
 };
 

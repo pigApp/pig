@@ -167,7 +167,7 @@ void View::init_info(const int &ID, const QString &path)
 
     get_covers(NULL, ID);
 
-    emit setTopbarState(true);
+    emit sendTopbarState(true);
 
     connect ((*_b_back), SIGNAL(pressed()), this, SLOT(delete_info()));
 
@@ -182,7 +182,7 @@ void View::delete_info()
     ui->sa_covers->setEnabled(true);
     ui->sa_covers->show();
 
-    emit setTopbarState(false);
+    emit sendTopbarState(false);
 
     (*_b_back)->disconnect();
     (*_b_back)->hide();

@@ -10,31 +10,33 @@ win32 {
 
 QT += sql opengl network widgets 
 
-SOURCES += src/main.cpp\
-           src/pig.cpp\
-           src/authorization.cpp\
-           src/update.cpp\
-           src/topbar.cpp\
-           src/finder.cpp\
-           src/setup.cpp\
-           src/view.cpp\
-           src/player.cpp\
-           src/unpack.cpp\
-           src/su.cpp\
-           src/threadedsocket.cpp
+SOURCES += src/main.cpp \
+           src/pig.cpp \
+           src/authorization.cpp \
+           src/update.cpp \
+           src/topbar.cpp \
+           src/finder.cpp \
+           src/setup.cpp \
+           src/view.cpp \
+           src/player.cpp \
+           src/unpack.cpp \
+           src/su.cpp \
+           src/threadedsocket.cpp \
+           src/error.cpp
 
-HEADERS += src/pig.h\
-           src/authorization.h\
-           src/update.h\
-           src/topbar.h\
-           src/finder.h\
-           src/setup.h\
-           src/view.h\
-           src/player.h\
-           src/unpack.h\
-           src/su.h\
-           src/threadedsocket.h\
-           src/ui.h
+HEADERS += src/pig.h \
+           src/authorization.h \
+           src/update.h \
+           src/topbar.h \
+           src/finder.h \
+           src/setup.h \
+           src/view.h \
+           src/player.h \
+           src/unpack.h \
+           src/su.h \
+           src/threadedsocket.h \
+           src/ui.h \
+           src/error.h
 
 RESOURCES = resources.qrc
 
@@ -57,9 +59,9 @@ unix {
 
 win32 {
     CONFIG += c++11
-    LIBS += -LC:/boost/lib -lpsapi\
+    LIBS += -LC:/boost/lib -lpsapi \
             -LC:/libtorrent-rasterbar-1.0.2/bin/msvc-12.0/release/address-model-64/architecture-x86/boost-link-shared/boost-source/resolve-countries-off/threading-multi -ltorrent
-    INCLUDEPATH += C:/boost/include/boost-1_56\
+    INCLUDEPATH += C:/boost/include/boost-1_56 \
                    C:/libtorrent-rasterbar-1.0.2/include
 
     target.path = C:\PIG

@@ -875,6 +875,31 @@ public:
     }
 };
 
+class Ui_Error
+{
+public:
+    QLabel *lb;
+    QPushButton *b;
+    QHBoxLayout *l;
+
+    void setupUi(const QString **errorMsg, QWidget *Error)
+    {
+        lb = new QLabel(**errorMsg, Error);
+
+        b = new QPushButton(QIcon(":/icon-cancel"), NULL, Error);
+        b->setToolTip("EXIT");
+        b->setFlat(true);
+
+        l = new QHBoxLayout(Error);
+        l->setAlignment(Qt::AlignHCenter);
+        l->addWidget(lb);
+        l->addSpacing(10);//TODO: PORCENTAJE
+        l->addWidget(b);
+
+        Error->setLayout(l);
+    }
+};
+
 namespace Ui {
     class PIG: public Ui_PIG {};
     class Authorization: public Ui_Authotization {};
@@ -883,6 +908,7 @@ namespace Ui {
     class Finder: public Ui_Finder {};
     class Setup: public Ui_Setup {};
     class View: public Ui_View {};
+    class Error: public Ui_Error {};
 }
 
 QT_END_NAMESPACE

@@ -21,6 +21,7 @@ public:
 
 signals:
     void sendData(const QStringList *data, const QStringList *filter = NULL);
+    void sendError(QString errorMsg);
 
 private:
     QSqlDatabase *_db;

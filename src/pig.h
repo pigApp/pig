@@ -4,6 +4,7 @@
 #include "topbar.h"
 #include "setup.h"
 #include "view.h"
+#include "error.h"
 #include "ui.h"
 
 #include <QWidget>
@@ -37,6 +38,7 @@ private:
     TopBar *topbar;
     Setup *setup;
     View *view;
+    Error *error;
 
     QShortcut *sc_quit;
     QShortcut *sc_back;
@@ -47,13 +49,13 @@ private:
     Ui::PIG *ui;
 
 private slots:
-    void init();
+    bool init();
     void init_authorization();
     void init_update();
     void init_topbar();
     void init_view(const QStringList *data, const QStringList *filter);
     void init_setup();
-    void error(QString error);
+    void init_error(QString errorMsg);
     QHash<QString, QVariant> get_rc();
 };
 

@@ -27,9 +27,16 @@ Update::Update(const QString* const PIG_PATH, QSqlDatabase *db_, QWidget *parent
 
         if (!query.exec()) {
             _db->close();
-            QTimer::singleShot(100, this, SLOT(error("DATABASE CORRUPTED")));
+
+            QTimer *t = new QTimer(this);
+
+            QObject::connect (t, &QTimer::timeout, [&] { delete this; });
+
+            t->setSingleShot(true);
+            t->start(100);
         } else {
             query.next();
+
             bin = query.value(0).toInt();
             rel = query.value(1).toInt();
             db = query.value(2).toInt();
@@ -39,12 +46,18 @@ Update::Update(const QString* const PIG_PATH, QSqlDatabase *db_, QWidget *parent
             hostSite = query.value(6).toString();
             urlSiteNews = query.value(7).toString();
             pkgs << NULL;
+
             _db->close();
 
             get();
         }
     } else {
-        QTimer::singleShot(100, this, SLOT(error("DATABASE CORRUPTED")));
+        QTimer *t = new QTimer(this);
+
+        QObject::connect (t, &QTimer::timeout, [&] { delete this; });
+
+        t->setSingleShot(true);
+        t->start(100);
     }
 }
 
@@ -60,10 +73,12 @@ void Update::get()
 
     for(int i = 0; i < pkgs.count(); i++) {
         thread[i] = new ThreadedSocket(_PIG_PATH, &host, &urls[i], &pkgs[i], i, this);
+
         connect (thread[i], SIGNAL(sendData(QString)), this, SLOT(check(QString)));
         connect (thread[i], SIGNAL(sendFile(int, QString)), this, SLOT(unpack(int, QString)));
-        connect (thread[i], SIGNAL(socketError(QString)), this, SLOT(error(QString)));
+        connect (thread[i], SIGNAL(sendError(QString)), this, SLOT(error(QString)));
         connect (thread[i], SIGNAL(finished()), thread[i], SLOT(deleteLater()));
+
         thread[i]->start();
     }
 }
@@ -125,8 +140,7 @@ void Update::unpack(int ID, QString path)
     ui->lb->setText("UNPACKING");
 
     Unpack *unpack = new Unpack(this);
-
-    QObject::connect (unpack, &Unpack::finished, [&] (int exitCode) {
+    QObject::connect (unpack, &Unpack::sendExitCode, [&] (int exitCode) {
         unpack->deleteLater();
 
         if (exitCode == 0) {
@@ -178,7 +192,7 @@ void Update::install()
 #ifdef __linux__
     Su *su = new Su(this);
 
-    QObject::connect (su, &Su::finished, [=] (int exitCode) {
+    QObject::connect (su, &Su::sendExitCode, [=] (int exitCode) {
         status(exitCode);
         su->deleteLater();
     });
@@ -276,7 +290,7 @@ void Update::status(const int &exitCode)
 #endif
 }
 
-void Update::error(QString error)
+void Update::error(const QString &errorMsg)
 {
     origin = *_PIG_PATH+"/db.sqlite";
     target = *_PIG_PATH+"/tmp/update/db.sqlite.trash";
@@ -290,18 +304,15 @@ void Update::error(QString error)
             file.rename(backup, origin);
         }
     }
-
     
     if (ui != 0) {
-        ui->lb->setText(error);
+        ui->lb->setText(errorMsg);
         ui->b_1->setIcon(QIcon(":/icon-cancel"));
         ui->b_1->setToolTip("CLOSE");
         ui->b_1->show();
 
         QObject::connect (ui->b_1, &QPushButton::pressed, [&] { delete this; });
     } else { 
-        if (error == "DATABASE CORRUPTED")
-            emit dbError(error);
         delete this;
     }
 }
@@ -322,5 +333,5 @@ void Update::init_ui()
     });
     QObject::connect (ui->b_2, &QPushButton::pressed, [&] { delete this; });
 
-    emit showWidget(this);
+    emit sendWidget(this);
 }

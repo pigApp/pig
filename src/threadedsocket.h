@@ -17,7 +17,7 @@ public:
 signals:
     void sendData(QString data);
     void sendFile(int ID, QString path);
-    void socketError(QString error);
+    void sendError(QString errorMsg);
 
 public slots:
     void run();
@@ -37,7 +37,7 @@ private slots:
     void readyRead();
     void processData();
     void disconnected();
-    void error(QAbstractSocket::SocketError error);
+    void error(QAbstractSocket::SocketError errorMsg);
 };
 
 #endif

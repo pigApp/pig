@@ -13,7 +13,7 @@ public:
     ~Su();
 
 signals:
-    void finished(int exitCode);
+    void sendExitCode(int exitCode);
 
 public slots:
     void install(const QString arg);

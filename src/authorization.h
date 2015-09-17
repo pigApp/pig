@@ -20,7 +20,7 @@ public:
     ~Authorization();
 
 signals:
-    void showWidget(QWidget *w);
+    void sendWidget(QWidget *w);
 
 public slots:
     void check();

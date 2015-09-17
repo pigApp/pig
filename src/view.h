@@ -21,8 +21,7 @@ public:
     ~View();
 
 signals:
-    void setWidget(QWidget *w = NULL, bool add = false);
-    void setTopbarState(const bool &hide);
+    void sendTopbarState(const bool &hide);
 
 public slots:
     void get_covers(const QStringList *data = NULL, const int &ID = -1);

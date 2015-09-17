@@ -60,7 +60,7 @@ QStringList *Finder::query(const QString &name, const QString &pornstar, const Q
 
         if (!query.exec()) {
             (_db)->close();
-            //db_error();
+            emit sendError("DATABASE CORRUPTED");
         } else {
             for (int i = 0; query.next(); i++) {
                 if (getMovies) { 
@@ -92,6 +92,7 @@ QStringList *Finder::query(const QString &name, const QString &pornstar, const Q
                         pornstars.append(query.value(0).toString().split(","));
                 }
             }
+
             (_db)->close();
 
             if (getMovies) {
@@ -106,10 +107,12 @@ QStringList *Finder::query(const QString &name, const QString &pornstar, const Q
             }
         }
     } else {
-        //db_error();
+        emit sendError("DATABASE CORRUPTED");
     }
 
-    return 0;
+    data.clear();
+
+    return &data;
 }
 
 void Finder::filters()

@@ -37,20 +37,20 @@ void Unpack::unzip(const QString* const PIG_PATH, const QString *path, const QSt
                     zip.close();
                     target.close();
 
-                    emit finished(-1);
+                    emit sendExitCode(-1);
                 }
                 zipFile.close();
                 target.close();
             }
             zip.close();
         } else {
-            emit finished(-1);
+            emit sendExitCode(-1);
         }
     } else {
         if (origin.isOpen())
             origin.close();
 
-        emit finished(-1);
+        emit sendExitCode(-1);
     }
-    emit finished(0);
+    emit sendExitCode(0);
 }

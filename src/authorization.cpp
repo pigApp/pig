@@ -139,5 +139,5 @@ void Authorization::init_ui()
     connect (ui->b_reset, SIGNAL(clicked()), this, SLOT(reset()));
 
     if (!_set)
-        emit showWidget(this);
+        emit sendWidget(this);
 }
