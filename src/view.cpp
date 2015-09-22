@@ -68,6 +68,7 @@ void View::get_covers(const QStringList *data, const int &ID)
                                                    &(*m_data)[(offsetData + 10)],
                                                    i, this);
                     connect (thread[i], SIGNAL(sendFile(int, QString)), this, SLOT(add_cover(int, QString)));
+                    QObject::connect (thread[i], &ThreadedSocket::sendError, [=] { --requiredCovers; });//
                     connect (thread[i], SIGNAL(finished()), thread[i], SLOT(deleteLater()));
                     QObject::connect (thread[i], &ThreadedSocket::destroyed, [=] { thread[i] = NULL; });
 

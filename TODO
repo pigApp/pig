@@ -1,23 +1,22 @@
 - FIX: Tamaño boton minimize y close.
-- Terminar info.
 - tab order.
 - Pasar valores a porcentajes.
 - Completer.
 
-- FIX: SI HAY SOCKET ERROR:
-  THREADEDSOCKET: VER POR QUE SIEMPRE DA ERROR "The remote host closed the connection".
-  UPDATE: SI HAY SOCKETS ABIERTOS LOS DEBE CERRAR.
-  VIEW: SI EL COVER NO FUE DESCARGADO RESTAR 1 A requiredCovers.
+- FIX: SOCKET: Pedido http sin headers. 
+         VIEW: Si el cover no fue descargado por error en el socket restar 1 a 'requiredCovers'.
 
-- PIG error.
+- Agregar icono de 'descargando' en topBar.
+- Revisar paginas de covers.
+- Terminar info.
+
 - Player en info.
-- Random entre 3 hosts para los covers y previews. 
 - Filtrado de filas en Torrent.
 - Array cache para las filas .torrent.
 - Icono main.cpp.
 - Agregar librerias e include de vlc a /usr/lib/pig y /usr/include/pig.
 
-- Setting torrent.
+- Setting libtorrent.
 - Esconder el puntero del mouse en el reproductor.
 
 - Verificar los enleces simbolicos al actualizar librerias.

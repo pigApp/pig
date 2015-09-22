@@ -3,6 +3,8 @@
 #include <QTimer>
 #include <QDebug>//
 
+const int RND = (random() / (RAND_MAX + 1.0) * (((2 + 1) - 0) + 0));
+
 Finder::Finder(QSqlDatabase *db, QGridLayout *l_topbar, QWidget *parent) :
     QWidget(parent),
     _db(db),
@@ -49,7 +51,7 @@ QStringList *Finder::query(const QString &name, const QString &pornstar, const Q
             query.prepare("SELECT name FROM Movies ORDER BY name ASC LIMIT 1000");
         } else if (getData) {
             query.prepare("SELECT name, date, cas, quality, time, full, category, timestamp \
-                          , hostCovers, urlCover, urlBackCover, hostPreview, urlPreview \
+                          , hostsCovers, urlsCover, urlsBackCover, hostsPreview, urlsPreview \
                           , hostTorrent, urlTorrent, scenes FROM Movies WHERE name LIKE \
                           '"+name+"%' AND cas LIKE '%"+pornstar+"%' AND quality LIKE \
                           '%"+quality+"%' AND full LIKE '%"+full+"%' AND category LIKE \
@@ -66,6 +68,12 @@ QStringList *Finder::query(const QString &name, const QString &pornstar, const Q
                 if (getMovies) { 
                     movies << query.value(0).toString().split(",");
                 } else if (getData) {
+                    QStringList _hostsCovers = query.value(8).toString().split(",");
+                    QStringList _urlsCover = query.value(9).toString().split(",");
+                    QStringList _urlsBackCover = query.value(10).toString().split(",");
+                    QStringList _hostsPreview = query.value(11).toString().split(",");
+                    QStringList _urlsPreview = query.value(12).toString().split(",");
+
                     data.append(query.value(0).toString());
                     data.append(query.value(1).toString());
                     data.append(query.value(2).toString());
@@ -74,13 +82,13 @@ QStringList *Finder::query(const QString &name, const QString &pornstar, const Q
                     data.append(query.value(5).toString());
                     data.append(query.value(6).toString());
                     data.append(query.value(7).toString());
-                    data.append(query.value(8).toString());
-                    data.append(query.value(9).toString());
+                    data.append(_hostsCovers[RND]);
+                    data.append(_urlsCover[RND]);
                     data.append(query.value(0).toString()+"_front.jpg");
-                    data.append(query.value(10).toString());
+                    data.append(_urlsBackCover[RND]);
                     data.append(query.value(0).toString()+"_back.jpg");
-                    data.append(query.value(11).toString());
-                    data.append(query.value(12).toString());
+                    data.append(_hostsPreview[RND]);
+                    data.append(_urlsPreview[RND]);
                     data.append(query.value(0).toString()+".mp4");
                     data.append(query.value(13).toString());
                     data.append(query.value(14).toString());

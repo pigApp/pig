@@ -826,9 +826,6 @@ public:
         lb_info_backCover = new QLabel(w_info);
         lb_info_backCover->setPixmap(px_backCover.scaled(335, 480, Qt::KeepAspectRatio));//TODO: PORCENTAJE.
 
-        l_info_scenes = new QVBoxLayout;
-        l_info_scenes->addSpacing(15);//TODO: PORCENTAJE.
-
         cb_info_scenes = new QComboBox(w_info);
         cb_info_scenes->setFont(f);
         cb_info_scenes->setStyleSheet("QComboBox { color: rgb(255, 255, 255); \
@@ -841,9 +838,11 @@ public:
 
         QString scenes = (**_data)[((ID * sizeData) + 18)];
         for (int i = 0; i < scenes.toInt(); i++) 
-            cb_info_scenes->addItem(QIcon(":/icon-watch"), " WATCH SCENE "+QString::number(i+1));
+            cb_info_scenes->addItem(QIcon(":/icon-watch"), " SCENE "+QString::number(i + 1));
+
+        l_info_scenes = new QVBoxLayout;
         l_info_scenes->addWidget(cb_info_scenes);
-        l_info_scenes->addStretch();//FIX: CON ESTE STRETCH QUEDA MUCHO MARGEN ABAJO.
+        l_info_scenes->addStretch();
 
         QPixmap px_player(":/img-back_cover");
         lb_info_player = new QLabel(w_info);
@@ -858,12 +857,11 @@ public:
         l_info_multimedia->addWidget(lb_info_cover);
         l_info_multimedia->addWidget(lb_info_backCover);
         l_info_multimedia->addLayout(l_info_scenes);
-        //l_info_multimedia->addWidget(cb_info_scenes);
         l_info_multimedia->addWidget(lb_info_player);//
 
         l_info = new QVBoxLayout(w_info);
         l_info->setContentsMargins(0, 3, 0, 0);//TODO: PORCENTAJE.
-        l_info->addLayout(l_info_metadata);
+        l_info->addLayout(l_info_metadata, 1);
         l_info->addLayout(l_info_multimedia);
 
         w_info->setLayout(l_info);

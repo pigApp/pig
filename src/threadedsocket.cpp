@@ -1,5 +1,6 @@
 #include "threadedsocket.h"
 
+#include <QFile>
 #include <QDataStream>
 #include <QDebug>//
 
@@ -87,22 +88,18 @@ void ThreadedSocket::disconnected()
 {
     socket->deleteLater();
 
-    if (socket->errorString().isEmpty() ||
-        socket->errorString() == "The remote host closed the connection") {
-        processData();
-        exit(0);
-    } else {
-        exit(0);
-    }
+    processData();
+
+    exit(0);
 }
 
-void ThreadedSocket::error(QAbstractSocket::SocketError errorMsg)
+void ThreadedSocket::error(QAbstractSocket::SocketError socketError)
 {
-    if (errorMsg != 1) {
+    qDebug() << socketError;
+
+    if ((socketError != 1) && (socketError != -1)) {
         emit sendError("NETWORK ERROR");
-        //if (NO CONECTADO) {
-        //    socket->deleteLater();
-        //    exit(0);
-        //}
+        socket->deleteLater();
+        exit(0);
     }
 }

@@ -7,6 +7,8 @@
 #include <QTextStream>
 #include <QTimer>
 
+const int RND = (random() / (RAND_MAX + 1.0) * (((2 + 1) - 0) + 0));
+
 Update::Update(const QString* const PIG_PATH, QSqlDatabase *db_, QWidget *parent) :
     QWidget(parent),
     _PIG_PATH(PIG_PATH),
@@ -22,8 +24,8 @@ Update::Update(const QString* const PIG_PATH, QSqlDatabase *db_, QWidget *parent
     if (_db->open()) {
         QSqlQuery query;
 
-        query.prepare("SELECT binary, release, database, library, hostUpdate \
-                      , urlUpdate, hostSite, urlSiteNews FROM data");
+        query.prepare("SELECT binary, release, database, library, hostsUpdate, \
+                       urlsUpdate, hostSite, urlSiteNews FROM data");
 
         if (!query.exec()) {
             _db->close();
@@ -37,12 +39,15 @@ Update::Update(const QString* const PIG_PATH, QSqlDatabase *db_, QWidget *parent
         } else {
             query.next();
 
+            QStringList _hosts = query.value(4).toString().split(",");
+            QStringList _urls = query.value(5).toString().split(",");
+
             bin = query.value(0).toInt();
             rel = query.value(1).toInt();
             db = query.value(2).toInt();
             lib = query.value(3).toInt();
-            host = query.value(4).toString();
-            urls << query.value(5).toString();
+            host = _hosts[RND];
+            urls << _urls[RND];
             hostSite = query.value(6).toString();
             urlSiteNews = query.value(7).toString();
             pkgs << NULL;
