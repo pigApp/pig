@@ -25,18 +25,18 @@ signals:
 
 private:
     QSqlDatabase *_db;
-
-    QStringList movies;
-    QStringList data;
-    QStringList filter;
-    QStringList categories; 
-    QStringList pornstars; 
     
     bool isFiltersHidden;
     bool isFilteringCovers;
     bool filtersReset;
 
     Ui::Finder *ui;
+
+    QStringList movies;
+    QStringList data;
+    QStringList filter;
+    QStringList categories;
+    QStringList pornstars;
 
 private slots:
     QStringList *query(const QString &name = NULL, const QString &pornstar = NULL,

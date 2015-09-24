@@ -35,7 +35,7 @@ private slots:
     bool set_rc(const QString &option, const QVariant &value);
     bool clean_folder(const QString &folder);
     void set_icon(QPushButton **button, const bool &setDisabled = true,
-                  const bool &failed = false);
+                  const bool &hasFailed = false);
 };
 
 #endif

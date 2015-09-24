@@ -237,9 +237,9 @@ bool Setup::clean_folder(const QString &folder)
     return false;
 }
 
-void Setup::set_icon(QPushButton **button, const bool &setDisabled, const bool &failed)
+void Setup::set_icon(QPushButton **button, const bool &setDisabled, const bool &hasFailed)
 {
-    if (failed)
+    if (hasFailed)
         (*button)->setIcon(QIcon(":/icon-cancel"));
     else
         (*button)->setIcon(QIcon(":/icon-ok"));
@@ -250,7 +250,7 @@ void Setup::set_icon(QPushButton **button, const bool &setDisabled, const bool &
     timer->setSingleShot(true);
     timer->start(1000);
 
-    if (failed) {
+    if (hasFailed) {
         QObject::connect(timer, &QTimer::timeout, [=] {
             (*button)->setIcon(QIcon(":/icon-reset"));
         });

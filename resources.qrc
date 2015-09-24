@@ -29,7 +29,6 @@
         <file alias="icon-cancel">resources/images/global/cancel.svg</file>
         <file alias="icon-more">resources/images/global/more.svg</file>
         <file alias="icon-less">resources/images/global/less.svg</file>
-        <file alias="icon-downloading">resources/images/global/downloading.svg</file>
         <file>resources/images/global/icon.ico</file>
         <file>resources/images/global/icon.jpg</file>
         <file>resources/images/global/icon.rc</file>

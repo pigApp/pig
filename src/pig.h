@@ -28,25 +28,26 @@ protected:
     bool eventFilter(QObject *obj, QEvent *e);
 
 private:
-#ifdef __linux__
-    const QString PIG_PATH = QDir::homePath()+"/.pig";
-#else
-    const QString PIG_PATH = "C:/PIG/.pig";
-#endif
-    QSqlDatabase db;
-
     TopBar *topbar;
     Setup *setup;
     View *view;
     Error *error;
 
-    QShortcut *sc_quit;
-    QShortcut *sc_back;
-
     bool keep_covers, keep_torrents, keep_movies;
     int torrent_port_1, torrent_port_2;
 
     Ui::PIG *ui;
+
+    QShortcut *sc_quit;
+    QShortcut *sc_back;
+
+    QSqlDatabase db;
+
+#ifdef __linux__
+    const QString PIG_PATH = QDir::homePath()+"/.pig";
+#else
+    const QString PIG_PATH = "C:/PIG/.pig";
+#endif
 
 private slots:
     bool init();

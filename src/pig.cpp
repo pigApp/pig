@@ -144,8 +144,8 @@ void PIG::init_view(const QStringList *data, const QStringList *filter)
         if (data != 0) {
             view = new View(&PIG_PATH, &ui->b_back, this);
 
-            QObject::connect (view, &View::sendTopbarState, [&] (bool hide) {
-                topbar->setHidden(hide);
+            QObject::connect (view, &View::sendTopbarState, [&] (bool setHidden) {
+                topbar->setHidden(setHidden);
             });
 
             ui->main_layout->addWidget(view);

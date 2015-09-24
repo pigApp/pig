@@ -10,11 +10,14 @@ View::View(const QString* const PIG_PATH, QPushButton **b_back, QWidget *parent)
     QWidget(parent),
     _PIG_PATH(PIG_PATH),
     _b_back(b_back),
+    setLbDownloadHidden(false),
     ui(new Ui::View)
 {
     ui->setupUi(this);
     
-    QObject::connect (ui->sa_covers->verticalScrollBar(), &QScrollBar::valueChanged, [&] { pages_handler(); });
+    QObject::connect (ui->sa_covers->verticalScrollBar(), &QScrollBar::valueChanged, [&] {
+        pages_handler();
+    });
 
     sc_back = new QShortcut(QKeySequence(Qt::Key_Escape), this, SLOT(delete_info()));
     sc_back->setEnabled(false);
@@ -23,6 +26,12 @@ View::View(const QString* const PIG_PATH, QPushButton **b_back, QWidget *parent)
     onLocalCovers = target.entryList(QDir::Files | QDir::NoDotAndDotDot);
     target.setPath(*_PIG_PATH+"/tmp/covers/back");
     onLocalBackCovers = target.entryList(QDir::Files | QDir::NoDotAndDotDot);
+
+    t = new QTimer(this);
+    QObject::connect (t, &QTimer::timeout, [&] {
+        ui->lb_download->setHidden(setLbDownloadHidden);
+        setLbDownloadHidden = !setLbDownloadHidden;
+    });
 }
 
 View::~View()
@@ -67,6 +76,7 @@ void View::get_covers(const QStringList *data, const int &ID)
                                                    &(*m_data)[(offsetData + 9)],
                                                    &(*m_data)[(offsetData + 10)],
                                                    i, this);
+
                     connect (thread[i], SIGNAL(sendFile(int, QString)), this, SLOT(add_cover(int, QString)));
                     QObject::connect (thread[i], &ThreadedSocket::sendError, [=] { --requiredCovers; });//
                     connect (thread[i], SIGNAL(finished()), thread[i], SLOT(deleteLater()));
@@ -79,7 +89,11 @@ void View::get_covers(const QStringList *data, const int &ID)
             }
 
             offsetData += sizeData;
+
+            if ((i == (requiredCovers - 1)) && (requiredRemoteCovers != 0))
+                set_download_state(true, false);
         }
+
     } else {
         int _ID = ((ID + 1) * sizeData);
 
@@ -94,17 +108,25 @@ void View::get_covers(const QStringList *data, const int &ID)
             thread = new ThreadedSocket(_PIG_PATH, &(*m_data)[(_ID - 11)],
                                         &(*m_data)[(_ID - 8)],
                                         &(*m_data)[(_ID - 7)], 0, this);
+
             QObject::connect (thread, &ThreadedSocket::sendFile, [=] (int ID, QString path) {
                 Q_UNUSED(ID);
+
                 if (ui->w_info != 0) {
                     QPixmap px_backCover(path);
                     ui->lb_info_backCover->setPixmap(px_backCover.scaled(335, 480, Qt::KeepAspectRatio));
                 }
+
                 onLocalBackCovers << (*m_data)[(_ID - 7)];
             });
             connect (thread, SIGNAL(finished()), thread, SLOT(deleteLater()));
+            QObject::connect (thread, &ThreadedSocket::destroyed, [&] {
+                set_download_state(false, true);
+            });
 
             thread->start();
+
+            set_download_state(false, false);
         }
     }
 }
@@ -142,6 +164,7 @@ void View::add_cover(int ID, QString path)
     if ((ui->v_b_covers.size() - offsetCovers) == requiredCovers) {
         offsetCovers += 10;
         ++n_pages;
+        set_download_state(true, true);
         if ((n_covers - offsetCovers) <= 0)
             hasMoreCovers = false;
     }
@@ -208,15 +231,6 @@ void View::pages_handler()
     }
 }
 
-bool View::hasOnLocal(const QString &cover, const QStringList *localList)
-{
-    for (int i = 0; i < localList->size(); i++)
-        if (cover == (*localList)[i])
-            return true;
-
-    return false;
-}
-
 void View::set_filter(const QStringList *filter)
 {
     for (int i = 0; i < ui->v_b_covers.size(); i++) {
@@ -251,3 +265,31 @@ void View::set_filter(const QStringList *filter)
         }
     }
 }
+
+void View::set_download_state(bool isCover, bool setHidden)
+{
+    setLbDownloadHidden = setHidden;
+
+    if (setHidden) {
+        t->stop();
+        ui->lb_download->setHidden(setHidden);
+    } else {
+        if (isCover)
+            ui->lb_download->setGeometry(944, 1, 4, 4);//TODO: PORCENTAJE.
+        else
+            ui->lb_download->setGeometry(590, 557, 4, 4);//TODO: PORCENTAJE.
+
+        t->start(500);
+    }
+}
+
+bool View::hasOnLocal(const QString &cover, const QStringList *localList)
+{
+    for (int i = 0; i < localList->size(); i++)
+        if (cover == (*localList)[i])
+            return true;
+
+    return false;
+}
+
+

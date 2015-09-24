@@ -115,7 +115,7 @@ public:
     QHBoxLayout *l_input;
     QVBoxLayout *l;
 
-    void setupUi(bool set, bool setted, QWidget *Authorization)
+    void setupUi(bool set, bool hasSet, QWidget *Authorization)
     {
         QBrush br_alternate_base(QColor(15, 15, 15, 255));
         QBrush br_white(QColor(255, 255, 255, 255));
@@ -158,17 +158,17 @@ public:
         input->setEchoMode(QLineEdit::Password);
         if (!set)
             input->setFocus();
-        input->setDisabled(set && setted);
+        input->setDisabled(set && hasSet);
         input->setAlignment(Qt::AlignCenter);
 
         b_reset = new QPushButton(Authorization);
-        if  (setted)
+        if  (hasSet)
             b_reset->setIcon(QIcon(":/icon-reset"));
         else
             b_reset->setIcon(QIcon(":/icon-reset-dark"));
         b_reset->setToolTip("RESET PASSWORD");
         b_reset->setFlat(true);
-        b_reset->setDisabled(!setted);
+        b_reset->setDisabled(!hasSet);
         b_reset->setHidden(!set);
 
         l_input = new QHBoxLayout;
@@ -343,8 +343,6 @@ public:
         l->addWidget(input, 0, 0);
 
         _l_topbar->addLayout(l, 0, 0);
-
-        input->setFocus();
     }
 
     void setupFilterUi(const QStringList *categories, const QStringList *pornstars, QWidget *Finder)
@@ -727,6 +725,7 @@ class Ui_View
 {
 public:
     QScrollArea *sa_covers;
+    QLabel *lb_download;
     QLabel *lb_info_metadata[5];
     QLabel *lb_info_cover;
     QLabel *lb_info_backCover;
@@ -754,6 +753,10 @@ public:
         sa_covers->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
         w_covers = new QWidget(sa_covers);
+
+        lb_download = new QLabel("·", View);
+        lb_download->setHidden(true);
+        lb_download->setParent(View);
 
         l_covers = new QGridLayout(w_covers);
         l_covers->setHorizontalSpacing(0);

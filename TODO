@@ -6,7 +6,7 @@
 - FIX: SOCKET: Pedido http sin headers. 
          VIEW: Si el cover no fue descargado por error en el socket restar 1 a 'requiredCovers'.
 
-- Agregar icono de 'descargando' en topBar.
+- Agregar icono de 'descargando' arriba de view (covers) y de info (back cover). FIX: No se puede matar el timer desde el thread del socket.
 - Revisar paginas de covers.
 - Terminar info.
 

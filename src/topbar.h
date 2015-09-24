@@ -25,10 +25,9 @@ public:
 
 private:
     Finder *m_finder;
+    QPushButton *m_b_setup;
 
     Ui::TopBar *ui;
-
-    QPushButton *m_b_setup;
 };
 
 #endif

@@ -29,19 +29,19 @@ private:
     const QString* const _PIG_PATH;
     bool _set;
 
-    bool setted;
+    bool hasSet;
+
+    Ui::Authorization *ui;
 
     QFile file;
     QString digest;
-
-    Ui::Authorization *ui;
 
 private slots:
     void set(const QString &str);
     void reset();
     void match(const QString &str);
     const QString calculate(const QString *plain);
-    void set_icon(const bool &isReset, const bool &failed = false);
+    void set_icon(const bool &hasReset, const bool &hasFailed = false);
     void init_ui();
 };
 

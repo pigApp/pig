@@ -26,6 +26,11 @@ private:
     const QString* const _PIG_PATH;
     QSqlDatabase *_db;
 
+    bool hasNewBin, hasNewDb, hasNewLib;
+    int nUnpacked;
+
+    Ui::Update *ui;
+
     QFile file;
     QString origin;
     QString target;
@@ -34,11 +39,6 @@ private:
     QString hostSite;
     QString urlSiteNews;
     QStringList urls, sums, pkgs;
-
-    bool hasNewBin, hasNewDb, hasNewLib;
-    int nUnpacked;
-
-    Ui::Update *ui;
 
     int bin, rel, db, lib;
 
