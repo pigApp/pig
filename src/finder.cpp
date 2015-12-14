@@ -139,26 +139,26 @@ void Finder::filters()
             if (filtersReset)
                 ui->cb_categories->setStyleSheet(ui->cb_style);
             else
-                filters_handler(&ui->cb_categories, "CATEGORY");
+                filters_handler(&ui->cb_categories, "                  CATEGORY");
         });
         QObject::connect (ui->cb_pornstars, static_cast<void (QComboBox::*)(const QString &)>
                           (&QComboBox::currentIndexChanged), [=] {
             if (filtersReset)
                 ui->cb_pornstars->setStyleSheet(ui->cb_style);
             else
-                filters_handler(&ui->cb_pornstars, "PORNSTAR");
+                filters_handler(&ui->cb_pornstars, "                  PORNSTAR");
         });
         QObject::connect (ui->cb_quality, static_cast<void (QComboBox::*)(const QString &)>
                           (&QComboBox::currentIndexChanged), [=] {
             if (filtersReset)
                 ui->cb_quality->setStyleSheet(ui->cb_style);
             else
-                filters_handler(&ui->cb_quality, "QUALITY");
+                filters_handler(&ui->cb_quality, "                  QUALITY");
         });
         QObject::connect (ui->b_fullMovie, &QPushButton::pressed, [=] {
             filters_handler(NULL, "FULLMOVIE");
         });
-        QObject::connect (ui->r_filter_on_covers, &QPushButton::pressed, [=] {
+        QObject::connect (ui->r_apply_on_results, &QPushButton::pressed, [=] {
             isFilteringCovers = !isFilteringCovers;
         });
         

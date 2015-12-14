@@ -254,7 +254,7 @@ public:
     QComboBox *cb_pornstars;
     QComboBox *cb_quality;
     QPushButton *b_fullMovie;
-    QRadioButton *r_filter_on_covers;
+    QRadioButton *r_apply_on_results;
     QHBoxLayout *l_filters;
     QGridLayout *l;
 
@@ -368,21 +368,21 @@ public:
         cb_categories = new QComboBox(Finder); //TODO: ESTETICA.
         cb_categories->setFont(f);
         cb_categories->setStyleSheet(cb_style);
-        cb_categories->addItem("CATEGORY");
+        cb_categories->addItem("                  CATEGORY");
         for (int i = 0; i < (*categories).size(); i++)
             cb_categories->addItem((*categories)[i]);
 
         cb_pornstars = new QComboBox(Finder);
         cb_pornstars->setFont(f);
         cb_pornstars->setStyleSheet(cb_style);
-        cb_pornstars->addItem("PORNSTAR");
+        cb_pornstars->addItem("                  PORNSTAR");
         for (int i = 0; i < (*pornstars).size(); i++)
             cb_pornstars->addItem((*pornstars)[i]);
 
         cb_quality = new QComboBox(Finder);
         cb_quality->setFont(f);
         cb_quality->setStyleSheet(cb_style);
-        cb_quality->addItem("QUALITY");
+        cb_quality->addItem("                  QUALITY");
         cb_quality->addItem("720p");
         cb_quality->addItem("1080p");
 
@@ -393,10 +393,10 @@ public:
         b_fullMovie->setChecked(false);
         b_fullMovie->setAutoFillBackground(true);
 
-        r_filter_on_covers = new QRadioButton("FILTER ON COVERS", Finder);
-        r_filter_on_covers->setFont(f);
-        r_filter_on_covers->setCheckable(true);
-        r_filter_on_covers->setChecked(true);
+        r_apply_on_results = new QRadioButton("APPLY ON RESULTS", Finder);
+        r_apply_on_results->setFont(f);
+        r_apply_on_results->setCheckable(true);
+        r_apply_on_results->setChecked(true);
 
         l_filters = new QHBoxLayout;
         l_filters->setSpacing(10);//TODO: PORCENTAJE.
@@ -405,7 +405,7 @@ public:
         l_filters->addWidget(cb_pornstars);
         l_filters->addWidget(cb_quality);
         l_filters->addWidget(b_fullMovie);
-        l_filters->addWidget(r_filter_on_covers, 0, Qt::AlignHCenter);
+        l_filters->addWidget(r_apply_on_results, 0, Qt::AlignHCenter);
 
         _l_topbar->addLayout(l_filters, 1, 0);
     }
@@ -425,7 +425,7 @@ public:
     QLabel *lb_contribute_torrent;
     QLabel *lb_contribute_code;
     QLabel *lb_contribute_bug;
-    QLabel *lb_contribute_donate;
+    QLabel *lb_contribute_support;
     QLabel *lb_contribute_wallet;
     QLineEdit *input_torrent_port_1;
     QLineEdit *input_torrent_port_2;
@@ -439,7 +439,7 @@ public:
     QPushButton *b_contribute_torrent;
     QPushButton *b_contribute_code;
     QPushButton *b_contribute_bug;
-    QPushButton *b_contribute_donate;
+    QPushButton *b_contribute_support;
     QPushButton *b_contribute_copy_wallet;
     QWidget *w_data;
     QWidget *w_authorization;
@@ -456,7 +456,7 @@ public:
     QHBoxLayout *l_contribute_torrent;
     QHBoxLayout *l_contribute_code;
     QHBoxLayout *l_contribute_bug;
-    QHBoxLayout *l_contribute_donate;
+    QHBoxLayout *l_contribute_support;
     QVBoxLayout *l_contribute;
     QVBoxLayout *l;
 
@@ -557,7 +557,7 @@ public:
         r_folder_covers->setAutoExclusive(false);
 
         b_folder_covers_reset = new QPushButton(QIcon(":/icon-reset"), NULL, w_folder);
-        b_folder_covers_reset->setToolTip("RESET FOLDER");
+        b_folder_covers_reset->setToolTip("CLEAN FOLDER");
         b_folder_covers_reset->setFlat(true);
 
         r_folder_torrents = new QRadioButton("KEEP TORRENTS", w_folder);
@@ -565,7 +565,7 @@ public:
         r_folder_torrents->setAutoExclusive(false);
 
         b_folder_torrents_reset = new QPushButton(QIcon(":/icon-reset"), NULL, w_folder);
-        b_folder_torrents_reset->setToolTip("RESET FOLDER");
+        b_folder_torrents_reset->setToolTip("CLEAN FOLDER");
         b_folder_torrents_reset->setFlat(true);
 
         r_folder_movies = new QRadioButton("KEEP MOVIES", w_folder);
@@ -573,7 +573,7 @@ public:
         r_folder_movies->setAutoExclusive(false);
 
         b_folder_movies_reset = new QPushButton(QIcon(":/icon-reset"), NULL, w_folder);
-        b_folder_movies_reset->setToolTip("RESET FOLDER");
+        b_folder_movies_reset->setToolTip("CLEAN FOLDER");
         b_folder_movies_reset->setFlat(true);
 
         l_folder_covers = new QHBoxLayout;
@@ -641,8 +641,8 @@ public:
 
         lb_contribute_torrent = new QLabel("TORRENT", w_contribute);
 
-        b_contribute_torrent = new QPushButton(QIcon(":/icon-upload"), NULL, w_contribute);
-        b_contribute_torrent->setToolTip("UPLOAD TORRENT");
+        b_contribute_torrent = new QPushButton(QIcon(":/icon-browser"), NULL, w_contribute);
+        b_contribute_torrent->setToolTip("CONTRIBUTE TORRENT");
         b_contribute_torrent->setFlat(true);
 
         l_contribute_torrent = new QHBoxLayout;
@@ -652,8 +652,8 @@ public:
 
         lb_contribute_code = new QLabel("CODE", w_contribute);
 
-        b_contribute_code = new QPushButton(QIcon(":/icon-upload"), NULL, w_contribute);
-        b_contribute_code->setToolTip("UPLOAD CODE");
+        b_contribute_code = new QPushButton(QIcon(":/icon-browser"), NULL, w_contribute);
+        b_contribute_code->setToolTip("CONTRIBUTE CODE");
         b_contribute_code->setFlat(true);
 
         l_contribute_code = new QHBoxLayout;
@@ -663,7 +663,7 @@ public:
 
         lb_contribute_bug = new QLabel("BUG", w_contribute);
 
-        b_contribute_bug = new QPushButton(QIcon(":/icon-upload"), NULL, w_contribute);
+        b_contribute_bug = new QPushButton(QIcon(":/icon-browser"), NULL, w_contribute);
         b_contribute_bug->setToolTip("REPORT BUG");
         b_contribute_bug->setFlat(true);;
 
@@ -672,7 +672,7 @@ public:
         l_contribute_bug->insertStretch(1);
         l_contribute_bug->addWidget(b_contribute_bug);
 
-        lb_contribute_donate = new QLabel("DONATE", w_contribute);
+        lb_contribute_support = new QLabel("SUPPORT", w_contribute);
 
         lb_contribute_wallet = new QLabel("aCef523jkD8239OEwMfn7692BH23489BsJk", w_contribute);
         lb_contribute_wallet->setFont(f_wallet);
@@ -681,28 +681,28 @@ public:
         lb_contribute_wallet->setAutoFillBackground(true);
         lb_contribute_wallet->setHidden(true);
 
-        b_contribute_donate = new QPushButton(QIcon(":/icon-more"), NULL, w_contribute);
-        b_contribute_donate->setToolTip("BITCOIN");
-        b_contribute_donate->setFlat(true);
+        b_contribute_support = new QPushButton(QIcon(":/icon-more"), NULL, w_contribute);
+        b_contribute_support->setToolTip("BITCOIN");
+        b_contribute_support->setFlat(true);
 
         b_contribute_copy_wallet= new QPushButton(QIcon(":/icon-copy"), NULL, w_contribute);
         b_contribute_copy_wallet->setToolTip("COPY WALLET");
         b_contribute_copy_wallet->setFlat(true);
         b_contribute_copy_wallet->setHidden(true);
 
-        l_contribute_donate = new QHBoxLayout;
-        l_contribute_donate->addWidget(lb_contribute_donate);
-        l_contribute_donate->addSpacing(5);//TODO: PORCENTAJE.
-        l_contribute_donate->addWidget(lb_contribute_wallet);
-        l_contribute_donate->addWidget(b_contribute_copy_wallet);
-        l_contribute_donate->insertStretch(5);//TODO: PORCENTAJE.
-        l_contribute_donate->addWidget(b_contribute_donate);
+        l_contribute_support = new QHBoxLayout;
+        l_contribute_support->addWidget(lb_contribute_support);
+        l_contribute_support->addSpacing(5);//TODO: PORCENTAJE.
+        l_contribute_support->addWidget(lb_contribute_wallet);
+        l_contribute_support->addWidget(b_contribute_copy_wallet);
+        l_contribute_support->insertStretch(5);//TODO: PORCENTAJE.
+        l_contribute_support->addWidget(b_contribute_support);
 
         l_contribute = new QVBoxLayout(w_contribute);
         l_contribute->addLayout(l_contribute_torrent);
         l_contribute->addLayout(l_contribute_code);
         l_contribute->addLayout(l_contribute_bug);
-        l_contribute->addLayout(l_contribute_donate);
+        l_contribute->addLayout(l_contribute_support);
 
         w_contribute->setLayout(l_contribute);
 
@@ -754,7 +754,9 @@ public:
 
         w_covers = new QWidget(sa_covers);
 
-        lb_download = new QLabel("·", View);
+        QPixmap px_download(":/icon-download");
+        lb_download = new QLabel(View);
+        lb_download->setPixmap(px_download);
         lb_download->setHidden(true);
         lb_download->setParent(View);
 
@@ -837,7 +839,7 @@ public:
                                       "QComboBox QAbstractItemView { color: rgb(255, 255, 255); \
                                        background-color: rgb(15, 15, 15); \
                                        border-radius: 0px; }");
-        cb_info_scenes->addItem(QIcon(":/icon-watch"), " WATCH");
+        cb_info_scenes->addItem("                    WATCH");
 
         QString scenes = (**_data)[((ID * sizeData) + 18)];
         for (int i = 0; i < scenes.toInt(); i++) 

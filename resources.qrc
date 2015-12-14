@@ -7,7 +7,7 @@
         <file alias="icon-setup">resources/images/setup/setup.svg</file>
         <file alias="icon-reset">resources/images/setup/reset.svg</file>
         <file alias="icon-reset-dark">resources/images/setup/reset-dark.svg</file>
-        <file alias="icon-upload">resources/images/setup/upload.svg</file>
+        <file alias="icon-browser">resources/images/setup/browser.svg</file>
         <file alias="icon-copy">resources/images/setup/copy.svg</file>
         <file alias="img-back_cover">resources/images/viewer/back_cover.jpg</file>
         <file alias="icon-watch">resources/images/viewer/watch.svg</file>
@@ -27,6 +27,7 @@
         <file alias="icon-quit-dark">resources/images/global/quit-dark.svg</file>
         <file alias="icon-ok">resources/images/global/ok.svg</file>
         <file alias="icon-cancel">resources/images/global/cancel.svg</file>
+        <file alias="icon-download">resources/images/global/download.jpg</file>
         <file alias="icon-more">resources/images/global/more.svg</file>
         <file alias="icon-less">resources/images/global/less.svg</file>
         <file>resources/images/global/icon.ico</file>

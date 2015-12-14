@@ -234,21 +234,21 @@ void View::pages_handler()
 void View::set_filter(const QStringList *filter)
 {
     for (int i = 0; i < ui->v_b_covers.size(); i++) {
-        if ((*filter)[0] == "CATEGORY") {
+        if ((*filter)[0] == "                  CATEGORY") {
             if (!((*m_data)[((i * sizeData) + 6)]).contains((*filter)[1]) &&
                 ((*filter)[1] != 0)) {
                 ui->v_b_covers.at(i)->setDisabled(true);
             } else {
                 ui->v_b_covers.at(i)->setEnabled(true);
             }
-        } else if ((*filter)[0] == "PORNSTAR") {
+        } else if ((*filter)[0] == "                  PORNSTAR") {
             if (!((*m_data)[((i * sizeData) + 2)]).contains((*filter)[1]) &&
                 ((*filter)[1] != 0)) {
                 ui->v_b_covers.at(i)->setDisabled(true);
             } else {
                 ui->v_b_covers.at(i)->setEnabled(true);
             }
-        } else if ((*filter)[0] == "QUALITY") {
+        } else if ((*filter)[0] == "                  QUALITY") {
             if (!((*filter)[1] == (*m_data)[((i * sizeData) + 3)]) &&
                 ((*filter)[1] != 0)) {
                 ui->v_b_covers.at(i)->setDisabled(true);
@@ -275,9 +275,9 @@ void View::set_download_state(bool isCover, bool setHidden)
         ui->lb_download->setHidden(setHidden);
     } else {
         if (isCover)
-            ui->lb_download->setGeometry(944, 1, 4, 4);//TODO: PORCENTAJE.
+            ui->lb_download->setGeometry(20, 20, 24, 24);//TODO: PORCENTAJE.
         else
-            ui->lb_download->setGeometry(590, 557, 4, 4);//TODO: PORCENTAJE.
+            ui->lb_download->setGeometry(20, 20, 24, 24);//TODO: PORCENTAJE.
 
         t->start(500);
     }

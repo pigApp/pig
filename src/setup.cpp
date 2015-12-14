@@ -175,14 +175,14 @@ Setup::Setup(const QString* const PIG_PATH, bool *keep_covers, bool *keep_torren
         QObject::connect (ui->b_contribute_bug, &QPushButton::pressed, [=] {
             QDesktopServices::openUrl(QUrl("http://"+data[3]+data[6]));
         });
-        QObject::connect (ui->b_contribute_donate, &QPushButton::pressed, [&] {
-            if (ui->lb_contribute_donate->text() == "DONATE") {
-                ui->lb_contribute_donate->setText("BITCOIN");
-                ui->b_contribute_donate->setIcon(QIcon(":/icon-less"));
+        QObject::connect (ui->b_contribute_support, &QPushButton::pressed, [&] {
+            if (ui->lb_contribute_support->text() == "SUPPORT") {
+                ui->lb_contribute_support->setText("BITCOIN");
+                ui->b_contribute_support->setIcon(QIcon(":/icon-less"));
                 ui->lb_contribute_wallet->setPalette(ui->p_wallet);
             } else {
-                ui->lb_contribute_donate->setText("DONATE");
-                ui->b_contribute_donate->setIcon(QIcon(":/icon-more"));
+                ui->lb_contribute_support->setText("SUPPORT");
+                ui->b_contribute_support->setIcon(QIcon(":/icon-more"));
             }
             ui->lb_contribute_wallet->setHidden(!ui->lb_contribute_wallet->isHidden());
             ui->b_contribute_copy_wallet->setHidden(!ui->b_contribute_copy_wallet->isHidden());
