@@ -119,6 +119,7 @@ Setup::Setup(const QString* const PIG_PATH, bool *keep_covers, bool *keep_torren
                 ui->input_torrent_port_1->setText(QString::number(*torrent_port_1));
                 set_icon(&ui->b_torrent_ports_reset, false, true);
             }
+
             ui->input_torrent_port_1->setPalette(ui->p_torrent);
         });
 
@@ -148,6 +149,7 @@ Setup::Setup(const QString* const PIG_PATH, bool *keep_covers, bool *keep_torren
 
                 set_icon(&ui->b_torrent_ports_reset, false, true);
             }
+
             ui->input_torrent_port_2->setPalette(ui->p_torrent);
         });
 
@@ -156,10 +158,12 @@ Setup::Setup(const QString* const PIG_PATH, bool *keep_covers, bool *keep_torren
                 && set_rc("TORRENT_PORT_2", 6999)) {
                 *torrent_port_1 = 6900;
                 *torrent_port_2 = 6999;
+
                 ui->input_torrent_port_1->setText("6900");
                 ui->input_torrent_port_2->setText("6999");
                 ui->input_torrent_port_1->setPalette(ui->p_torrent);
                 ui->input_torrent_port_2->setPalette(ui->p_torrent);
+
                 set_icon(&ui->b_torrent_ports_reset);
             } else {
                 set_icon(&ui->b_torrent_ports_reset, false, true);
@@ -184,6 +188,7 @@ Setup::Setup(const QString* const PIG_PATH, bool *keep_covers, bool *keep_torren
                 ui->lb_contribute_support->setText("SUPPORT");
                 ui->b_contribute_support->setIcon(QIcon(":/icon-more"));
             }
+
             ui->lb_contribute_wallet->setHidden(!ui->lb_contribute_wallet->isHidden());
             ui->b_contribute_copy_wallet->setHidden(!ui->b_contribute_copy_wallet->isHidden());
         });
@@ -206,12 +211,14 @@ bool Setup::set_rc(const QString &option, const QVariant &value)
     if (file.open(QIODevice::ReadWrite | QIODevice::Text)) {
         QTextStream stream(&file);
         QString out;
+
         while (!stream.atEnd()) {
             QString line = stream.readLine().simplified();
             if (line.section("=", 0, 0) == option)
                 line.replace(line, option+"="+value.toString());
             out.append(line+"\n");
         }
+
         file.resize(0);
         stream << out;
         file.close();
@@ -227,10 +234,10 @@ bool Setup::clean_folder(const QString &folder)
     QDir dir(*_PIG_PATH+"/tmp/"+folder);
     dir.setNameFilters(QStringList() << "*.*");
     dir.setFilter(QDir::NoDotAndDotDot | QDir::Files);
-
     if (dir.exists()) {
         foreach (QString file, dir.entryList())
             dir.remove(file);
+
         return true;
     }
 

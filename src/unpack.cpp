@@ -18,7 +18,6 @@ Unpack::~Unpack()
 void Unpack::unzip(const QString* const PIG_PATH, const QString *path, const QString *sum)
 {
     QFile origin(*path);
-
     if ((origin.open(QIODevice::ReadOnly)) &&
         (*sum == (QCryptographicHash::hash(origin.readAll(), QCryptographicHash::Md5).toHex()))) {
         origin.close();
@@ -26,6 +25,7 @@ void Unpack::unzip(const QString* const PIG_PATH, const QString *path, const QSt
         QuaZip zip(*path);
         if (zip.open(QuaZip::mdUnzip)) {
             QuaZipFile zipFile(&zip);
+
             for (bool f = zip.goToFirstFile(); f; f = zip.goToNextFile()) {
                 zipFile.open(QIODevice::ReadOnly);
 
@@ -36,12 +36,13 @@ void Unpack::unzip(const QString* const PIG_PATH, const QString *path, const QSt
                     zipFile.close();
                     zip.close();
                     target.close();
-
                     emit sendExitCode(-1);
                 }
+
                 zipFile.close();
                 target.close();
             }
+
             zip.close();
         } else {
             emit sendExitCode(-1);

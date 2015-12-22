@@ -9,6 +9,8 @@ PIG::PIG(QWidget *parent) :
     topbar(NULL),
     setup(NULL),
     view(NULL),
+    //torrent(NULL),
+    player(NULL),
     error(NULL),
     keep_covers(true),
     keep_torrents(true),
@@ -147,6 +149,8 @@ void PIG::init_view(const QStringList *data, const QStringList *filter)
             QObject::connect (view, &View::sendTopbarState, [&] (bool setHidden) {
                 topbar->setHidden(setHidden);
             });
+            connect (view, SIGNAL(sendTorrentData(const int&, const QStringList**, const int&, int)),
+                     this, SLOT(init_movie(const int&, const QStringList**, const int&, int)));
 
             ui->main_layout->addWidget(view);
         }
@@ -161,6 +165,19 @@ void PIG::init_view(const QStringList *data, const QStringList *filter)
     }
 }
 
+void PIG::init_movie(const int &ID, const QStringList **data, const int &sizeData, int scene)
+{
+    test_path = "http://abv.cdn.vizplay.org/v/4fca0c95d17ef9371222670af35f55b1.mp4?st=wn5jhAxMLwkJu4LuGD0Q5w&hash=Apw4fFvjT400DOejXIrqQA";//"/home/lxfb/.pig/tmp/torrents/movies/test.mp4";//
+
+    player = new Player(&test_path, this);
+
+    view->hide();
+    ui->main_layout->addWidget(player);
+
+    torrent = new Torrent(&PIG_PATH, &((**data)[(ID * sizeData) + 16]), &(**data)[(ID * sizeData) + 17],
+                          &(**data)[(ID * sizeData + 18)], scene, &player);
+}
+
 void PIG::init_setup()
 {
     if (setup == 0) {
@@ -172,6 +189,7 @@ void PIG::init_setup()
             connect (setup, SIGNAL(folderCoversReset()), view, SLOT(reset_local_covers()));
             view->hide();
         }
+
         ui->main_layout->addWidget(setup);
 
         topbar->setHidden(true);
@@ -185,6 +203,7 @@ void PIG::init_setup()
 
         if (view != 0)
             view->show();
+
         topbar->setHidden(false);
 
         ui->b_back->disconnect();

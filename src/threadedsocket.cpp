@@ -58,6 +58,7 @@ void ThreadedSocket::processData()
     while (!in.atEnd()) {
         line = in.device()->readLine();
         bytes += line.size();
+
         if (line.toHex() == "0d0a") {
             data.remove(0, bytes);
             break;
@@ -68,14 +69,17 @@ void ThreadedSocket::processData()
         emit sendData(QString(data.constData()));
     } else {
         QFile file;
-        if (_pkg->endsWith("_front.jpg"))
+        if (_pkg->endsWith(".zip"))
+            file.setFileName(*_PIG_PATH+"/tmp/update/"+*_pkg);
+        else if (_pkg->endsWith("_front.jpg"))
             file.setFileName(*_PIG_PATH+"/tmp/covers/"+*_pkg);
         else if (_pkg->endsWith("_back.jpg"))
             file.setFileName(*_PIG_PATH+"/tmp/covers/back/"+*_pkg);
-        else if (_pkg->endsWith(".zip"))
-            file.setFileName(*_PIG_PATH+"/tmp/update/"+*_pkg);
+        else if (_pkg->endsWith(".torrent"))
+            file.setFileName(*_PIG_PATH+"/tmp/torrents/"+*_pkg);
         else
             file.setFileName(*_PIG_PATH+"/tmp/"+*_pkg);
+
         file.open(QIODevice::WriteOnly);
         file.write(data);
         file.close();

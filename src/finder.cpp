@@ -3,13 +3,13 @@
 #include <QTimer>
 #include <QDebug>//
 
-const int RND = (random() / (RAND_MAX + 1.0) * (((2 + 1) - 0) + 0));
+const int RDM = (random() / (RAND_MAX + 1.0) * (((2 + 1) - 0) + 0));
 
 Finder::Finder(QSqlDatabase *db, QGridLayout *l_topbar, QWidget *parent) :
     QWidget(parent),
     _db(db),
     isFiltersHidden(true),
-    isFilteringCovers(true),
+    isFilteringResult(true),
     filtersReset(false),
     ui(new Ui::Finder)
 {
@@ -17,6 +17,7 @@ Finder::Finder(QSqlDatabase *db, QGridLayout *l_topbar, QWidget *parent) :
 
     QObject::connect (ui->input, &QLineEdit::returnPressed, [&] {
         data.clear();
+
         emit sendData(query((ui->input->selectAll(), ui->input->selectedText()),
                             NULL, NULL, NULL, NULL, false, true));
         ui->input->deselect();
@@ -27,10 +28,12 @@ Finder::Finder(QSqlDatabase *db, QGridLayout *l_topbar, QWidget *parent) :
     connect (ui->b_filters, SIGNAL(pressed()), this, SLOT(filters()));
 
     QTimer *t = new QTimer(this);
+
     QObject::connect (t, &QTimer::timeout, [&] {
         emit sendData(query(NULL, NULL, NULL, NULL, NULL, false, true, false,
                             "date(timestamp) DESC LIMIT 1000"));
     });
+
     t->setSingleShot(true);
     t->start(100);
 }
@@ -62,6 +65,7 @@ QStringList *Finder::query(const QString &name, const QString &pornstar, const Q
 
         if (!query.exec()) {
             (_db)->close();
+
             emit sendError("DATABASE CORRUPTED");
         } else {
             for (int i = 0; query.next(); i++) {
@@ -82,16 +86,17 @@ QStringList *Finder::query(const QString &name, const QString &pornstar, const Q
                     data.append(query.value(5).toString());
                     data.append(query.value(6).toString());
                     data.append(query.value(7).toString());
-                    data.append(_hostsCovers[RND]);
-                    data.append(_urlsCover[RND]);
+                    data.append(_hostsCovers[RDM]);
+                    data.append(_urlsCover[RDM]);
                     data.append(query.value(0).toString()+"_front.jpg");
-                    data.append(_urlsBackCover[RND]);
+                    data.append(_urlsBackCover[RDM]);
                     data.append(query.value(0).toString()+"_back.jpg");
-                    data.append(_hostsPreview[RND]);
-                    data.append(_urlsPreview[RND]);
+                    data.append(_hostsPreview[RDM]);
+                    data.append(_urlsPreview[RDM]);
                     data.append(query.value(0).toString()+".mp4");
                     data.append(query.value(13).toString());
                     data.append(query.value(14).toString());
+                    data.append(query.value(0).toString()+".torrent");
                     data.append(query.value(15).toString());
                 } else if (getFilter) {
                     if (name == "categories")
@@ -159,7 +164,7 @@ void Finder::filters()
             filters_handler(NULL, "FULLMOVIE");
         });
         QObject::connect (ui->r_apply_on_results, &QPushButton::pressed, [=] {
-            isFilteringCovers = !isFilteringCovers;
+            isFilteringResult = !isFilteringResult;
         });
         
         isFiltersHidden = false;
@@ -176,7 +181,6 @@ void Finder::filters()
 void Finder::filters_handler(QComboBox **cb, const QString &item)
 {
     filtersReset = true;
-
     filter.clear();
 
     if (item == 0) {
@@ -191,7 +195,7 @@ void Finder::filters_handler(QComboBox **cb, const QString &item)
         ui->cb_quality->setCurrentIndex(0);
 
         if (ui->b_fullMovie->isChecked()) {
-            if (isFilteringCovers) {
+            if (isFilteringResult) {
                 filter << item << NULL;
                 emit sendData(NULL, &filter);
             } else {
@@ -202,7 +206,7 @@ void Finder::filters_handler(QComboBox **cb, const QString &item)
 
             ui->b_fullMovie->setPalette(ui->p_fullMovie);
         } else {
-            if (isFilteringCovers) {
+            if (isFilteringResult) {
                 filter << item << "YES";
                 emit sendData(NULL, &filter);
             } else {
@@ -229,7 +233,7 @@ void Finder::filters_handler(QComboBox **cb, const QString &item)
         ui->b_fullMovie->setPalette(ui->p_fullMovie);
 
         if ((*cb)->currentText() == item) {
-            if (isFilteringCovers) {
+            if (isFilteringResult) {
                 filter << item << NULL;
                 emit sendData(NULL, &filter);
             } else {
@@ -239,11 +243,12 @@ void Finder::filters_handler(QComboBox **cb, const QString &item)
 
             (*cb)->setStyleSheet(ui->cb_style);
         } else {
-            if (isFilteringCovers) {
+            if (isFilteringResult) {
                 filter << item << (*cb)->currentText();
                 emit sendData(NULL, &filter);
             } else {
                 data.clear();
+
                 if ((*cb) == ui->cb_categories)
                     emit sendData(query(NULL, NULL, NULL, NULL, ui->cb_categories->currentText(),
                                         false, true));

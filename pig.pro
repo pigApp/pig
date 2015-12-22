@@ -19,6 +19,7 @@ SOURCES += src/main.cpp \
            src/setup.cpp \
            src/view.cpp \
            src/player.cpp \
+           src/torrent.cpp \
            src/unpack.cpp \
            src/su.cpp \
            src/threadedsocket.cpp \
@@ -32,6 +33,7 @@ HEADERS += src/pig.h \
            src/setup.h \
            src/view.h \
            src/player.h \
+           src/torrent.h \
            src/unpack.h \
            src/su.h \
            src/threadedsocket.h \

@@ -7,7 +7,7 @@
 #include <QTextStream>
 #include <QTimer>
 
-const int RND = (random() / (RAND_MAX + 1.0) * (((2 + 1) - 0) + 0));
+const int RDM = (random() / (RAND_MAX + 1.0) * (((2 + 1) - 0) + 0));
 
 Update::Update(const QString* const PIG_PATH, QSqlDatabase *db_, QWidget *parent) :
     QWidget(parent),
@@ -46,8 +46,8 @@ Update::Update(const QString* const PIG_PATH, QSqlDatabase *db_, QWidget *parent
             rel = query.value(1).toInt();
             db = query.value(2).toInt();
             lib = query.value(3).toInt();
-            host = _hosts[RND];
-            urls << _urls[RND];
+            host = _hosts[RDM];
+            urls << _urls[RDM];
             hostSite = query.value(6).toString();
             urlSiteNews = query.value(7).toString();
             pkgs << NULL;
@@ -118,6 +118,7 @@ void Update::check(QString data)
         pkgs << "update_bin.zip";
         hasNewBin = true;
     }
+
     if (last[2].toInt() > db) {
         db = last[2].toInt();
         urls << last[6];
@@ -125,6 +126,7 @@ void Update::check(QString data)
         pkgs << "update_db.zip";
         hasNewDb = true;
     }
+
     if (last[3].toInt() > lib) {
         lib = last[3].toInt();
         urls << last[7];
@@ -249,6 +251,7 @@ void Update::status(const int &exitCode)
                     query.prepare("UPDATE data SET library='"+QString::number(lib)+"'");
                     query.exec();
                 }
+
                 _db->close();
             }
         }
@@ -285,9 +288,11 @@ void Update::status(const int &exitCode)
                     query.prepare("UPDATE data SET library='"+QString::number(lib)+"'");
                     query.exec();
                 }
+
                 _db->close();
             }
         }
+
         exit(0);
     } else {
         error("UPDATE FAILED");

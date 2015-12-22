@@ -27,7 +27,7 @@ private:
     QSqlDatabase *_db;
     
     bool isFiltersHidden;
-    bool isFilteringCovers;
+    bool isFilteringResult;
     bool filtersReset;
 
     Ui::Finder *ui;

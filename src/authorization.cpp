@@ -26,6 +26,7 @@ void Authorization::check()
         while (!file.atEnd())
             digest = QString(file.readLine()).toUtf8().simplified();
         file.close();
+
         hasSet = true;
         init_ui();
     } else if (_set) {
@@ -42,16 +43,19 @@ void Authorization::set(const QString &str)
             QTextStream stream(&file);
             stream << calculate(&str).simplified();
             file.close();
+
             ui->input->clear();
             ui->input->setDisabled(true);
             hasSet = true;
-            set_icon(false);            
+
+            set_icon(false);
         } else {
             ui->input->clear();
             ui->input->setEchoMode(QLineEdit::Normal);
             ui->input->setText("ERROR: CHECK PERMISSIONS ON "+*_PIG_PATH);
             ui->input->setPalette(ui->p_error);
             ui->input->setDisabled(true);
+
             set_icon(false, true);
         }
     }
@@ -64,6 +68,7 @@ void Authorization::reset()
         ui->input->setEchoMode(QLineEdit::Password);
         ui->input->setEnabled(true);
         hasSet = false;
+
         set_icon(true);
     } else {
         ui->input->clear();
@@ -71,6 +76,7 @@ void Authorization::reset()
         ui->input->setText("ERROR: CHECK PERMISSIONS ON "+*_PIG_PATH);
         ui->input->setPalette(ui->p_error);
         ui->input->setDisabled(true);
+
         set_icon(true, true);
     }
 }

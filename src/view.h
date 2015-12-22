@@ -23,6 +23,8 @@ public:
 
 signals:
     void sendTopbarState(const bool &setHidden);
+    void sendTorrentData(const int &ID, const QStringList **data,
+                         const int &sizeData, int scene);
 
 public slots:
     void get_covers(const QStringList *data = NULL, const int &ID = -1);

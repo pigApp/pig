@@ -729,7 +729,7 @@ public:
     QLabel *lb_info_metadata[5];
     QLabel *lb_info_cover;
     QLabel *lb_info_backCover;
-    QLabel *lb_info_player;//
+    //QLabel *lb_info_player;//
     QComboBox *cb_info_scenes;
     //Player *player_info;
     QWidget *w_covers;
@@ -841,7 +841,7 @@ public:
                                        border-radius: 0px; }");
         cb_info_scenes->addItem("                    WATCH");
 
-        QString scenes = (**_data)[((ID * sizeData) + 18)];
+        QString scenes = (**_data)[((ID * sizeData) + 19)];
         for (int i = 0; i < scenes.toInt(); i++) 
             cb_info_scenes->addItem(QIcon(":/icon-watch"), " SCENE "+QString::number(i + 1));
 
@@ -849,20 +849,21 @@ public:
         l_info_scenes->addWidget(cb_info_scenes);
         l_info_scenes->addStretch();
 
-        QPixmap px_player(":/img-back_cover");
-        lb_info_player = new QLabel(w_info);
-        lb_info_player->setPixmap(px_player.scaled(700, 480));
+        //QPixmap px_player(":/img-back_cover");
+        //lb_info_player = new QLabel(w_info);
+        //lb_info_player->setPixmap(px_player.scaled(700, 480));
 
         //QString preview = "http://" + ((**_data)[((ID * sizeData) + 13)]) + ((**_data)[((ID * sizeData) + 14)]);
         //player_info = new Player(&preview, w_info);
-        //player_info->setFixedSize(QSize(700, 540));//TODO: PORCENTAJE.
+        //player_info->setFixedSize(QSize(700, 480));//TODO: PORCENTAJE.
 
         l_info_multimedia = new QHBoxLayout;
         l_info_multimedia->setSpacing(10);//TODO: PORCENTAJE.
         l_info_multimedia->addWidget(lb_info_cover);
         l_info_multimedia->addWidget(lb_info_backCover);
         l_info_multimedia->addLayout(l_info_scenes);
-        l_info_multimedia->addWidget(lb_info_player);//
+        //l_info_multimedia->addWidget(player_info);
+        //l_info_multimedia->addWidget(lb_info_player);//
 
         l_info = new QVBoxLayout(w_info);
         l_info->setContentsMargins(0, 3, 0, 0);//TODO: PORCENTAJE.
@@ -875,6 +876,50 @@ public:
         sa_covers->hide();
 
         l->addWidget(w_info);
+    }
+};
+
+class Ui_Player
+{
+public:
+    QLabel *lb_kb_writen;
+    QVBoxLayout *l;
+
+    void setupUi(QWidget *Player)
+    {
+        QFont f(":/font-global");
+        f.setPointSize(12);//TODO: PORCENTAJE.
+        f.setBold(true);
+
+        QBrush br_alternate_base(QColor(15, 15, 15, 255));
+        QBrush br_white(QColor(255, 255, 255, 255));
+        QBrush br_black(QColor(0, 0, 0, 255));
+
+        QPalette p;
+        p.setBrush(QPalette::Active, QPalette::Base, br_alternate_base);
+        p.setBrush(QPalette::Active, QPalette::Window, br_alternate_base);
+        p.setBrush(QPalette::Active, QPalette::WindowText, br_white);
+        p.setBrush(QPalette::Active, QPalette::Text, br_white);
+        p.setBrush(QPalette::Active, QPalette::Highlight, br_black);
+        p.setBrush(QPalette::Active, QPalette::Button, br_alternate_base);
+        p.setBrush(QPalette::Active, QPalette::ButtonText, br_white);
+        p.setBrush(QPalette::Disabled, QPalette::Base, br_alternate_base);
+        p.setBrush(QPalette::Disabled, QPalette::Window, br_alternate_base);
+        p.setBrush(QPalette::Disabled, QPalette::WindowText, br_black);
+        p.setBrush(QPalette::Disabled, QPalette::Text, br_black);
+        p.setBrush(QPalette::Disabled, QPalette::Highlight, br_alternate_base);
+        p.setBrush(QPalette::Disabled, QPalette::Button, br_alternate_base);
+        p.setBrush(QPalette::Disabled, QPalette::ButtonText, br_black);
+
+        lb_kb_writen = new QLabel(Player);
+        lb_kb_writen->setFont(f);
+        lb_kb_writen->setPalette(p);
+        lb_kb_writen->setAutoFillBackground(true);
+
+        l = new QVBoxLayout(Player);
+        l->addWidget(lb_kb_writen);
+
+        Player->setLayout(l);
     }
 };
 
@@ -911,6 +956,7 @@ namespace Ui {
     class Finder: public Ui_Finder {};
     class Setup: public Ui_Setup {};
     class View: public Ui_View {};
+    class Player: public Ui_Player {};
     class Error: public Ui_Error {};
 }
 

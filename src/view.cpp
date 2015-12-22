@@ -4,7 +4,7 @@
 #include <QDebug>//
 
 const int pageHeight = 970; //TODO: PORCENTAJE.
-const int sizeData = 19;
+const int sizeData = 20;
 
 View::View(const QString* const PIG_PATH, QPushButton **b_back, QWidget *parent) :
     QWidget(parent),
@@ -28,6 +28,7 @@ View::View(const QString* const PIG_PATH, QPushButton **b_back, QWidget *parent)
     onLocalBackCovers = target.entryList(QDir::Files | QDir::NoDotAndDotDot);
 
     t = new QTimer(this);
+
     QObject::connect (t, &QTimer::timeout, [&] {
         ui->lb_download->setHidden(setLbDownloadHidden);
         setLbDownloadHidden = !setLbDownloadHidden;
@@ -97,17 +98,17 @@ void View::get_covers(const QStringList *data, const int &ID)
     } else {
         int _ID = ((ID + 1) * sizeData);
 
-        if (hasOnLocal((*m_data)[(_ID - 7)], &onLocalBackCovers)) {
+        if (hasOnLocal((*m_data)[(_ID - 8)], &onLocalBackCovers)) {
             if (ui->w_info != 0) {
-                QPixmap px_backCover(*_PIG_PATH+"/tmp/covers/back/"+(*m_data)[(_ID - 7)]);
+                QPixmap px_backCover(*_PIG_PATH+"/tmp/covers/back/"+(*m_data)[(_ID - 8)]);
                 ui->lb_info_backCover->setPixmap(px_backCover.scaled(335, 480, Qt::KeepAspectRatio));
             }
         } else {
             ThreadedSocket *thread;
 
-            thread = new ThreadedSocket(_PIG_PATH, &(*m_data)[(_ID - 11)],
-                                        &(*m_data)[(_ID - 8)],
-                                        &(*m_data)[(_ID - 7)], 0, this);
+            thread = new ThreadedSocket(_PIG_PATH, &(*m_data)[(_ID - 12)],
+                                        &(*m_data)[(_ID - 9)],
+                                        &(*m_data)[(_ID - 8)], 0, this);
 
             QObject::connect (thread, &ThreadedSocket::sendFile, [=] (int ID, QString path) {
                 Q_UNUSED(ID);
@@ -117,7 +118,7 @@ void View::get_covers(const QStringList *data, const int &ID)
                     ui->lb_info_backCover->setPixmap(px_backCover.scaled(335, 480, Qt::KeepAspectRatio));
                 }
 
-                onLocalBackCovers << (*m_data)[(_ID - 7)];
+                onLocalBackCovers << (*m_data)[(_ID - 8)];
             });
             connect (thread, SIGNAL(finished()), thread, SLOT(deleteLater()));
             QObject::connect (thread, &ThreadedSocket::destroyed, [&] {
@@ -164,7 +165,9 @@ void View::add_cover(int ID, QString path)
     if ((ui->v_b_covers.size() - offsetCovers) == requiredCovers) {
         offsetCovers += 10;
         ++n_pages;
+
         set_download_state(true, true);
+
         if ((n_covers - offsetCovers) <= 0)
             hasMoreCovers = false;
     }
@@ -188,6 +191,11 @@ void View::delete_covers()
 void View::init_info(const int &ID, const QString &path)
 {
     ui->setupInfoUi(ID, path, &m_data, sizeData, this);
+
+    QObject::connect (ui->cb_info_scenes, static_cast<void (QComboBox::*)(const QString &)>
+                      (&QComboBox::currentIndexChanged), [=] {
+        emit sendTorrentData(ID, &m_data, sizeData, ui->cb_info_scenes->currentIndex());
+    });
 
     get_covers(NULL, ID);
 

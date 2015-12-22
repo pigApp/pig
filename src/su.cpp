@@ -12,6 +12,7 @@ Su::Su(QObject *parent) :
     } else {
         p->start("/bin/bash", QStringList() << "-c" << "ls /usr/bin/kdesu");
         p->waitForFinished(500);
+
         if (p->exitCode() == 0)
             manager = "kdesu";
     }
