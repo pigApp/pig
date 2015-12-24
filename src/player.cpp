@@ -1,7 +1,5 @@
 #include "player.h"
 
-#include <QPalette>
-
 #include <QTimer>
 #include <QDebug>
 
@@ -9,7 +7,11 @@
 
 Player::Player(const QString *path, QWidget *parent) :
     QWidget(parent),
-    kb_writen("0"),
+    m_bitrate("0"),
+    m_peers("0"),
+    m_kb_required(0),
+    m_n_kb(0),
+    m_kb_writen(0),
     ui(new Ui::Player)
 {
     ui->setupUi(this);
@@ -21,14 +23,11 @@ Player::Player(const QString *path, QWidget *parent) :
     libvlc_media_release(media);
     libvlc_media_player_set_xwindow(mediaplayer, this->winId());
 
-    QBrush b(QColor(10, 10, 10, 255));
-    QPalette p;
-    p.setBrush(QPalette::Active, QPalette::Window, b);
-    setPalette(p);
+    setPalette(ui->p_player);
     setAutoFillBackground(true);
 
     //if (libvlc_media_player_will_play(mediaplayer)) {
-        libvlc_media_player_play(mediaplayer);  //TODO: CONTROL DE REPRODUCCION
+        //libvlc_media_player_play(mediaplayer);  //TODO: CONTROL DE REPRODUCCION
     //  show();
     //} else {
     //  qDebug() << "--> NOT WILL PLAY";
@@ -46,11 +45,18 @@ Player::~Player()
         libvlc_release(instance);
         qDebug() << "DELETE PLAYER";
     }
+
+    delete ui;
 }
 
 void Player::stats()
 {
-    ui->lb_kb_writen->setText(kb_writen);
+    ui->lb_bitrate->setText(m_bitrate);
+    ui->lb_peers->setText(m_peers);
+
+    qDebug() << "KB_REQUIRED: " << m_kb_required;
+    qDebug() << "N_KB: " << m_n_kb;
+    qDebug() << "KB_WRITEN: " << m_kb_writen;
 
     QTimer::singleShot(1000, this, SLOT(stats()));
 }

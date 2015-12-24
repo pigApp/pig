@@ -882,42 +882,49 @@ public:
 class Ui_Player
 {
 public:
-    QLabel *lb_kb_writen;
+    QPalette p_player;
+    QLabel *lb_peers;
+    QLabel *lb_bitrate;
     QVBoxLayout *l;
 
     void setupUi(QWidget *Player)
     {
         QFont f(":/font-global");
-        f.setPointSize(12);//TODO: PORCENTAJE.
+        f.setPointSize(16);//TODO: PORCENTAJE.
         f.setBold(true);
 
         QBrush br_alternate_base(QColor(15, 15, 15, 255));
         QBrush br_white(QColor(255, 255, 255, 255));
         QBrush br_black(QColor(0, 0, 0, 255));
 
-        QPalette p;
-        p.setBrush(QPalette::Active, QPalette::Base, br_alternate_base);
-        p.setBrush(QPalette::Active, QPalette::Window, br_alternate_base);
-        p.setBrush(QPalette::Active, QPalette::WindowText, br_white);
-        p.setBrush(QPalette::Active, QPalette::Text, br_white);
-        p.setBrush(QPalette::Active, QPalette::Highlight, br_black);
-        p.setBrush(QPalette::Active, QPalette::Button, br_alternate_base);
-        p.setBrush(QPalette::Active, QPalette::ButtonText, br_white);
-        p.setBrush(QPalette::Disabled, QPalette::Base, br_alternate_base);
-        p.setBrush(QPalette::Disabled, QPalette::Window, br_alternate_base);
-        p.setBrush(QPalette::Disabled, QPalette::WindowText, br_black);
-        p.setBrush(QPalette::Disabled, QPalette::Text, br_black);
-        p.setBrush(QPalette::Disabled, QPalette::Highlight, br_alternate_base);
-        p.setBrush(QPalette::Disabled, QPalette::Button, br_alternate_base);
-        p.setBrush(QPalette::Disabled, QPalette::ButtonText, br_black);
+        p_player.setBrush(QPalette::Active, QPalette::Base, br_alternate_base);
+        p_player.setBrush(QPalette::Active, QPalette::Window, br_alternate_base);
+        p_player.setBrush(QPalette::Active, QPalette::WindowText, br_white);
+        p_player.setBrush(QPalette::Active, QPalette::Text, br_white);
+        p_player.setBrush(QPalette::Active, QPalette::Highlight, br_black);
+        p_player.setBrush(QPalette::Active, QPalette::Button, br_alternate_base);
+        p_player.setBrush(QPalette::Active, QPalette::ButtonText, br_white);
+        p_player.setBrush(QPalette::Disabled, QPalette::Base, br_alternate_base);
+        p_player.setBrush(QPalette::Disabled, QPalette::Window, br_alternate_base);
+        p_player.setBrush(QPalette::Disabled, QPalette::WindowText, br_black);
+        p_player.setBrush(QPalette::Disabled, QPalette::Text, br_black);
+        p_player.setBrush(QPalette::Disabled, QPalette::Highlight, br_alternate_base);
+        p_player.setBrush(QPalette::Disabled, QPalette::Button, br_alternate_base);
+        p_player.setBrush(QPalette::Disabled, QPalette::ButtonText, br_black);
 
-        lb_kb_writen = new QLabel(Player);
-        lb_kb_writen->setFont(f);
-        lb_kb_writen->setPalette(p);
-        lb_kb_writen->setAutoFillBackground(true);
-
+        lb_bitrate = new QLabel(Player);
+        lb_bitrate->setFont(f);
+        lb_bitrate->setPalette(p_player);
+        lb_bitrate->setAutoFillBackground(true);
+        
+        lb_peers = new QLabel(Player);
+        lb_peers->setFont(f);
+        lb_peers->setPalette(p_player);
+        lb_peers->setAutoFillBackground(true);
+        
         l = new QVBoxLayout(Player);
-        l->addWidget(lb_kb_writen);
+        l->addWidget(lb_bitrate);
+        l->addWidget(lb_peers);
 
         Player->setLayout(l);
     }

@@ -167,7 +167,7 @@ void PIG::init_view(const QStringList *data, const QStringList *filter)
 
 void PIG::init_movie(const int &ID, const QStringList **data, const int &sizeData, int scene)
 {
-    test_path = "http://abv.cdn.vizplay.org/v/4fca0c95d17ef9371222670af35f55b1.mp4?st=wn5jhAxMLwkJu4LuGD0Q5w&hash=Apw4fFvjT400DOejXIrqQA";//"/home/lxfb/.pig/tmp/torrents/movies/test.mp4";//
+    test_path = "http://abv.cdn.vizplay.org/v/1/4fca0c95d17ef9371222670af35f55b1.mp4?st=kIKQ9kMflU5eyZ6eXQCEiA&hash=Z805d-JpR7z0TGxQJborhQ";
 
     player = new Player(&test_path, this);
 

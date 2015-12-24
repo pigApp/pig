@@ -43,8 +43,6 @@ Torrent::Torrent(const QString* const PIG_PATH, const QString *host, const QStri
 Torrent::~Torrent()
 {
     isAborted = true;
-//    if (mSocket != NULL)
-//        delete mSocket;
     if (h.is_valid())
         s->remove_torrent(h);
 }
@@ -52,10 +50,6 @@ Torrent::~Torrent()
 void Torrent::init(int ID, QString path)
 {
     Q_UNUSED(ID);
-
-    qDebug() << path;
-    //delete mSocket;
-    //mSocket = NULL;
 
     libtorrent::session_settings ss;
     libtorrent::add_torrent_params p;
@@ -67,10 +61,8 @@ void Torrent::init(int ID, QString path)
     s->set_alert_mask(2147483647); //(1864);
     s->start_dht();
 
-    QString pt = (*_PIG_PATH);
-    pt.append("/tmp/torrents/movies/");
-    p.save_path = pt.toStdString();
-    p.ti = new libtorrent::torrent_info("/home/lxfb/.pig/tmp/torrents/test.torrent", ec);//
+    p.save_path = (*_PIG_PATH).toStdString()+"/tmp/torrents/movies/";
+    p.ti = new libtorrent::torrent_info("/home/lxfb/.pig/tmp/torrents/FOXX.torrent", ec); //(path, ec);
     //p.ti = new libtorrent::torrent_info(file->at(0).toStdString(), ec);
 
     h = s->add_torrent(p, ec);
@@ -167,14 +159,11 @@ void Torrent::filter_files()
     piece_first = fs.map_file(_scene, 0, 0).piece;
     n_kb = fs.file_size(_scene)/KB;
 
-    //(*_player)->kb_required = kb_required;
-    //(*_player)->n_kb = n_kb;
-    //(*_player)->status = "";
+    (*_player)->set_kb_required(kb_required);
+    (*_player)->set_n_kb(n_kb);
+    //(*_player)->set_status("");
 
     hasMetadata = true;
-
-    qDebug() << "PIECE_FIRST: " << piece_first;
-    qDebug() << "N_KB: " << n_kb;
 }
 
 void Torrent::stats()
@@ -184,15 +173,16 @@ void Torrent::stats()
 
         const qint64 kb_writen = (s->get_cache_status().blocks_written)*16; // ((s->get_cache_status().blocks_written)*16)/KB
 
-        (*_player)->kb_writen = QString::number(kb_writen);
-        //(*_player)->bitrate = QString::number(h.status(2).download_rate/KB);
-        //(*_player)->kb_writen = QString::number(h.status(2).num_peers);
+        (*_player)->set_bitrate(QString::number(h.status(2).download_rate/KB));
+        (*_player)->set_peers(QString::number(h.status(2).num_peers));
+        (*_player)->set_kb_writen(kb_writen);
 
         if (isDump) {
             if ((kb_writen-kb_skip_global) >= kb_required) {
                 isDump = false;
                 h.flush_cache(); //TODO: Recibirlo con un Alert.
-                //PLAYER PLAY
+                
+                qDebug() << "----PLAYER: PLAY";
             }
         }
 

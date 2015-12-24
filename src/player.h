@@ -22,10 +22,23 @@ public:
     ~Player();
 
     libvlc_media_player_t *mediaplayer;
+    
 
-    QString kb_writen;
+
+public slots:
+   void set_bitrate(QString bitrate) { m_bitrate = bitrate; } 
+   void set_peers(QString peers) { m_peers = peers; } 
+   void set_kb_required(double kb_required) { m_kb_required = kb_required; } 
+   void set_n_kb(double n_kb) { m_n_kb = n_kb; } 
+   void set_kb_writen(qint64 kb_writen) { m_kb_writen = kb_writen; } 
 
 private:
+    QString m_bitrate;
+    QString m_peers;
+    double m_kb_required;
+    double m_n_kb;
+    qint64 m_kb_writen;
+    
     Ui::Player *ui;
 
     libvlc_instance_t *instance;
