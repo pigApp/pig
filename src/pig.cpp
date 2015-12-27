@@ -9,8 +9,8 @@ PIG::PIG(QWidget *parent) :
     topbar(NULL),
     setup(NULL),
     view(NULL),
-    //torrent(NULL),
     player(NULL),
+    torrent(NULL),
     error(NULL),
     keep_covers(true),
     keep_torrents(true),
@@ -167,15 +167,17 @@ void PIG::init_view(const QStringList *data, const QStringList *filter)
 
 void PIG::init_movie(const int &ID, const QStringList **data, const int &sizeData, int scene)
 {
-    test_path = "http://abv.cdn.vizplay.org/v/1/4fca0c95d17ef9371222670af35f55b1.mp4?st=kIKQ9kMflU5eyZ6eXQCEiA&hash=Z805d-JpR7z0TGxQJborhQ";
-
-    player = new Player(&test_path, this);
-
-    view->hide();
-    ui->main_layout->addWidget(player);
+    player = new Player(this);
 
     torrent = new Torrent(&PIG_PATH, &((**data)[(ID * sizeData) + 16]), &(**data)[(ID * sizeData) + 17],
                           &(**data)[(ID * sizeData + 18)], scene, &player);
+
+    connect (torrent, SIGNAL(sendFile(const QString*)), player, SLOT(init_mediaplayer(const QString*)));
+    connect (torrent, SIGNAL(sendStats(int, int, const qint64&, const double&, const double&)),
+             player, SLOT(stats(int, int, const qint64&, const double&, const double&)));
+    
+    view->hide();
+    ui->main_layout->addWidget(player);
 }
 
 void PIG::init_setup()

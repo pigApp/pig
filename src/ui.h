@@ -37,12 +37,12 @@ public:
     void setupUi(QWidget *PIG)
     {
         QFont f(":/font-global");
-        f.setPointSize(16);//TODO: PORCENTAJE.
+        f.setPointSize(16); //TODO: PORCENTAJE.
         f.setCapitalization(QFont::AllUppercase);
         f.setBold(true);
 
         QFont f_toolTip(":/font-global");
-        f_toolTip.setPointSize(12);//TODO: PORCENTAJE.
+        f_toolTip.setPointSize(12); //TODO: PORCENTAJE.
         f_toolTip.setCapitalization(QFont::AllUppercase);
         f_toolTip.setBold(true);
 
@@ -75,7 +75,7 @@ public:
 
         b_back = new QPushButton(QIcon(":/icon-back"), NULL, PIG);
         //b_back->setFixedSize(QSize(16, 16));
-        b_back->setGeometry(1863, 7, 10, 14);//TODO: PORCENTAJE.
+        b_back->setGeometry(1863, 7, 10, 14); //TODO: PORCENTAJE.
         b_back->setToolTip("BACK");
         b_back->setMouseTracking(true);
         b_back->setFlat(true);
@@ -83,15 +83,15 @@ public:
         b_back->setParent(PIG);
 
         b_minimize = new QPushButton(QIcon(":/icon-minimize"), NULL, PIG);
-        //b_minimize->setFixedSize(QSize(16, 16));//TODO: PORCENTAJE.
-        b_minimize->setGeometry(1880, 5, 16, 16);//TODO: PORCENTAJE.
+        //b_minimize->setFixedSize(QSize(16, 16)); //TODO: PORCENTAJE.
+        b_minimize->setGeometry(1880, 5, 16, 16); //TODO: PORCENTAJE.
         b_minimize->setMouseTracking(true);
         b_minimize->setFlat(true);
         b_minimize->setParent(PIG);
 
         b_quit = new QPushButton(QIcon(":/icon-quit"), NULL, PIG);
         //b_quit->setFixedSize(QSize(32, 32));
-        b_quit->setGeometry(1900, 5, 16, 16);//TODO: PORCENTAJE.
+        b_quit->setGeometry(1900, 5, 16, 16); //TODO: PORCENTAJE.
         b_quit->setMouseTracking(true);
         b_quit->setFlat(true);
         b_quit->setParent(PIG);
@@ -172,7 +172,7 @@ public:
         b_reset->setHidden(!set);
 
         l_input = new QHBoxLayout;
-        l_input->setSpacing(10);//TODO: PORCENTAJE.
+        l_input->setSpacing(10); //TODO: PORCENTAJE.
         if (set)
             l_input->addWidget(lb);
         l_input->addWidget(input);
@@ -211,7 +211,7 @@ public:
         l = new QHBoxLayout(Update);
         l->setAlignment(Qt::AlignHCenter);
         l->addWidget(lb);
-        l->addSpacing(10);//TODO: PORCENTAJE
+        l->addSpacing(10); //TODO: PORCENTAJE.
         l->addWidget(b_1);
         l->addWidget(b_2);
 
@@ -233,7 +233,7 @@ public:
 
         l = new QGridLayout(Topbar);
         l->setSpacing(0);
-        l->setContentsMargins(0, 10, 46, 0);//TODO: PORCENTAJE.
+        l->setContentsMargins(0, 10, 46, 0); //TODO: PORCENTAJE.
         l->setAlignment(Qt::AlignLeft | Qt::AlignTop);
         l->addWidget(b_setup, 0, 1);
 
@@ -268,7 +268,7 @@ public:
         cb_categories = NULL;
 
         QFont f(":/font-global");
-        f.setPointSize(12);//TODO: PORCENTAJE.
+        f.setPointSize(12); //TODO: PORCENTAJE.
         f.setCapitalization(QFont::AllUppercase);
         f.setBold(true);
 
@@ -326,20 +326,20 @@ public:
         input = new QLineEdit(Finder);
         input->setPalette(p);
         input->setMaxLength(65);
-        input->setMinimumHeight(45);//TODO: PORCENTAJE.
+        input->setMinimumHeight(45); //TODO: PORCENTAJE.
         input->setFrame(QFrame::NoFrame);
         input->setCompleter(completer);
         input->setAlignment(Qt::AlignCenter);
 
         b_filters = new QPushButton(QIcon(":/icon-filters"), NULL, Finder);
-        b_filters->setGeometry(14, 11, 24, 24);//TODO: PORCENTAJE.
+        b_filters->setGeometry(14, 11, 24, 24); //TODO: PORCENTAJE.
         b_filters->setCursor(Qt::ArrowCursor);
         b_filters->setFlat(true);
         b_filters->setParent(input);
 
         l = new QGridLayout;
         l->setSpacing(0);
-        l->setContentsMargins(83, 0, 12, 0);//TODO: PORCENTAJE.
+        l->setContentsMargins(83, 0, 12, 0); //TODO: PORCENTAJE.
         l->addWidget(input, 0, 0);
 
         _l_topbar->addLayout(l, 0, 0);
@@ -348,7 +348,7 @@ public:
     void setupFilterUi(const QStringList *categories, const QStringList *pornstars, QWidget *Finder)
     {
         QFont f(":/font-global");
-        f.setPointSize(12);//TODO: PORCENTAJE.
+        f.setPointSize(12); //TODO: PORCENTAJE.
         f.setBold(true);
 
         cb_style = "QComboBox { color: rgb(255, 255, 255); \
@@ -399,8 +399,8 @@ public:
         r_apply_on_results->setChecked(true);
 
         l_filters = new QHBoxLayout;
-        l_filters->setSpacing(10);//TODO: PORCENTAJE.
-        l_filters->setContentsMargins(84, 10, 13, 0);//TODO: PORCENTAJE.
+        l_filters->setSpacing(10); //TODO: PORCENTAJE.
+        l_filters->setContentsMargins(84, 10, 13, 0); //TODO: PORCENTAJE.
         l_filters->addWidget(cb_categories);
         l_filters->addWidget(cb_pornstars);
         l_filters->addWidget(cb_quality);
@@ -467,7 +467,7 @@ public:
                  QWidget *authorization, QWidget *Setup)
     {
         QFont f_wallet(":/font-global");
-        f_wallet.setPointSize(16);//TODO: PORCENTAJE.
+        f_wallet.setPointSize(16); //TODO: PORCENTAJE.
         f_wallet.setBold(true);
 
         QBrush br_base(QColor(10, 10, 10, 255));
@@ -530,7 +530,7 @@ public:
         lb_data_license = new QLabel("GPL 2.0", w_data);
 
         l_data = new QHBoxLayout(w_data);
-        l_data->setSpacing(20);//TODO: PORCENTAJE.
+        l_data->setSpacing(20); //TODO: PORCENTAJE.
         l_data->addWidget(lb_data_binary);
         l_data->addWidget(lb_data_database);
         l_data->addWidget(lb_data_license);
@@ -627,7 +627,7 @@ public:
             b_torrent_ports_reset->setDisabled(true);
 
         l_torrent = new QHBoxLayout(w_torrent);
-        l_torrent->setSpacing(10);//TODO: PORCENTAJE.
+        l_torrent->setSpacing(10); //TODO: PORCENTAJE.
         l_torrent->addWidget(lb_torrent_ports);
         l_torrent->addWidget(input_torrent_port_1);
         l_torrent->addWidget(input_torrent_port_2);
@@ -641,7 +641,7 @@ public:
 
         lb_contribute_torrent = new QLabel("TORRENT", w_contribute);
 
-        b_contribute_torrent = new QPushButton(QIcon(":/icon-browser"), NULL, w_contribute);
+        b_contribute_torrent = new QPushButton(QIcon(":/icon-upload"), NULL, w_contribute);
         b_contribute_torrent->setToolTip("CONTRIBUTE TORRENT");
         b_contribute_torrent->setFlat(true);
 
@@ -652,7 +652,7 @@ public:
 
         lb_contribute_code = new QLabel("CODE", w_contribute);
 
-        b_contribute_code = new QPushButton(QIcon(":/icon-browser"), NULL, w_contribute);
+        b_contribute_code = new QPushButton(QIcon(":/icon-upload"), NULL, w_contribute);
         b_contribute_code->setToolTip("CONTRIBUTE CODE");
         b_contribute_code->setFlat(true);
 
@@ -663,7 +663,7 @@ public:
 
         lb_contribute_bug = new QLabel("BUG", w_contribute);
 
-        b_contribute_bug = new QPushButton(QIcon(":/icon-browser"), NULL, w_contribute);
+        b_contribute_bug = new QPushButton(QIcon(":/icon-upload"), NULL, w_contribute);
         b_contribute_bug->setToolTip("REPORT BUG");
         b_contribute_bug->setFlat(true);;
 
@@ -692,10 +692,10 @@ public:
 
         l_contribute_support = new QHBoxLayout;
         l_contribute_support->addWidget(lb_contribute_support);
-        l_contribute_support->addSpacing(5);//TODO: PORCENTAJE.
+        l_contribute_support->addSpacing(5); //TODO: PORCENTAJE.
         l_contribute_support->addWidget(lb_contribute_wallet);
         l_contribute_support->addWidget(b_contribute_copy_wallet);
-        l_contribute_support->insertStretch(5);//TODO: PORCENTAJE.
+        l_contribute_support->insertStretch(5); //TODO: PORCENTAJE.
         l_contribute_support->addWidget(b_contribute_support);
 
         l_contribute = new QVBoxLayout(w_contribute);
@@ -707,8 +707,8 @@ public:
         w_contribute->setLayout(l_contribute);
 
         l = new QVBoxLayout(Setup);
-        l->setSpacing(10);//TODO: PORCENTAJE.
-        l->setContentsMargins(80, 13, 80, 10);//TODO: PORCENTAJE.
+        l->setSpacing(10); //TODO: PORCENTAJE.
+        l->setContentsMargins(80, 13, 80, 10); //TODO: PORCENTAJE.
         l->setAlignment(Qt::AlignLeft | Qt::AlignTop);
         l->addWidget(w_data);
         l->addWidget(w_authorization);
@@ -725,10 +725,10 @@ class Ui_View
 {
 public:
     QScrollArea *sa_covers;
-    QLabel *lb_download;
+    QLabel *lb_px_download;
     QLabel *lb_info_metadata[5];
-    QLabel *lb_info_cover;
-    QLabel *lb_info_backCover;
+    QLabel *lb_info_px_cover;
+    QLabel *lb_info_px_backCover;
     //QLabel *lb_info_player;//
     QComboBox *cb_info_scenes;
     //Player *player_info;
@@ -755,15 +755,15 @@ public:
         w_covers = new QWidget(sa_covers);
 
         QPixmap px_download(":/icon-download");
-        lb_download = new QLabel(View);
-        lb_download->setPixmap(px_download);
-        lb_download->setHidden(true);
-        lb_download->setParent(View);
+        lb_px_download = new QLabel(View);
+        lb_px_download->setPixmap(px_download);
+        lb_px_download->setHidden(true);
+        lb_px_download->setParent(View);
 
         l_covers = new QGridLayout(w_covers);
         l_covers->setHorizontalSpacing(0);
-        l_covers->setVerticalSpacing(5);//TODO: PORCENTAJE.
-        l_covers->setMargin(0);//TODO: PORCENTAJE.
+        l_covers->setVerticalSpacing(5); //TODO: PORCENTAJE.
+        l_covers->setMargin(0); //TODO: PORCENTAJE.
         l_covers->setAlignment(Qt::AlignLeft | Qt::AlignTop);
 
         w_covers->setLayout(l_covers);
@@ -771,7 +771,7 @@ public:
         sa_covers->setWidget(w_covers);
 
         l = new QVBoxLayout(View);
-        l->setContentsMargins(80, 10, 80, 11);//TODO: PORCENTAJE.
+        l->setContentsMargins(80, 10, 80, 11); //TODO: PORCENTAJE.
         l->addWidget(sa_covers);
 
         View->setLayout(l);
@@ -783,7 +783,7 @@ public:
         const QStringList **_data = data;
 
         QFont f(":/font-global");
-        f.setPointSize(12);//TODO: PORCENTAJE.
+        f.setPointSize(12); //TODO: PORCENTAJE.
         f.setBold(true);
 
         QBrush br_alternate_base(QColor(15, 15, 15, 255));
@@ -809,7 +809,7 @@ public:
         w_info = new QWidget(View);
 
         l_info_metadata = new QVBoxLayout;
-        l_info_metadata->setSpacing(10);//TODO: PORCENTAJE.
+        l_info_metadata->setSpacing(10); //TODO: PORCENTAJE.
 
         QStringList metadata_titles;
         metadata_titles << "NAME " << "DATE " << "CASTING " << "QUALITY " << "TIME " << "FULL "  << "CATEGORIES ";
@@ -824,12 +824,12 @@ public:
         l_info_metadata->addStretch();
 
         QPixmap px_cover(path);
-        lb_info_cover = new QLabel(w_info);
-        lb_info_cover->setPixmap(px_cover.scaled(335, 480, Qt::KeepAspectRatio));//TODO: PORCENTAJE.
+        lb_info_px_cover = new QLabel(w_info);
+        lb_info_px_cover->setPixmap(px_cover.scaled(335, 480, Qt::KeepAspectRatio)); //TODO: PORCENTAJE.
 
         QPixmap px_backCover(":/img-back_cover");
-        lb_info_backCover = new QLabel(w_info);
-        lb_info_backCover->setPixmap(px_backCover.scaled(335, 480, Qt::KeepAspectRatio));//TODO: PORCENTAJE.
+        lb_info_px_backCover = new QLabel(w_info);
+        lb_info_px_backCover->setPixmap(px_backCover.scaled(335, 480, Qt::KeepAspectRatio)); //TODO: PORCENTAJE.
 
         cb_info_scenes = new QComboBox(w_info);
         cb_info_scenes->setFont(f);
@@ -855,18 +855,18 @@ public:
 
         //QString preview = "http://" + ((**_data)[((ID * sizeData) + 13)]) + ((**_data)[((ID * sizeData) + 14)]);
         //player_info = new Player(&preview, w_info);
-        //player_info->setFixedSize(QSize(700, 480));//TODO: PORCENTAJE.
+        //player_info->setFixedSize(QSize(700, 480)); //TODO: PORCENTAJE.
 
         l_info_multimedia = new QHBoxLayout;
-        l_info_multimedia->setSpacing(10);//TODO: PORCENTAJE.
-        l_info_multimedia->addWidget(lb_info_cover);
-        l_info_multimedia->addWidget(lb_info_backCover);
+        l_info_multimedia->setSpacing(10); //TODO: PORCENTAJE.
+        l_info_multimedia->addWidget(lb_info_px_cover);
+        l_info_multimedia->addWidget(lb_info_px_backCover);
         l_info_multimedia->addLayout(l_info_scenes);
         //l_info_multimedia->addWidget(player_info);
         //l_info_multimedia->addWidget(lb_info_player);//
 
         l_info = new QVBoxLayout(w_info);
-        l_info->setContentsMargins(0, 3, 0, 0);//TODO: PORCENTAJE.
+        l_info->setContentsMargins(0, 3, 0, 0); //TODO: PORCENTAJE.
         l_info->addLayout(l_info_metadata, 1);
         l_info->addLayout(l_info_multimedia);
 
@@ -882,49 +882,70 @@ public:
 class Ui_Player
 {
 public:
-    QPalette p_player;
-    QLabel *lb_peers;
+    QPalette p;
+    QLabel *lb_px_bitrate;
     QLabel *lb_bitrate;
+    QLabel *lb_px_peers;
+    QLabel *lb_peers;
+    QHBoxLayout *l_stats;
     QVBoxLayout *l;
 
     void setupUi(QWidget *Player)
     {
         QFont f(":/font-global");
-        f.setPointSize(16);//TODO: PORCENTAJE.
+        f.setPointSize(16); //TODO: PORCENTAJE.
         f.setBold(true);
 
         QBrush br_alternate_base(QColor(15, 15, 15, 255));
         QBrush br_white(QColor(255, 255, 255, 255));
         QBrush br_black(QColor(0, 0, 0, 255));
 
-        p_player.setBrush(QPalette::Active, QPalette::Base, br_alternate_base);
-        p_player.setBrush(QPalette::Active, QPalette::Window, br_alternate_base);
-        p_player.setBrush(QPalette::Active, QPalette::WindowText, br_white);
-        p_player.setBrush(QPalette::Active, QPalette::Text, br_white);
-        p_player.setBrush(QPalette::Active, QPalette::Highlight, br_black);
-        p_player.setBrush(QPalette::Active, QPalette::Button, br_alternate_base);
-        p_player.setBrush(QPalette::Active, QPalette::ButtonText, br_white);
-        p_player.setBrush(QPalette::Disabled, QPalette::Base, br_alternate_base);
-        p_player.setBrush(QPalette::Disabled, QPalette::Window, br_alternate_base);
-        p_player.setBrush(QPalette::Disabled, QPalette::WindowText, br_black);
-        p_player.setBrush(QPalette::Disabled, QPalette::Text, br_black);
-        p_player.setBrush(QPalette::Disabled, QPalette::Highlight, br_alternate_base);
-        p_player.setBrush(QPalette::Disabled, QPalette::Button, br_alternate_base);
-        p_player.setBrush(QPalette::Disabled, QPalette::ButtonText, br_black);
+        p.setBrush(QPalette::Active, QPalette::Base, br_alternate_base);
+        p.setBrush(QPalette::Active, QPalette::Window, br_alternate_base);
+        p.setBrush(QPalette::Active, QPalette::WindowText, br_white);
+        p.setBrush(QPalette::Active, QPalette::Text, br_white);
+        p.setBrush(QPalette::Active, QPalette::Highlight, br_black);
+        p.setBrush(QPalette::Active, QPalette::Button, br_alternate_base);
+        p.setBrush(QPalette::Active, QPalette::ButtonText, br_white);
+        p.setBrush(QPalette::Disabled, QPalette::Base, br_alternate_base);
+        p.setBrush(QPalette::Disabled, QPalette::Window, br_alternate_base);
+        p.setBrush(QPalette::Disabled, QPalette::WindowText, br_black);
+        p.setBrush(QPalette::Disabled, QPalette::Text, br_black);
+        p.setBrush(QPalette::Disabled, QPalette::Highlight, br_alternate_base);
+        p.setBrush(QPalette::Disabled, QPalette::Button, br_alternate_base);
+        p.setBrush(QPalette::Disabled, QPalette::ButtonText, br_black);
+
+        QPixmap px_bitrate(":/icon-bitrate");
+        lb_px_bitrate = new QLabel(Player);
+        lb_px_bitrate->setPixmap(px_bitrate);
 
         lb_bitrate = new QLabel(Player);
         lb_bitrate->setFont(f);
-        lb_bitrate->setPalette(p_player);
+        lb_bitrate->setPalette(p);
+        lb_bitrate->setText("0 KB/s");
         lb_bitrate->setAutoFillBackground(true);
-        
+
+        QPixmap px_peers(":/icon-peers");
+        lb_px_peers = new QLabel(Player);
+        lb_px_peers->setPixmap(px_peers);
+
         lb_peers = new QLabel(Player);
         lb_peers->setFont(f);
-        lb_peers->setPalette(p_player);
+        lb_peers->setPalette(p);
+        lb_peers->setText("0 PEERS");
         lb_peers->setAutoFillBackground(true);
-        
+
+        l_stats = new QHBoxLayout;
+        l_stats->setSpacing(15); //TODO: PORCENTAJE.
+        l_stats->setAlignment(Qt::AlignCenter);
+        l_stats->addWidget(lb_px_bitrate);
+        l_stats->addWidget(lb_bitrate);
+        l_stats->addSpacing(15); //TODO: PORCENTAJE.
+        l_stats->addWidget(lb_px_peers);
+        l_stats->addWidget(lb_peers);
+
         l = new QVBoxLayout(Player);
-        l->addWidget(lb_bitrate);
-        l->addWidget(lb_peers);
+        l->addLayout(l_stats);
 
         Player->setLayout(l);
     }
@@ -948,7 +969,7 @@ public:
         l = new QHBoxLayout(Error);
         l->setAlignment(Qt::AlignHCenter);
         l->addWidget(lb);
-        l->addSpacing(10);//TODO: PORCENTAJE
+        l->addSpacing(10); //TODO: PORCENTAJE.
         l->addWidget(b);
 
         Error->setLayout(l);

@@ -30,7 +30,7 @@ View::View(const QString* const PIG_PATH, QPushButton **b_back, QWidget *parent)
     t = new QTimer(this);
 
     QObject::connect (t, &QTimer::timeout, [&] {
-        ui->lb_download->setHidden(setLbDownloadHidden);
+        ui->lb_px_download->setHidden(setLbDownloadHidden);
         setLbDownloadHidden = !setLbDownloadHidden;
     });
 }
@@ -101,7 +101,7 @@ void View::get_covers(const QStringList *data, const int &ID)
         if (hasOnLocal((*m_data)[(_ID - 8)], &onLocalBackCovers)) {
             if (ui->w_info != 0) {
                 QPixmap px_backCover(*_PIG_PATH+"/tmp/covers/back/"+(*m_data)[(_ID - 8)]);
-                ui->lb_info_backCover->setPixmap(px_backCover.scaled(335, 480, Qt::KeepAspectRatio));
+                ui->lb_info_px_backCover->setPixmap(px_backCover.scaled(335, 480, Qt::KeepAspectRatio));
             }
         } else {
             ThreadedSocket *thread;
@@ -115,7 +115,7 @@ void View::get_covers(const QStringList *data, const int &ID)
 
                 if (ui->w_info != 0) {
                     QPixmap px_backCover(path);
-                    ui->lb_info_backCover->setPixmap(px_backCover.scaled(335, 480, Qt::KeepAspectRatio));
+                    ui->lb_info_px_backCover->setPixmap(px_backCover.scaled(335, 480, Qt::KeepAspectRatio));
                 }
 
                 onLocalBackCovers << (*m_data)[(_ID - 8)];
@@ -280,12 +280,12 @@ void View::set_download_state(bool isCover, bool setHidden)
 
     if (setHidden) {
         t->stop();
-        ui->lb_download->setHidden(setHidden);
+        ui->lb_px_download->setHidden(setHidden);
     } else {
         if (isCover)
-            ui->lb_download->setGeometry(20, 20, 24, 24);//TODO: PORCENTAJE.
+            ui->lb_px_download->setGeometry(20, 962, 28, 24); //TODO: PORCENTAJE.
         else
-            ui->lb_download->setGeometry(20, 20, 24, 24);//TODO: PORCENTAJE.
+            ui->lb_px_download->setGeometry(20, 1023, 28, 24); //TODO: PORCENTAJE.
 
         t->start(500);
     }

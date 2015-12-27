@@ -4,8 +4,8 @@
 #include "topbar.h"
 #include "setup.h"
 #include "view.h"
-#include "torrent.h"
 #include "player.h"
+#include "torrent.h"
 #include "error.h"
 #include "ui.h"
 
@@ -33,11 +33,9 @@ private:
     TopBar *topbar;
     Setup *setup;
     View *view;
-    Torrent *torrent;
     Player *player;
+    Torrent *torrent;
     Error *error;
-
-    QString test_path;//
 
     bool keep_covers, keep_torrents, keep_movies;
     int torrent_port_1, torrent_port_2;

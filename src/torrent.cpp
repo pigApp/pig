@@ -20,8 +20,8 @@ Torrent::Torrent(const QString* const PIG_PATH, const QString *host, const QStri
     _host(host),
     _url(url),
     _pkg(pkg),
-    _player(player),
-    _scene(scene)
+    _scene(scene),
+    _player(player)
 {
     isDump = true;
     hasMetadata = false;
@@ -29,7 +29,6 @@ Torrent::Torrent(const QString* const PIG_PATH, const QString *host, const QStri
     isAborted = false;
     kb_required = 20480; //5120;
     kb_skip_global = 0;
-
 
     ThreadedSocket *thread = new ThreadedSocket(_PIG_PATH, _host, _url, _pkg);
 
@@ -159,10 +158,6 @@ void Torrent::filter_files()
     piece_first = fs.map_file(_scene, 0, 0).piece;
     n_kb = fs.file_size(_scene)/KB;
 
-    (*_player)->set_kb_required(kb_required);
-    (*_player)->set_n_kb(n_kb);
-    //(*_player)->set_status("");
-
     hasMetadata = true;
 }
 
@@ -171,18 +166,18 @@ void Torrent::stats()
     if (!isAborted) {
         h.flush_cache();
 
-        const qint64 kb_writen = (s->get_cache_status().blocks_written)*16; // ((s->get_cache_status().blocks_written)*16)/KB
+        const qint64 kb_writen = (s->get_cache_status().blocks_written)*16; //((s->get_cache_status().blocks_written)*16)/KB
 
-        (*_player)->set_bitrate(QString::number(h.status(2).download_rate/KB));
-        (*_player)->set_peers(QString::number(h.status(2).num_peers));
-        (*_player)->set_kb_writen(kb_writen);
-
+        emit sendStats((h.status(2).download_rate/KB), h.status(2).num_peers,
+                       kb_writen, kb_required, n_kb);
+        
         if (isDump) {
             if ((kb_writen-kb_skip_global) >= kb_required) {
                 isDump = false;
                 h.flush_cache(); //TODO: Recibirlo con un Alert.
                 
-                qDebug() << "----PLAYER: PLAY";
+                videotest = "http://abv.cdn.vizplay.org/v/1/4fca0c95d17ef9371222670af35f55b1.mp4?st=6c_1EwuzvnKnlbQTIHcEEg&hash=sa06nS2P4CC3jD1U4VoinA";
+                emit sendFile(&videotest);
             }
         }
 
