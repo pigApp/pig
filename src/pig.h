@@ -42,8 +42,9 @@ private:
 
     Ui::PIG *ui;
 
+    QShortcut *sc_backSetup;
+    QShortcut *sc_backMovie;
     QShortcut *sc_quit;
-    QShortcut *sc_back;
 
     QSqlDatabase db;
 
@@ -59,8 +60,8 @@ private slots:
     void init_update();
     void init_topbar();
     void init_view(const QStringList *data, const QStringList *filter);
-    void init_movie(const int &ID, const QStringList **data,
-                      const int &sizeData, int scene);
+    void init_movie(const int &ID = 0, const QStringList **data = NULL,
+                    const int &sizeData = 0, int scene = 0);
     void init_setup();
     void init_error(QString errorMsg);
     QHash<QString, QVariant> get_rc();

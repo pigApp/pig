@@ -29,7 +29,6 @@ QT_BEGIN_NAMESPACE
 class Ui_PIG
 {
 public:
-    QPushButton *b_back;
     QPushButton *b_minimize;
     QPushButton *b_quit;
     QVBoxLayout *main_layout;
@@ -72,15 +71,6 @@ public:
 
         QToolTip::setFont(f_toolTip);
         QToolTip::setPalette(p_toolTip);
-
-        b_back = new QPushButton(QIcon(":/icon-back"), NULL, PIG);
-        //b_back->setFixedSize(QSize(16, 16));
-        b_back->setGeometry(1863, 7, 10, 14); //TODO: PORCENTAJE.
-        b_back->setToolTip("BACK");
-        b_back->setMouseTracking(true);
-        b_back->setFlat(true);
-        b_back->setHidden(true);
-        b_back->setParent(PIG);
 
         b_minimize = new QPushButton(QIcon(":/icon-minimize"), NULL, PIG);
         //b_minimize->setFixedSize(QSize(16, 16)); //TODO: PORCENTAJE.

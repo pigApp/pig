@@ -22,8 +22,6 @@
         <file alias="icon-standby">resources/images/player/standby.svg</file>
         <file alias="icon-volume">resources/images/player/volume.svg</file>
         <file alias="icon-volume-off">resources/images/player/volume-off.svg</file>
-        <file alias="icon-back">resources/images/global/back.svg</file>
-        <file alias="icon-back-dark">resources/images/global/back-dark.svg</file>
         <file alias="icon-minimize">resources/images/global/minimize.svg</file>
         <file alias="icon-minimize-dark">resources/images/global/minimize-dark.svg</file>
         <file alias="icon-quit">resources/images/global/quit.svg</file>

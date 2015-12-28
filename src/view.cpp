@@ -6,10 +6,9 @@
 const int pageHeight = 970; //TODO: PORCENTAJE.
 const int sizeData = 20;
 
-View::View(const QString* const PIG_PATH, QPushButton **b_back, QWidget *parent) :
+View::View(const QString* const PIG_PATH, QWidget *parent) :
     QWidget(parent),
     _PIG_PATH(PIG_PATH),
-    _b_back(b_back),
     setLbDownloadHidden(false),
     ui(new Ui::View)
 {
@@ -154,7 +153,7 @@ void View::add_cover(int ID, QString path)
     int __ID = ((n_pages * 10) + _ID);
     
     ui->v_b_covers.push_back(new QPushButton(QIcon(path), NULL, ui->w_covers));
-    ui->v_b_covers.last()->setIconSize(QSize(335, 480));//TODO: PORCENTAJE.
+    ui->v_b_covers.last()->setIconSize(QSize(335, 480)); //TODO: PORCENTAJE.
     ui->v_b_covers.last()->setFlat(true);
     
     QObject::connect (ui->v_b_covers.last(), &QPushButton::pressed, [=] { init_info(__ID, path); });
@@ -201,8 +200,6 @@ void View::init_info(const int &ID, const QString &path)
 
     emit sendTopbarState(true);
 
-    connect ((*_b_back), SIGNAL(pressed()), this, SLOT(delete_info()));
-
     sc_back->setEnabled(true);
 }
 
@@ -215,9 +212,6 @@ void View::delete_info()
     ui->sa_covers->show();
 
     emit sendTopbarState(false);
-
-    (*_b_back)->disconnect();
-    (*_b_back)->hide();
 
     sc_back->setEnabled(false);
 }

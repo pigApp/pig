@@ -1,6 +1,5 @@
 #include "player.h"
 
-#include <QTimer>
 #include <QDebug>
 
 #define qtu( i ) ((i).toUtf8().constData())
@@ -17,8 +16,6 @@ Player::Player(QWidget *parent) :
 
 Player::~Player()
 {
-    //TODO: VER SI LO BORRA BIEN
-
     if (instance) {
         libvlc_release(instance);
         qDebug() << "DELETE PLAYER";
@@ -55,6 +52,4 @@ void Player::stats(int bitrate, int peers, const qint64 &kb_writen,
     qDebug() << "KB_WRITEN: " << kb_writen;
     qDebug() << "KB_REQUIRED: " << kb_required;
     qDebug() << "N_KB: " << n_kb;
-
-    //QTimer::singleShot(1000, this, SLOT(stats()));
 }

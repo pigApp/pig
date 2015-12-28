@@ -20,16 +20,18 @@ PIG::PIG(QWidget *parent) :
     ui(new Ui::PIG)
 {
     ui->setupUi(this);
-    ui->b_back->installEventFilter(this);
+
     ui->b_minimize->installEventFilter(this);
     ui->b_quit->installEventFilter(this);
 
     QObject::connect (ui->b_minimize, &QPushButton::released, [&] { showMinimized(); });
     QObject::connect (ui->b_quit, &QPushButton::released, [&] { close(); });
 
+    sc_backSetup = new QShortcut(QKeySequence(Qt::Key_Escape), this, SLOT(init_setup()));
+    sc_backSetup->setEnabled(false);
+    sc_backMovie = new QShortcut(QKeySequence(Qt::Key_Escape), this, SLOT(init_movie()));
+    sc_backMovie->setEnabled(false);
     sc_quit = new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_Q), this, SLOT(close()));
-    sc_back = new QShortcut(QKeySequence(Qt::Key_Escape), this, SLOT(init_setup()));
-    sc_back->setEnabled(false);
 
     if (init())
         init_authorization();
@@ -144,7 +146,7 @@ void PIG::init_view(const QStringList *data, const QStringList *filter)
 {
     if (view == 0) {
         if (data != 0) {
-            view = new View(&PIG_PATH, &ui->b_back, this);
+            view = new View(&PIG_PATH, this);
 
             QObject::connect (view, &View::sendTopbarState, [&] (bool setHidden) {
                 topbar->setHidden(setHidden);
@@ -167,17 +169,31 @@ void PIG::init_view(const QStringList *data, const QStringList *filter)
 
 void PIG::init_movie(const int &ID, const QStringList **data, const int &sizeData, int scene)
 {
-    player = new Player(this);
+    if (player == 0) {
+        player = new Player(this);
 
-    torrent = new Torrent(&PIG_PATH, &((**data)[(ID * sizeData) + 16]), &(**data)[(ID * sizeData) + 17],
-                          &(**data)[(ID * sizeData + 18)], scene, &player);
+        torrent = new Torrent(&PIG_PATH, &((**data)[(ID * sizeData) + 16]), &(**data)[(ID * sizeData) + 17],
+                              &(**data)[(ID * sizeData + 18)], scene, &player);
 
-    connect (torrent, SIGNAL(sendFile(const QString*)), player, SLOT(init_mediaplayer(const QString*)));
-    connect (torrent, SIGNAL(sendStats(int, int, const qint64&, const double&, const double&)),
-             player, SLOT(stats(int, int, const qint64&, const double&, const double&)));
+        connect (torrent, SIGNAL(sendFile(const QString*)), player, SLOT(init_mediaplayer(const QString*)));
+        connect (torrent, SIGNAL(sendStats(int, int, const qint64&, const double&, const double&)),
+                 player, SLOT(stats(int, int, const qint64&, const double&, const double&)));
     
-    view->hide();
-    ui->main_layout->addWidget(player);
+        view->hide();
+        ui->main_layout->addWidget(player);
+
+        sc_backMovie->setEnabled(true);
+    } else {
+        ui->main_layout->removeWidget(player);
+        view->show();
+
+        sc_backMovie->setEnabled(false);
+
+        torrent->deleteLater();
+        player->deleteLater();
+        torrent = NULL;
+        player = NULL;
+    }
 }
 
 void PIG::init_setup()
@@ -192,14 +208,11 @@ void PIG::init_setup()
             view->hide();
         }
 
-        ui->main_layout->addWidget(setup);
-
         topbar->setHidden(true);
 
-        connect (ui->b_back, SIGNAL(pressed()), this, SLOT(init_setup()));
-        ui->b_back->show();
+        ui->main_layout->addWidget(setup);
 
-        sc_back->setEnabled(true);
+        sc_backSetup->setEnabled(true);
     } else {
         ui->main_layout->removeWidget(setup);
 
@@ -208,10 +221,7 @@ void PIG::init_setup()
 
         topbar->setHidden(false);
 
-        ui->b_back->disconnect();
-        ui->b_back->hide();
-
-        sc_back->setEnabled(false);
+        sc_backSetup->setEnabled(false);
 
         setup->deleteLater();
         setup = NULL;
@@ -221,9 +231,9 @@ void PIG::init_setup()
 void PIG::init_error(QString errorMsg)
 {
     if ((ui != 0) && (error == 0)) {
-        sc_back->setEnabled(false);
+        sc_backSetup->setEnabled(false);
+        sc_backMovie->setEnabled(false);
 
-        ui->b_back->hide();
         ui->b_minimize->hide();
         ui->b_quit->hide();
 
@@ -254,17 +264,7 @@ QHash<QString, QVariant> PIG::get_rc()
 
 bool PIG::eventFilter(QObject *obj, QEvent *e)
 {
-    if (obj == (QObject*)ui->b_back) {
-        if (e->type() == QEvent::Enter) {
-            ui->b_back->setIcon(QIcon(":/icon-back-dark"));
-            return true;
-        } else if (e->type() == QEvent::Leave) {
-            ui->b_back->setIcon(QIcon(":/icon-back"));
-            return true;
-        } else {
-            return false;
-        }
-    } else if (obj == (QObject*)ui->b_minimize) {
+    if (obj == (QObject*)ui->b_minimize) {
         if (e->type() == QEvent::Enter) {
             ui->b_minimize->setIcon(QIcon(":/icon-minimize-dark"));
             return true;

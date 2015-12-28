@@ -7,8 +7,6 @@
 
 #include <QWidget>
 
-#include <QObject>
-
 namespace Ui {
 class Player;
 }
