@@ -27,10 +27,9 @@ PIG::PIG(QWidget *parent) :
     QObject::connect (ui->b_minimize, &QPushButton::released, [&] { showMinimized(); });
     QObject::connect (ui->b_quit, &QPushButton::released, [&] { close(); });
 
-    sc_backSetup = new QShortcut(QKeySequence(Qt::Key_Escape), this, SLOT(init_setup()));
-    sc_backSetup->setEnabled(false);
-    sc_backMovie = new QShortcut(QKeySequence(Qt::Key_Escape), this, SLOT(init_movie()));
-    sc_backMovie->setEnabled(false);
+    sc_back = new QShortcut(this);
+    sc_back->setKey(QKeySequence(Qt::Key_Escape));
+    sc_back->setEnabled(false);
     sc_quit = new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_Q), this, SLOT(close()));
 
     if (init())
@@ -117,7 +116,6 @@ void PIG::init_update()
     QObject::connect (update, &Update::sendWidget, [&] (QWidget *w) {
         for (int i = 0; i < ui->main_layout->count(); i++)
             ui->main_layout->itemAt(i)->widget()->setDisabled(true);
-
         ui->main_layout->insertWidget(0, w);
         w->show();
     });
@@ -169,79 +167,77 @@ void PIG::init_view(const QStringList *data, const QStringList *filter)
 
 void PIG::init_movie(const int &ID, const QStringList **data, const int &sizeData, int scene)
 {
-    if (player == 0) {
-        player = new Player(this);
+    player = new Player(this);
 
-        torrent = new Torrent(&PIG_PATH, &((**data)[(ID * sizeData) + 16]), &(**data)[(ID * sizeData) + 17],
+    torrent = new Torrent(&PIG_PATH, &((**data)[(ID * sizeData) + 16]), &(**data)[(ID * sizeData) + 17],
                               &(**data)[(ID * sizeData + 18)], scene, &player);
 
-        connect (torrent, SIGNAL(sendFile(const QString*)), player, SLOT(init_mediaplayer(const QString*)));
-        connect (torrent, SIGNAL(sendStats(int, int, const qint64&, const double&, const double&)),
-                 player, SLOT(stats(int, int, const qint64&, const double&, const double&)));
+    connect (torrent, SIGNAL(sendFile(const QString*)), player, SLOT(init_mediaplayer(const QString*)));
+    connect (torrent, SIGNAL(sendStats(int, int, const qint64&, const double&, const double&)),
+             player, SLOT(stats(int, int, const qint64&, const double&, const double&)));
     
-        view->hide();
-        ui->main_layout->addWidget(player);
+    view->hide();
+    ui->main_layout->addWidget(player);
 
-        sc_backMovie->setEnabled(true);
-    } else {
+    QObject::connect (sc_back, &QShortcut::activated, [&] {
         ui->main_layout->removeWidget(player);
         view->show();
 
-        sc_backMovie->setEnabled(false);
+        sc_back->disconnect();
+        sc_back->setEnabled(false);
 
         torrent->deleteLater();
         player->deleteLater();
         torrent = NULL;
         player = NULL;
-    }
+    });
+
+    sc_back->setEnabled(true);
 }
 
 void PIG::init_setup()
 {
-    if (setup == 0) {
-        setup = new Setup(&PIG_PATH, &keep_covers, &keep_torrents, &keep_movies,
-                          &torrent_port_1, &torrent_port_2, &db, this);
+    setup = new Setup(&PIG_PATH, &keep_covers, &keep_torrents, &keep_movies,
+                      &torrent_port_1, &torrent_port_2, &db, this);
 
-        connect (setup, SIGNAL(sendError(QString)), this, SLOT(init_error(QString)));
-        if (view != 0) {
-            connect (setup, SIGNAL(folderCoversReset()), view, SLOT(reset_local_covers()));
-            view->hide();
-        }
+    connect (setup, SIGNAL(sendError(QString)), this, SLOT(init_error(QString)));
+    if (view != 0) {
+        connect (setup, SIGNAL(folderCoversReset()), view, SLOT(reset_local_covers()));
+        view->hide();
+    }
+    topbar->setHidden(true);
+    ui->main_layout->addWidget(setup);
 
-        topbar->setHidden(true);
-
-        ui->main_layout->addWidget(setup);
-
-        sc_backSetup->setEnabled(true);
-    } else {
+    QObject::connect (sc_back, &QShortcut::activated, [&] {
         ui->main_layout->removeWidget(setup);
-
         if (view != 0)
             view->show();
-
         topbar->setHidden(false);
 
-        sc_backSetup->setEnabled(false);
+        sc_back->disconnect();
+        sc_back->setEnabled(false);
 
         setup->deleteLater();
         setup = NULL;
-    }
+    });
+
+    sc_back->setEnabled(true);
 }
 
 void PIG::init_error(QString errorMsg)
 {
     if ((ui != 0) && (error == 0)) {
-        sc_backSetup->setEnabled(false);
-        sc_backMovie->setEnabled(false);
+        for (int i = 0; i < ui->main_layout->count(); i++)
+            ui->main_layout->itemAt(i)->widget()->hide();
 
         ui->b_minimize->hide();
         ui->b_quit->hide();
 
-        for (int i = 0; i < ui->main_layout->count(); i++)
-            ui->main_layout->itemAt(i)->widget()->hide();
-
         error = new Error(&errorMsg, this);
         ui->main_layout->insertWidget(0, error, Qt::AlignCenter);
+
+        sc_back->disconnect();
+        sc_back->setEnabled(false);
     }
 }
 

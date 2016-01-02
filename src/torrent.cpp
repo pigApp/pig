@@ -3,10 +3,6 @@
 
 #include <stdlib.h>
 
-#include <libtorrent/alert.hpp>
-#include <libtorrent/alert_types.hpp>
-#include <libtorrent/extensions/ut_pex.hpp>// Por defecto enable.
-
 #include <QDir>
 #include <QTimer>
 #include <QDebug>//
@@ -42,8 +38,9 @@ Torrent::Torrent(const QString* const PIG_PATH, const QString *host, const QStri
 Torrent::~Torrent()
 {
     isAborted = true;
+    
     if (h.is_valid())
-        s->remove_torrent(h);
+        s.remove_torrent(h);
 }
 
 void Torrent::init(int ID, QString path)
@@ -51,20 +48,21 @@ void Torrent::init(int ID, QString path)
     Q_UNUSED(ID);
 
     libtorrent::session_settings ss;
+    ss.disable_hash_checks = true;
+    
     libtorrent::add_torrent_params p;
     libtorrent::error_code ec;
 
-    s = new libtorrent::session();
-    ss.disable_hash_checks = true;
-    s->set_settings(ss);
-    s->set_alert_mask(2147483647); //(1864);
-    s->start_dht();
+    s.set_settings(ss);
+    s.set_alert_mask(2147483647); //(1864);
+	s.listen_on(std::make_pair(6881, 6889), ec);
+    s.start_dht();
 
     p.save_path = (*_PIG_PATH).toStdString()+"/tmp/torrents/movies/";
     p.ti = new libtorrent::torrent_info("/home/lxfb/.pig/tmp/torrents/FOXX.torrent", ec); //(path, ec);
     //p.ti = new libtorrent::torrent_info(file->at(0).toStdString(), ec);
 
-    h = s->add_torrent(p, ec);
+    h = s.add_torrent(p, ec);
     h.set_sequential_download(true);
     h.set_priority(255);
 
@@ -79,7 +77,8 @@ void Torrent::main_loop()
     qDebug() << "MAIN_LOOP";
 
     if (!isAborted) {
-        std::auto_ptr<libtorrent::alert> a = s->pop_alert();
+
+        std::auto_ptr<libtorrent::alert> a = s.pop_alert();
 
         switch (a->type())
         {
@@ -104,8 +103,6 @@ void Torrent::main_loop()
             default: break;
         }
 
-        //(*_player)->debug = QString::fromStdString(a->message());
-
         if (hasMetadata) stats();
 
         QTimer::singleShot(1000, this, SLOT(main_loop()));
@@ -122,35 +119,34 @@ void Torrent::filter_files()
     formats << ".avi" << ".divx" << ".flv" << ".h264" << ".mkv" << ".mp4"
             << ".mpg" << ".mpeg" << ".ogm"<< ".ogv" << ".wmv";
 
-    /*
-    fs = h.torrent_file().get()->orig_files();
+//    fs = h.torrent_file().get()->orig_files();
 
-    for (int i=0; i<fs.num_files(); i++) {
-        if (check) {
-            for (int n=0; n<formats.size(); n++) {
-                if (QString::fromStdString(fs.file_name(i)).endsWith(formats[n]
-                    , Qt::CaseInsensitive)) {
-                    if (_scene == ctrl) {
-                        priorities.push_back(7);
-                        _scene = i;
-                        check = false;
-                    } else {
-                        priorities.push_back(0);
-                        ++ctrl;
-                    }
-                    break;
-                } else {
-                    if (n == formats.size()+1)
-                        priorities.push_back(0);
-                }
-            }
-        } else {
-            priorities.push_back(0);
-        }
-    }
-    */
+//    for (int i=0; i<fs.num_files(); i++) {
+//        if (check) {
+//            for (int n=0; n<formats.size(); n++) {
+//                if (QString::fromStdString(fs.file_name(i)).endsWith(formats[n]
+//                    , Qt::CaseInsensitive)) {
+//                    if (_scene == ctrl) {
+//                        priorities.push_back(7);
+//                        _scene = i;
+//                        check = false;
+//                    } else {
+//                        priorities.push_back(0);
+//                        ++ctrl;
+//                    }
+//                    break;
+//                } else {
+//                    if (n == formats.size()+1)
+//                        priorities.push_back(0);
+//                }
+//            }
+//        } else {
+//            priorities.push_back(0);
+//        }
+//    }
+//
 
-    h.prioritize_files(priorities); //TODO: PROBAR ESTO SOLO.
+    //h.prioritize_files(priorities); //TODO: PROBAR ESTO SOLO.
 
     _scene = 0;//
 
@@ -166,7 +162,7 @@ void Torrent::stats()
     if (!isAborted) {
         h.flush_cache();
 
-        const qint64 kb_writen = (s->get_cache_status().blocks_written)*16; //((s->get_cache_status().blocks_written)*16)/KB
+        const qint64 kb_writen = (s.get_cache_status().blocks_written)*16; //((s->get_cache_status().blocks_written)*16)/KB
 
         emit sendStats((h.status(2).download_rate/KB), h.status(2).num_peers,
                        kb_writen, kb_required, n_kb);
@@ -174,33 +170,30 @@ void Torrent::stats()
         if (isDump) {
             if ((kb_writen-kb_skip_global) >= kb_required) {
                 isDump = false;
-                h.flush_cache(); //TODO: Recibirlo con un Alert.
+                
+                //h.flush_cache(); //TODO: Recibirlo con un Alert.
                 
                 videotest = "http://abv.cdn.vizplay.org/v/1/4fca0c95d17ef9371222670af35f55b1.mp4?st=6c_1EwuzvnKnlbQTIHcEEg&hash=sa06nS2P4CC3jD1U4VoinA";
                 emit sendFile(&videotest);
             }
         }
 
-        /*
-        if (player != NULL) {
-            int total_sec = 6658730/1000;
-            int total_mb = 836600/1024;
-            int current_sec = libvlc_media_player_get_time(player->mediaplayer)/1000;
-            qint64 current_mb_to_sec = ((total_sec*(kb_writen/1024))/total_mb);
+//      if (player != NULL) {
+//          int total_sec = 6658730/1000;
+//          int total_mb = 836600/1024;
+//          int current_sec = libvlc_media_player_get_time(player->mediaplayer)/1000;
+//          qint64 current_mb_to_sec = ((total_sec*(kb_writen/1024))/total_mb);
 
-            if (current_sec >= 10) {
-                if ((current_sec >= current_mb_to_sec) && libvlc_media_player_is_playing(player->mediaplayer)) {
-                    libvlc_media_player_pause(player->mediaplayer);
-                    qDebug() << "-- PAUSED";
-                } else if ((current_sec <= current_mb_to_sec) && !libvlc_media_player_is_playing(player->mediaplayer)) {
-                    libvlc_media_player_play(player->mediaplayer);
-                    qDebug() << "-- PLAY";
-                }
-            }
-
-            qDebug() << "SEC " << current_sec << "|" << "MB_TO_SEC" << current_mb_to_sec;
-        }
-        */
+//          if (current_sec >= 10) {
+//              if ((current_sec >= current_mb_to_sec) && libvlc_media_player_is_playing(player->mediaplayer)) {
+//                  libvlc_media_player_pause(player->mediaplayer);
+//                  qDebug() << "-- PAUSED";
+//              } else if ((current_sec <= current_mb_to_sec) && !libvlc_media_player_is_playing(player->mediaplayer)) {
+//                  libvlc_media_player_play(player->mediaplayer);
+//                  qDebug() << "-- PLAY";
+//              }
+//          }
+//      }
     }
 }
 
@@ -209,10 +202,6 @@ void Torrent::error(QString error)
     qDebug() << error;
 //  (*_player)->status = "TORRENT ERROR";
 }
-
-
-
-
 
 
 

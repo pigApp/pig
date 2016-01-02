@@ -42,7 +42,7 @@ private:
 
     Ui::PIG *ui;
 
-    QShortcut *sc_backSetup;
+    QShortcut *sc_back;
     QShortcut *sc_backMovie;
     QShortcut *sc_quit;
 

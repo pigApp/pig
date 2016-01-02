@@ -1,13 +1,13 @@
 #ifndef TORRENT_H
 #define TORRENT_H
 
+#pragma GCC system_header
+
 #include "player.h"
 
-//#include <libtorrent/torrent.hpp>//
 #include <libtorrent/session.hpp>
-//  #include <libtorrent/disk_io_thread.hpp>
-
-#include <stdlib.h>
+#include <libtorrent/alert.hpp>
+#include <libtorrent/alert_types.hpp>
 
 #include <QObject>
 
@@ -35,16 +35,14 @@ private:
     const QString *_host;
     const QString *_url;
     const QString *_pkg;
+    int _scene;
     Player **_player;
 
-    //libtorrent::torrent::request_time_critical_pieces();
-
-    libtorrent::session *s;
+    libtorrent::session s;
     libtorrent::torrent_handle h;
     libtorrent::file_storage fs;
-    libtorrent::cache_status cache;
 
-    int _scene, piece_first;
+    int piece_first;
     double kb_required, kb_skip_global, n_kb;
     bool hasMetadata, isDump, isSkip, isAborted;
 
