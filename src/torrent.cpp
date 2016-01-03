@@ -23,7 +23,7 @@ Torrent::Torrent(const QString* const PIG_PATH, const QString *host, const QStri
     hasMetadata = false;
     isSkip = false;
     isAborted = false;
-    kb_required = 20480; //5120;
+    kb_required = 2048; //5120;
     kb_skip_global = 0;
 
     ThreadedSocket *thread = new ThreadedSocket(_PIG_PATH, _host, _url, _pkg);
@@ -59,7 +59,8 @@ void Torrent::init(int ID, QString path)
     s.start_dht();
 
     p.save_path = (*_PIG_PATH).toStdString()+"/tmp/torrents/movies/";
-    p.ti = new libtorrent::torrent_info("/home/lxfb/.pig/tmp/torrents/FOXX.torrent", ec); //(path, ec);
+    p.ti = new libtorrent::torrent_info("/home/lxfb/.pig/tmp/torrents/FOXX.torrent", ec);
+    //p.ti = new libtorrent::torrent_info(path.toStdString(), ec); //(path, ec);
     //p.ti = new libtorrent::torrent_info(file->at(0).toStdString(), ec);
 
     h = s.add_torrent(p, ec);
@@ -173,8 +174,7 @@ void Torrent::stats()
                 
                 //h.flush_cache(); //TODO: Recibirlo con un Alert.
                 
-                videotest = "http://abv.cdn.vizplay.org/v/1/4fca0c95d17ef9371222670af35f55b1.mp4?st=6c_1EwuzvnKnlbQTIHcEEg&hash=sa06nS2P4CC3jD1U4VoinA";
-                emit sendFile(&videotest);
+                emit sendFile(QString::fromStdString(fs.file_path(_scene)));
             }
         }
 

@@ -22,7 +22,7 @@ public:
     ~Torrent();
 
 signals:
-    void sendFile(const QString *path);
+    void sendFile(QString path);
     void sendStats(int bitrate, int peers, const qint64 &kb_writen,
                    const double &kb_required, const double &n_kb);
 
@@ -45,8 +45,6 @@ private:
     int piece_first;
     double kb_required, kb_skip_global, n_kb;
     bool hasMetadata, isDump, isSkip, isAborted;
-
-    QString videotest;//
 
 private slots:
     void init(int ID, QString path);

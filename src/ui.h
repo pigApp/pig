@@ -12,6 +12,7 @@
 #include <QPixmap>
 #include <QScrollArea>
 #include <QScrollBar>
+#include <QProgressBar>
 #include <QHBoxLayout>
 #include <QVBoxLayout>
 #include <QGridLayout>
@@ -877,7 +878,9 @@ public:
     QLabel *lb_bitrate;
     QLabel *lb_px_peers;
     QLabel *lb_peers;
-    QHBoxLayout *l_stats;
+    QProgressBar *progressBar;
+    QHBoxLayout *l_download;
+    QVBoxLayout *l_stats;
     QVBoxLayout *l;
 
     void setupUi(QWidget *Player)
@@ -925,14 +928,29 @@ public:
         lb_peers->setText("0 PEERS");
         lb_peers->setAutoFillBackground(true);
 
-        l_stats = new QHBoxLayout;
-        l_stats->setSpacing(15); //TODO: PORCENTAJE.
+        progressBar = new QProgressBar();
+        progressBar->setFixedHeight(3); //TODO: PORCENTAJE.
+        progressBar->setFixedWidth(500); //TODO: PORCENTAJE.
+        progressBar->setStyleSheet ("QProgressBar { background: rgb(15, 15, 15); \
+                                     border: none; }"
+                                    "QProgressBar::chunk { background: rgb(255, 255, 255); }");
+        progressBar->setTextVisible(false);
+        progressBar->setMinimum(0);
+        
+        l_download = new QHBoxLayout;
+        l_download->setSpacing(15); //TODO: PORCENTAJE.
+        l_download->setAlignment(Qt::AlignCenter);
+        l_download->addWidget(lb_px_bitrate);
+        l_download->addWidget(lb_bitrate);
+        l_download->addSpacing(15); //TODO: PORCENTAJE.
+        l_download->addWidget(lb_px_peers);
+        l_download->addWidget(lb_peers);
+
+        l_stats = new QVBoxLayout;
         l_stats->setAlignment(Qt::AlignCenter);
-        l_stats->addWidget(lb_px_bitrate);
-        l_stats->addWidget(lb_bitrate);
+        l_stats->addLayout(l_download);
         l_stats->addSpacing(15); //TODO: PORCENTAJE.
-        l_stats->addWidget(lb_px_peers);
-        l_stats->addWidget(lb_peers);
+        l_stats->addWidget(progressBar);
 
         l = new QVBoxLayout(Player);
         l->addLayout(l_stats);

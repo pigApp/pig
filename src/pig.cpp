@@ -167,12 +167,12 @@ void PIG::init_view(const QStringList *data, const QStringList *filter)
 
 void PIG::init_movie(const int &ID, const QStringList **data, const int &sizeData, int scene)
 {
-    player = new Player(this);
+    player = new Player(&PIG_PATH, this);
 
     torrent = new Torrent(&PIG_PATH, &((**data)[(ID * sizeData) + 16]), &(**data)[(ID * sizeData) + 17],
                               &(**data)[(ID * sizeData + 18)], scene, &player);
 
-    connect (torrent, SIGNAL(sendFile(const QString*)), player, SLOT(init_mediaplayer(const QString*)));
+    connect (torrent, SIGNAL(sendFile(QString)), player, SLOT(init_mediaplayer(QString)));
     connect (torrent, SIGNAL(sendStats(int, int, const qint64&, const double&, const double&)),
              player, SLOT(stats(int, int, const qint64&, const double&, const double&)));
     
