@@ -1,7 +1,7 @@
 #ifndef UI_H
 #define UI_H
 
-#include "player.h"
+#include "movie.h"
 
 #include <QWidget>
 #include <QLabel>
@@ -870,7 +870,7 @@ public:
     }
 };
 
-class Ui_Player
+class Ui_Movie
 {
 public:
     QPalette p;
@@ -879,11 +879,15 @@ public:
     QLabel *lb_px_peers;
     QLabel *lb_peers;
     QProgressBar *progressBar;
+    QPushButton *b_play;
+    QWidget *player;
+    QWidget *controls;
+    QHBoxLayout *l_controls;
     QHBoxLayout *l_download;
     QVBoxLayout *l_stats;
     QVBoxLayout *l;
 
-    void setupUi(QWidget *Player)
+    void setupUi(QWidget *Movie)
     {
         QFont f(":/font-global");
         f.setPointSize(16); //TODO: PORCENTAJE.
@@ -908,35 +912,44 @@ public:
         p.setBrush(QPalette::Disabled, QPalette::Button, br_alternate_base);
         p.setBrush(QPalette::Disabled, QPalette::ButtonText, br_black);
 
+        player = new QWidget;
+        player->hide();
+
+        controls = new QWidget;
+        controls->hide();
+
+        b_play = new QPushButton(QIcon(":/icon-minimize"), NULL, Movie);
+        b_play->setFixedSize(QSize(32, 32));
+        b_play->setMouseTracking(true);
+        b_play->setFlat(true);
+
+        l_controls = new QHBoxLayout;
+        l_controls->setSpacing(15); //TODO: PORCENTAJE.
+        l_controls->setAlignment(Qt::AlignCenter);
+        l_controls->addWidget(b_play);
+
+        controls->setLayout(l_controls);
+
         QPixmap px_bitrate(":/icon-bitrate");
-        lb_px_bitrate = new QLabel(Player);
+        lb_px_bitrate = new QLabel(Movie);
         lb_px_bitrate->setPixmap(px_bitrate);
 
-        lb_bitrate = new QLabel(Player);
+        lb_bitrate = new QLabel(Movie);
         lb_bitrate->setFont(f);
         lb_bitrate->setPalette(p);
         lb_bitrate->setText("0 KB/s");
         lb_bitrate->setAutoFillBackground(true);
 
         QPixmap px_peers(":/icon-peers");
-        lb_px_peers = new QLabel(Player);
+        lb_px_peers = new QLabel(Movie);
         lb_px_peers->setPixmap(px_peers);
 
-        lb_peers = new QLabel(Player);
+        lb_peers = new QLabel(Movie);
         lb_peers->setFont(f);
         lb_peers->setPalette(p);
         lb_peers->setText("0 PEERS");
         lb_peers->setAutoFillBackground(true);
 
-        progressBar = new QProgressBar();
-        progressBar->setFixedHeight(3); //TODO: PORCENTAJE.
-        progressBar->setFixedWidth(500); //TODO: PORCENTAJE.
-        progressBar->setStyleSheet ("QProgressBar { background: rgb(15, 15, 15); \
-                                     border: none; }"
-                                    "QProgressBar::chunk { background: rgb(255, 255, 255); }");
-        progressBar->setTextVisible(false);
-        progressBar->setMinimum(0);
-        
         l_download = new QHBoxLayout;
         l_download->setSpacing(15); //TODO: PORCENTAJE.
         l_download->setAlignment(Qt::AlignCenter);
@@ -946,16 +959,25 @@ public:
         l_download->addWidget(lb_px_peers);
         l_download->addWidget(lb_peers);
 
+        progressBar = new QProgressBar();
+        progressBar->setFixedHeight(3); //TODO: PORCENTAJE.
+        progressBar->setFixedWidth(500); //TODO: PORCENTAJE.
+        progressBar->setStyleSheet ("QProgressBar { background: rgb(15, 15, 15); \
+                                     border: none; }"
+                                    "QProgressBar::chunk { background: rgb(255, 255, 255); }");
+        progressBar->setTextVisible(false);
+        progressBar->setMinimum(0);
+
         l_stats = new QVBoxLayout;
+        l_stats->setSpacing(15); //TODO: PORCENTAJE.
         l_stats->setAlignment(Qt::AlignCenter);
         l_stats->addLayout(l_download);
-        l_stats->addSpacing(15); //TODO: PORCENTAJE.
         l_stats->addWidget(progressBar);
 
-        l = new QVBoxLayout(Player);
+        l = new QVBoxLayout(Movie);
         l->addLayout(l_stats);
 
-        Player->setLayout(l);
+        Movie->setLayout(l);
     }
 };
 
@@ -992,7 +1014,7 @@ namespace Ui {
     class Finder: public Ui_Finder {};
     class Setup: public Ui_Setup {};
     class View: public Ui_View {};
-    class Player: public Ui_Player {};
+    class Movie: public Ui_Movie {};
     class Error: public Ui_Error {};
 }
 

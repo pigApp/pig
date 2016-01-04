@@ -93,7 +93,6 @@ void View::get_covers(const QStringList *data, const int &ID)
             if ((i == (requiredCovers - 1)) && (requiredRemoteCovers != 0))
                 set_download_state(true, false);
         }
-
     } else {
         int _ID = ((ID + 1) * sizeData);
 

@@ -8,26 +8,28 @@
 #include <QWidget>
 
 namespace Ui {
-class Player;
+class Movie;
 }
 
-class Player : public QWidget
+class Movie : public QWidget
 {
     Q_OBJECT
 
 public:
-    explicit Player(const QString* const PIG_PATH, QWidget *parent = 0);
-    ~Player();
+    explicit Movie(const QString* const PIG_PATH, QWidget *parent = 0);
+    ~Movie();
     
 private:
     const QString* const _PIG_PATH;
+
+    bool isInitPlayer;
 
     libvlc_instance_t *instance;
     libvlc_media_player_t *mediaplayer;
     libvlc_media_t *media;
     //libvlc_media_stats_t *stats;
 
-    Ui::Player *ui;
+    Ui::Movie *ui;
 
 private slots:
     void init_mediaplayer(QString path);

@@ -10,20 +10,20 @@
 const int KB = 1024;
 
 Torrent::Torrent(const QString* const PIG_PATH, const QString *host, const QString *url,
-                 const QString *pkg, int scene, Player **player, QObject *parent) :
+                 const QString *pkg, int scene, Movie **movie, QObject *parent) :
     QObject(parent),
     _PIG_PATH(PIG_PATH),
     _host(host),
     _url(url),
     _pkg(pkg),
     _scene(scene),
-    _player(player)
+    _player(movie)
 {
     isDump = true;
     hasMetadata = false;
     isSkip = false;
     isAborted = false;
-    kb_required = 2048; //5120;
+    kb_required = 100; //5120;
     kb_skip_global = 0;
 
     ThreadedSocket *thread = new ThreadedSocket(_PIG_PATH, _host, _url, _pkg);
@@ -178,7 +178,7 @@ void Torrent::stats()
             }
         }
 
-//      if (player != NULL) {
+//      if (movie != NULL) {
 //          int total_sec = 6658730/1000;
 //          int total_mb = 836600/1024;
 //          int current_sec = libvlc_media_player_get_time(player->mediaplayer)/1000;

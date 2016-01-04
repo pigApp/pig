@@ -9,7 +9,7 @@ PIG::PIG(QWidget *parent) :
     topbar(NULL),
     setup(NULL),
     view(NULL),
-    player(NULL),
+    movie(NULL),
     torrent(NULL),
     error(NULL),
     keep_covers(true),
@@ -167,29 +167,29 @@ void PIG::init_view(const QStringList *data, const QStringList *filter)
 
 void PIG::init_movie(const int &ID, const QStringList **data, const int &sizeData, int scene)
 {
-    player = new Player(&PIG_PATH, this);
+    movie = new Movie(&PIG_PATH, this);
 
     torrent = new Torrent(&PIG_PATH, &((**data)[(ID * sizeData) + 16]), &(**data)[(ID * sizeData) + 17],
-                              &(**data)[(ID * sizeData + 18)], scene, &player);
+                              &(**data)[(ID * sizeData + 18)], scene, &movie);
 
-    connect (torrent, SIGNAL(sendFile(QString)), player, SLOT(init_mediaplayer(QString)));
+    connect (torrent, SIGNAL(sendFile(QString)), movie, SLOT(init_mediaplayer(QString)));
     connect (torrent, SIGNAL(sendStats(int, int, const qint64&, const double&, const double&)),
-             player, SLOT(stats(int, int, const qint64&, const double&, const double&)));
+             movie, SLOT(stats(int, int, const qint64&, const double&, const double&)));
     
     view->hide();
-    ui->main_layout->addWidget(player);
+    ui->main_layout->addWidget(movie);
 
     QObject::connect (sc_back, &QShortcut::activated, [&] {
-        ui->main_layout->removeWidget(player);
+        ui->main_layout->removeWidget(movie);
         view->show();
 
         sc_back->disconnect();
         sc_back->setEnabled(false);
 
         torrent->deleteLater();
-        player->deleteLater();
+        movie->deleteLater();
         torrent = NULL;
-        player = NULL;
+        movie = NULL;
     });
 
     sc_back->setEnabled(true);

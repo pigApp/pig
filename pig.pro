@@ -18,7 +18,7 @@ SOURCES += src/main.cpp \
            src/finder.cpp \
            src/setup.cpp \
            src/view.cpp \
-           src/player.cpp \
+           src/movie.cpp \
            src/torrent.cpp \
            src/unpack.cpp \
            src/su.cpp \
@@ -32,7 +32,7 @@ HEADERS += src/pig.h \
            src/finder.h \
            src/setup.h \
            src/view.h \
-           src/player.h \
+           src/movie.h \
            src/torrent.h \
            src/unpack.h \
            src/su.h \

@@ -3,7 +3,7 @@
 
 #pragma GCC system_header
 
-#include "player.h"
+#include "movie.h"
 
 #include <libtorrent/session.hpp>
 #include <libtorrent/alert.hpp>
@@ -17,7 +17,7 @@ class Torrent : public QObject
 
 public:
     explicit Torrent(const QString* const PIG_PATH, const QString *host, const QString *url,
-                     const QString *pkg, int scene, Player **player, QObject *parent = 0);
+                     const QString *pkg, int scene, Movie **movie, QObject *parent = 0);
 
     ~Torrent();
 
@@ -36,7 +36,7 @@ private:
     const QString *_url;
     const QString *_pkg;
     int _scene;
-    Player **_player;
+    Movie **_player;
 
     libtorrent::session s;
     libtorrent::torrent_handle h;

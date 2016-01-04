@@ -4,7 +4,7 @@
 #include "topbar.h"
 #include "setup.h"
 #include "view.h"
-#include "player.h"
+#include "movie.h"
 #include "torrent.h"
 #include "error.h"
 #include "ui.h"
@@ -33,7 +33,7 @@ private:
     TopBar *topbar;
     Setup *setup;
     View *view;
-    Player *player;
+    Movie *movie;
     Torrent *torrent;
     Error *error;
 
