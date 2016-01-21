@@ -1,4 +1,3 @@
-- Compilar libtorrent incluyendo funciones depreciadas.
 - Inicializar Player y Torrent en pig.cpp.
 - Descarga mal el archivo .torrent.
 - Actualizar a libtorrent 1.0.7 y usar nuevo tipo de alert.

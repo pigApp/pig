@@ -8,6 +8,7 @@
 #include <QLineEdit>
 #include <QPushButton>
 #include <QRadioButton>
+#include <QSlider>
 #include <QComboBox>
 #include <QPixmap>
 #include <QScrollArea>
@@ -880,6 +881,9 @@ public:
     QLabel *lb_peers;
     QProgressBar *progressBar;
     QPushButton *b_play;
+    QPushButton *b_mute;
+    QSlider *sl_volume;
+    QSlider *sl_position;
     QWidget *player;
     QWidget *controls;
     QHBoxLayout *l_controls;
@@ -918,15 +922,31 @@ public:
         controls = new QWidget;
         controls->hide();
 
-        b_play = new QPushButton(QIcon(":/icon-minimize"), NULL, Movie);
-        b_play->setFixedSize(QSize(32, 32));
+        b_play = new QPushButton(QIcon(":/icon-pause"), NULL, Movie);
+        b_play->setIconSize(QSize(24, 24));
         b_play->setMouseTracking(true);
         b_play->setFlat(true);
+
+        b_mute = new QPushButton(QIcon(":/icon-mute"), NULL, Movie);
+        b_mute->setIconSize(QSize(24, 24));
+        b_mute->setMouseTracking(true);
+        b_mute->setFlat(true);
+
+        sl_volume = new QSlider(Qt::Horizontal);
+        sl_volume->setPalette(p);
+        sl_volume->setValue(80);
+
+        sl_position = new QSlider(Qt::Horizontal);
+        sl_position->setPalette(p);
+        sl_position->setMaximum(1000);
 
         l_controls = new QHBoxLayout;
         l_controls->setSpacing(15); //TODO: PORCENTAJE.
         l_controls->setAlignment(Qt::AlignCenter);
         l_controls->addWidget(b_play);
+        l_controls->addWidget(b_mute);
+        l_controls->addWidget(sl_volume);
+        l_controls->addWidget(sl_position);
 
         controls->setLayout(l_controls);
 
