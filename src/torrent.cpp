@@ -75,7 +75,7 @@ void Torrent::init(int ID, QString path)
 
 void Torrent::main_loop()
 {
-    qDebug() << "MAIN_LOOP";
+    //qDebug() << "MAIN_LOOP";
 
     if (!isAborted) {
 

@@ -21,11 +21,7 @@ PIG::PIG(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    ui->b_minimize->installEventFilter(this);
-    ui->b_quit->installEventFilter(this);
 
-    QObject::connect (ui->b_minimize, &QPushButton::released, [&] { showMinimized(); });
-    QObject::connect (ui->b_quit, &QPushButton::released, [&] { close(); });
 
     sc_back = new QShortcut(this);
     sc_back->setKey(QKeySequence(Qt::Key_Escape));
@@ -177,10 +173,18 @@ void PIG::init_movie(const int &ID, const QStringList **data, const int &sizeDat
              movie, SLOT(stats(int, int, const qint64&, const double&, const double&)));
 
     view->hide();
+    view->setDisabled(true);
+    ui->main_layout->setMargin(0);
+    ui->main_layout->setContentsMargins(0, 0, 0, 0);
+    ui->main_layout->setSpacing(0);
     ui->main_layout->addWidget(movie);
 
     QObject::connect (sc_back, &QShortcut::activated, [&] {
+        ui->main_layout->setMargin(11);
+        ui->main_layout->setContentsMargins(11, 11, 11, 11);
+        ui->main_layout->setSpacing(11);
         ui->main_layout->removeWidget(movie);
+        view->setEnabled(true);
         view->show();
 
         sc_back->disconnect();
@@ -210,6 +214,7 @@ void PIG::init_setup()
 
     QObject::connect (sc_back, &QShortcut::activated, [&] {
         ui->main_layout->removeWidget(setup);
+
         if (view != 0)
             view->show();
         topbar->setHidden(false);
@@ -229,9 +234,6 @@ void PIG::init_error(QString errorMsg)
     if ((ui != 0) && (error == 0)) {
         for (int i = 0; i < ui->main_layout->count(); i++)
             ui->main_layout->itemAt(i)->widget()->hide();
-
-        ui->b_minimize->hide();
-        ui->b_quit->hide();
 
         error = new Error(&errorMsg, this);
         ui->main_layout->insertWidget(0, error, Qt::AlignCenter);
@@ -256,31 +258,4 @@ QHash<QString, QVariant> PIG::get_rc()
     }
 
     return rc;
-}
-
-bool PIG::eventFilter(QObject *obj, QEvent *e)
-{
-    if (obj == (QObject*)ui->b_minimize) {
-        if (e->type() == QEvent::Enter) {
-            ui->b_minimize->setIcon(QIcon(":/icon-minimize-dark"));
-            return true;
-        } else if (e->type() == QEvent::Leave) {
-            ui->b_minimize->setIcon(QIcon(":/icon-minimize"));
-            return true;
-        } else {
-            return false;
-        }
-    } else if (obj == (QObject*)ui->b_quit) {
-        if (e->type() == QEvent::Enter) {
-            ui->b_quit->setIcon(QIcon(":/icon-quit-dark"));
-            return true;
-        } else if (e->type() == QEvent::Leave) {
-            ui->b_quit->setIcon(QIcon(":/icon-quit"));
-            return true;
-        } else {
-            return false;
-        }
-    } else {
-        return QWidget::eventFilter(obj, e);
-    }
 }

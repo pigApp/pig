@@ -13,8 +13,6 @@
         <file alias="img-back_cover">resources/images/viewer/back_cover.jpg</file>
         <file alias="icon-watch">resources/images/viewer/watch.svg</file>
         <file alias="icon-watched">resources/images/viewer/watched.svg</file>
-        <file alias="icon-bitrate">resources/images/movie/bitrate.svg</file>
-        <file alias="icon-peers">resources/images/movie/peers.svg</file>
         <file alias="icon-play">resources/images/movie/player/play.svg</file>
         <file alias="icon-replay">resources/images/movie/player/replay.svg</file>
         <file alias="icon-playing">resources/images/movie/player/playing.svg</file>
@@ -22,10 +20,6 @@
         <file alias="icon-standby">resources/images/movie/player/standby.svg</file>
         <file alias="icon-mute">resources/images/movie/player/mute.svg</file>
         <file alias="icon-mute-off">resources/images/movie/player/mute-off.svg</file>
-        <file alias="icon-minimize">resources/images/global/minimize.svg</file>
-        <file alias="icon-minimize-dark">resources/images/global/minimize-dark.svg</file>
-        <file alias="icon-quit">resources/images/global/quit.svg</file>
-        <file alias="icon-quit-dark">resources/images/global/quit-dark.svg</file>
         <file alias="icon-ok">resources/images/global/ok.svg</file>
         <file alias="icon-cancel">resources/images/global/cancel.svg</file>
         <file alias="icon-more">resources/images/global/more.svg</file>

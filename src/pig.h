@@ -26,9 +26,6 @@ public:
     PIG(QWidget *parent = 0);
     ~PIG();
 
-protected:
-    bool eventFilter(QObject *obj, QEvent *e);
-
 private:
     TopBar *topbar;
     Setup *setup;
@@ -43,7 +40,6 @@ private:
     Ui::PIG *ui;
 
     QShortcut *sc_back;
-    QShortcut *sc_backMovie;
     QShortcut *sc_quit;
 
     QSqlDatabase db;

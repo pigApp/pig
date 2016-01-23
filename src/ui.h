@@ -31,8 +31,6 @@ QT_BEGIN_NAMESPACE
 class Ui_PIG
 {
 public:
-    QPushButton *b_minimize;
-    QPushButton *b_quit;
     QVBoxLayout *main_layout;
 
     void setupUi(QWidget *PIG)
@@ -73,20 +71,6 @@ public:
 
         QToolTip::setFont(f_toolTip);
         QToolTip::setPalette(p_toolTip);
-
-        b_minimize = new QPushButton(QIcon(":/icon-minimize"), NULL, PIG);
-        //b_minimize->setFixedSize(QSize(16, 16)); //TODO: PORCENTAJE.
-        b_minimize->setGeometry(1880, 5, 16, 16); //TODO: PORCENTAJE.
-        b_minimize->setMouseTracking(true);
-        b_minimize->setFlat(true);
-        b_minimize->setParent(PIG);
-
-        b_quit = new QPushButton(QIcon(":/icon-quit"), NULL, PIG);
-        //b_quit->setFixedSize(QSize(32, 32));
-        b_quit->setGeometry(1900, 5, 16, 16); //TODO: PORCENTAJE.
-        b_quit->setMouseTracking(true);
-        b_quit->setFlat(true);
-        b_quit->setParent(PIG);
 
         main_layout = new QVBoxLayout(PIG);
 
@@ -874,35 +858,40 @@ public:
 class Ui_Movie
 {
 public:
-    QPalette p;
-    QLabel *lb_px_bitrate;
+    QPalette p_stats_controls;
     QLabel *lb_bitrate;
-    QLabel *lb_px_peers;
     QLabel *lb_peers;
-    QProgressBar *progressBar;
+    QProgressBar *pb_minimum_download;
     QPushButton *b_play;
     QPushButton *b_mute;
     QSlider *sl_volume;
     QSlider *sl_position;
+    QLabel *lb_current_time;
+    QLabel *lb_total_time;
+    QPushButton *b_more;
     QWidget *player;
     QWidget *controls;
+    QHBoxLayout *l_horizontal_stats;
+    QVBoxLayout *l_vertical_stats;
     QHBoxLayout *l_controls;
-    QHBoxLayout *l_download;
-    QVBoxLayout *l_stats;
     QVBoxLayout *l;
 
     void setupUi(QWidget *Movie)
     {
         QFont f(":/font-global");
         f.setPointSize(16); //TODO: PORCENTAJE.
+        f.setCapitalization(QFont::MixedCase);
         f.setBold(true);
 
+        QBrush br_base(QColor(10, 10, 10, 255));
         QBrush br_alternate_base(QColor(15, 15, 15, 255));
         QBrush br_white(QColor(255, 255, 255, 255));
         QBrush br_black(QColor(0, 0, 0, 255));
+        QBrush br_dark(QColor(40, 40, 40, 255));
 
-        p.setBrush(QPalette::Active, QPalette::Base, br_alternate_base);
-        p.setBrush(QPalette::Active, QPalette::Window, br_alternate_base);
+        QPalette p;
+        p.setBrush(QPalette::Active, QPalette::Base, br_base);
+        p.setBrush(QPalette::Active, QPalette::Window, br_base);
         p.setBrush(QPalette::Active, QPalette::WindowText, br_white);
         p.setBrush(QPalette::Active, QPalette::Text, br_white);
         p.setBrush(QPalette::Active, QPalette::Highlight, br_black);
@@ -916,7 +905,56 @@ public:
         p.setBrush(QPalette::Disabled, QPalette::Button, br_alternate_base);
         p.setBrush(QPalette::Disabled, QPalette::ButtonText, br_black);
 
+        p_stats_controls.setBrush(QPalette::Active, QPalette::Base, br_base);
+        p_stats_controls.setBrush(QPalette::Active, QPalette::Window, br_base);
+        p_stats_controls.setBrush(QPalette::Active, QPalette::WindowText, br_dark);
+        p_stats_controls.setBrush(QPalette::Active, QPalette::Text, br_dark);
+        p_stats_controls.setBrush(QPalette::Active, QPalette::Highlight, br_black);
+        p_stats_controls.setBrush(QPalette::Active, QPalette::Button, br_alternate_base);
+        p_stats_controls.setBrush(QPalette::Active, QPalette::ButtonText, br_white);
+        p_stats_controls.setBrush(QPalette::Disabled, QPalette::Base, br_alternate_base);
+        p_stats_controls.setBrush(QPalette::Disabled, QPalette::Window, br_alternate_base);
+        p_stats_controls.setBrush(QPalette::Disabled, QPalette::WindowText, br_black);
+        p_stats_controls.setBrush(QPalette::Disabled, QPalette::Text, br_black);
+        p_stats_controls.setBrush(QPalette::Disabled, QPalette::Highlight, br_alternate_base);
+        p_stats_controls.setBrush(QPalette::Disabled, QPalette::Button, br_alternate_base);
+        p_stats_controls.setBrush(QPalette::Disabled, QPalette::ButtonText, br_black);
+
+        lb_bitrate = new QLabel(Movie);
+        lb_bitrate->setFont(f);
+        lb_bitrate->setPalette(p);
+        lb_bitrate->setText("0 KBPS");
+        lb_bitrate->setAutoFillBackground(true);
+
+        lb_peers = new QLabel(Movie);
+        lb_peers->setFont(f);
+        lb_peers->setPalette(p);
+        lb_peers->setText("0 PEERS");
+        lb_peers->setAutoFillBackground(true);
+
+        l_horizontal_stats = new QHBoxLayout;
+        l_horizontal_stats->setSpacing(15); //TODO: PORCENTAJE.
+        l_horizontal_stats->setAlignment(Qt::AlignCenter);
+        l_horizontal_stats->addWidget(lb_bitrate);
+        l_horizontal_stats->addWidget(lb_peers);
+
+        pb_minimum_download = new QProgressBar();
+        pb_minimum_download->setFixedHeight(3); //TODO: PORCENTAJE.
+        pb_minimum_download->setFixedWidth(500); //TODO: PORCENTAJE.
+        pb_minimum_download->setStyleSheet ("QProgressBar { background: rgb(15, 15, 15); \
+                                             border: none; }"
+                                            "QProgressBar::chunk { background: rgb(255, 255, 255); }");
+        pb_minimum_download->setTextVisible(false);
+        pb_minimum_download->setMinimum(0);
+
+        l_vertical_stats = new QVBoxLayout;
+        l_vertical_stats->setSpacing(15); //TODO: PORCENTAJE.
+        l_vertical_stats->setAlignment(Qt::AlignCenter);
+        l_vertical_stats->addLayout(l_horizontal_stats);
+        l_vertical_stats->addWidget(pb_minimum_download);
+        
         player = new QWidget;
+        player->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
         player->hide();
 
         controls = new QWidget;
@@ -924,21 +962,51 @@ public:
 
         b_play = new QPushButton(QIcon(":/icon-pause"), NULL, Movie);
         b_play->setIconSize(QSize(24, 24));
-        b_play->setMouseTracking(true);
         b_play->setFlat(true);
 
         b_mute = new QPushButton(QIcon(":/icon-mute"), NULL, Movie);
         b_mute->setIconSize(QSize(24, 24));
-        b_mute->setMouseTracking(true);
         b_mute->setFlat(true);
 
         sl_volume = new QSlider(Qt::Horizontal);
-        sl_volume->setPalette(p);
+        sl_volume->setMaximumWidth(100); //TODO: PORCENTAJE.
+        sl_volume->setStyleSheet ("QSlider::groove:horizontal { background: rgb(15, 15, 15); \
+                                   height: 3px; \
+                                   border: none; }"
+                                  "QSlider::handle:horizontal { background: white; \
+                                   width: 3px; \
+                                   border: 5px solid white; }"
+                                  "QSlider::sub-page:horizontal { background: white; \
+                                   height: 3px; \
+                                   border: none; }");
         sl_volume->setValue(80);
 
         sl_position = new QSlider(Qt::Horizontal);
-        sl_position->setPalette(p);
-        sl_position->setMaximum(1000);
+        sl_position->setStyleSheet ("QSlider::groove:horizontal { background: rgb(15, 15, 15); \
+                                     height: 3px; \
+                                     border: none; }"
+                                    "QSlider::handle:horizontal { background: white; \
+                                     width: 3px; \
+                                     border: 5px solid white; }"
+                                    "QSlider::sub-page:horizontal { background: white; \
+                                     height: 3px; \
+                                     border: none; }");
+        sl_position->setMaximum(1000);//
+        
+        lb_current_time = new QLabel(Movie);
+        lb_current_time->setFont(f);
+        lb_current_time->setPalette(p);
+        lb_current_time->setText("00:00:00");
+        lb_current_time->setAutoFillBackground(true);
+        
+        lb_total_time = new QLabel(Movie);
+        lb_total_time->setFont(f);
+        lb_total_time->setPalette(p);
+        lb_total_time->setText("00:00:00");
+        lb_total_time->setAutoFillBackground(true);
+
+        b_more = new QPushButton(QIcon(":/icon-more"), NULL, Movie);
+        b_more->setFlat(true);
 
         l_controls = new QHBoxLayout;
         l_controls->setSpacing(15); //TODO: PORCENTAJE.
@@ -947,55 +1015,17 @@ public:
         l_controls->addWidget(b_mute);
         l_controls->addWidget(sl_volume);
         l_controls->addWidget(sl_position);
-
+        l_controls->addWidget(lb_current_time);
+        l_controls->addWidget(lb_total_time);
+        l_controls->addWidget(b_more);
+        
         controls->setLayout(l_controls);
 
-        QPixmap px_bitrate(":/icon-bitrate");
-        lb_px_bitrate = new QLabel(Movie);
-        lb_px_bitrate->setPixmap(px_bitrate);
-
-        lb_bitrate = new QLabel(Movie);
-        lb_bitrate->setFont(f);
-        lb_bitrate->setPalette(p);
-        lb_bitrate->setText("0 KB/s");
-        lb_bitrate->setAutoFillBackground(true);
-
-        QPixmap px_peers(":/icon-peers");
-        lb_px_peers = new QLabel(Movie);
-        lb_px_peers->setPixmap(px_peers);
-
-        lb_peers = new QLabel(Movie);
-        lb_peers->setFont(f);
-        lb_peers->setPalette(p);
-        lb_peers->setText("0 PEERS");
-        lb_peers->setAutoFillBackground(true);
-
-        l_download = new QHBoxLayout;
-        l_download->setSpacing(15); //TODO: PORCENTAJE.
-        l_download->setAlignment(Qt::AlignCenter);
-        l_download->addWidget(lb_px_bitrate);
-        l_download->addWidget(lb_bitrate);
-        l_download->addSpacing(15); //TODO: PORCENTAJE.
-        l_download->addWidget(lb_px_peers);
-        l_download->addWidget(lb_peers);
-
-        progressBar = new QProgressBar();
-        progressBar->setFixedHeight(3); //TODO: PORCENTAJE.
-        progressBar->setFixedWidth(500); //TODO: PORCENTAJE.
-        progressBar->setStyleSheet ("QProgressBar { background: rgb(15, 15, 15); \
-                                     border: none; }"
-                                    "QProgressBar::chunk { background: rgb(255, 255, 255); }");
-        progressBar->setTextVisible(false);
-        progressBar->setMinimum(0);
-
-        l_stats = new QVBoxLayout;
-        l_stats->setSpacing(15); //TODO: PORCENTAJE.
-        l_stats->setAlignment(Qt::AlignCenter);
-        l_stats->addLayout(l_download);
-        l_stats->addWidget(progressBar);
-
         l = new QVBoxLayout(Movie);
-        l->addLayout(l_stats);
+        l->setMargin(0);
+        l->setContentsMargins(0, 0, 0, 0);
+        l->setSpacing(0);
+        l->addLayout(l_vertical_stats);
 
         Movie->setLayout(l);
     }
