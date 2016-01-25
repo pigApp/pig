@@ -21,8 +21,6 @@ PIG::PIG(QWidget *parent) :
 {
     ui->setupUi(this);
 
-
-
     sc_back = new QShortcut(this);
     sc_back->setKey(QKeySequence(Qt::Key_Escape));
     sc_back->setEnabled(false);

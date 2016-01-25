@@ -163,8 +163,12 @@ void Finder::filters()
         QObject::connect (ui->b_fullMovie, &QPushButton::pressed, [=] {
             filters_handler(NULL, "FULLMOVIE");
         });
-        QObject::connect (ui->r_apply_on_results, &QPushButton::pressed, [=] {
+        QObject::connect (ui->b_apply_on_results, &QPushButton::pressed, [=] {
             isFilteringResult = !isFilteringResult;
+            if (isFilteringResult)
+                ui->b_apply_on_results->setIcon(QIcon(":/icon-ok"));
+            else
+                ui->b_apply_on_results->setIcon(QIcon(":/icon-ok-dark"));
         });
         
         isFiltersHidden = false;

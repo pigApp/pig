@@ -1,5 +1,6 @@
 #include "movie.h"
 
+#include <QCursor>
 #include <QDebug>
 
 #define qtu( i ) ((i).toUtf8().constData())
@@ -14,7 +15,16 @@ Movie::Movie(const QString* const PIG_PATH, QWidget *parent) :
     media(NULL),
     ui(new Ui::Movie)
 {
+    this->setMouseTracking(true);
+    
     ui->setupUi(this);
+
+    t_delayControls = new QTimer(this);
+    t_delayControls->setSingleShot(true);
+    QObject::connect (t_delayControls, &QTimer::timeout, [&] {
+        mediaplayer_controls(false);
+        t_delayControls->disconnect();
+    });
 }
 
 Movie::~Movie()
@@ -27,16 +37,17 @@ Movie::~Movie()
 
 void Movie::init_mediaplayer(QString path)
 {
+    t_delayControls->start(5000);
+
     instance = libvlc_new(0, NULL);
     media = libvlc_media_new_path(instance, qtu((*_PIG_PATH)+"/tmp/torrents/movies/"+path));
     mediaplayer = libvlc_media_player_new_from_media(media);
     libvlc_media_release(media);
 #if defined(Q_OS_UNIX)
-    libvlc_media_player_set_xwindow(mediaplayer, ui->player->winId());
+    libvlc_media_player_set_xwindow(mediaplayer, ui->w_player->winId());
 #elif defined(Q_OS_WIN)
-    libvlc_media_player_set_hwnd(mediaplayer, ui->player->winId());
+    libvlc_media_player_set_hwnd(mediaplayer, ui->w_player->winId());
 #endif
-    libvlc_set_fullscreen(mediaplayer, true);//
     libvlc_video_set_aspect_ratio(mediaplayer, "16:9"); //TODO: LLAMAR A FUNCION.
     libvlc_video_set_scale(mediaplayer, 1);
 
@@ -48,7 +59,7 @@ void Movie::init_mediaplayer(QString path)
         if (ui->lb_bitrate->isHidden()) {
             ui->lb_bitrate->setHidden(false);
             ui->lb_peers->setHidden(false);
-            ui->b_more->setIcon(QIcon(":/icon-less"));
+            ui->b_more->setIcon(QIcon(":/icon-more-dark"));
         } else {
             ui->lb_bitrate->setHidden(true);
             ui->lb_peers->setHidden(true);
@@ -64,21 +75,16 @@ void Movie::init_mediaplayer(QString path)
     ui->lb_peers->setPalette(ui->p_stats_controls);
     ui->l_vertical_stats->setSpacing(0);
     ui->l_controls->addLayout(ui->l_vertical_stats);
-    ui->l->addWidget(ui->player);
-    ui->l->addWidget(ui->controls);
-    ui->player->show();
-    ui->controls->show();
+    ui->l->addWidget(ui->w_player);
+    ui->l->addWidget(ui->w_controls);
+    ui->w_player->show();
+    ui->w_controls->show();
 
     mediaplayer_play();
 
-    QTimer *t_ui = new QTimer(this);
-    connect (t_ui, SIGNAL(timeout()), this, SLOT(mediaplayer_update_ui()));
-    t_ui->start(100);
-
-    t_controls = new QTimer(this);
-    t_controls->setSingleShot(true);
-    QObject::connect (t_controls, &QTimer::timeout, [&] { mediaplayer_controls(false); });
-    t_controls->start(5000);
+    QTimer *t_updateUi = new QTimer(this);
+    connect (t_updateUi, SIGNAL(timeout()), this, SLOT(mediaplayer_update_ui()));
+    t_updateUi->start(100);
 }
 
 void Movie::mediaplayer_play()
@@ -101,7 +107,7 @@ void Movie::mediaplayer_mute()
             mediaplayer_set_volume(cacheVolume);
             ui->sl_volume->setValue(cacheVolume);
         } else {
-            cacheVolume = ui->sl_volume->value(); //TODO: REVISAR.
+            cacheVolume = ui->sl_volume->value();
             mediaplayer_set_volume(0);
             ui->sl_volume->setValue(0);
         }
@@ -112,7 +118,7 @@ int Movie::mediaplayer_set_volume(int vol)
 {
     if (mediaplayer) {
         if (vol == 0)
-            ui->b_mute->setIcon(QIcon(":/icon-mute-off"));
+            ui->b_mute->setIcon(QIcon(":/icon-mute-dark"));
         else
             ui->b_mute->setIcon(QIcon(":/icon-mute"));
 
@@ -164,10 +170,10 @@ void Movie::mediaplayer_controls(bool show)
 {
     if (show) {
         libvlc_video_set_scale(mediaplayer, 1);
-        ui->controls->show();
+        ui->w_controls->show();
     } else {
         libvlc_video_set_scale(mediaplayer, 0);
-        ui->controls->hide();
+        ui->w_controls->hide();
     }
 }
 
@@ -184,13 +190,6 @@ void Movie::mediaplayer_update_ui()
     else
         set_time(libvlc_media_player_get_time(mediaplayer));
 
-    if (((ui->player->mapFromGlobal(QCursor::pos()).y()) > 1030) &&
-         (ui->controls->isHidden())) //TODO: 1030 porcentaje.
-        mediaplayer_controls();
-    else if (((ui->player->mapFromGlobal(QCursor::pos()).y()) < 1030) &&
-             (!ui->controls->isHidden()) && (!t_controls->isActive())) //TODO: 1030 porcentaje.
-        mediaplayer_controls(false);
-
     if (libvlc_media_player_get_state(mediaplayer) == libvlc_Ended)
         mediaplayer_stop();
 }
@@ -206,6 +205,24 @@ void Movie::stats(int bitrate, int peers, const qint64 &kb_writen,
     ui->pb_minimum_download->setMaximum(kb_required);
     ui->pb_minimum_download->setValue(kb_writen);
 }
+
+void Movie::mouseMoveEvent(QMouseEvent * event)
+{
+    if (mediaplayer && !t_delayControls->isActive()) {
+        if (ui->w_controls->isHidden()) { //TODO: 1030 porcentaje.
+            t_delayControls->start(1000);
+            mediaplayer_controls();
+            QCursor::setPos(event->x(), 1050); //TODO: 1050 porcentaje.
+        } else if ((event->y() < 1030) && (!ui->w_controls->isHidden())) {  //TODO: player.height-player.height/10 1030 porcentaje.
+            t_delayControls->start(2000);
+            mediaplayer_controls(false);
+            QCursor::setPos(event->x(), 1000); //TODO: 1000 porcentaje.
+        }
+    }
+}
+
+
+
 
 
 //media = libvlc_media_new_location(instance, qtu((*_PIG_PATH)+"/tmp/torrents/movies/"+path)); // Desde URL.

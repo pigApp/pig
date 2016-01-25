@@ -317,7 +317,7 @@ void Update::error(const QString &errorMsg)
     
     if (ui != 0) {
         ui->lb->setText(errorMsg);
-        ui->b_1->setIcon(QIcon(":/icon-cancel"));
+        ui->b_1->setIcon(QIcon(":/icon-error"));
         ui->b_1->setToolTip("CLOSE");
         ui->b_1->show();
 

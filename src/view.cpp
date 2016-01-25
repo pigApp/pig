@@ -9,7 +9,7 @@ const int sizeData = 20;
 View::View(const QString* const PIG_PATH, QWidget *parent) :
     QWidget(parent),
     _PIG_PATH(PIG_PATH),
-    setLbDownloadHidden(false),
+    setDownloadStatusHidden(false),
     ui(new Ui::View)
 {
     ui->setupUi(this);
@@ -26,11 +26,11 @@ View::View(const QString* const PIG_PATH, QWidget *parent) :
     target.setPath(*_PIG_PATH+"/tmp/covers/back");
     onLocalBackCovers = target.entryList(QDir::Files | QDir::NoDotAndDotDot);
 
-    t = new QTimer(this);
+    t_download_status = new QTimer(this);
 
-    QObject::connect (t, &QTimer::timeout, [&] {
-        ui->lb_px_download->setHidden(setLbDownloadHidden);
-        setLbDownloadHidden = !setLbDownloadHidden;
+    QObject::connect (t_download_status, &QTimer::timeout, [&] {
+        ui->lb_px_download_status->setHidden(setDownloadStatusHidden);
+        setDownloadStatusHidden = !setDownloadStatusHidden;
     });
 }
 
@@ -91,7 +91,7 @@ void View::get_covers(const QStringList *data, const int &ID)
             offsetData += sizeData;
 
             if ((i == (requiredCovers - 1)) && (requiredRemoteCovers != 0))
-                set_download_state(true, false);
+                set_download_status(true, false);
         }
     } else {
         int _ID = ((ID + 1) * sizeData);
@@ -120,12 +120,12 @@ void View::get_covers(const QStringList *data, const int &ID)
             });
             connect (thread, SIGNAL(finished()), thread, SLOT(deleteLater()));
             QObject::connect (thread, &ThreadedSocket::destroyed, [&] {
-                set_download_state(false, true);
+                set_download_status(false, true);
             });
 
             thread->start();
 
-            set_download_state(false, false);
+            set_download_status(false, false);
         }
     }
 }
@@ -164,7 +164,7 @@ void View::add_cover(int ID, QString path)
         offsetCovers += 10;
         ++n_pages;
 
-        set_download_state(true, true);
+        set_download_status(true, true);
 
         if ((n_covers - offsetCovers) <= 0)
             hasMoreCovers = false;
@@ -267,20 +267,20 @@ void View::set_filter(const QStringList *filter)
     }
 }
 
-void View::set_download_state(bool isCover, bool setHidden)
+void View::set_download_status(bool isCover, bool setHidden)
 {
-    setLbDownloadHidden = setHidden;
+    setDownloadStatusHidden = setHidden;
 
     if (setHidden) {
-        t->stop();
-        ui->lb_px_download->setHidden(setHidden);
+        t_download_status->stop();
+        ui->lb_px_download_status->setHidden(setHidden);
     } else {
         if (isCover)
-            ui->lb_px_download->setGeometry(20, 962, 28, 24); //TODO: PORCENTAJE.
+            ui->lb_px_download_status->setGeometry(20, 962, 18, 12); //TODO: PORCENTAJE.
         else
-            ui->lb_px_download->setGeometry(20, 1023, 28, 24); //TODO: PORCENTAJE.
+            ui->lb_px_download_status->setGeometry(20, 1023, 18, 12); //TODO: PORCENTAJE.
 
-        t->start(500);
+        t_download_status->start(500);
     }
 }
 

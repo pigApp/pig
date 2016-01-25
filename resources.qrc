@@ -9,21 +9,19 @@
         <file alias="icon-reset-dark">resources/images/setup/reset-dark.svg</file>
         <file alias="icon-upload">resources/images/setup/upload.svg</file>
         <file alias="icon-copy">resources/images/setup/copy.svg</file>
-        <file alias="icon-download">resources/images/viewer/download.svg</file>
+        <file alias="icon-download_status">resources/images/viewer/download_status.svg</file>
         <file alias="img-back_cover">resources/images/viewer/back_cover.jpg</file>
         <file alias="icon-watch">resources/images/viewer/watch.svg</file>
-        <file alias="icon-watched">resources/images/viewer/watched.svg</file>
+        <file alias="icon-watch-dark">resources/images/viewer/watch-dark.svg</file>
         <file alias="icon-play">resources/images/movie/player/play.svg</file>
-        <file alias="icon-replay">resources/images/movie/player/replay.svg</file>
-        <file alias="icon-playing">resources/images/movie/player/playing.svg</file>
         <file alias="icon-pause">resources/images/movie/player/pause.svg</file>
-        <file alias="icon-standby">resources/images/movie/player/standby.svg</file>
         <file alias="icon-mute">resources/images/movie/player/mute.svg</file>
-        <file alias="icon-mute-off">resources/images/movie/player/mute-off.svg</file>
+        <file alias="icon-mute-dark">resources/images/movie/player/mute-dark.svg</file>
         <file alias="icon-ok">resources/images/global/ok.svg</file>
-        <file alias="icon-cancel">resources/images/global/cancel.svg</file>
+        <file alias="icon-ok-dark">resources/images/global/ok-dark.svg</file>
+        <file alias="icon-error">resources/images/global/error.svg</file>
         <file alias="icon-more">resources/images/global/more.svg</file>
-        <file alias="icon-less">resources/images/global/less.svg</file>
+        <file alias="icon-more-dark">resources/images/global/more-dark.svg</file>
         <file>resources/images/global/icon.ico</file>
         <file>resources/images/global/icon.jpg</file>
         <file>resources/images/global/icon.rc</file>

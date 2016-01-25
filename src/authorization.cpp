@@ -26,7 +26,6 @@ void Authorization::check()
         while (!file.atEnd())
             digest = QString(file.readLine()).toUtf8().simplified();
         file.close();
-
         hasSet = true;
         init_ui();
     } else if (_set) {
@@ -98,7 +97,7 @@ const QString Authorization::calculate(const QString *plain)
 void Authorization::set_icon(const bool &hasReset, const bool &hasFailed)
 {
     if (hasFailed)
-        ui->b_reset->setIcon(QIcon(":/icon-cancel"));
+        ui->b_reset->setIcon(QIcon(":/icon-error"));
     else
         ui->b_reset->setIcon(QIcon(":/icon-ok"));
 

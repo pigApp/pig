@@ -60,17 +60,20 @@ Setup::Setup(const QString* const PIG_PATH, bool *keep_covers, bool *keep_torren
         ui->setupUi(&data, &keep_covers, &keep_torrents, &keep_movies,
                     &torrent_port_1, &torrent_port_2, authorization, this);
 
-        QObject::connect (ui->r_folder_covers, &QPushButton::pressed, [=] {
+        QObject::connect (ui->b_folder_covers, &QPushButton::pressed, [=] {
             *keep_covers = !*keep_covers;
             set_rc("KEEP_LOCAL_COPY_OF_COVERS", *keep_covers);
+            set_icon(&ui->b_folder_covers, false, !*keep_covers, false);
         });
-        QObject::connect (ui->r_folder_torrents, &QPushButton::pressed, [=] {
+        QObject::connect (ui->b_folder_torrents, &QPushButton::pressed, [=] {
             *keep_torrents = !*keep_torrents;
             set_rc("KEEP_LOCAL_COPY_OF_TORRENTS", *keep_torrents);
+            set_icon(&ui->b_folder_torrents, false, !*keep_torrents, false);
         });
-        QObject::connect (ui->r_folder_movies, &QPushButton::pressed, [=] {
+        QObject::connect (ui->b_folder_movies, &QPushButton::pressed, [=] {
             *keep_movies = !*keep_movies;
             set_rc("KEEP_LOCAL_COPY_OF_MOVIES", *keep_movies);
+            set_icon(&ui->b_folder_movies, false, !*keep_movies, false);
         });
 
         QObject::connect (ui->b_folder_covers_reset, &QPushButton::pressed, [&] {
@@ -95,7 +98,7 @@ Setup::Setup(const QString* const PIG_PATH, bool *keep_covers, bool *keep_torren
         });
 
         QObject::connect (ui->input_torrent_port_1, &QLineEdit::cursorPositionChanged, [&] {
-            ui->input_torrent_port_1->setPalette(ui->p_torrent_edit);
+            ui->input_torrent_port_1->setPalette(ui->p_torrent_ports_edit);
 
             if ((ui->input_torrent_port_1->text().toInt() == 6900)
                 && (ui->input_torrent_port_2->text().toInt() == 6999)) {
@@ -120,11 +123,11 @@ Setup::Setup(const QString* const PIG_PATH, bool *keep_covers, bool *keep_torren
                 set_icon(&ui->b_torrent_ports_reset, false, true);
             }
 
-            ui->input_torrent_port_1->setPalette(ui->p_torrent);
+            ui->input_torrent_port_1->setPalette(ui->p_torrent_ports);
         });
 
         QObject::connect (ui->input_torrent_port_2, &QLineEdit::cursorPositionChanged, [&] {
-            ui->input_torrent_port_2->setPalette(ui->p_torrent_edit);
+            ui->input_torrent_port_2->setPalette(ui->p_torrent_ports_edit);
 
             if ((ui->input_torrent_port_1->text().toInt() == 6900)
                 && (ui->input_torrent_port_2->text().toInt() == 6999)) {
@@ -150,7 +153,7 @@ Setup::Setup(const QString* const PIG_PATH, bool *keep_covers, bool *keep_torren
                 set_icon(&ui->b_torrent_ports_reset, false, true);
             }
 
-            ui->input_torrent_port_2->setPalette(ui->p_torrent);
+            ui->input_torrent_port_2->setPalette(ui->p_torrent_ports);
         });
 
         QObject::connect (ui->b_torrent_ports_reset, &QPushButton::pressed, [=] {
@@ -161,8 +164,8 @@ Setup::Setup(const QString* const PIG_PATH, bool *keep_covers, bool *keep_torren
 
                 ui->input_torrent_port_1->setText("6900");
                 ui->input_torrent_port_2->setText("6999");
-                ui->input_torrent_port_1->setPalette(ui->p_torrent);
-                ui->input_torrent_port_2->setPalette(ui->p_torrent);
+                ui->input_torrent_port_1->setPalette(ui->p_torrent_ports);
+                ui->input_torrent_port_2->setPalette(ui->p_torrent_ports);
 
                 set_icon(&ui->b_torrent_ports_reset);
             } else {
@@ -170,19 +173,19 @@ Setup::Setup(const QString* const PIG_PATH, bool *keep_covers, bool *keep_torren
             }
         });
 
-        QObject::connect (ui->b_contribute_torrent, &QPushButton::pressed, [=] {
+        QObject::connect (ui->b_contribute_torrents, &QPushButton::pressed, [=] {
             QDesktopServices::openUrl(QUrl("http://"+data[3]+data[4]));
         });
         QObject::connect (ui->b_contribute_code, &QPushButton::pressed, [=] {
             QDesktopServices::openUrl(QUrl("http://"+data[3]+data[5]));
         });
-        QObject::connect (ui->b_contribute_bug, &QPushButton::pressed, [=] {
+        QObject::connect (ui->b_contribute_bugs, &QPushButton::pressed, [=] {
             QDesktopServices::openUrl(QUrl("http://"+data[3]+data[6]));
         });
         QObject::connect (ui->b_contribute_support, &QPushButton::pressed, [&] {
             if (ui->lb_contribute_support->text() == "SUPPORT") {
                 ui->lb_contribute_support->setText("BITCOIN");
-                ui->b_contribute_support->setIcon(QIcon(":/icon-less"));
+                ui->b_contribute_support->setIcon(QIcon(":/icon-more-dark"));
                 ui->lb_contribute_wallet->setPalette(ui->p_wallet);
             } else {
                 ui->lb_contribute_support->setText("SUPPORT");
@@ -190,9 +193,9 @@ Setup::Setup(const QString* const PIG_PATH, bool *keep_covers, bool *keep_torren
             }
 
             ui->lb_contribute_wallet->setHidden(!ui->lb_contribute_wallet->isHidden());
-            ui->b_contribute_copy_wallet->setHidden(!ui->b_contribute_copy_wallet->isHidden());
+            ui->b_contribute_wallet_copy->setHidden(!ui->b_contribute_wallet_copy->isHidden());
         });
-        QObject::connect (ui->b_contribute_copy_wallet, &QPushButton::pressed, [&] {
+        QObject::connect (ui->b_contribute_wallet_copy, &QPushButton::pressed, [&] {
             ui->clipboard->clear();
             ui->clipboard->setText(ui->lb_contribute_wallet->text());
             ui->lb_contribute_wallet->setPalette(ui->p_wallet_copied);
@@ -211,14 +214,12 @@ bool Setup::set_rc(const QString &option, const QVariant &value)
     if (file.open(QIODevice::ReadWrite | QIODevice::Text)) {
         QTextStream stream(&file);
         QString out;
-
         while (!stream.atEnd()) {
             QString line = stream.readLine().simplified();
             if (line.section("=", 0, 0) == option)
                 line.replace(line, option+"="+value.toString());
             out.append(line+"\n");
         }
-
         file.resize(0);
         stream << out;
         file.close();
@@ -244,32 +245,38 @@ bool Setup::clean_folder(const QString &folder)
     return false;
 }
 
-void Setup::set_icon(QPushButton **button, const bool &setDisabled, const bool &hasFailed)
+void Setup::set_icon(QPushButton **button, const bool &setDisabled,
+                     const bool &hasFailed, const bool &isLoop)
 {
     if (hasFailed)
-        (*button)->setIcon(QIcon(":/icon-cancel"));
+        if (isLoop)
+            (*button)->setIcon(QIcon(":/icon-error"));
+        else
+            (*button)->setIcon(QIcon(":/icon-ok-dark"));
     else
         (*button)->setIcon(QIcon(":/icon-ok"));
 
-    (*button)->setEnabled(true);
+    if (isLoop) {
+        (*button)->setEnabled(true);
 
-    QTimer *timer = new QTimer(this);
-    timer->setSingleShot(true);
-    timer->start(1000);
+        QTimer *timer = new QTimer(this);
+        timer->setSingleShot(true);
+        timer->start(1000);
 
-    if (hasFailed) {
-        QObject::connect(timer, &QTimer::timeout, [=] {
-            (*button)->setIcon(QIcon(":/icon-reset"));
-        });
-    } else {
-        QObject::connect(timer, &QTimer::timeout, [=] {
-            if (setDisabled) {
-                (*button)->setIcon(QIcon(":/icon-reset-dark"));
-                (*button)->setDisabled(true);
-            } else {
+        if (hasFailed) {
+            QObject::connect(timer, &QTimer::timeout, [=] {
                 (*button)->setIcon(QIcon(":/icon-reset"));
-            }
-        });
+            });
+        } else {
+            QObject::connect(timer, &QTimer::timeout, [=] {
+                if (setDisabled) {
+                    (*button)->setIcon(QIcon(":/icon-reset-dark"));
+                    (*button)->setDisabled(true);
+                } else {
+                    (*button)->setIcon(QIcon(":/icon-reset"));
+                }
+            });
+        }
     }
 
     this->setFocus();

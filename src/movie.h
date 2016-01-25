@@ -7,6 +7,7 @@
 
 #include <QWidget>
 
+#include <QMouseEvent>
 #include <QTimer>
 
 namespace Ui {
@@ -20,7 +21,10 @@ class Movie : public QWidget
 public:
     explicit Movie(const QString* const PIG_PATH, QWidget *parent = 0);
     ~Movie();
-    
+
+protected:
+    void mouseMoveEvent(QMouseEvent * event);
+
 private:
     const QString* const _PIG_PATH;
 
@@ -34,7 +38,7 @@ private:
 
     Ui::Movie *ui;
 
-    QTimer *t_controls;
+    QTimer *t_delayControls;
 
 private slots:
     void init_mediaplayer(QString path);

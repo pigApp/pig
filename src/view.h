@@ -39,7 +39,7 @@ private:
 
     const QStringList *m_data = NULL;
 
-    bool setLbDownloadHidden;
+    bool setDownloadStatusHidden;
 
     Ui::View *ui;
 
@@ -50,7 +50,7 @@ private:
     QStringList onLocalCovers;
     QStringList onLocalBackCovers;
 
-    QTimer *t;
+    QTimer *t_download_status;
 
     int offsetData, offsetCovers;
     int requiredCovers, requiredRemoteCovers, n_covers;
@@ -64,7 +64,7 @@ private slots:
     void init_info(const int &ID, const QString &path);
     void delete_info();
     void pages_handler();
-    void set_download_state(bool isCover, bool setHidden);
+    void set_download_status(bool isCover, bool setHidden);
     bool hasOnLocal(const QString &cover, const QStringList *localList);
 };
 

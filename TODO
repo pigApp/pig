@@ -1,13 +1,13 @@
+- Cambiar icono watch a watch-dark.
 - Inicializar Player y Torrent en pig.cpp.
 - Descarga mal el archivo .torrent.
-- Actualizar a libtorrent 1.0.7 y usar nuevo tipo de alert.
-- FIX: Tamaño boton minimize y close.
+- Al cerrar cuando pide el password sale con Segmentation fault.
 - tab order.
 - Pasar valores a porcentajes.
 
-- Agregar boton back en info.
 - FIX: SOCKET: Pedido http sin headers. 
          VIEW: Si el cover no fue descargado por error en el socket restar 1 a 'requiredCovers'.
+         VIEW: Si se borran los covers desde setup, al volver a view y apretar enter en el buscador para que descargue todas las tapas de nuevo, la segunda pagina de tapas no la descarga.
 
 - Revisar paginas de covers.
 
@@ -18,7 +18,6 @@
 - Agregar librerias e include de vlc a /usr/lib/pig y /usr/include/pig.
 
 - Setting libtorrent.
-- Esconder el puntero del mouse en el reproductor.
 
 - Verificar los enleces simbolicos al actualizar librerias.
 - Agregar UNSIGNED SHORT a int.
