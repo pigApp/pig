@@ -76,25 +76,25 @@ Setup::Setup(const QString* const PIG_PATH, bool *keep_covers, bool *keep_torren
             set_icon(&ui->b_folder_movies, false, !*keep_movies, false);
         });
 
-        QObject::connect (ui->b_folder_covers_reset, &QPushButton::pressed, [&] {
+        QObject::connect (ui->b_folder_covers_clean, &QPushButton::pressed, [&] {
             if (clean_folder("covers") && clean_folder("covers/back")) {
-                set_icon(&ui->b_folder_covers_reset);
-                emit folderCoversReset();
+                set_icon(&ui->b_folder_covers_clean);
+                emit cleanFolderCovers();
             } else {
-                set_icon(&ui->b_folder_covers_reset, false, true);
+                set_icon(&ui->b_folder_covers_clean, false, true);
             }
         });
-        QObject::connect (ui->b_folder_torrents_reset, &QPushButton::pressed, [&] {
+        QObject::connect (ui->b_folder_torrents_clean, &QPushButton::pressed, [&] {
             if (clean_folder("torrents"))
-                set_icon(&ui->b_folder_torrents_reset);
+                set_icon(&ui->b_folder_torrents_clean);
             else
-                set_icon(&ui->b_folder_torrents_reset, false, true);
+                set_icon(&ui->b_folder_torrents_clean, false, true);
         });
-        QObject::connect (ui->b_folder_movies_reset, &QPushButton::pressed, [&] {
+        QObject::connect (ui->b_folder_movies_clean, &QPushButton::pressed, [&] {
             if (clean_folder("torrents/movies"))
-                set_icon(&ui->b_folder_movies_reset);
+                set_icon(&ui->b_folder_movies_clean);
             else
-                set_icon(&ui->b_folder_movies_reset, false, true);
+                set_icon(&ui->b_folder_movies_clean, false, true);
         });
 
         QObject::connect (ui->input_torrent_port_1, &QLineEdit::cursorPositionChanged, [&] {

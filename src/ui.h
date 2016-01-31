@@ -91,7 +91,7 @@ public:
     QHBoxLayout *l_input;
     QVBoxLayout *l;
 
-    void setupUi(bool set, bool hasSet, QWidget *Authorization)
+    void setupUi(bool set, bool isSet, QWidget *Authorization)
     {
         QBrush br_base_light(QColor(15, 15, 15, 255));
         QBrush br_white(QColor(255, 255, 255, 255));
@@ -135,17 +135,17 @@ public:
         input->setEchoMode(QLineEdit::Password);
         if (!set)
             input->setFocus();
-        input->setDisabled(set && hasSet);
+        input->setDisabled(set && isSet);
         input->setAlignment(Qt::AlignCenter);
 
         b_reset = new QPushButton(Authorization);
-        if  (hasSet)
+        if  (isSet)
             b_reset->setIcon(QIcon(":/icon-reset"));
         else
             b_reset->setIcon(QIcon(":/icon-reset-dark"));
         b_reset->setToolTip("RESET");
         b_reset->setFlat(true);
-        b_reset->setDisabled(!hasSet);
+        b_reset->setDisabled(!isSet);
         b_reset->setHidden(!set);
 
         l_input = new QHBoxLayout;
@@ -178,11 +178,11 @@ public:
         lb = new QLabel("UPDATE AVAILABLE", Update);
 
         b_1 = new QPushButton(QIcon(":/icon-install"), NULL, Update);
-        b_1->setToolTip("ACCEPT UPDATE");
+        b_1->setToolTip("INSTALL");
         b_1->setFlat(true);
 
         b_2 = new QPushButton(QIcon(":/icon-error"), NULL, Update);
-        b_2->setToolTip("CANCEL UPDATE");
+        b_2->setToolTip("CANCEL");
         b_2->setFlat(true);
 
         l = new QHBoxLayout(Update);
@@ -249,12 +249,17 @@ public:
         f.setCapitalization(QFont::AllUppercase);
         f.setBold(true);
 
+        QFont f_completer(":/font-global");
+        f_completer.setPointSize(12); //TODO: PORCENTAJE.
+        f_completer.setCapitalization(QFont::AllUppercase);
+        
         QBrush br_base(QColor(10, 10, 10, 255));
         QBrush br_base_light(QColor(15, 15, 15, 255));
         QBrush br_white(QColor(255, 255, 255, 255));
         QBrush br_black(QColor(0, 0, 0, 255));
         QBrush br_green(QColor(0, 112, 0, 255));
         QBrush br_red(QColor(115, 10, 10, 255));
+        QBrush br_dark(QColor(40, 40, 40, 255));
 
         QPalette p;
         p.setBrush(QPalette::Active, QPalette::Base, br_base_light);
@@ -276,7 +281,7 @@ public:
         p_completer.setBrush(QPalette::Active, QPalette::Base, br_base_light);
         p_completer.setBrush(QPalette::Active, QPalette::Window, br_base_light);
         p_completer.setBrush(QPalette::Active, QPalette::Text, br_white);
-        p_completer.setBrush(QPalette::Active, QPalette::Highlight, br_green);
+        p_completer.setBrush(QPalette::Active, QPalette::Highlight, br_dark);
         p_completer.setBrush(QPalette::Disabled, QPalette::Base, br_base_light);
         p_completer.setBrush(QPalette::Disabled, QPalette::Window, br_base_light);
         p_completer.setBrush(QPalette::Disabled, QPalette::Text, br_black);
@@ -297,7 +302,7 @@ public:
         completer->setFilterMode(Qt::MatchContains);
         completer->setCaseSensitivity(Qt::CaseInsensitive);
         completer->setCompletionMode(QCompleter::PopupCompletion);
-        completer->popup()->setFont(f);
+        completer->popup()->setFont(f_completer);
         completer->popup()->setPalette(p_completer);
 
         input = new QLineEdit(Finder);
@@ -330,7 +335,7 @@ public:
 
         cb_style = "QComboBox { color: rgb(255, 255, 255); \
                     background-color: rgb(15, 15, 15); \
-                    selection-background-color: rgb(0, 112, 0); } \
+                    selection-background-color: rgb(40, 40, 40); } \
                     QComboBox QAbstractItemView { color: rgb(255, 255, 255); \
                     background-color: rgb(15, 15, 15); \
                     border-radius: 0px; }";
@@ -408,9 +413,9 @@ public:
     QPushButton *b_folder_covers;
     QPushButton *b_folder_torrents;
     QPushButton *b_folder_movies;
-    QPushButton *b_folder_covers_reset;
-    QPushButton *b_folder_torrents_reset;
-    QPushButton *b_folder_movies_reset;
+    QPushButton *b_folder_covers_clean;
+    QPushButton *b_folder_torrents_clean;
+    QPushButton *b_folder_movies_clean;
     QPushButton *b_torrent_ports_reset;
     QPushButton *b_contribute_torrents;
     QPushButton *b_contribute_code;
@@ -562,32 +567,32 @@ public:
             b_folder_movies->setIcon(QIcon(":/icon-ok-dark"));
         b_folder_movies->setFlat(true);
 
-        b_folder_covers_reset = new QPushButton(QIcon(":/icon-reset"), NULL, w_folder);
-        b_folder_covers_reset->setToolTip("CLEAN");
-        b_folder_covers_reset->setFlat(true);
+        b_folder_covers_clean = new QPushButton(QIcon(":/icon-reset"), NULL, w_folder);
+        b_folder_covers_clean->setToolTip("CLEAN");
+        b_folder_covers_clean->setFlat(true);
 
-        b_folder_torrents_reset = new QPushButton(QIcon(":/icon-reset"), NULL, w_folder);
-        b_folder_torrents_reset->setToolTip("CLEAN");
-        b_folder_torrents_reset->setFlat(true);
+        b_folder_torrents_clean = new QPushButton(QIcon(":/icon-reset"), NULL, w_folder);
+        b_folder_torrents_clean->setToolTip("CLEAN");
+        b_folder_torrents_clean->setFlat(true);
 
-        b_folder_movies_reset = new QPushButton(QIcon(":/icon-reset"), NULL, w_folder);
-        b_folder_movies_reset->setToolTip("CLEAN");
-        b_folder_movies_reset->setFlat(true);
+        b_folder_movies_clean = new QPushButton(QIcon(":/icon-reset"), NULL, w_folder);
+        b_folder_movies_clean->setToolTip("CLEAN");
+        b_folder_movies_clean->setFlat(true);
 
         l_folder_covers = new QHBoxLayout;
         l_folder_covers->addWidget(b_folder_covers);
         l_folder_covers->insertStretch(1);
-        l_folder_covers->addWidget(b_folder_covers_reset);
+        l_folder_covers->addWidget(b_folder_covers_clean);
 
         l_folder_torrents = new QHBoxLayout;
         l_folder_torrents->addWidget(b_folder_torrents);
         l_folder_torrents->insertStretch(1);
-        l_folder_torrents->addWidget(b_folder_torrents_reset);
+        l_folder_torrents->addWidget(b_folder_torrents_clean);
 
         l_folder_movies = new QHBoxLayout;
         l_folder_movies->addWidget(b_folder_movies);
         l_folder_movies->insertStretch(1);
-        l_folder_movies->addWidget(b_folder_movies_reset);
+        l_folder_movies->addWidget(b_folder_movies_clean);
 
         l_folder = new QVBoxLayout(w_folder);
         l_folder->addLayout(l_folder_covers);
@@ -833,7 +838,7 @@ public:
         cb_info_scenes->setFont(f);
         cb_info_scenes->setStyleSheet("QComboBox { color: rgb(255, 255, 255); \
                                        background-color: rgb(15, 15, 15); \
-                                       selection-background-color: rgb(0, 112, 0); }"
+                                       selection-background-color: rgb(40, 40, 40); }"
                                       "QComboBox QAbstractItemView { color: rgb(255, 255, 255); \
                                        background-color: rgb(15, 15, 15); \
                                        border-radius: 0px; }");

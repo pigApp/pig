@@ -2,6 +2,7 @@
 - Inicializar Player y Torrent en pig.cpp.
 - Descarga mal el archivo .torrent.
 - Al cerrar cuando pide el password sale con Segmentation fault.
+- FIX UPDATE: Cambiar url de souceforge en el archivo 'last' en sourceforge.net
 - tab order.
 - Pasar valores a porcentajes.
 

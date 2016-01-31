@@ -144,9 +144,8 @@ void Update::check(QString data)
 
 void Update::unpack(int ID, QString path)
 {
-    ui->lb->setText("UNPACKING");
-
     Unpack *unpack = new Unpack(this);
+    
     QObject::connect (unpack, &Unpack::sendExitCode, [&] (int exitCode) {
         unpack->deleteLater();
 
@@ -155,7 +154,7 @@ void Update::unpack(int ID, QString path)
             if (pkgs.count() == nUnpacked)
                 install();
             else
-                ui->lb->setText("DOWNLOADING");
+                ui->lb->setText("DOWNLOADING <html><img src=':/icon-download_status'></html>");
         } else {
             error("UNPACK FAILED");
         }
@@ -166,7 +165,7 @@ void Update::unpack(int ID, QString path)
 
 void Update::install()
 {
-    ui->lb->setText("INSTALLING");
+    ui->lb->setText("INSTALLING <html><img src=':/icon-install-dark'></html>");
 
     if (hasNewDb) {
         origin = *_PIG_PATH+"/tmp/update/db.sqlite";
@@ -179,12 +178,11 @@ void Update::install()
             if (!hasNewBin) {
                 ui->lb->setText("DATABASE UPDATED");
                 ui->b_1->setIcon(QIcon(":/icon-ok"));
-                ui->b_1->setToolTip("DONE");
+                ui->b_1->setToolTip("ACCEPT");
                 ui->b_2->setIcon(QIcon(":/icon-more"));
-                ui->b_2->setToolTip("SHOW MORE INFO");
+                ui->b_2->setToolTip("MORE INFO");
                 ui->b_1->show();
                 ui->b_2->show();
-
                 QObject::connect (ui->b_1, &QPushButton::pressed, [&] { delete this; });
                 QObject::connect (ui->b_2, &QPushButton::pressed, [&] {
                     QDesktopServices::openUrl(QUrl("http://"+hostSite+urlSiteNews));
@@ -246,7 +244,6 @@ void Update::status(const int &exitCode)
                 query.exec();
                 query.prepare("UPDATE data SET release='"+QString::number(rel)+"'");
                 query.exec();
-
                 if (hasNewLib) {
                     query.prepare("UPDATE data SET library='"+QString::number(lib)+"'");
                     query.exec();
@@ -260,7 +257,7 @@ void Update::status(const int &exitCode)
         ui->b_1->setIcon(QIcon(":/icon-off"));
         ui->b_1->setToolTip("CLOSE PIG");
         ui->b_2->setIcon(QIcon(":/icon-more"));
-        ui->b_2->setToolTip("SHOW MORE INFO");
+        ui->b_2->setToolTip("MORE INFO");
         ui->b_1->show();
         ui->b_2->show();
 
@@ -283,7 +280,6 @@ void Update::status(const int &exitCode)
                 query.exec();
                 query.prepare("UPDATE data SET release='"+QString::number(rel)+"'");
                 query.exec();
-
                 if (hasNewLib) {
                     query.prepare("UPDATE data SET library='"+QString::number(lib)+"'");
                     query.exec();
@@ -320,7 +316,6 @@ void Update::error(const QString &errorMsg)
         ui->b_1->setIcon(QIcon(":/icon-error"));
         ui->b_1->setToolTip("CLOSE");
         ui->b_1->show();
-
         QObject::connect (ui->b_1, &QPushButton::pressed, [&] { delete this; });
     } else { 
         delete this;
@@ -333,7 +328,7 @@ void Update::init_ui()
     ui->setupUi(this);
 
     QObject::connect (ui->b_1, &QPushButton::pressed, [&] {
-        ui->lb->setText("DOWNLOADING");
+        ui->lb->setText("DOWNLOADING <html><img src=':/icon-download_status'></html>");
         ui->b_1->hide();
         ui->b_2->hide();
         ui->b_1->disconnect();

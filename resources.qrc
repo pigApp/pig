@@ -1,6 +1,7 @@
 <RCC>
     <qresource prefix="/">
         <file alias="icon-install">resources/images/update/install.svg</file>
+        <file alias="icon-install-dark">resources/images/update/install-dark.svg</file>
         <file alias="icon-off">resources/images/update/off.svg</file>
         <file alias="icon-filters">resources/images/finder/filters.svg</file>
         <file alias="icon-filters-dark">resources/images/finder/filters-dark.svg</file>

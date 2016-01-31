@@ -29,7 +29,7 @@ private:
     const QString* const _PIG_PATH;
     bool _set;
 
-    bool hasSet;
+    bool isSet;
 
     Ui::Authorization *ui;
 
@@ -41,7 +41,7 @@ private slots:
     void reset();
     void match(const QString &str);
     const QString calculate(const QString *plain);
-    void set_icon(const bool &hasReset, const bool &hasFailed = false);
+    void set_icon(const bool &isReset, const bool &hasFailed = false);
     void init_ui();
 };
 

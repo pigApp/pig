@@ -91,9 +91,7 @@ void ThreadedSocket::processData()
 void ThreadedSocket::disconnected()
 {
     socket->deleteLater();
-
     processData();
-
     exit(0);
 }
 

@@ -21,8 +21,8 @@ public:
     explicit TopBar(QSqlDatabase *db, QWidget *parent = 0);
     ~TopBar();
 
-    Finder *getFinderObj() { return m_finder; }
-    QPushButton *getButtonSetupObj() { return m_b_setup; }
+    Finder *get_finder_obj() { return m_finder; }
+    QPushButton *get_buttonSetup_obj() { return m_b_setup; }
 
 private:
     Finder *m_finder;

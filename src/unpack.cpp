@@ -17,7 +17,10 @@ Unpack::~Unpack()
 
 void Unpack::unzip(const QString* const PIG_PATH, const QString *path, const QString *sum)
 {
+    int exitCode = 0;
+    
     QFile origin(*path);
+
     if ((origin.open(QIODevice::ReadOnly)) &&
         (*sum == (QCryptographicHash::hash(origin.readAll(), QCryptographicHash::Md5).toHex()))) {
         origin.close();
@@ -36,22 +39,20 @@ void Unpack::unzip(const QString* const PIG_PATH, const QString *path, const QSt
                     zipFile.close();
                     zip.close();
                     target.close();
-                    emit sendExitCode(-1);
+                    exitCode = -1;
                 }
-
                 zipFile.close();
                 target.close();
             }
-
             zip.close();
         } else {
-            emit sendExitCode(-1);
+            exitCode = -1;
         }
     } else {
         if (origin.isOpen())
             origin.close();
-
-        emit sendExitCode(-1);
+        exitCode = -1;
     }
-    emit sendExitCode(0);
+    
+    emit sendExitCode(exitCode);
 }

@@ -38,13 +38,13 @@ private:
     int _scene;
     Movie **_player;
 
-    libtorrent::session s;
-    libtorrent::torrent_handle h;
-    libtorrent::file_storage fs;
-
     int piece_first;
     double kb_required, kb_skip_global, n_kb;
     bool hasMetadata, isDump, isSkip, isAborted;
+
+    libtorrent::session session;
+    libtorrent::torrent_handle handle;
+    libtorrent::file_storage storage;
 
 private slots:
     void init(int ID, QString path);

@@ -22,7 +22,7 @@ public:
     ~Setup();
 
 signals:
-    void folderCoversReset();
+    void cleanFolderCovers();
     void sendError(QString errorMsg);
 
 private:

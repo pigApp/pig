@@ -126,10 +126,10 @@ void PIG::init_topbar()
 {
     topbar = new TopBar(&db, this);
 
-    connect (topbar->getFinderObj(), SIGNAL(sendData(const QStringList*, const QStringList*)),
+    connect (topbar->get_finder_obj(), SIGNAL(sendData(const QStringList*, const QStringList*)),
              this, SLOT(init_view(const QStringList*, const QStringList*)));
-    connect (topbar->getFinderObj(), SIGNAL(sendError(QString)), this, SLOT(init_error(QString)));
-    connect (topbar->getButtonSetupObj(), SIGNAL(released()), this, SLOT(init_setup()));
+    connect (topbar->get_finder_obj(), SIGNAL(sendError(QString)), this, SLOT(init_error(QString)));
+    connect (topbar->get_buttonSetup_obj(), SIGNAL(released()), this, SLOT(init_setup()));
 
     ui->main_layout->addWidget(topbar);
 }
@@ -204,7 +204,7 @@ void PIG::init_setup()
 
     connect (setup, SIGNAL(sendError(QString)), this, SLOT(init_error(QString)));
     if (view != 0) {
-        connect (setup, SIGNAL(folderCoversReset()), view, SLOT(reset_local_covers()));
+        connect (setup, SIGNAL(cleanFolderCovers()), view, SLOT(reset_local_covers()));
         view->hide();
     }
     topbar->setHidden(true);

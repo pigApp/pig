@@ -37,11 +37,15 @@ Movie::~Movie()
 
 void Movie::init_mediaplayer(QString path)
 {
+    qDebug() << qtu((*_PIG_PATH)+"/tmp/torrents/movies/"+path);
     t_delayControls->start(5000);
 
     instance = libvlc_new(0, NULL);
     media = libvlc_media_new_path(instance, qtu((*_PIG_PATH)+"/tmp/torrents/movies/"+path));
+    //media = libvlc_media_new_location(instance, "http://..."); // Desde URL.
     mediaplayer = libvlc_media_player_new_from_media(media);
+    events = libvlc_media_player_event_manager(mediaplayer);
+
     libvlc_media_release(media);
 #if defined(Q_OS_UNIX)
     libvlc_media_player_set_xwindow(mediaplayer, ui->w_player->winId());
@@ -50,6 +54,13 @@ void Movie::init_mediaplayer(QString path)
 #endif
     libvlc_video_set_aspect_ratio(mediaplayer, "16:9"); //TODO: LLAMAR A FUNCION.
     libvlc_video_set_scale(mediaplayer, 1);
+
+    libvlc_event_attach (events, libvlc_MediaPlayerEncounteredError, mediaplayer_callback, this);
+    libvlc_event_attach (events, libvlc_MediaPlayerOpening, mediaplayer_callback, this);
+    libvlc_event_attach (events, libvlc_MediaPlayerBuffering, mediaplayer_callback, this);
+    libvlc_event_attach (events, libvlc_MediaPlayerPlaying, mediaplayer_callback, this);
+    libvlc_event_attach (events, libvlc_MediaPlayerVout, mediaplayer_callback, this);
+    libvlc_event_attach (events, libvlc_MediaPlayerStopped, mediaplayer_callback, this);
 
     connect (ui->b_play, SIGNAL(pressed()), this, SLOT(mediaplayer_play()));
     connect (ui->b_mute, SIGNAL(pressed()), this, SLOT(mediaplayer_mute()));
@@ -83,7 +94,9 @@ void Movie::init_mediaplayer(QString path)
     mediaplayer_play();
 
     QTimer *t_updateUi = new QTimer(this);
+    
     connect (t_updateUi, SIGNAL(timeout()), this, SLOT(mediaplayer_update_ui()));
+    
     t_updateUi->start(100);
 }
 
@@ -97,6 +110,17 @@ void Movie::mediaplayer_play()
             libvlc_media_player_play(mediaplayer);
             ui->b_play->setIcon(QIcon(":/icon-pause"));
         }
+    }
+}
+
+void Movie::mediaplayer_stop()
+{
+    if (mediaplayer) {
+        libvlc_media_player_stop(mediaplayer);
+        //libvlc_media_player_release(mediaplayer);
+        //mediaplayer = NULL;
+        ui->sl_position->setValue(0);
+        ui->b_play->setIcon(QIcon(":/icon-play"));
     }
 }
 
@@ -134,7 +158,7 @@ void Movie::mediaplayer_set_position(int pos)
         libvlc_media_player_set_position(mediaplayer, (float)pos/1000.0);
 }
 
-void Movie::set_time(qint64 ms, bool setTotalTime)
+void Movie::mediaplayer_set_time(qint64 ms, bool setTotalTime)
 {
     const int hh = ms/(1000*60*60);
     const int mm = (ms-(hh*1000*60*60))/(1000*60);
@@ -152,17 +176,6 @@ void Movie::set_time(qint64 ms, bool setTotalTime)
         isSetTotalTime = true;
     } else {
         ui->lb_current_time->setText(fTime);
-    }
-}
-
-void Movie::mediaplayer_stop()
-{
-    if (mediaplayer) {
-        libvlc_media_player_stop(mediaplayer);
-        //libvlc_media_player_release(mediaplayer);
-        //mediaplayer = NULL;
-        ui->sl_position->setValue(0);
-        ui->b_play->setIcon(QIcon(":/icon-play"));
     }
 }
 
@@ -186,12 +199,26 @@ void Movie::mediaplayer_update_ui()
     ui->sl_position->setValue((int)(pos * 1000.0));
 
     if ((libvlc_media_player_get_length(mediaplayer) != -1) && !isSetTotalTime)
-        set_time(libvlc_media_player_get_length(mediaplayer), true);
+        mediaplayer_set_time(libvlc_media_player_get_length(mediaplayer), true);
     else
-        set_time(libvlc_media_player_get_time(mediaplayer));
+        mediaplayer_set_time(libvlc_media_player_get_time(mediaplayer));
 
     if (libvlc_media_player_get_state(mediaplayer) == libvlc_Ended)
         mediaplayer_stop();
+}
+
+void Movie::mediaplayer_callback(const struct libvlc_event_t *event, void *userData)
+{
+    Q_UNUSED(userData);
+
+    switch(event->type)
+    {
+        case libvlc_MediaPlayerEncounteredError:
+            qDebug() << "-- ERROR";
+            break;
+        default:
+            break;
+    }
 }
 
 void Movie::stats(int bitrate, int peers, const qint64 &kb_writen,
@@ -220,17 +247,3 @@ void Movie::mouseMoveEvent(QMouseEvent * event)
         }
     }
 }
-
-
-
-
-
-//media = libvlc_media_new_location(instance, qtu((*_PIG_PATH)+"/tmp/torrents/movies/"+path)); // Desde URL.
-
-//if (libvlc_media_player_will_play(mediaplayer)) {
-    //libvlc_media_player_play(mediaplayer);  //TODO: CONTROL DE REPRODUCCION
-//  show();
-//} else {
-//  qDebug() << "--> NOT WILL PLAY";
-//}
-//ui->l->addWidget(ui->base);

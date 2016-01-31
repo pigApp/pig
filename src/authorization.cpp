@@ -8,7 +8,7 @@ Authorization::Authorization(const QString* const PIG_PATH, bool set_, QWidget *
     QWidget(parent),
     _PIG_PATH(PIG_PATH),
     _set(set_),
-    hasSet(false),
+    isSet(false),
     ui(NULL)
 {
     file.setFileName(*_PIG_PATH+"/.pd");
@@ -26,7 +26,7 @@ void Authorization::check()
         while (!file.atEnd())
             digest = QString(file.readLine()).toUtf8().simplified();
         file.close();
-        hasSet = true;
+        isSet = true;
         init_ui();
     } else if (_set) {
         init_ui();
@@ -45,7 +45,7 @@ void Authorization::set(const QString &str)
 
             ui->input->clear();
             ui->input->setDisabled(true);
-            hasSet = true;
+            isSet = true;
 
             set_icon(false);
         } else {
@@ -66,7 +66,7 @@ void Authorization::reset()
         ui->input->clear();
         ui->input->setEchoMode(QLineEdit::Password);
         ui->input->setEnabled(true);
-        hasSet = false;
+        isSet = false;
 
         set_icon(true);
     } else {
@@ -94,7 +94,7 @@ const QString Authorization::calculate(const QString *plain)
                                             QCryptographicHash::Md5).toHex());
 }
 
-void Authorization::set_icon(const bool &hasReset, const bool &hasFailed)
+void Authorization::set_icon(const bool &isReset, const bool &hasFailed)
 {
     if (hasFailed)
         ui->b_reset->setIcon(QIcon(":/icon-error"));
@@ -108,7 +108,7 @@ void Authorization::set_icon(const bool &hasReset, const bool &hasFailed)
     timer->start(1000);
 
     if (hasFailed)
-        if (hasReset)
+        if (isReset)
             QObject::connect(timer, &QTimer::timeout, [=] { ui->b_reset->setIcon(QIcon(":/icon-reset")); });
         else
             QObject::connect(timer, &QTimer::timeout, [=] {
@@ -116,7 +116,7 @@ void Authorization::set_icon(const bool &hasReset, const bool &hasFailed)
                 ui->b_reset->setDisabled(true);
             });
     else
-        if (hasReset)
+        if (isReset)
             QObject::connect(timer, &QTimer::timeout, [=] {
                 ui->b_reset->setIcon(QIcon(":/icon-reset-dark"));
                 ui->b_reset->setDisabled(true);
@@ -128,7 +128,7 @@ void Authorization::set_icon(const bool &hasReset, const bool &hasFailed)
 void Authorization::init_ui()
 {
     ui = new Ui::Authorization;
-    ui->setupUi(_set, hasSet, this);
+    ui->setupUi(_set, isSet, this);
 
     QObject::connect (ui->input, &QLineEdit::textChanged, [&] {
         ui->input->setPalette(ui->p);
